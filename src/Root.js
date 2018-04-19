@@ -1,10 +1,16 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import App from './views/app';
+import { KeycloakProvider } from './views/components';
+import config from './config';
 
 const Root = () => (
-  <View>
-    <Text>Now we cookin'</Text>
-  </View>
+  <KeycloakProvider
+    baseUrl={config.keycloak.baseUrl}
+    realm={config.keycloak.realm}
+    clientId={config.keycloak.clientId}
+  >
+    <App />
+  </KeycloakProvider>
 );
 
 export default Root;

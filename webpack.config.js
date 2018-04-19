@@ -1,6 +1,6 @@
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require( 'path' );
+const webpack = require( 'webpack' );
+const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 
 // This is needed for webpack to compile JavaScript.
 // Many OSS React Native packages are not compiled to ES5 before being
@@ -11,9 +11,9 @@ const babelLoaderConfiguration = {
   test: /\.js$/,
   // Add every directory that needs to be compiled by Babel during the build.
   include: [
-    path.resolve(__dirname, 'web/index.js'),
-    path.resolve(__dirname, 'src'),
-    path.resolve(__dirname, 'node_modules/react-native-uncompiled'),
+    path.resolve( __dirname, 'web/index.js' ),
+    path.resolve( __dirname, 'src' ),
+    path.resolve( __dirname, 'node_modules/react-native-uncompiled' ),
   ],
   use: {
     loader: 'babel-loader',
@@ -35,9 +35,9 @@ const babelLoaderConfiguration = {
       presets: [
         'react-native',
         'react',
-      ]
-    }
-  }
+      ],
+    },
+  },
 };
 
 // This is needed for webpack to import static images in JavaScript files.
@@ -46,21 +46,21 @@ const imageLoaderConfiguration = {
   use: {
     loader: 'url-loader',
     options: {
-      name: '[name].[ext]'
-    }
-  }
+      name: '[name].[ext]',
+    },
+  },
 };
 
 module.exports = {
-  context: path.resolve(__dirname, 'src'),
+  context: path.resolve( __dirname, 'src' ),
 
   // your web-specific entry file
-  entry: path.resolve(__dirname, 'web/index.js'),
+  entry: path.resolve( __dirname, 'web/index.js' ),
 
   // configures where the build ends up
   output: {
     filename: 'bundle.web.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve( __dirname, 'dist' ),
     publicPath: '/',
   },
 
@@ -78,8 +78,8 @@ module.exports = {
     // builds to eliminate development checks and reduce build size. You may
     // wish to include additional optimizations.
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-      __DEV__: process.env.NODE_ENV !== 'production' || true,
+      'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV || 'development' ),
+      '__DEV__': process.env.NODE_ENV !== 'production' || true,
     }),
     new HtmlWebpackPlugin({
       template: '../web/index.html',
@@ -91,14 +91,14 @@ module.exports = {
     // If you're working on a multi-platform React Native app, web-specific
     // module implementations should be written in files using the extension
     // `.web.js`.
-    extensions: [ '.web.js', '.js' ],
+    extensions: ['.web.js', '.js'],
   },
 
   devtool: 'eval',
 
   devServer: {
     port: process.env.PORT || 3000,
-    contentBase: path.resolve(__dirname, 'dist'),
+    contentBase: path.resolve( __dirname, 'dist' ),
     historyApiFallback: true,
-  }
-}
+  },
+};
