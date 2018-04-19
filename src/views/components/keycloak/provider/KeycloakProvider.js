@@ -52,7 +52,7 @@ class KeycloakProvider extends Component {
     const RegisterUrl = this.createRegisterUrl();
 
     this.setState({
-      isRegistering: true,
+      isAuthenticating: true,
       error: null,
       browserSession: RegisterUrl,
     });
@@ -109,7 +109,8 @@ class KeycloakProvider extends Component {
   state = {
     isAuthenticated: false,
     isAuthenticating: false,
-    isRegistering: false,
+    isCheckingCallback: true,
+    isCheckingStorage: true,
     accessToken: null,
     refreshToken: null,
     refreshTimer: null,
@@ -124,8 +125,10 @@ class KeycloakProvider extends Component {
   }
 
   componentDidMount = () => {
-    this.checkForExistingState();
-    this.checkForCallback();
+    this.checkStorage();
+
+    if ( Platform.OS === 'web' )
+      this.checkCallback();
   }
 
   componentWillUnmount() {
@@ -137,12 +140,12 @@ class KeycloakProvider extends Component {
     return new Promise( resolve => this.setState( state, resolve ));
   }
 
-  checkForExistingState = async () => {
+  checkStorage = async () => {
     try {
       const session = await Storage.getAndParse( 'kcAuth' );
 
       if ( !session )
-        return;
+        throw false;
 
       const {
         state,
@@ -174,31 +177,39 @@ class KeycloakProvider extends Component {
     catch ( e ) {
       /* We don't care if there is an error. */
     }
+    finally {
+      this.setState({ isCheckingStorage: false });
+    }
   }
 
-  checkForCallback = async () => {
-    /* Only perform this on the web. */
-    if ( Platform.OS !== 'web' ) return;
+  checkCallback = async () => {
+    try {
+      const sessionState = await Storage.get( 'kcSessionState' );
+      const { state, code, ...restQuery } = queryString.parse( location.search );
+      const numberOfRestQueries = restQuery ? Object.keys( restQuery ).length : 0;
 
-    const sessionState = await Storage.get( 'kcSessionState' );
-    const { state, code, ...restQuery } = queryString.parse( location.search );
-    const numberOfRestQueries = restQuery ? Object.keys( restQuery ).length : 0;
+      if ( !sessionState ) throw false;
+      if ( !state ) throw false;
+      if ( !code ) throw false;
 
-    if ( !sessionState ) return;
-    if ( !state ) return;
-    if ( !code ) return;
+      /* Remove `state` and `code` from the URL query params. */
+      let newUrl = location.pathname;
 
-    /* Remove `state` and `code` from the URL query params. */
-    let newUrl = location.pathname;
+      if ( numberOfRestQueries.length > 0 )
+        newUrl += `?${queryString.stringify( restQuery )}`;
 
-    if ( numberOfRestQueries.length > 0 )
-      newUrl += `?${queryString.stringify( restQuery )}`;
+      history.replaceState({}, null, newUrl );
 
-    history.replaceState({}, null, newUrl );
-
-    /* Ensure the sessions are aligned. */
-    if ( sessionState === state )
-      this.handleAuthSuccess( code );
+      /* Ensure the sessions are aligned. */
+      if ( sessionState === state )
+        this.handleAuthSuccess( code );
+    }
+    catch ( e ) {
+      /* We don't care if there is an error. */
+    }
+    finally {
+      this.setState({ isCheckingCallback: false });
+    }
   }
 
   createRealmUrl() {
@@ -265,7 +276,6 @@ class KeycloakProvider extends Component {
   handleAuthSuccess = async code => {
     await this.asyncSetState({
       isAuthenticating: false,
-      isRegistering: false,
       isAuthenticated: true,
     });
 

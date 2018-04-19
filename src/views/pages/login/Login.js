@@ -6,10 +6,7 @@ import Layout from '../../layout';
 class Login extends Component {
   static propTypes = {
     keycloak: object,
-  }
-
-  state = {
-    cancelledAttempt: false,
+    navigation: object,
   }
 
   componentDidMount() {
@@ -22,18 +19,14 @@ class Login extends Component {
     const attempt = await attemptLogin({ replaceUrl: true });
 
     if ( attempt && attempt.type === 'cancel' )
-      this.setState({ cancelledAttempt: true });
+      this.props.navigation.goBack();
   }
 
   render() {
     const { isAuthenticated, error } = this.props.keycloak;
-    const { cancelledAttempt } = this.state;
 
     if ( isAuthenticated )
-      return <Redirect to="home" />;
-
-    if ( cancelledAttempt )
-      return <Redirect to="splash" />;
+      return <Redirect to="app" />;
 
     if ( error )
       return <Text>An error has occurred!</Text>;

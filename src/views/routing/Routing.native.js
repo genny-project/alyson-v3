@@ -1,64 +1,25 @@
-import { StackNavigator } from 'react-navigation';
-import { routes } from '../../config';
-// import * as Pages from '../../views/pages';
+/* eslint-disable new-cap */
+import { StackNavigator, SwitchNavigator } from 'react-navigation';
+// import { routes } from '../../config';
+import * as Pages from '../../views/pages';
 
-/*
-const DrawerNav = DrawerNavigator({
-  home: { screen: Pages.Home },
-  login: { screen: Pages.Login },
-  register: { screen: Pages.Register },
+const AppStack = StackNavigator({
+  home: Pages.Home,
+  logout: Pages.Logout,
 });
 
-const Auth = StackNavigator({
-  home: {
-    screen: Pages.Home,
-  },
-  logout: {
-    screen: Pages.Logout,
-  },
+const AuthStack = StackNavigator({
+  splash: Pages.Splash,
+  login: Pages.Login,
+  register: Pages.Register,
+});
+
+const Main = SwitchNavigator({
+  loading: Pages.Loading,
+  app: AppStack,
+  auth: AuthStack,
 }, {
-  initialRouteName: 'home',
-  navigationOptions: ({ navigation }) => ({
-    headerStyle: {
-      backgroundColor: 'green',
-    },
-    title: 'Authenticated',
-    headerLeft: (
-      <Text onPress={() => navigation.navigate( 'DrawerOpen' )}>
-        Menu
-      </Text>
-    ),
-  }),
-});
-
-const Unauth = StackNavigator({
-  home: {
-    screen: Pages.Home,
-  },
-  login: {
-    screen: Pages.Login,
-  },
-  register: {
-    screen: Pages.Register,
-  },
-}, {
-  initialRouteName: 'home',
-  navigationOptions: ({ navigation }) => ({
-    headerStyle: {
-      backgroundColor: 'red',
-    },
-    title: 'Unauthenticated',
-    headerLeft: (
-      <Text onPress={() => navigation.navigate( 'DrawerOpen' )}>
-        Menu
-      </Text>
-    ),
-  }),
-});
-*/
-
-const Main = StackNavigator( routes, { // eslint-disable-line new-cap
-  initialRouteName: 'splash',
+  initialRouteName: 'auth',
 });
 
 export default Main;

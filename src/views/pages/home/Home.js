@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { ScrollView, RefreshControl } from 'react-native';
 import { object } from 'prop-types';
-import { Text, Button, Link, Box, KeycloakConsumer, Redirect } from '../../components';
+import { Text, Button, Link, Box, KeycloakConsumer } from '../../components';
 import Layout from '../../layout';
 import * as page from '../../../utils/page';
 
@@ -19,11 +19,8 @@ class Home extends Component {
   }
 
   render() {
-    const { isAuthenticated, isFetchingToken, accessToken, refreshToken, user } = this.props.keycloak;
+    const { isFetchingToken, accessToken, refreshToken, user } = this.props.keycloak;
     const { isRefreshing } = this.state;
-
-    if ( !isAuthenticated )
-      return <Redirect to="splash" />;
 
     return (
       <Layout title="Home">

@@ -1,12 +1,15 @@
 import { Component } from 'react';
 import { withNavigation } from 'react-navigation';
-import { string, object } from 'prop-types';
+import { string, object, bool } from 'prop-types';
 
 class Redirect extends Component {
   componentDidMount() {
-    const { navigation, to } = this.props;
+    const { navigation, to, replace } = this.props;
 
-    navigation.replace( to );
+    if ( replace )
+      navigation.replace( to );
+    else
+      navigation.navigate( to );
   }
 
   render() {
@@ -17,6 +20,7 @@ class Redirect extends Component {
 Redirect.propTypes = {
   to: string.isRequired,
   navigation: object,
+  replace: bool,
 };
 
 export default withNavigation( Redirect );

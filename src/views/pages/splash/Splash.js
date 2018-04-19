@@ -23,7 +23,7 @@ class Splash extends Component {
     const { isRefreshing } = this.state;
 
     if ( isAuthenticated )
-      return <Redirect to="home" />;
+      return <Redirect to="app" />;
 
     return (
       <Layout title="Splash">
