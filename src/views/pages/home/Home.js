@@ -7,26 +7,26 @@ class Home extends Component {
     return (
       <KeycloakConsumer>
         {({ isAuthenticated, accessToken, refreshToken, isFetchingToken, user }) => (
-          <Layout>
+          <Layout title="Home">
             <Box>
               <Text>Home</Text>
 
               {isAuthenticated ? (
                 <Link to="logout">
-                  <Button>
+                  <Button color="red">
                     Logout
                   </Button>
                 </Link>
               ) : (
                 <Fragment>
                   <Link to="login">
-                    <Button>
+                    <Button color="green">
                       Login
                     </Button>
                   </Link>
 
                   <Link to="register">
-                    <Button>
+                    <Button color="white">
                       Register
                     </Button>
                   </Link>

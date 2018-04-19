@@ -23,7 +23,7 @@ class Logout extends Component {
       return <Text>An error has occurred!</Text>;
 
     return (
-      <Layout>
+      <Layout title="Logout">
         <Box justifyContent="center" alignItems="center" height="100%">
           <Text>Logging you out...</Text>
         </Box>

@@ -1,17 +1,18 @@
 import React from 'react';
 import { Link as ReactRouterLink } from 'react-router-dom';
-import { string, bool, any, func } from 'prop-types';
+import { string, bool, any, func, oneOf } from 'prop-types';
 
 const Link = ({
   children = 'Link',
-  href,
-  disabled,
+  to,
+  disabled = false,
   onClick,
+  decoration = 'none',
   ...restProps
 }) => {
-  const route = href === 'home'
+  const href = to === 'home'
     ? '/'
-    : `/${href}`;
+    : `/${to}`;
 
   const handleClick = event => {
     if ( disabled ) {
@@ -27,8 +28,11 @@ const Link = ({
   return (
     <ReactRouterLink
       {...restProps}
-      to={route}
+      to={href}
       onClick={handleClick}
+      style={{
+        textDecoration: decoration,
+      }}
     >
       {children}
     </ReactRouterLink>
@@ -37,9 +41,12 @@ const Link = ({
 
 Link.propTypes = {
   children: any,
-  href: string,
+  to: string.isRequired,
   disabled: bool,
   onClick: func,
+  decoration: oneOf(
+    ['none', 'underline', 'line-through']
+  ),
 };
 
 export default Link;

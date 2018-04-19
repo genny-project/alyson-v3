@@ -26,7 +26,7 @@ class Register extends Component {
       return <Text>{error}</Text>;
 
     return (
-      <Layout>
+      <Layout title="Register">
         <Box justifyContent="center" alignItems="center" height="100%">
           <Text>Preparing to register...</Text>
         </Box>

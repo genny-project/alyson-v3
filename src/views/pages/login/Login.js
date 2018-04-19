@@ -26,7 +26,7 @@ class Login extends Component {
       return <Text>An error has occurred!</Text>;
 
     return (
-      <Layout>
+      <Layout title="Login">
         <Box justifyContent="center" alignItems="center" height="100%">
           <Text>Logging you in...</Text>
         </Box>

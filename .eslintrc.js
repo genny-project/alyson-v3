@@ -75,6 +75,10 @@ module.exports = {
     'react/display-name': 0,
     'no-multiple-empty-lines': ['error', { max: 1 }],
   },
+  globals: {
+    expect: true,
+    it: true,
+  },
   env: {
     browser: true,
     node: true,
