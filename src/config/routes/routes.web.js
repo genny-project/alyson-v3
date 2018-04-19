@@ -1,3 +1,5 @@
+import React from 'react';
+import { Redirect } from 'react-router-dom';
 import * as Pages from '../../views/pages';
 
 export default [
@@ -21,5 +23,17 @@ export default [
   {
     path: '/splash',
     component: Pages.Splash,
+  },
+  {
+    path: '/auth',
+    component: () => <Redirect to="/splash" />,
+  },
+  {
+    path: '/app',
+    component: () => <Redirect to="/" />,
+  },
+  {
+    path: '/loading',
+    component: Pages.Loading,
   },
 ];
