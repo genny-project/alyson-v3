@@ -76,6 +76,7 @@ module.exports = {
     'no-multiple-empty-lines': ['error', { max: 1 }],
   },
   globals: {
+    describe: true,
     expect: true,
     it: true,
   },
