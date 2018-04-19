@@ -9,6 +9,7 @@ const Link = ({
   disabled,
   onClick,
   navigation,
+  decoration = 'none',
   ...restProps
 }) => {
   const handlePress = event => {
@@ -23,6 +24,9 @@ const Link = ({
       {...restProps}
       onPress={handlePress}
       disabled={disabled}
+      style={{
+        textDecorationLine: decoration,
+      }}
     >
       {cloneElement( children, {
         onPress: handlePress,
@@ -37,6 +41,7 @@ Link.propTypes = {
   disabled: bool,
   onClick: func,
   navigation: object,
+  decoration: string,
 };
 
 export default withNavigation( Link );

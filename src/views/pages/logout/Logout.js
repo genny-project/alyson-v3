@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { object } from 'prop-types';
-import { Text, Box, KeycloakConsumer } from '../../components';
+import { Text, Box, KeycloakConsumer, Redirect } from '../../components';
 import Layout from '../../layout';
 
 class Logout extends Component {
@@ -13,11 +13,14 @@ class Logout extends Component {
   }
 
   doLogout() {
-    this.props.keycloak.attemptLogout();
+    this.props.keycloak.attemptLogout({ replaceUrl: true });
   }
 
   render() {
-    const { error } = this.props.keycloak;
+    const { isAuthenticated, error } = this.props.keycloak;
+
+    if ( !isAuthenticated )
+      return <Redirect to="home" />;
 
     if ( error )
       return <Text>An error has occurred!</Text>;

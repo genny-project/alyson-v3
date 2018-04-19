@@ -16,14 +16,18 @@ class KeycloakProvider extends Component {
   }
 
   /* eslint-disable react/sort-comp */
-  attemptLogin = () => {
+  attemptLogin = ( options = {}) => {
     if ( this.state.isAuthenticated ) return;
+
+    const {
+      replaceUrl = false,
+    } = options;
 
     const LoginUrl = this.createLoginUrl();
 
     LoginUrl
       .addEventListener( 'url', this.handleUrlChange )
-      .open();
+      .open({ replaceUrl });
 
     this.setState({
       isAuthenticating: true,
@@ -36,14 +40,18 @@ class KeycloakProvider extends Component {
     });
   }
 
-  attemptRegister = () => {
+  attemptRegister = ( options = {}) => {
     if ( this.state.isAuthenticated ) return;
+
+    const {
+      replaceUrl = false,
+    } = options;
 
     const RegisterUrl = this.createRegisterUrl();
 
     RegisterUrl
       .addEventListener( 'url', this.handleUrlChange )
-      .open();
+      .open({ replaceUrl });
 
     this.setState({
       isRegistering: true,
@@ -56,8 +64,12 @@ class KeycloakProvider extends Component {
     });
   }
 
-  attemptLogout = async () => {
+  attemptLogout = async ( options = {}) => {
     if ( !this.state.isAuthenticated ) return;
+
+    const {
+      replaceUrl = false,
+    } = options;
 
     if ( this.state.refreshTimer )
       clearInterval( this.state.refreshTimer );
@@ -80,7 +92,9 @@ class KeycloakProvider extends Component {
 
     const LogoutUrl = this.createLogoutUrl();
 
-    LogoutUrl.open();
+    LogoutUrl
+      .addEventListener( 'url', this.handleUrlChange )
+      .open({ replaceUrl });
 
     return new Promise(( resolve, reject ) => {
       this.setState({ promise: { resolve, reject } });
@@ -437,8 +451,11 @@ class KeycloakProvider extends Component {
     const sessionState = await Storage.get( 'kcSessionState' );
     const { query } = queryString.parseUrl( url );
 
+    if ( !query ) return;
+    if ( typeof query !== 'object' ) return;
+    if ( Object.keys( query ).length === 0 ) return;
+
     if (
-      query &&
       query.state &&
       query.state === sessionState &&
       query.code

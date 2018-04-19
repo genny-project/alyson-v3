@@ -17,7 +17,7 @@ const Text = ({
       style={[
         styles[color],
         {
-          textDecorationStyle: decoration,
+          textDecorationLine: decoration,
           marginVertical,
           marginHorizontal,
         },

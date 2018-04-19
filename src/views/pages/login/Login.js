@@ -13,7 +13,7 @@ class Login extends Component {
   }
 
   doLogin() {
-    this.props.keycloak.attemptLogin();
+    this.props.keycloak.attemptLogin({ replaceUrl: true });
   }
 
   render() {

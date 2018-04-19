@@ -13,7 +13,7 @@ class Register extends Component {
   }
 
   doRegister() {
-    this.props.keycloak.attemptRegister();
+    this.props.keycloak.attemptRegister({ replaceUrl: true });
   }
 
   render() {

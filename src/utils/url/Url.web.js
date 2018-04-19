@@ -10,10 +10,10 @@ class Url {
 
   open( options = {}) {
     const {
-      replace = false,
+      replaceUrl = false,
     } = options;
 
-    if ( replace )
+    if ( replaceUrl )
       window.location.replace( this.url );
     else
       window.location.href = this.url;
