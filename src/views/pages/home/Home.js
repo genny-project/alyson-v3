@@ -1,10 +1,15 @@
 import React, { Component, Fragment } from 'react';
 import { ScrollView, RefreshControl } from 'react-native';
+import { object } from 'prop-types';
 import { Text, Button, Link, Box, KeycloakConsumer, Redirect } from '../../components';
 import Layout from '../../layout';
 import * as page from '../../../utils/page';
 
 class Home extends Component {
+  static propTypes = {
+    keycloak: object,
+  }
+
   state = {
     isRefreshing: false,
   }
@@ -39,20 +44,18 @@ class Home extends Component {
               </Button>
             </Link>
 
-            {isFetchingToken ? (
-              <Text>Fetching token...</Text>
-            ) : (
-              <Fragment>
-                <Text>{accessToken ? accessToken.substr( -20 ) : 'No access token'}</Text>
-                <Text>{refreshToken ? refreshToken.substr( -20 ) : 'No refresh token'}</Text>
+            <Text>{accessToken ? accessToken.substr( -20 ) : 'No access token'}</Text>
+            <Text>{refreshToken ? refreshToken.substr( -20 ) : 'No refresh token'}</Text>
 
-                {user && (
-                  <Fragment>
-                    <Text>{user.fullName}</Text>
-                    <Text>{user.email}</Text>
-                  </Fragment>
-                )}
+            {user && (
+              <Fragment>
+                <Text>{user.fullName}</Text>
+                <Text>{user.email}</Text>
               </Fragment>
+            )}
+
+            {isFetchingToken && (
+              <Text>Fetching token...</Text>
             )}
           </Box>
         </ScrollView>

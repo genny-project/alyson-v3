@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import { ScrollView, RefreshControl } from 'react-native';
+import { object } from 'prop-types';
 import { Text, Link, Button, Redirect, Box, KeycloakConsumer } from '../../components';
 import Layout from '../../layout';
 import * as page from '../../../utils/page';
 
 class Splash extends Component {
+  static propTypes = {
+    keycloak: object,
+  }
+
   state = {
     isRefreshing: false,
   }
@@ -16,8 +21,6 @@ class Splash extends Component {
   render() {
     const { isAuthenticated } = this.props.keycloak;
     const { isRefreshing } = this.state;
-
-    console.log( this.props );
 
     if ( isAuthenticated )
       return <Redirect to="home" />;
