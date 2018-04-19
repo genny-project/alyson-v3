@@ -3,24 +3,37 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "react-native-scripts": "1.13.1",
+    "babel-plugin-react-native-web": "^0.6.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-react": "^6.24.1",
+    "html-webpack-plugin": "^3.2.0",
     "jest-expo": "26.0.0",
-    "react-test-renderer": "16.3.0-alpha.1"
+    "react-native-scripts": "1.13.1",
+    "react-test-renderer": "16.3.0-alpha.1",
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.0.14",
+    "webpack-dev-server": "^3.1.3"
   },
   "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
-    "start": "react-native-scripts start",
-    "eject": "react-native-scripts eject",
+    "start-native": "react-native-scripts start -- --reset-cache",
+    "eject-native": "react-native-scripts eject",
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
-    "test": "jest"
+    "test": "jest",
+    "start-web": "webpack-dev-server -d --inline --hot --colors",
+    "build-web": "webpack -p"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "dependencies": {
+    "babel-loader": "^7.1.4",
     "expo": "^26.0.0",
     "react": "16.3.0-alpha.1",
-    "react-native": "0.54.0"
+    "react-dom": "^16.3.2",
+    "react-native": "0.54.0",
+    "react-native-web": "^0.6.0",
+    "url-loader": "^1.0.1"
   }
 }
