@@ -29,8 +29,11 @@ class Login extends Component {
     const { isAuthenticated, error } = this.props.keycloak;
     const { cancelledAttempt } = this.state;
 
-    if ( isAuthenticated || cancelledAttempt )
+    if ( isAuthenticated )
       return <Redirect to="home" />;
+
+    if ( cancelledAttempt )
+      return <Redirect to="splash" />;
 
     if ( error )
       return <Text>An error has occurred!</Text>;

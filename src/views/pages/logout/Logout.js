@@ -20,7 +20,7 @@ class Logout extends Component {
     const { isAuthenticated, error } = this.props.keycloak;
 
     if ( !isAuthenticated )
-      return <Redirect to="home" />;
+      return <Redirect to="splash" />;
 
     if ( error )
       return <Text>An error has occurred!</Text>;

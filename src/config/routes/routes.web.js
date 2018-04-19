@@ -18,4 +18,8 @@ export default [
     path: '/register',
     component: Pages.Register,
   },
+  {
+    path: '/splash',
+    component: Pages.Splash,
+  },
 ];

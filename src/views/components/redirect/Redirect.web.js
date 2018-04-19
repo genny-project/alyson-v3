@@ -3,9 +3,12 @@ import { Redirect as ReactRouterRedirect } from 'react-router-dom';
 import { string } from 'prop-types';
 
 const Redirect = ({ to }) => {
-  const route = to === 'home'
+  let route = to === 'home'
     ? '/'
     : `/${to}`;
+
+  if ( location.search )
+    route += location.search;
 
   return (
     <ReactRouterRedirect

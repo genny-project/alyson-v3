@@ -13,7 +13,4 @@ export default {
   logout: {
     screen: Pages.Logout,
   },
-  splash: {
-    screen: Pages.Splash,
-  },
 };
