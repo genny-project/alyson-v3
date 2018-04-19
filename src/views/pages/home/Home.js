@@ -10,6 +10,10 @@ class Home extends Component {
     keycloak: object,
   }
 
+  static navigationOptions = {
+    title: 'Home',
+  }
+
   state = {
     isRefreshing: false,
   }
