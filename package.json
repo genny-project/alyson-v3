@@ -3,9 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "babel-loader": "^7.1.4",
     "babel-plugin-react-native-web": "^0.6.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-react": "^6.24.1",
+    "eslint": "^4.19.1",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-react": "^7.7.0",
     "html-webpack-plugin": "^3.2.0",
     "jest-expo": "26.0.0",
     "react-native-scripts": "1.13.1",
@@ -22,14 +27,16 @@
     "ios": "react-native-scripts ios",
     "test": "jest",
     "start-web": "webpack-dev-server -d --inline --hot --colors",
-    "build-web": "webpack -p"
+    "build-web": "webpack -p",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "dependencies": {
-    "babel-loader": "^7.1.4",
     "expo": "^26.0.0",
+    "prop-types": "^15.6.1",
     "react": "16.3.0-alpha.1",
     "react-dom": "^16.3.2",
     "react-native": "0.54.0",
