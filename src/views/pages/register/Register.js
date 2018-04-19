@@ -8,18 +8,28 @@ class Register extends Component {
     keycloak: object,
   }
 
+  state = {
+    cancelledAttempt: false,
+  }
+
   componentDidMount() {
     this.doRegister();
   }
 
-  doRegister() {
-    this.props.keycloak.attemptRegister({ replaceUrl: true });
+  doRegister = async () => {
+    const { attemptRegister } = this.props.keycloak;
+
+    const attempt = await attemptRegister({ replaceUrl: true });
+
+    if ( attempt && attempt.type === 'cancel' )
+      this.setState({ cancelledAttempt: true });
   }
 
   render() {
     const { isAuthenticated, error } = this.props.keycloak;
+    const { cancelledAttempt } = this.state;
 
-    if ( isAuthenticated )
+    if ( isAuthenticated || cancelledAttempt )
       return <Redirect to="home" />;
 
     if ( error )

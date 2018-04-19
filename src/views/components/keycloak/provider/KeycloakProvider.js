@@ -25,18 +25,20 @@ class KeycloakProvider extends Component {
 
     const LoginUrl = this.createLoginUrl();
 
-    LoginUrl
-      .addEventListener( 'url', this.handleUrlChange )
-      .open({ replaceUrl });
-
     this.setState({
       isAuthenticating: true,
       error: null,
       browserSession: LoginUrl,
     });
 
-    return new Promise(( resolve, reject ) => {
-      this.setState({ promise: { resolve, reject } });
+    return new Promise( async ( resolve, reject ) => {
+      await this.setState({ promise: { resolve, reject } });
+
+      const session = await LoginUrl
+        .addEventListener( 'url', this.handleUrlChange )
+        .open({ replaceUrl });
+
+      resolve( session );
     });
   }
 
@@ -49,18 +51,20 @@ class KeycloakProvider extends Component {
 
     const RegisterUrl = this.createRegisterUrl();
 
-    RegisterUrl
-      .addEventListener( 'url', this.handleUrlChange )
-      .open({ replaceUrl });
-
     this.setState({
       isRegistering: true,
       error: null,
       browserSession: RegisterUrl,
     });
 
-    return new Promise(( resolve, reject ) => {
-      this.setState({ promise: { resolve, reject } });
+    return new Promise( async ( resolve, reject ) => {
+      await this.setState({ promise: { resolve, reject } });
+
+      const session = await RegisterUrl
+        .addEventListener( 'url', this.handleUrlChange )
+        .open({ replaceUrl });
+
+      resolve( session );
     });
   }
 

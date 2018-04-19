@@ -8,18 +8,28 @@ class Login extends Component {
     keycloak: object,
   }
 
+  state = {
+    cancelledAttempt: false,
+  }
+
   componentDidMount() {
     this.doLogin();
   }
 
-  doLogin() {
-    this.props.keycloak.attemptLogin({ replaceUrl: true });
+  doLogin = async () => {
+    const { attemptLogin } = this.props.keycloak;
+
+    const attempt = await attemptLogin({ replaceUrl: true });
+
+    if ( attempt && attempt.type === 'cancel' )
+      this.setState({ cancelledAttempt: true });
   }
 
   render() {
     const { isAuthenticated, error } = this.props.keycloak;
+    const { cancelledAttempt } = this.state;
 
-    if ( isAuthenticated )
+    if ( isAuthenticated || cancelledAttempt )
       return <Redirect to="home" />;
 
     if ( error )
