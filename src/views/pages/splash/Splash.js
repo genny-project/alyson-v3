@@ -8,6 +8,12 @@ import * as page from '../../../utils/page';
 class Splash extends Component {
   static propTypes = {
     keycloak: object,
+    navigation: object,
+  }
+
+  static navigationOptions = {
+    title: 'Splash',
+    drawerLabel: 'Splash',
   }
 
   state = {
@@ -49,6 +55,10 @@ class Splash extends Component {
                 Register
               </Button>
             </Link>
+
+            <Button onPress={() => this.props.navigation.navigate( 'DrawerOpen' )}>
+              Open drawer
+            </Button>
           </Box>
         </ScrollView>
       </Layout>

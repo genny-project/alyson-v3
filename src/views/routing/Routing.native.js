@@ -1,37 +1,75 @@
 /* eslint-disable new-cap */
-// import React from 'react';
-import { StackNavigator, SwitchNavigator } from 'react-navigation';
-// import { Text } from 'react-native';
+import React from 'react';
+import { DrawerNavigator, StackNavigator, SwitchNavigator } from 'react-navigation';
 // import { routes } from '../../config';
-import { Header } from '../layout';
 import * as Pages from '../../views/pages';
+import Sidebar from './sidebar';
+import Header from './header';
 
-const AppStack = StackNavigator({
+const sidebarItems = [
+  {
+    name: 'Home',
+    path: 'home',
+  },
+  {
+    name: 'Dropdown',
+    isDropdown: true,
+    items: [
+      {
+        name: 'Home',
+        path: 'home',
+      },
+      {
+        name: 'Another dropdown',
+        isDropdown: true,
+        items: [
+          {
+            name: 'Home',
+            path: 'home',
+          },
+        ],
+      },
+      {
+        name: 'Logout',
+        path: 'logout',
+      },
+    ],
+  },
+  {
+    name: 'Logout',
+    path: 'logout',
+  },
+];
+
+const AuthenticatedStack = StackNavigator({
   home: Pages.Home,
   logout: Pages.Logout,
 }, {
-  navigationOptions: {
-    headerTitle: Header,
-  },
+  initialRouteName: 'home',
+  navigationOptions: ({ navigation }) => ({
+    header: <Header navigation={navigation} />,
+  }),
 });
 
-const AuthStack = StackNavigator({
+const AuthenticatedDrawer = DrawerNavigator({
+  authenticated: AuthenticatedStack,
+}, {
+  initialRouteName: 'authenticated',
+  contentComponent: props => (
+    <Sidebar {...props} items={sidebarItems} />
+  ),
+});
+
+const AuthStack = SwitchNavigator({
   splash: Pages.Splash,
   login: Pages.Login,
   register: Pages.Register,
 }, {
-  navigationOptions: {
-    headerTitle: Header,
-    headerStyle: {
-      backgroundColor: '#232323',
-      height: 60,
-    },
-  },
 });
 
 const Main = SwitchNavigator({
   loading: Pages.Loading,
-  app: AppStack,
+  app: AuthenticatedDrawer,
   auth: AuthStack,
 }, {
   initialRouteName: 'auth',
