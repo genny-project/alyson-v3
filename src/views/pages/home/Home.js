@@ -8,7 +8,6 @@ import * as page from '../../../utils/page';
 class Home extends Component {
   static propTypes = {
     keycloak: object,
-    navigation: object,
   }
 
   static navigationOptions = {
@@ -60,10 +59,6 @@ class Home extends Component {
             {isFetchingToken && (
               <Text>Fetching token...</Text>
             )}
-
-            <Button onPress={() => this.props.navigation.navigate( 'DrawerOpen' )}>
-              Open drawer
-            </Button>
           </Box>
         </ScrollView>
       </Layout>
