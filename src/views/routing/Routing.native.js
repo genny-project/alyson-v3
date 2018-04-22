@@ -72,7 +72,7 @@ const Main = SwitchNavigator({
   app: AuthenticatedDrawer,
   auth: AuthStack,
 }, {
-  initialRouteName: 'auth',
+  initialRouteName: 'loading',
 });
 
 export default Main;
