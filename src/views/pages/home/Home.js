@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import { ScrollView, RefreshControl } from 'react-native';
 import { object } from 'prop-types';
-import { Text, Button, Link, Box, KeycloakConsumer } from '../../components';
+import { Text, Button, Link, Box, KeycloakConsumer, ScrollView } from '../../components';
 import Layout from '../../layout';
 import * as page from '../../../utils/page';
 
@@ -30,12 +29,10 @@ class Home extends Component {
     return (
       <Layout title="Home">
         <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={this.handleRefresh}
-            />
-          }
+          enableRefresh
+          onRefresh={this.handleRefresh}
+          isRefreshing={isRefreshing}
+          flex={1}
         >
           <Box>
             <Text>Home</Text>

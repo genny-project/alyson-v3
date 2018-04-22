@@ -8,6 +8,7 @@ const Box = ({
   alignItems = 'flex-start',
   height = 'auto',
   width = 'auto',
+  flex = 0,
   ...restProps
 }) => {
   const style = {
@@ -15,6 +16,7 @@ const Box = ({
     alignItems,
     height,
     width,
+    flex,
   };
 
   return (
@@ -41,6 +43,7 @@ Box.propTypes = {
   width: oneOfType(
     [string, number]
   ),
+  flex: number,
 };
 
 export default Box;

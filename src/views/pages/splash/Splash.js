@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { ScrollView, RefreshControl } from 'react-native';
 import { object } from 'prop-types';
-import { Text, Link, Button, Redirect, Box, KeycloakConsumer } from '../../components';
+import { Text, Link, Button, Redirect, Box, KeycloakConsumer, ScrollView } from '../../components';
 import Layout from '../../layout';
 import * as page from '../../../utils/page';
 
@@ -32,30 +31,33 @@ class Splash extends Component {
 
     return (
       <Layout title="Splash">
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={this.handleRefresh}
-            />
-          }
-        >
-          <Box>
-            <Text>Splash</Text>
+        <Box flex={1}>
+          <ScrollView
+            enableRefresh
+            onRefresh={this.handleRefresh}
+            isRefreshing={isRefreshing}
+            flex={1}
+            width="100%"
+          >
+            <Box
+              justifyContent="center"
+              alignItems="center"
+              flex={1}
+            >
+              <Link to="login">
+                <Button color="green">
+                  Login
+                </Button>
+              </Link>
 
-            <Link to="login">
-              <Button color="green">
-                Login
-              </Button>
-            </Link>
-
-            <Link to="register">
-              <Button color="white">
-                Register
-              </Button>
-            </Link>
-          </Box>
-        </ScrollView>
+              <Link to="register">
+                <Button color="white">
+                  Register
+                </Button>
+              </Link>
+            </Box>
+          </ScrollView>
+        </Box>
       </Layout>
     );
   }
