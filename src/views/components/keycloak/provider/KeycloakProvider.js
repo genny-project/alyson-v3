@@ -109,8 +109,8 @@ class KeycloakProvider extends Component {
   state = {
     isAuthenticated: false,
     isAuthenticating: false,
-    isCheckingCallback: true,
-    isCheckingStorage: true,
+    isCheckingCallback: false,
+    isCheckingStorage: false,
     accessToken: null,
     refreshToken: null,
     refreshTimer: null,
@@ -141,6 +141,10 @@ class KeycloakProvider extends Component {
   }
 
   checkStorage = async () => {
+    this.setState({
+      isCheckingStorage: true,
+    });
+
     try {
       const session = await Storage.getAndParse( 'kcAuth' );
 
@@ -178,11 +182,17 @@ class KeycloakProvider extends Component {
       /* We don't care if there is an error. */
     }
     finally {
-      this.setState({ isCheckingStorage: false });
+      this.setState({
+        isCheckingStorage: false,
+      });
     }
   }
 
   checkCallback = async () => {
+    this.setState({
+      isCheckingCallback: true,
+    });
+
     try {
       const sessionState = await Storage.get( 'kcSessionState' );
       const { state, code, ...restQuery } = queryString.parse( location.search );
@@ -208,7 +218,9 @@ class KeycloakProvider extends Component {
       /* We don't care if there is an error. */
     }
     finally {
-      this.setState({ isCheckingCallback: false });
+      this.setState({
+        isCheckingCallback: false,
+      });
     }
   }
 

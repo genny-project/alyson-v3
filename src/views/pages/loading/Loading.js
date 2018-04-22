@@ -13,7 +13,7 @@ class Loading extends Component {
     const { isAuthenticated, isAuthenticating, isCheckingStorage, isCheckingCallback } = this.props.keycloak;
 
     if ( isAuthenticated ) {
-      return <Redirect to="app" replace />;
+      return <Redirect to="app" />;
     }
 
     if (
@@ -35,7 +35,7 @@ class Loading extends Component {
       );
     }
 
-    return <Redirect to="auth" replace />;
+    return <Redirect to="auth" />;
   }
 }
 
