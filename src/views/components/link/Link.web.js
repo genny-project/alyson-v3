@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link as ReactRouterLink } from 'react-router-dom';
+import { Link as ReactRouterLink, browserHistory } from 'react-router-dom';
 import { string, bool, any, func, oneOf } from 'prop-types';
 
 const Link = ({
@@ -24,6 +24,19 @@ const Link = ({
     if ( onClick )
       onClick( event );
   };
+
+  const handleNavigate = event => {
+    if ( !disabled )
+      browserHistory.push( to );
+
+    handleClick( event );
+  };
+
+  if ( typeof children === 'function' ) {
+    return children({
+      onPress: handleNavigate,
+    });
+  }
 
   return (
     <ReactRouterLink

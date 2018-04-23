@@ -16,4 +16,13 @@ export default {
   splash: {
     screen: Pages.Splash,
   },
+  profile: {
+    screen: Pages.Profile,
+  },
+  chat: {
+    screen: Pages.Chat,
+  },
+  alerts: {
+    screen: Pages.Alerts,
+  },
 };

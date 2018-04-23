@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, TouchableWithoutFeedback } from 'react-native';
 import { object } from 'prop-types';
 import { MaterialIcons } from '@expo/vector-icons';
-import { StatusBar } from '../../components';
+import { StatusBar, Link } from '../../components';
 import styles from './Header.style';
 import HeaderItem from './item';
 
@@ -37,22 +37,24 @@ class Header extends Component {
               />
             </TouchableWithoutFeedback>
 
-            <Text style={styles.title}>Genny</Text>
+            <Link to="home">
+              <Text style={styles.title}>Genny</Text>
+            </Link>
           </View>
 
           <View style={styles.right}>
             <HeaderItem
-              onPress={this.handleToggleMenu}
+              href="chat"
               icon="chat"
             />
 
             <HeaderItem
-              onPress={this.handleToggleMenu}
+              href="alerts"
               icon="notifications"
             />
 
             <HeaderItem
-              onPress={this.handleToggleMenu}
+              href="profile"
               icon="person"
             />
           </View>

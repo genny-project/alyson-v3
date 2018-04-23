@@ -4,3 +4,6 @@ export { default as Register } from './register';
 export { default as Logout } from './logout';
 export { default as Splash } from './splash';
 export { default as Loading } from './loading';
+export { default as Chat } from './chat';
+export { default as Alerts } from './alerts';
+export { default as Profile } from './profile';

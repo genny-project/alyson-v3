@@ -7,17 +7,25 @@ const Link = ({
   children = 'Link',
   to,
   disabled,
-  onClick,
+  onPress,
   navigation,
   decoration = 'none',
   ...restProps
 }) => {
   const handlePress = event => {
+    if ( disabled ) return;
+
     navigation.navigate( to );
 
-    if ( onClick )
-      onClick( event );
+    if ( onPress )
+      onPress( event );
   };
+
+  if ( typeof children === 'function' ) {
+    return children({
+      onPress: handlePress,
+    });
+  }
 
   return (
     <TouchableWithoutFeedback
@@ -39,7 +47,7 @@ Link.propTypes = {
   children: any,
   to: string.isRequired,
   disabled: bool,
-  onClick: func,
+  onPress: func,
   navigation: object,
   decoration: string,
 };

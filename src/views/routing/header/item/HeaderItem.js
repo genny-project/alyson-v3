@@ -1,28 +1,32 @@
 import React, { Component } from 'react';
-import { func, string } from 'prop-types';
+import { string } from 'prop-types';
 import { TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { Link } from '../../../components';
 import styles from './HeaderItem.style';
 
 class HeaderItem extends Component {
   static propTypes = {
-    onPress: func,
     icon: string,
+    href: string,
   }
 
   render() {
-    const { onPress, icon } = this.props;
+    const { icon, href } = this.props;
 
     return (
-      <TouchableOpacity
-        onPress={onPress}
-        style={styles.wrapper}
+      <Link
+        to={href}
       >
-        <MaterialIcons
-          name={icon}
-          style={styles.icon}
-        />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.wrapper}
+        >
+          <MaterialIcons
+            name={icon}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+      </Link>
     );
   }
 }

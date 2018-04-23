@@ -36,6 +36,18 @@ const sidebarItems = [
     ],
   },
   {
+    name: 'Chat',
+    path: 'chat',
+  },
+  {
+    name: 'Alerts',
+    path: 'alerts',
+  },
+  {
+    name: 'Profile',
+    path: 'profile',
+  },
+  {
     name: 'Logout',
     path: 'logout',
   },
@@ -44,6 +56,9 @@ const sidebarItems = [
 const AuthenticatedStack = StackNavigator({
   home: Pages.Home,
   logout: Pages.Logout,
+  alerts: Pages.Alerts,
+  profile: Pages.Profile,
+  chat: Pages.Chat,
 }, {
   initialRouteName: 'home',
   navigationOptions: ({ navigation }) => ({
@@ -72,7 +87,7 @@ const Main = SwitchNavigator({
   app: AuthenticatedDrawer,
   auth: AuthStack,
 }, {
-  initialRouteName: 'loading',
+  initialRouteName: 'app',
 });
 
 export default Main;

@@ -36,4 +36,16 @@ export default [
     path: '/loading',
     component: Pages.Loading,
   },
+  {
+    path: '/alerts',
+    component: Pages.Alerts,
+  },
+  {
+    path: '/profile',
+    component: Pages.Profile,
+  },
+  {
+    path: '/chat',
+    component: Pages.Chat,
+  },
 ];

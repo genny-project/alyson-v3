@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { object } from 'prop-types';
-import { Text, Link, Button, Redirect, Box, KeycloakConsumer, ScrollView } from '../../components';
+import { Link, Button, Redirect, Box, KeycloakConsumer, ScrollView } from '../../components';
 import Layout from '../../layout';
 import * as page from '../../../utils/page';
 

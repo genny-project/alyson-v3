@@ -18,7 +18,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   nested: {
-    paddingLeft: 15,
+    marginLeft: 15,
+    borderLeftColor: '#FFF',
+    borderLeftWidth: 1,
+    borderStyle: 'solid',
   },
 });
 
