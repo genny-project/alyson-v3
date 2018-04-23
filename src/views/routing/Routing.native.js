@@ -10,6 +10,7 @@ const sidebarItems = [
   {
     name: 'Home',
     path: 'home',
+    icon: 'chevron-right',
   },
   {
     name: 'Dropdown',
@@ -18,6 +19,7 @@ const sidebarItems = [
       {
         name: 'Home',
         path: 'home',
+        icon: 'chevron-right',
       },
       {
         name: 'Another dropdown',
@@ -26,30 +28,36 @@ const sidebarItems = [
           {
             name: 'Home',
             path: 'home',
+            icon: 'chevron-right',
           },
         ],
       },
       {
         name: 'Logout',
         path: 'logout',
+        icon: 'chevron-right',
       },
     ],
   },
   {
     name: 'Chat',
     path: 'chat',
+    icon: 'chevron-right',
   },
   {
     name: 'Alerts',
     path: 'alerts',
+    icon: 'chevron-right',
   },
   {
     name: 'Profile',
     path: 'profile',
+    icon: 'chevron-right',
   },
   {
     name: 'Logout',
     path: 'logout',
+    icon: 'chevron-right',
   },
 ];
 

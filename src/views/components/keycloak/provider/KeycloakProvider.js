@@ -34,11 +34,11 @@ class KeycloakProvider extends Component {
     return new Promise( async ( resolve, reject ) => {
       await this.setState({ promise: { resolve, reject } });
 
-      const session = await LoginUrl
+      LoginUrl
         .addEventListener( 'url', this.handleUrlChange )
-        .open({ replaceUrl });
-
-      resolve( session );
+        .open({ replaceUrl })
+        .then( resolve )
+        .catch( reject );
     });
   }
 
@@ -379,7 +379,7 @@ class KeycloakProvider extends Component {
     const accessExpiresInSeconds = expires_in * 1000; // Convert from seconds to ms
     const refreshExpiresInSeconds = refresh_expires_in * 1000; // Convert from seconds to ms
 
-    const setTokens = resolve => {
+    const setTokens = new Promise( resolve => {
       this.setState({
         refreshToken: refresh_token,
         refreshTokenExpiresOn: currentTime + refreshExpiresInSeconds,
@@ -387,9 +387,9 @@ class KeycloakProvider extends Component {
         accessTokenExpiresOn: currentTime + accessExpiresInSeconds,
         idToken: id_token,
       }, resolve );
-    };
+    });
 
-    const setUserData = ( resolve, reject ) => {
+    const setUserData = new Promise(( resolve, reject ) => {
       try {
         const decodedIdToken = keycloakUtils.decodeToken( id_token );
 
@@ -407,13 +407,12 @@ class KeycloakProvider extends Component {
       catch ( error ) {
         reject( error );
       }
-    };
+    });
 
-    /* Wait for the setState operations to finish. */
-    await Promise.all( [
-      new Promise( setTokens ),
-      new Promise( setUserData ),
-    ] );
+    /* Wait for these operations to finish. */
+    await Promise.all(
+      [setTokens, setUserData]
+    );
 
     Storage.stringifyAndSet( 'kcAuth', {
       refreshToken: this.state.refreshToken,

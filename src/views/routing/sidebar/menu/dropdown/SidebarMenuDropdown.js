@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 import { func, string, array } from 'prop-types';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SidebarMenuItem from '../item';
 import styles from './SidebarMenuDropdown.style';
 
@@ -19,21 +18,11 @@ class SidebarMenuDropdown extends Component {
 
     return (
       <View>
-        <TouchableOpacity
+        <SidebarMenuItem
           onPress={onToggle( name )}
-          style={styles.wrapper}
-        >
-          <Text
-            style={styles.text}
-          >
-            {name}
-          </Text>
-
-          <MaterialCommunityIcons
-            name={isOpen( name ) ? 'chevron-down' : 'chevron-right'}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
+          icon={isOpen( name ) ? 'expand-less' : 'expand-more'}
+          name={name}
+        />
 
         {isOpen( name ) && (
           <View style={styles.nested}>

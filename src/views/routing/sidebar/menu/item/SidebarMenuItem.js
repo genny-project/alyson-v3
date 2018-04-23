@@ -1,23 +1,31 @@
 import React, { Component } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import { func, string } from 'prop-types';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Link } from '../../../../components';
 import styles from './SidebarMenuItem.style';
 
 class SidebarMenuItem extends Component {
   static propTypes = {
-    onNavigate: func,
+    onPress: func,
     name: string,
     path: string,
+    icon: string,
   }
 
   render() {
-    const { onNavigate, name, path } = this.props;
+    const { onPress, name, path, icon } = this.props;
 
-    return (
+    const element = (
       <TouchableOpacity
-        onPress={onNavigate( path )}
+        onPress={onPress}
         style={styles.wrapper}
       >
+        <MaterialIcons
+          name={icon}
+          style={styles.icon}
+        />
+
         <Text
           style={styles.text}
         >
@@ -25,6 +33,16 @@ class SidebarMenuItem extends Component {
         </Text>
       </TouchableOpacity>
     );
+
+    if ( path ) {
+      return (
+        <Link to={path}>
+          {element}
+        </Link>
+      );
+    }
+
+    return element;
   }
 }
 
