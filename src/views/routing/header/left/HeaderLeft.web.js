@@ -40,6 +40,8 @@ class HeaderLeft extends Component {
   }
 }
 
+export { HeaderLeft };
+
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({ toggleSidebar }, dispatch );
 };
