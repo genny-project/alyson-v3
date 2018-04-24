@@ -38,14 +38,16 @@ const Button = ({
       name={icon}
       size={size}
     />
-  ) : (
+  ) : ( typeof children === 'string' ) ? (
     <Text
       color={textColor || textColors[color]}
       decoration="none"
-      size={textSizes}
+      size={textSizes[size]}
     >
       {children}
     </Text>
+  ) : (
+    children
   );
 
   return createElement(

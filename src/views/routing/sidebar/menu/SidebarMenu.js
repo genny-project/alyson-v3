@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import { array, object } from 'prop-types';
-import { withNavigation } from 'react-navigation';
 import SidebarMenuItem from './item';
 import SidebarMenuDropdown from './dropdown';
 
@@ -13,12 +12,6 @@ class SidebarMenu extends Component {
 
   state = {
     open: [],
-  }
-
-  handleNavigate = routeName => () => {
-    const { navigation } = this.props;
-
-    navigation.navigate( routeName );
   }
 
   handleToggle = name => () => {
@@ -48,7 +41,6 @@ class SidebarMenu extends Component {
             <SidebarMenuDropdown
               {...item}
               key={item.name}
-              onNavigate={this.handleNavigate}
               onToggle={this.handleToggle}
               isOpen={this.isOpen}
             />
@@ -56,7 +48,6 @@ class SidebarMenu extends Component {
             <SidebarMenuItem
               {...item}
               key={item.name}
-              onNavigate={this.handleNavigate}
               iconLeft={item.icon}
             />
           )
@@ -66,4 +57,4 @@ class SidebarMenu extends Component {
   }
 }
 
-export default withNavigation( SidebarMenu );
+export default SidebarMenu;

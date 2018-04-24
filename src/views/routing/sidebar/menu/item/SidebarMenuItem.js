@@ -1,46 +1,54 @@
 import React, { Component } from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { func, string } from 'prop-types';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Link, Box } from '../../../../components';
-import styles from './SidebarMenuItem.style';
+import { Link, Box, Icon, Text } from '../../../../components';
 
 class SidebarMenuItem extends Component {
   static propTypes = {
-    onPress: func,
     name: string,
     path: string,
     iconLeft: string,
     iconRight: string,
+    onPress: func,
   }
 
   render() {
-    const { onPress, name, path, iconLeft, iconRight } = this.props;
+    const { name, onPress, path, iconLeft, iconRight } = this.props;
 
     const element = (
       <TouchableOpacity
         onPress={onPress}
-        style={styles.wrapper}
       >
-        <Box flex={1} flexDirection="row">
-          <MaterialIcons
-            name={iconLeft}
-            style={styles.iconLeft}
-          />
-
-          <Text
-            style={styles.text}
+        <Box
+          paddingY={10}
+          flex={1}
+          alignItems="center"
+        >
+          <Box
+            flex={1}
+            flexDirection="row"
           >
-            {name}
-          </Text>
-        </Box>
+            <Box paddingX={15}>
+              <Icon
+                name={iconLeft}
+                color="white"
+              />
+            </Box>
 
-        {iconRight && (
-          <MaterialIcons
-            name={iconRight}
-            style={styles.iconRight}
-          />
-        )}
+            <Text color="white">
+              {name}
+            </Text>
+          </Box>
+
+          {iconRight && (
+            <Box paddingX={15}>
+              <Icon
+                name={iconRight}
+                color="white"
+              />
+            </Box>
+          )}
+        </Box>
       </TouchableOpacity>
     );
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ScrollView as ReactNativeScrollView, Platform } from 'react-native';
-import { string, func, bool, oneOf, oneOfType, number, any, element } from 'prop-types';
+import { string, func, bool, oneOf, oneOfType, number, any } from 'prop-types';
 import { RefreshControl } from '../index';
 
 class ScrollView extends Component {
@@ -22,7 +22,7 @@ class ScrollView extends Component {
     ),
     children: any,
     onRefresh: func,
-    refreshControlElement: element,
+    refreshControlElement: any,
     enableRefresh: bool,
     isRefreshing: bool,
   }
@@ -99,7 +99,7 @@ class ScrollView extends Component {
               onRefresh={onRefresh}
             />
           )
-        )}
+        ) || null}
       >
         {children}
       </ReactNativeScrollView>

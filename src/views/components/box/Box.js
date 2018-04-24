@@ -22,6 +22,11 @@ const Box = ({
   marginLeft,
   marginBottom,
   backgroundColor,
+  position,
+  top,
+  right,
+  bottom,
+  left,
 }) => {
   const style = {
     justifyContent,
@@ -41,6 +46,11 @@ const Box = ({
     marginLeft,
     marginBottom,
     backgroundColor,
+    position,
+    top,
+    right,
+    bottom,
+    left,
   };
 
   return (
@@ -83,6 +93,13 @@ Box.propTypes = {
   marginBottom: oneOf( paddingMarginPropType ),
   marginLeft: oneOf( paddingMarginPropType ),
   backgroundColor: string,
+  position: oneOf(
+    ['fixed', 'absolute', 'relative', 'static']
+  ),
+  top: number,
+  right: number,
+  bottom: number,
+  left: number,
 };
 
 export default Box;
