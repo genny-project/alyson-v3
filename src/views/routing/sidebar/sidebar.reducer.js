@@ -18,7 +18,7 @@ const reducer = ( state = initialState, { type }) => {
 
     case SIDEBAR_TOGGLE:
       return {
-        open: !state,
+        open: !state.open,
       };
 
     default:

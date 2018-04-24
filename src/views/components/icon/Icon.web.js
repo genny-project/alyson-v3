@@ -19,12 +19,14 @@ const Icon = ({
           whiteSpace: 'nowrap',
           fontWeight: 'normal',
           fontStyle: 'normal',
-          lineHeight: 1,
           direction: 'ltr',
         },
       ]}
     >
-      {name}
+      {name.includes( '-' )
+        ? name.replace( /-/g, '_' )
+        : name
+      }
     </Text>
   );
 };

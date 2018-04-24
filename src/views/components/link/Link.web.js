@@ -6,7 +6,7 @@ const Link = ({
   children = 'Link',
   to,
   disabled = false,
-  onClick,
+  onPress,
   decoration = 'none',
   ...restProps
 }) => {
@@ -21,8 +21,8 @@ const Link = ({
       return false;
     }
 
-    if ( onClick )
-      onClick( event );
+    if ( onPress )
+      onPress( event );
   };
 
   const handleNavigate = event => {
@@ -56,7 +56,7 @@ Link.propTypes = {
   children: any,
   to: string.isRequired,
   disabled: bool,
-  onClick: func,
+  onPress: func,
   decoration: oneOf(
     ['none', 'underline', 'line-through']
   ),

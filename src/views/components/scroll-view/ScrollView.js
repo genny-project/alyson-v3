@@ -25,6 +25,9 @@ class ScrollView extends Component {
     refreshControlElement: any,
     enableRefresh: bool,
     isRefreshing: bool,
+    padding: number,
+    paddingX: number,
+    paddingY: number,
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
@@ -63,6 +66,9 @@ class ScrollView extends Component {
       onRefresh,
       refreshControlElement,
       enableRefresh,
+      padding,
+      paddingX,
+      paddingY,
     } = this.props;
 
     const { isRefreshing } = this.state;
@@ -75,6 +81,9 @@ class ScrollView extends Component {
 
     const contentStyle = {
       flex,
+      padding,
+      paddingHorizontal: paddingX,
+      paddingVertical: paddingY,
     };
 
     return (

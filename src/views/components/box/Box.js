@@ -1,6 +1,6 @@
 import React from 'react';
-import { View } from 'react-native';
-import { any, oneOf, oneOfType, string, number } from 'prop-types';
+import { View, Platform } from 'react-native';
+import { any, oneOf, oneOfType, string, number, array, func } from 'prop-types';
 import range from 'lodash.range';
 
 const Box = ({
@@ -27,6 +27,11 @@ const Box = ({
   right,
   bottom,
   left,
+  zIndex,
+  transform,
+  transition,
+  opacity,
+  ...restProps
 }) => {
   const style = {
     justifyContent,
@@ -51,11 +56,30 @@ const Box = ({
     right,
     bottom,
     left,
+    zIndex,
+    transform,
+    opacity,
   };
+
+  const webStyle = Platform.OS === 'web' ? {
+    transition,
+  } : {};
+
+  const nativeStyle = (
+    Platform.OS === 'android' ||
+    Platform.OS === 'ios'
+  ) ? {
+
+  } : {};
 
   return (
     <View
-      style={style}
+      {...restProps}
+      style={[
+        style,
+        webStyle,
+        nativeStyle,
+      ]}
     >
       {children}
     </View>
@@ -100,6 +124,11 @@ Box.propTypes = {
   right: number,
   bottom: number,
   left: number,
+  zIndex: number,
+  transform: array,
+  transition: string,
+  opacity: number,
+  onPress: func,
 };
 
 export default Box;
