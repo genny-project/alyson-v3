@@ -1,5 +1,22 @@
 {
   "expo": {
-    "sdkVersion": "26.0.0"
+    "sdkVersion": "26.0.0",
+    "ios": {
+      "bundleIdentifier": "alyson.v3",
+      "publishBundlePath": "ios/alyson-v3/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/alyson-v3/Supporting/shell-app-manifest.json"
+    },
+    "android": {
+      "package": "alyson.v3"
+    },
+    "name": "alyson-v3",
+    "slug": "alyson-v3",
+    "version": "0.1.0",
+    "isDetached": true,
+    "detach": {
+      "scheme": "expdb84ca6ba37941aeb5b732c8f877104b",
+      "iosExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/ios-v2.4.4-sdk26.0.0-3bd935c7-cdd3-4002-8e44-4df857a675f2.tar.gz",
+      "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v2.4.0-sdk26.0.0-e63d9209-070c-4118-b06b-c60e82da0b66.tar.gz"
+    }
   }
 }

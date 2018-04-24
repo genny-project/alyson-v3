@@ -1,4 +1,5 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
+import { SafeAreaView } from 'react-native';
 import { any } from 'prop-types';
 
 class Layout extends Component {
@@ -10,9 +11,9 @@ class Layout extends Component {
     const { children } = this.props;
 
     return (
-      <Fragment>
+      <SafeAreaView style={{ flex: 1 }}>
         {children}
-      </Fragment>
+      </SafeAreaView>
     );
   }
 }
