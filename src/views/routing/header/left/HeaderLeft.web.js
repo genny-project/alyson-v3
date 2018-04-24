@@ -1,14 +1,24 @@
 import React, { Component } from 'react';
+import { func } from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Link, Button, Box, Heading } from '../../../components';
+import { toggleSidebar } from '../../../../redux/actions';
 
 class HeaderLeft extends Component {
+  static propTypes = {
+    toggleSidebar: func,
+  }
+
   render() {
+    const { toggleSidebar } = this.props;
+
     return (
       <Box
         alignItems="center"
       >
         <Button
-          onPress={this.handleToggleMenu}
+          onPress={toggleSidebar}
           size="lg"
           color="transparent"
           textColor="white"
@@ -30,4 +40,8 @@ class HeaderLeft extends Component {
   }
 }
 
-export default HeaderLeft;
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators({ toggleSidebar }, dispatch );
+};
+
+export default connect( null, mapDispatchToProps )( HeaderLeft );
