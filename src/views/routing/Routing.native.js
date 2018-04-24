@@ -1,65 +1,10 @@
 /* eslint-disable new-cap */
 import React from 'react';
 import { DrawerNavigator, StackNavigator, SwitchNavigator } from 'react-navigation';
-// import { routes } from '../../config';
+import { sidebar } from '../../config';
 import * as Pages from '../../views/pages';
 import Sidebar from './sidebar';
 import Header from './header';
-
-const sidebarItems = [
-  {
-    name: 'Home',
-    path: 'home',
-    icon: 'chevron-right',
-  },
-  {
-    name: 'Dropdown',
-    isDropdown: true,
-    items: [
-      {
-        name: 'Home',
-        path: 'home',
-        icon: 'chevron-right',
-      },
-      {
-        name: 'Another dropdown',
-        isDropdown: true,
-        items: [
-          {
-            name: 'Home',
-            path: 'home',
-            icon: 'chevron-right',
-          },
-        ],
-      },
-      {
-        name: 'Logout',
-        path: 'logout',
-        icon: 'chevron-right',
-      },
-    ],
-  },
-  {
-    name: 'Chat',
-    path: 'chat',
-    icon: 'chevron-right',
-  },
-  {
-    name: 'Alerts',
-    path: 'alerts',
-    icon: 'chevron-right',
-  },
-  {
-    name: 'Profile',
-    path: 'profile',
-    icon: 'chevron-right',
-  },
-  {
-    name: 'Logout',
-    path: 'logout',
-    icon: 'chevron-right',
-  },
-];
 
 const AuthenticatedStack = StackNavigator({
   home: Pages.Home,
@@ -79,7 +24,7 @@ const AuthenticatedDrawer = DrawerNavigator({
 }, {
   initialRouteName: 'authenticated',
   contentComponent: props => (
-    <Sidebar {...props} items={sidebarItems} />
+    <Sidebar {...props} items={sidebar} />
   ),
 });
 

@@ -43,6 +43,9 @@ Box.propTypes = {
   width: oneOfType(
     [string, number]
   ),
+  flexDirection: oneOf(
+    ['row', 'row-reverse', 'column', 'column-reverse']
+  ),
   flex: number,
 };
 

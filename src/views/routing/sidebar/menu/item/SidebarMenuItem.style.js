@@ -12,10 +12,15 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
   },
-  icon: {
+  iconLeft: {
     color: '#FFFFFF',
     fontSize: 24,
-    marginRight: 10,
+    marginRight: 15,
+  },
+  iconRight: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    marginLeft: 15,
   },
 });
 

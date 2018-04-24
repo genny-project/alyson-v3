@@ -57,6 +57,7 @@ class SidebarMenu extends Component {
               {...item}
               key={item.name}
               onNavigate={this.handleNavigate}
+              iconLeft={item.icon}
             />
           )
         ))}

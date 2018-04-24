@@ -11,16 +11,18 @@ class SidebarMenuDropdown extends Component {
     onNavigate: func,
     name: string,
     items: array,
+    icon: string,
   }
 
   render() {
-    const { onToggle, onNavigate, isOpen, items, name } = this.props;
+    const { onToggle, onNavigate, isOpen, items, name, icon } = this.props;
 
     return (
       <View>
         <SidebarMenuItem
           onPress={onToggle( name )}
-          icon={isOpen( name ) ? 'expand-less' : 'expand-more'}
+          iconLeft={icon}
+          iconRight={isOpen( name ) ? 'expand-less' : 'expand-more'}
           name={name}
         />
 
@@ -40,6 +42,7 @@ class SidebarMenuDropdown extends Component {
                   {...item}
                   onNavigate={onNavigate}
                   key={item.name}
+                  iconLeft={item.icon}
                 />
               )
             ))}
