@@ -1,15 +1,27 @@
 import React from 'react';
 import { View } from 'react-native';
 import { any, oneOf, oneOfType, string, number } from 'prop-types';
+import range from 'lodash.range';
 
 const Box = ({
   children,
-  justifyContent = 'flex-start',
-  alignItems = 'flex-start',
-  height = 'auto',
-  width = 'auto',
-  flex = 0,
-  ...restProps
+  justifyContent,
+  alignItems,
+  height,
+  width,
+  flex,
+  flexDirection = 'row',
+  padding,
+  paddingX,
+  paddingY,
+  margin,
+  marginX,
+  marginY,
+  marginTop,
+  marginRight,
+  marginLeft,
+  marginBottom,
+  backgroundColor,
 }) => {
   const style = {
     justifyContent,
@@ -17,17 +29,30 @@ const Box = ({
     height,
     width,
     flex,
+    flexDirection,
+    padding,
+    paddingHorizontal: paddingX,
+    paddingVertical: paddingY,
+    margin,
+    marginHorizontal: marginX,
+    marginVertical: marginY,
+    marginTop,
+    marginRight,
+    marginLeft,
+    marginBottom,
+    backgroundColor,
   };
 
   return (
     <View
-      {...restProps}
       style={style}
     >
       {children}
     </View>
   );
 };
+
+const paddingMarginPropType = range( 0, 12 );
 
 Box.propTypes = {
   children: any,
@@ -47,6 +72,17 @@ Box.propTypes = {
     ['row', 'row-reverse', 'column', 'column-reverse']
   ),
   flex: number,
+  padding: oneOf( paddingMarginPropType ),
+  paddingX: oneOf( paddingMarginPropType ),
+  paddingY: oneOf( paddingMarginPropType ),
+  margin: oneOf( paddingMarginPropType ),
+  marginX: oneOf( paddingMarginPropType ),
+  marginY: oneOf( paddingMarginPropType ),
+  marginTop: oneOf( paddingMarginPropType ),
+  marginRight: oneOf( paddingMarginPropType ),
+  marginBottom: oneOf( paddingMarginPropType ),
+  marginLeft: oneOf( paddingMarginPropType ),
+  backgroundColor: string,
 };
 
 export default Box;

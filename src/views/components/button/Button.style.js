@@ -1,10 +1,6 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  wrapper: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-  },
   red: {
     backgroundColor: 'red',
   },
@@ -16,6 +12,9 @@ const styles = StyleSheet.create({
   },
   white: {
     backgroundColor: 'white',
+  },
+  transparent: {
+    backgroundColor: 'transparent',
   },
 });
 

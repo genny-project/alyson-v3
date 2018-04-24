@@ -34,7 +34,12 @@ class Home extends Component {
           isRefreshing={isRefreshing}
           flex={1}
         >
-          <Box>
+          <Box
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            flex={1}
+          >
             <Text>Home</Text>
 
             <Link to="logout">

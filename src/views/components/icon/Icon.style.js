@@ -1,35 +1,26 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
+  white: {
+    color: '#FFFFFF',
+  },
   black: {
     color: 'black',
   },
   red: {
     color: 'red',
   },
-  blue: {
-    color: 'blue',
-  },
-  green: {
-    color: 'green',
-  },
-  white: {
-    color: 'white',
-  },
-  xs: {
-    fontSize: 14,
-  },
   sm: {
-    fontSize: 16,
+    fontSize: 18,
   },
   md: {
-    fontSize: 20,
-  },
-  lg: {
     fontSize: 24,
   },
+  lg: {
+    fontSize: 36,
+  },
   xl: {
-    fontSize: 32,
+    fontSize: 48,
   },
 });
 

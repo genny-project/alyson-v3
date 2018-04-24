@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { StatusBar as ReactNativeStatusBar } from 'react-native';
+import { StatusBar as ReactNativeStatusBar, View } from 'react-native';
 import { string, bool, any } from 'prop-types';
 
 class StatusBar extends Component {
@@ -28,15 +28,17 @@ class StatusBar extends Component {
 
     return (
       <Fragment>
-        <ReactNativeStatusBar
-          animated={animated}
-          barStyle={barStyle}
-          hidden={hidden}
-          backgroundColor={backgroundColor}
-          translucent={translucent}
-          networkActivityIndicatorVisible={networkActivityIndicatorVisible}
-          showHideTransition={showHideTransition}
-        />
+        <View style={{ backgroundColor: '#000' }}>
+          <ReactNativeStatusBar
+            animated={animated}
+            barStyle={barStyle}
+            translucent={translucent}
+            hidden={hidden}
+            backgroundColor={backgroundColor}
+            networkActivityIndicatorVisible={networkActivityIndicatorVisible}
+            showHideTransition={showHideTransition}
+          />
+        </View>
 
         {children}
       </Fragment>

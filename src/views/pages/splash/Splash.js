@@ -43,6 +43,7 @@ class Splash extends Component {
               justifyContent="center"
               alignItems="center"
               flex={1}
+              flexDirection="column"
             >
               <Link to="login">
                 <Button color="green">

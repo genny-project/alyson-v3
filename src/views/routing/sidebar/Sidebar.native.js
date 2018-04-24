@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView, View } from 'react-native';
 import { array } from 'prop-types';
 import SidebarMenu from './menu';
-import styles from './Sidebar.style';
+import styles from './Sidebar.native.style';
 
 class Sidebar extends Component {
   static propTypes = {

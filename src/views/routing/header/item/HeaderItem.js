@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { string } from 'prop-types';
-import { TouchableOpacity } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Link } from '../../../components';
-import styles from './HeaderItem.style';
+import { Link, Button } from '../../../components';
 
 class HeaderItem extends Component {
   static propTypes = {
@@ -18,14 +15,14 @@ class HeaderItem extends Component {
       <Link
         to={href}
       >
-        <TouchableOpacity
-          style={styles.wrapper}
-        >
-          <MaterialIcons
-            name={icon}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
+        <Button
+          size="md"
+          color="transparent"
+          textColor="white"
+          icon={icon}
+          paddingX={5}
+          paddingY={5}
+        />
       </Link>
     );
   }

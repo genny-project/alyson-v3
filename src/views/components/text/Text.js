@@ -1,14 +1,22 @@
 import React from 'react';
 import { Text as NativeText } from 'react-native';
-import { string, oneOf, number } from 'prop-types';
+import { string, oneOf } from 'prop-types';
+import range from 'lodash.range';
 import styles from './Text.style';
 
 const Text = ({
   children,
   color = 'black',
   decoration = 'none',
-  marginVertical = 10,
-  marginHorizontal = 0,
+  margin,
+  marginX,
+  marginY = 0,
+  marginTop,
+  marginRight,
+  marginBottom,
+  marginLeft,
+  fontWeight,
+  size = 'sm',
   ...restProps
 }) => {
   return (
@@ -16,10 +24,17 @@ const Text = ({
       {...restProps}
       style={[
         styles[color],
+        styles[size],
         {
           textDecorationLine: decoration,
-          marginVertical,
-          marginHorizontal,
+          margin,
+          marginHorizontal: marginX,
+          marginVertical: marginY,
+          marginTop,
+          marginRight,
+          marginBottom,
+          marginLeft,
+          fontWeight,
         },
       ]}
     >
@@ -27,6 +42,8 @@ const Text = ({
     </NativeText>
   );
 };
+
+const marginPropType = range( 0, 12 );
 
 Text.propTypes = {
   children: string,
@@ -36,8 +53,15 @@ Text.propTypes = {
   decoration: oneOf(
     ['none']
   ),
-  marginVertical: number,
-  marginHorizontal: number,
+  margin: oneOf( marginPropType ),
+  marginX: oneOf( marginPropType ),
+  marginY: oneOf( marginPropType ),
+  marginTop: oneOf( marginPropType ),
+  marginRight: oneOf( marginPropType ),
+  marginBottom: oneOf( marginPropType ),
+  marginLeft: oneOf( marginPropType ),
+  fontWeight: string,
+  size: string,
 };
 
 export default Text;
