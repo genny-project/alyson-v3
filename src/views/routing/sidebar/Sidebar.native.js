@@ -1,27 +1,27 @@
-import React, { Component } from 'react';
-import { ScrollView, View, SafeAreaView } from 'react-native';
-import { array } from 'prop-types';
+import React from 'react';
+import { SafeAreaView } from 'react-native';
+import { ScrollView, Box } from '../../components';
 import SidebarMenu from './menu';
-import styles from './Sidebar.native.style';
+import { sidebar as sidebarItems } from '../../../config';
 
-class Sidebar extends Component {
-  static propTypes = {
-    items: array,
-  }
-
-  render() {
-    const { items } = this.props;
-
-    return (
-      <SafeAreaView style={styles.outer}>
-        <View style={styles.inner}>
-          <ScrollView>
-            <SidebarMenu items={items} />
-          </ScrollView>
-        </View>
-      </SafeAreaView>
-    );
-  }
-}
+const Sidebar = () => (
+  <SafeAreaView
+    style={{
+      flex: 1,
+      backgroundColor: '#232323',
+    }}
+  >
+    <Box
+      flex={1}
+      paddingY={20}
+    >
+      <ScrollView>
+        <SidebarMenu
+          items={sidebarItems}
+        />
+      </ScrollView>
+    </Box>
+  </SafeAreaView>
+);
 
 export default Sidebar;
