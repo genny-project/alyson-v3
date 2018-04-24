@@ -14,6 +14,6 @@
 	<key>STANDALONE_CONTEXT_TYPE</key>
 	<string>user</string>
 	<key>developmentUrl</key>
-	<string>expdb84ca6ba37941aeb5b732c8f877104b://localhost:19000</string>
+	<string>expdb84ca6ba37941aeb5b732c8f877104b://2r-rx4.callan.alyson-v3.exp.direct:80</string>
 </dict>
 </plist>

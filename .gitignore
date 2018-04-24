@@ -13,6 +13,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# ios
+/ios/build
+
 # Xcode
 !**/*.xcodeproj
 !**/*.pbxproj

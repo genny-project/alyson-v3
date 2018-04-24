@@ -28,8 +28,8 @@
   },
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start-native": "react-native-scripts start -- --reset-cache",
-    "eject-native": "react-native-scripts eject",
+    "expo": "exp start",
+    "start-native": "exp start",
     "test": "jest",
     "start-web": "webpack-dev-server -d --inline --hot --colors",
     "build-web": "webpack -p",
