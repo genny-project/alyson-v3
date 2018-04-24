@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, SafeAreaView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { array } from 'prop-types';
 import SidebarMenu from './menu';
 import styles from './Sidebar.style';
@@ -13,13 +13,11 @@ class Sidebar extends Component {
     const { items } = this.props;
 
     return (
-      <SafeAreaView>
-        <View style={styles.wrapper}>
-          <ScrollView>
-            <SidebarMenu items={items} />
-          </ScrollView>
-        </View>
-      </SafeAreaView>
+      <View style={styles.wrapper}>
+        <ScrollView>
+          <SidebarMenu items={items} />
+        </ScrollView>
+      </View>
     );
   }
 }
