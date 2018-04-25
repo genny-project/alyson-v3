@@ -7,7 +7,6 @@ import { Box, ScrollView } from '../../components';
 import { sidebar as sidebarItems } from '../../../config';
 import { closeSidebar } from '../../../redux/actions';
 import SidebarMenu from './menu';
-import { View } from 'react-native-web';
 
 const Sidebar = ({ sidebar, closeSidebar }) => (
   <Fragment>
