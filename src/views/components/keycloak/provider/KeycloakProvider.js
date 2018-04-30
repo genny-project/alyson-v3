@@ -68,18 +68,17 @@ class KeycloakProvider extends Component {
     });
   }
 
-  attemptLogout = async ( options = {}) => {
+  attemptLogout = () => {
     if ( !this.state.isAuthenticated ) return;
 
-    const {
-      replaceUrl = false,
-    } = options;
+    const { accessToken, refreshToken } = this.state;
+    const logoutUrl = this.createLogoutUrl();
 
     if ( this.state.refreshTimer )
       clearInterval( this.state.refreshTimer );
 
     /* Make sure to wait for each of these functions to finish. */
-    await Promise.all( [
+    const promises = [
       Storage.remove( 'kcSessionState' ),
       Storage.remove( 'kcSessionNonce' ),
       Storage.remove( 'kcAuth' ),
@@ -92,16 +91,24 @@ class KeycloakProvider extends Component {
         error: null,
         user: {},
       }),
-    ] );
-
-    const LogoutUrl = this.createLogoutUrl();
-
-    LogoutUrl
-      .addEventListener( 'url', this.handleUrlChange )
-      .open({ replaceUrl });
+      fetch( logoutUrl, {
+        method: 'post',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: queryString.parse({
+          client_id: this.props.clientId,
+          refresh_token: refreshToken,
+        }),
+      }),
+    ];
 
     return new Promise(( resolve, reject ) => {
-      this.setState({ promise: { resolve, reject } });
+      Promise
+        .all( promises )
+        .then( resolve )
+        .catch( reject );
     });
   }
   /* eslint-enable react/sort-comp */
@@ -271,18 +278,10 @@ class KeycloakProvider extends Component {
     return new Url( url );
   }
 
-  createLogoutUrl = options => {
+  createLogoutUrl = () => {
     const realmUrl = this.createRealmUrl();
-    const redirectUri = keycloakUtils.getValidRedirectUri();
 
-    const query = queryString.stringify({
-      redirect_uri: redirectUri,
-      ...options,
-    });
-
-    const url = `${realmUrl}/protocol/openid-connect/logout?${query}`;
-
-    return new Url( url );
+    return `${realmUrl}/protocol/openid-connect/logout`;
   }
 
   handleAuthSuccess = async code => {

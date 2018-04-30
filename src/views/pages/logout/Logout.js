@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { object } from 'prop-types';
 import { Text, Box, KeycloakConsumer, Redirect } from '../../components';
 import Layout from '../../layout';
@@ -9,11 +10,7 @@ class Logout extends Component {
   }
 
   componentDidMount() {
-    this.doLogout();
-  }
-
-  doLogout() {
-    this.props.keycloak.attemptLogout({ replaceUrl: true });
+    this.props.keycloak.attemptLogout();
   }
 
   render() {
@@ -35,6 +32,7 @@ class Logout extends Component {
           alignItems="center"
           height="100%"
         >
+          <ActivityIndicator />
           <Text>Logging you out...</Text>
         </Box>
       </Layout>
