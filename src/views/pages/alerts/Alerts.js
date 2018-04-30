@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, Box } from '../../components';
+import { Text, Box, Input } from '../../components';
 import Layout from '../../layout';
 
 class Alerts extends Component {
@@ -10,8 +10,13 @@ class Alerts extends Component {
           justifyContent="center"
           alignItems="center"
           flex={1}
+          flexDirection="column"
         >
           <Text>Alerts</Text>
+
+          <Input
+            type="text"
+          />
         </Box>
       </Layout>
     );

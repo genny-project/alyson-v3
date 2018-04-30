@@ -8,5 +8,6 @@ export { default as ScrollView } from './scroll-view';
 export { default as RefreshControl } from './refresh-control';
 export { default as Icon } from './icon';
 export { default as Heading } from './heading';
+export { default as Input } from './input';
 
 export * from './keycloak';
