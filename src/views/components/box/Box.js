@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Platform } from 'react-native';
 import { any, oneOf, oneOfType, string, number, array, func } from 'prop-types';
-import range from 'lodash.range';
 
 const Box = ({
   children,
@@ -86,8 +85,6 @@ const Box = ({
   );
 };
 
-const paddingMarginPropType = range( 0, 12 );
-
 Box.propTypes = {
   children: any,
   justifyContent: oneOf(
@@ -106,16 +103,16 @@ Box.propTypes = {
     ['row', 'row-reverse', 'column', 'column-reverse']
   ),
   flex: number,
-  padding: oneOf( paddingMarginPropType ),
-  paddingX: oneOf( paddingMarginPropType ),
-  paddingY: oneOf( paddingMarginPropType ),
-  margin: oneOf( paddingMarginPropType ),
-  marginX: oneOf( paddingMarginPropType ),
-  marginY: oneOf( paddingMarginPropType ),
-  marginTop: oneOf( paddingMarginPropType ),
-  marginRight: oneOf( paddingMarginPropType ),
-  marginBottom: oneOf( paddingMarginPropType ),
-  marginLeft: oneOf( paddingMarginPropType ),
+  padding: number,
+  paddingX: number,
+  paddingY: number,
+  margin: number,
+  marginX: number,
+  marginY: number,
+  marginTop: number,
+  marginRight: number,
+  marginBottom: number,
+  marginLeft: number,
   backgroundColor: string,
   position: oneOf(
     ['fixed', 'absolute', 'relative', 'static']

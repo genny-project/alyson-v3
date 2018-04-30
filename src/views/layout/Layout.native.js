@@ -5,7 +5,7 @@ import { LayoutConsumer } from '../layout';
 class Layout extends Component {
   static defaultProps = {
     appColor: 'dark',
-    backgroundColor: 'dark',
+    backgroundColor: 'grey',
   }
 
   static propTypes = {

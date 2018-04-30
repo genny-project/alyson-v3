@@ -43,13 +43,13 @@ class LayoutProvider extends Component {
   }
 
   appColors = {
-    light: '#DDD',
+    light: '#fafafa',
     dark: '#232323',
   }
 
   backgroundColors = {
     white: '#FFF',
-    grey: '#DDD',
+    grey: '#fafafa',
   }
 
   render() {

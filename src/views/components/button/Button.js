@@ -42,7 +42,7 @@ const Button = ({
     <Text
       color={textColor || textColors[color]}
       decoration="none"
-      size={textSizes}
+      size={textSizes[size]}
     >
       {children}
     </Text>
