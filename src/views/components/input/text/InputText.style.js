@@ -4,17 +4,20 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     padding: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: '#DDD',
+    borderWidth: 2,
+    borderColor: '#DDD',
+  },
+  inputWithIcon: {
+    paddingRight: 45,
   },
   warning: {
-    borderBottomColor: 'yellow',
+    borderColor: 'yellow',
   },
   success: {
-    borderBottomColor: 'green',
+    borderColor: 'green',
   },
   error: {
-    borderBottomColor: 'red',
+    borderColor: 'red',
   },
 });
 

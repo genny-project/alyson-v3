@@ -10,6 +10,18 @@ const styles = StyleSheet.create({
   red: {
     color: 'red',
   },
+  green: {
+    color: 'green',
+  },
+  yellow: {
+    color: 'yellow',
+  },
+  grey: {
+    color: 'slategrey',
+  },
+  lightGrey: {
+    color: 'grey',
+  },
   sm: {
     fontSize: 18,
   },

@@ -58,7 +58,6 @@ const Box = ({
     left,
     zIndex,
     transform,
-    transition,
     opacity,
   };
 

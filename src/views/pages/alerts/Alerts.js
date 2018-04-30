@@ -16,6 +16,7 @@ class Alerts extends Component {
 
           <Input
             type="text"
+            icon="edit"
           />
         </Box>
       </Layout>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextInput } from 'react-native';
 import { string, oneOf, number, shape, bool, func } from 'prop-types';
+import { Box, Icon } from '../../../components';
 import styles from './InputText.style';
 
 const InputText = ({
@@ -40,6 +41,7 @@ const InputText = ({
   error,
   success,
   warning,
+  icon,
 }) => {
   const style = {
     margin,
@@ -51,42 +53,68 @@ const InputText = ({
     marginLeft,
   };
 
+  const iconColor =
+    !editable ? 'lightGrey'
+    : success ? 'green'
+    : error ? 'red'
+    : warning ? 'yellow'
+    : 'grey';
+
   return (
-    <TextInput
-      autoCapitalize={autoCapitalize}
-      autoComplete={autoComplete}
-      autoCorrect={autoCorrect}
-      autoFocus={autoFocus}
-      blurOnSubmit={blurOnSubmit}
-      clearTextOnFocus={clearTextOnFocus}
-      defaultValue={defaultValue}
-      editable={editable}
-      keyboardType={keyboardType}
-      maxLength={maxLength}
-      multiline={multiline}
-      onBlur={onBlur}
-      onChange={onChange}
-      onChangeText={onChangeText}
-      onFocus={onFocus}
-      onKeyPress={onKeyPress}
-      onLayout={onLayout}
-      onSelectionChange={onSelectionChange}
-      onSubmitEditing={onSubmitEditing}
-      placeholder={placeholder}
-      placeholderTextColor={placeholderTextColor}
-      secureTextEntry={secureTextEntry}
-      selection={selection}
-      selectTextOnFocus={selectTextOnFocus}
-      spellCheck={spellCheck}
-      style={[
-        styles.input,
-        error && styles.error,
-        success && styles.success,
-        warning && styles.warning,
-        style,
-      ]}
-      value={value}
-    />
+    <Box
+      position="relative"
+    >
+      <TextInput
+        autoCapitalize={autoCapitalize}
+        autoComplete={autoComplete}
+        autoCorrect={autoCorrect}
+        autoFocus={autoFocus}
+        blurOnSubmit={blurOnSubmit}
+        clearTextOnFocus={clearTextOnFocus}
+        defaultValue={defaultValue}
+        editable={editable}
+        keyboardType={keyboardType}
+        maxLength={maxLength}
+        multiline={multiline}
+        onBlur={onBlur}
+        onChange={onChange}
+        onChangeText={onChangeText}
+        onFocus={onFocus}
+        onKeyPress={onKeyPress}
+        onLayout={onLayout}
+        onSelectionChange={onSelectionChange}
+        onSubmitEditing={onSubmitEditing}
+        placeholder={placeholder}
+        placeholderTextColor={placeholderTextColor}
+        secureTextEntry={secureTextEntry}
+        selection={selection}
+        selectTextOnFocus={selectTextOnFocus}
+        spellCheck={spellCheck}
+        style={[
+          styles.input,
+          error && styles.error,
+          success && styles.success,
+          warning && styles.warning,
+          icon && styles.inputWithIcon,
+          style,
+        ]}
+        value={value}
+      />
+
+      {icon && (
+        <Icon
+          name={icon}
+          position="absolute"
+          right={10}
+          top="50%"
+          transform={[
+            { translateY: '-50%' },
+          ]}
+          color={iconColor}
+          size="md"
+        />
+      )}
+    </Box>
   );
 };
 
@@ -134,6 +162,7 @@ InputText.propTypes = {
   error: bool,
   success: bool,
   warning: bool,
+  icon: string,
 };
 
 export default InputText;
