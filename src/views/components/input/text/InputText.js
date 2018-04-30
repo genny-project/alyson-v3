@@ -102,17 +102,18 @@ const InputText = ({
       />
 
       {icon && (
-        <Icon
-          name={icon}
+        <Box
           position="absolute"
           right={10}
-          top="50%"
-          transform={[
-            { translateY: '-50%' },
-          ]}
-          color={iconColor}
-          size="md"
-        />
+          height="100%"
+          alignItems="center"
+        >
+          <Icon
+            name={icon}
+            color={iconColor}
+            size="md"
+          />
+        </Box>
       )}
     </Box>
   );

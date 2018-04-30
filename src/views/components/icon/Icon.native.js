@@ -1,6 +1,6 @@
 import React from 'react';
-import { MaterialIcons } from '@expo/vector-icons';
 import { oneOf, string } from 'prop-types';
+import { MaterialIcons } from '@expo/vector-icons';
 import styles from './Icon.style';
 
 const Icon = ({
@@ -11,7 +11,10 @@ const Icon = ({
   return (
     <MaterialIcons
       name={name}
-      style={[styles[size], styles[color]]}
+      style={[
+        styles[size],
+        styles[color],
+      ]}
     />
   );
 };
@@ -19,7 +22,7 @@ const Icon = ({
 Icon.propTypes = {
   name: string.isRequired,
   color: oneOf(
-    ['white', 'black', 'red']
+    ['white', 'black', 'red', 'green', 'yellow', 'grey', 'lightGrey']
   ).isRequired,
   size: oneOf(
     ['xs', 'sm', 'md', 'lg', 'xl']
