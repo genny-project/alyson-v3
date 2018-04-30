@@ -1,5 +1,5 @@
 import React from 'react';
-import { string, oneOf } from 'prop-types';
+import { string, oneOf, func } from 'prop-types';
 import range from 'lodash.range';
 import Text from '../text';
 
@@ -12,6 +12,7 @@ const Heading = ({
   marginY,
   fontWeight = 'bold',
   size = 'md',
+  onPress,
 }) => {
   return (
     <Text
@@ -22,6 +23,7 @@ const Heading = ({
       marginY={marginY}
       fontWeight={fontWeight}
       size={size}
+      onPress={onPress}
     >
       {children}
     </Text>
@@ -43,6 +45,7 @@ Heading.propTypes = {
   marginY: oneOf( marginPropType ),
   fontWeight: string,
   size: string,
+  onPress: func,
 };
 
 export default Heading;
