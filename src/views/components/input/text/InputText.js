@@ -96,6 +96,7 @@ const InputText = ({
           ...icon && styles.inputWithIcon,
         ]}
         value={value}
+        underlineColorAndroid="transparent"
       />
 
       {icon && (
