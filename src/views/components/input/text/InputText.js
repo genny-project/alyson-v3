@@ -43,7 +43,7 @@ const InputText = ({
   warning,
   icon,
 }) => {
-  const style = {
+  const inputStyle = {
     margin,
     marginHorizontal: marginX,
     marginVertical: marginY,
@@ -51,6 +51,10 @@ const InputText = ({
     marginRight,
     marginBottom,
     marginLeft,
+    ...error && styles.error,
+    ...success && styles.success,
+    ...warning && styles.warning,
+    ...icon && styles.inputWithIcon,
   };
 
   const iconColor =
@@ -92,11 +96,7 @@ const InputText = ({
         spellCheck={spellCheck}
         style={[
           styles.input,
-          error && styles.error,
-          success && styles.success,
-          warning && styles.warning,
-          icon && styles.inputWithIcon,
-          style,
+          inputStyle,
         ]}
         value={value}
       />
