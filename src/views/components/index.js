@@ -9,5 +9,6 @@ export { default as RefreshControl } from './refresh-control';
 export { default as Icon } from './icon';
 export { default as Heading } from './heading';
 export { default as Input } from './input';
+export { default as Dropdown } from './dropdown';
 
 export * from './keycloak';

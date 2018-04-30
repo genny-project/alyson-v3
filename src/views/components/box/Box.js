@@ -7,7 +7,11 @@ const Box = ({
   justifyContent,
   alignItems,
   height,
+  minHeight,
+  maxHeight,
   width,
+  minWidth,
+  maxWidth,
   flex,
   flexDirection = 'row',
   padding,
@@ -36,7 +40,11 @@ const Box = ({
     justifyContent,
     alignItems,
     height,
+    minHeight,
+    maxHeight,
     width,
+    minWidth,
+    maxWidth,
     flex,
     flexDirection,
     padding,
@@ -96,7 +104,19 @@ Box.propTypes = {
   height: oneOfType(
     [string, number]
   ),
+  minHeight: oneOfType(
+    [string, number]
+  ),
+  maxHeight: oneOfType(
+    [string, number]
+  ),
   width: oneOfType(
+    [string, number]
+  ),
+  minWidth: oneOfType(
+    [string, number]
+  ),
+  maxWidth: oneOfType(
     [string, number]
   ),
   flexDirection: oneOf(
