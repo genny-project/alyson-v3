@@ -22,7 +22,10 @@ class Loading extends Component {
       isCheckingCallback
     ) {
       return (
-        <Layout title="Loading...">
+        <Layout
+          title="Loading..."
+          appColor="light"
+        >
           <Box
             justifyContent="center"
             alignItems="center"

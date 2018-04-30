@@ -1,9 +1,32 @@
 import React, { Component, Fragment } from 'react';
-import { any } from 'prop-types';
+import { oneOf, node, object } from 'prop-types';
+import { LayoutConsumer } from '../layout';
 
 class Layout extends Component {
+  static defaultProps = {
+    appColor: 'dark',
+    backgroundColor: 'dark',
+  }
+
   static propTypes = {
-    children: any,
+    children: node,
+    appColor: oneOf(
+      ['light', 'dark']
+    ),
+    backgroundColor: oneOf(
+      ['white', 'grey']
+    ),
+    layout: object,
+  }
+
+  componentDidMount() {
+    const { backgroundColor, appColor, layout } = this.props;
+
+    if ( layout.backgroundColor !== backgroundColor )
+      layout.setBackgroundColor( backgroundColor );
+
+    if ( layout.appColor !== appColor )
+      layout.setAppColor( appColor );
   }
 
   render() {
@@ -17,4 +40,10 @@ class Layout extends Component {
   }
 }
 
-export default Layout;
+export default props => (
+  <LayoutConsumer>
+    {layout => (
+      <Layout {...props} layout={layout} />
+    )}
+  </LayoutConsumer>
+);

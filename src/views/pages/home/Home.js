@@ -1,8 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { object } from 'prop-types';
-import { Text, Button, Link, Box, KeycloakConsumer, ScrollView } from '../../components';
+import { Text, Button, Link, Box, KeycloakConsumer } from '../../components';
 import Layout from '../../layout';
-import * as page from '../../../utils/page';
 
 class Home extends Component {
   static propTypes = {
@@ -14,55 +13,39 @@ class Home extends Component {
     drawerLabel: 'Home',
   }
 
-  state = {
-    isRefreshing: false,
-  }
-
-  handleRefresh = () => {
-    page.refresh();
-  }
-
   render() {
     const { isFetchingToken, accessToken, refreshToken, user } = this.props.keycloak;
-    const { isRefreshing } = this.state;
 
     return (
       <Layout title="Home">
-        <ScrollView
-          enableRefresh
-          onRefresh={this.handleRefresh}
-          isRefreshing={isRefreshing}
+        <Box
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
           flex={1}
         >
-          <Box
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            flex={1}
-          >
-            <Text>Home</Text>
+          <Text>Home</Text>
 
-            <Link to="logout">
-              <Button color="red">
-                Logout
-              </Button>
-            </Link>
+          <Link to="logout">
+            <Button color="red">
+              Logout
+            </Button>
+          </Link>
 
-            <Text>{accessToken ? accessToken.substr( -20 ) : 'No access token'}</Text>
-            <Text>{refreshToken ? refreshToken.substr( -20 ) : 'No refresh token'}</Text>
+          <Text>{accessToken ? accessToken.substr( -20 ) : 'No access token'}</Text>
+          <Text>{refreshToken ? refreshToken.substr( -20 ) : 'No refresh token'}</Text>
 
-            {user && (
-              <Fragment>
-                <Text>{user.fullName}</Text>
-                <Text>{user.email}</Text>
-              </Fragment>
-            )}
+          {user && (
+            <Fragment>
+              <Text>{user.fullName}</Text>
+              <Text>{user.email}</Text>
+            </Fragment>
+          )}
 
-            {isFetchingToken && (
-              <Text>Fetching token...</Text>
-            )}
-          </Box>
-        </ScrollView>
+          {isFetchingToken && (
+            <Text>Fetching token...</Text>
+          )}
+        </Box>
       </Layout>
     );
   }

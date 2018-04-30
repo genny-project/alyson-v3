@@ -5,31 +5,29 @@ import { Box, Icon } from '../../../components';
 import styles from './InputText.style';
 
 const InputText = ({
-  autoCapitalize,
-  autoComplete,
-  autoCorrect,
-  autoFocus,
-  blurOnSubmit,
-  clearTextOnFocus,
+  autoCapitalize = 'sentences',
+  autoComplete = true,
+  autoCorrect = true,
+  autoFocus = false,
+  blurOnSubmit = true,
+  clearTextOnFocus = false,
   defaultValue,
-  editable,
-  keyboardType,
+  disabled = false,
+  keyboardType = 'default',
   maxLength,
-  multiline,
+  multiline = false,
   onBlur,
   onChange,
-  onChangeText,
   onFocus,
   onKeyPress,
   onLayout,
   onSelectionChange,
   onSubmitEditing,
-  placeholder,
-  placeholderTextColor,
-  secureTextEntry,
+  placeholder = 'Type here...',
+  secureTextEntry = false,
   selection,
-  selectTextOnFocus,
-  spellCheck,
+  selectTextOnFocus = false,
+  spellCheck = true,
   margin,
   marginX,
   marginY,
@@ -38,9 +36,9 @@ const InputText = ({
   marginBottom,
   marginLeft,
   value,
-  error,
-  success,
-  warning,
+  error = false,
+  success = false,
+  warning = false,
   icon,
 }) => {
   const inputStyle = {
@@ -51,14 +49,10 @@ const InputText = ({
     marginRight,
     marginBottom,
     marginLeft,
-    ...error && styles.error,
-    ...success && styles.success,
-    ...warning && styles.warning,
-    ...icon && styles.inputWithIcon,
   };
 
-  const iconColor =
-    !editable ? 'lightGrey'
+  const statusColor =
+    disabled ? 'lightGrey'
     : success ? 'green'
     : error ? 'red'
     : warning ? 'yellow'
@@ -76,20 +70,19 @@ const InputText = ({
         blurOnSubmit={blurOnSubmit}
         clearTextOnFocus={clearTextOnFocus}
         defaultValue={defaultValue}
-        editable={editable}
+        editable={!disabled}
         keyboardType={keyboardType}
         maxLength={maxLength}
         multiline={multiline}
         onBlur={onBlur}
         onChange={onChange}
-        onChangeText={onChangeText}
         onFocus={onFocus}
         onKeyPress={onKeyPress}
         onLayout={onLayout}
         onSelectionChange={onSelectionChange}
         onSubmitEditing={onSubmitEditing}
         placeholder={placeholder}
-        placeholderTextColor={placeholderTextColor}
+        placeholderTextColor={statusColor}
         secureTextEntry={secureTextEntry}
         selection={selection}
         selectTextOnFocus={selectTextOnFocus}
@@ -97,6 +90,10 @@ const InputText = ({
         style={[
           styles.input,
           inputStyle,
+          ...error && styles.error,
+          ...success && styles.success,
+          ...warning && styles.warning,
+          ...icon && styles.inputWithIcon,
         ]}
         value={value}
       />
@@ -110,7 +107,7 @@ const InputText = ({
         >
           <Icon
             name={icon}
-            color={iconColor}
+            color={statusColor}
             size="md"
           />
         </Box>
@@ -129,7 +126,7 @@ InputText.propTypes = {
   blurOnSubmit: func,
   clearTextOnFocus: bool,
   defaultValue: string,
-  editable: bool,
+  disabled: bool,
   keyboardType: oneOf(
     ['default', 'email-address', 'numeric', 'phone-pad', 'search', 'url', 'web-search']
   ),
@@ -137,14 +134,12 @@ InputText.propTypes = {
   multiline: bool,
   onBlur: func,
   onChange: func,
-  onChangeText: func,
   onFocus: func,
   onKeyPress: func,
   onLayout: func,
   onSelectionChange: func,
   onSubmitEditing: func,
   placeholder: string,
-  placeholderTextColor: string,
   secureTextEntry: bool,
   selection: shape({
     start: number,
