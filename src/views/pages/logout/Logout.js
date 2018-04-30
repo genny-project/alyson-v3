@@ -30,7 +30,8 @@ class Logout extends Component {
         <Box
           justifyContent="center"
           alignItems="center"
-          height="100%"
+          flex={1}
+          flexDirection="column"
         >
           <ActivityIndicator />
           <Text>Logging you out...</Text>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { object } from 'prop-types';
 import { Text, Box, KeycloakConsumer, Redirect } from '../../components';
 import Layout from '../../layout';
@@ -39,8 +40,10 @@ class Register extends Component {
         <Box
           justifyContent="center"
           alignItems="center"
-          height="100%"
+          flex={1}
+          flexDirection="column"
         >
+          <ActivityIndicator />
           <Text>Preparing to register...</Text>
         </Box>
       </Layout>
