@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import * as Pages from '../../views/pages';
 
-export default [
+const routes = [
   {
     path: '/',
     component: Pages.Home,
@@ -49,3 +49,5 @@ export default [
     component: Pages.Chat,
   },
 ];
+
+export default routes;

@@ -32,7 +32,7 @@ class KeycloakProvider extends Component {
     });
 
     return new Promise( async ( resolve, reject ) => {
-      await this.setState({ promise: { resolve, reject } });
+      await this.asyncSetState({ promise: { resolve, reject } });
 
       LoginUrl
         .addEventListener( 'url', this.handleUrlChange )
@@ -58,7 +58,7 @@ class KeycloakProvider extends Component {
     });
 
     return new Promise( async ( resolve, reject ) => {
-      await this.setState({ promise: { resolve, reject } });
+      await this.asyncSetState({ promise: { resolve, reject } });
 
       const session = await RegisterUrl
         .addEventListener( 'url', this.handleUrlChange )
