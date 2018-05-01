@@ -19,7 +19,7 @@ const Sidebar = ({ sidebar, closeSidebar }) => (
       backgroundColor="#232323"
       zIndex={100}
       transform={[
-        { translateX: sidebar.open ? 300 : 0 },
+        { translateX: sidebar.isOpen ? 300 : 0 },
       ]}
       transition="300ms ease transform"
     >
@@ -33,7 +33,7 @@ const Sidebar = ({ sidebar, closeSidebar }) => (
       </ScrollView>
     </Box>
 
-    {sidebar.open && (
+    {sidebar.isOpen && (
       <TouchableWithoutFeedback
         onPress={closeSidebar}
       >
@@ -45,7 +45,7 @@ const Sidebar = ({ sidebar, closeSidebar }) => (
           width="100%"
           zIndex={99}
           backgroundColor="#000"
-          opacity={sidebar.open ? 0.5 : 0}
+          opacity={sidebar.isOpen ? 0.5 : 0}
           transition="300ms ease opacity"
         />
       </TouchableWithoutFeedback>
