@@ -33,6 +33,7 @@ const AuthStack = SwitchNavigator({
   login: Pages.Login,
   register: Pages.Register,
 }, {
+  initialRouteName: 'splash',
 });
 
 const Main = SwitchNavigator({
@@ -40,7 +41,7 @@ const Main = SwitchNavigator({
   app: AuthenticatedDrawer,
   auth: AuthStack,
 }, {
-  initialRouteName: 'app',
+  initialRouteName: 'loading',
 });
 
 export default Main;

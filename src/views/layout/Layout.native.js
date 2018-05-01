@@ -13,17 +13,19 @@ class Layout extends Component {
     appColor: oneOf(
       ['light', 'dark']
     ),
-    backgroundColor: oneOf(
-      ['white', 'grey']
-    ),
+    // backgroundColor: oneOf(
+      // ['white', 'grey']
+    // ),
     layout: object,
   }
 
   componentDidMount() {
-    const { backgroundColor, appColor, layout } = this.props;
+    const { appColor, layout } = this.props;
 
-    if ( layout.backgroundColor !== backgroundColor )
-      layout.setBackgroundColor( backgroundColor );
+    /* TODO: fix bug on Android when setting backgroundColor */
+
+    // if ( layout.backgroundColor !== backgroundColor )
+      // layout.setBackgroundColor( backgroundColor );
 
     if ( layout.appColor !== appColor )
       layout.setAppColor( appColor );

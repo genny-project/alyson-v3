@@ -361,7 +361,7 @@ class KeycloakProvider extends Component {
       // const { session_state } = responseJson;
       // const sessionState = await Storage.get( 'kcSessionState' );
 
-      /* TODO fix check */
+      /* FIXME: fix check */
       // if ( session_state === sessionState )
         this.handleTokenRefreshSuccess( responseJson );
     }

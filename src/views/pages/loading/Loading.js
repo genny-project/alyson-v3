@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { object } from 'prop-types';
-import { ActivityIndicator, StatusBar } from 'react-native';
-import { KeycloakConsumer, Redirect, Box } from '../../components';
+import { ActivityIndicator } from 'react-native';
+import { KeycloakConsumer, Redirect, Box, Text } from '../../components';
 import Layout from '../../layout';
 
 class Loading extends Component {
@@ -29,10 +29,11 @@ class Loading extends Component {
           <Box
             justifyContent="center"
             alignItems="center"
-            height="100%"
+            flex={1}
+            flexDirection="column"
           >
             <ActivityIndicator />
-            <StatusBar barStyle="default" />
+            <Text>Loading...</Text>
           </Box>
         </Layout>
       );

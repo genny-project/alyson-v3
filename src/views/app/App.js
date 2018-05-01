@@ -13,7 +13,7 @@ class App extends Component {
               flex: 1,
               marginTop: StatusBar.currentHeight,
               backgroundColor: (
-                Platform.OS === 'ios' && layout.appColor
+                Platform.OS === 'ios' ? layout.appColor : 'transparent'
               ),
             }}
           >

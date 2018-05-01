@@ -8,15 +8,15 @@ import config from './config';
 
 const Root = () => (
   <ReduxProvider store={store}>
-    <KeycloakProvider
-      baseUrl={config.keycloak.baseUrl}
-      realm={config.keycloak.realm}
-      clientId={config.keycloak.clientId}
-    >
-      <LayoutProvider>
+    <LayoutProvider>
+      <KeycloakProvider
+        baseUrl={config.keycloak.baseUrl}
+        realm={config.keycloak.realm}
+        clientId={config.keycloak.clientId}
+      >
         <App />
-      </LayoutProvider>
-    </KeycloakProvider>
+      </KeycloakProvider>
+    </LayoutProvider>
   </ReduxProvider>
 );
 
