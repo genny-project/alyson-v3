@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { Box, Dropdown, KeycloakConsumer } from '../../../components';
 import HeaderItem from '../item';
 
@@ -20,8 +21,14 @@ const HeaderRight = () => (
         />
 
         <Dropdown
-          text={isAuthenticated ? `Hi, ${user.firstName}!` : 'G\'day!'}
-          iconWhenTextHidden="person"
+          paddingX={5}
+          text={(
+            Platform.select({
+              ios: user.firstName,
+              android: user.firstName,
+              web: isAuthenticated ? `Hi, ${user.firstName}!` : 'Options',
+            })
+          )}
           facingRight
           items={[
             {

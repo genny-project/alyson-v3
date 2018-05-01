@@ -59,7 +59,7 @@ class HeaderLeft extends Component {
 
         <Link to="home">
           <Heading
-            size="md"
+            size="lg"
             marginY={0}
             color="white"
             onPress={this.handlePopToTop}

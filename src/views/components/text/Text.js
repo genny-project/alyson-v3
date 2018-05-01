@@ -1,7 +1,6 @@
 import React from 'react';
 import { Text as NativeText } from 'react-native';
-import { string, oneOf } from 'prop-types';
-import range from 'lodash.range';
+import { string, number, oneOf, oneOfType } from 'prop-types';
 import styles from './Text.style';
 
 const Text = ({
@@ -16,34 +15,45 @@ const Text = ({
   marginBottom,
   marginLeft,
   fontWeight,
+  height,
   size = 'sm',
   ...restProps
 }) => {
+  const textSizes = {
+    xs: 14,
+    sm: 16,
+    md: 18,
+    lg: 20,
+    xl: 24,
+    xxl: 32,
+  };
+
+  const style = {
+    textDecorationLine: decoration,
+    margin,
+    marginHorizontal: marginX,
+    marginVertical: marginY,
+    marginTop,
+    marginRight,
+    marginBottom,
+    marginLeft,
+    fontWeight,
+    height,
+  };
+
   return (
     <NativeText
       {...restProps}
       style={[
         styles[color],
-        styles[size],
-        {
-          textDecorationLine: decoration,
-          margin,
-          marginHorizontal: marginX,
-          marginVertical: marginY,
-          marginTop,
-          marginRight,
-          marginBottom,
-          marginLeft,
-          fontWeight,
-        },
+        { fontSize: textSizes[size] },
+        style,
       ]}
     >
       {children}
     </NativeText>
   );
 };
-
-const marginPropType = range( 0, 12 );
 
 Text.propTypes = {
   children: string,
@@ -53,15 +63,18 @@ Text.propTypes = {
   decoration: oneOf(
     ['none']
   ),
-  margin: oneOf( marginPropType ),
-  marginX: oneOf( marginPropType ),
-  marginY: oneOf( marginPropType ),
-  marginTop: oneOf( marginPropType ),
-  marginRight: oneOf( marginPropType ),
-  marginBottom: oneOf( marginPropType ),
-  marginLeft: oneOf( marginPropType ),
+  margin: number,
+  marginX: number,
+  marginY: number,
+  marginTop: number,
+  marginRight: number,
+  marginBottom: number,
+  marginLeft: number,
   fontWeight: string,
   size: string,
+  height: oneOfType(
+    [number, string]
+  ),
 };
 
 export default Text;

@@ -16,21 +16,6 @@ const styles = StyleSheet.create({
   white: {
     color: 'white',
   },
-  xs: {
-    fontSize: 14,
-  },
-  sm: {
-    fontSize: 16,
-  },
-  md: {
-    fontSize: 20,
-  },
-  lg: {
-    fontSize: 24,
-  },
-  xl: {
-    fontSize: 32,
-  },
 });
 
 export default styles;
