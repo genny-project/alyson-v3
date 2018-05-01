@@ -36,6 +36,7 @@ class Login extends Component {
       <Layout
         title="Login"
         appColor="light"
+        hideHeader
       >
         <Box
           justifyContent="center"

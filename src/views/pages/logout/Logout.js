@@ -26,6 +26,7 @@ class Logout extends Component {
       <Layout
         title="Logout"
         appColor="light"
+        hideHeader
       >
         <Box
           justifyContent="center"

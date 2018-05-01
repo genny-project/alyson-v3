@@ -25,6 +25,7 @@ class Loading extends Component {
         <Layout
           title="Loading..."
           appColor="light"
+          hideHeader
         >
           <Box
             justifyContent="center"

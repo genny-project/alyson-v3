@@ -36,6 +36,7 @@ class Register extends Component {
       <Layout
         title="Register"
         appColor="light"
+        hideHeader
       >
         <Box
           justifyContent="center"

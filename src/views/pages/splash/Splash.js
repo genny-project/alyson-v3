@@ -23,6 +23,7 @@ class Splash extends Component {
       <Layout
         title="Splash"
         appColor="light"
+        hideHeader
       >
         <Box
           justifyContent="center"
