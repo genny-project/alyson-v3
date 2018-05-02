@@ -26,6 +26,10 @@ class Url {
     return WebBrowser.dismissBrowser();
   }
 
+  getUrl() {
+    return this.url;
+  }
+
   append( string ) {
     this.url += string;
 

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { SafeAreaView, StatusBar, Platform } from 'react-native';
 import { LayoutConsumer } from '../layout';
 import Routing from '../routing';
+import AuthenticatedApp from './authenticated';
 
 class App extends Component {
   render() {
@@ -17,7 +18,9 @@ class App extends Component {
               ),
             }}
           >
-            <Routing />
+            <AuthenticatedApp>
+              <Routing />
+            </AuthenticatedApp>
           </SafeAreaView>
         )}
       </LayoutConsumer>

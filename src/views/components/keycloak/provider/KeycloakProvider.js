@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform } from 'react-native';
+import { Platform, Linking } from 'react-native';
 import { string, any } from 'prop-types';
 import queryString from 'query-string';
 import uuid from 'uuid/v4';
@@ -11,11 +11,13 @@ class KeycloakProvider extends Component {
   static propTypes = {
     realm: string.isRequired,
     clientId: string.isRequired,
+    clientSecret: string,
     baseUrl: string.isRequired,
     children: any,
   }
 
   /* eslint-disable react/sort-comp */
+
   attemptLogin = ( options = {}) => {
     if ( this.state.isAuthenticated ) return;
 
@@ -24,6 +26,12 @@ class KeycloakProvider extends Component {
     } = options;
 
     const LoginUrl = this.createLoginUrl();
+    const isValidUrl = Linking.canOpenURL( LoginUrl.getUrl());
+
+    if ( !isValidUrl ) {
+      console.warn( `Attempted to open invalid login URL: ${LoginUrl.getUrl()}` );
+      return;
+    }
 
     this.setState({
       isAuthenticating: true,
@@ -111,6 +119,7 @@ class KeycloakProvider extends Component {
         .catch( reject );
     });
   }
+
   /* eslint-enable react/sort-comp */
 
   state = {
@@ -235,7 +244,7 @@ class KeycloakProvider extends Component {
     const { baseUrl, realm } = this.props;
     const encodedRealm = encodeURIComponent( realm );
 
-    return `${baseUrl}/auth/realms/${encodedRealm}`;
+    return `${baseUrl}/realms/${encodedRealm}`;
   }
 
   createActionUrl = ( action, query = {}) => {
@@ -311,12 +320,12 @@ class KeycloakProvider extends Component {
     const { promise } = this.state;
 
     if ( type === 'cancel' ) {
-      if ( promise )
-        promise.reject( `Could not ${action}! User dismissed window - try again.` );
+      const error = `Could not ${action}! User dismissed window - try again.`;
 
-      this.setState({
-        error: `Could not ${action}! User dismissed window - try again.`,
-      });
+      if ( promise )
+        promise.reject( error );
+
+      this.setState({ error });
     }
   }
 
@@ -324,7 +333,7 @@ class KeycloakProvider extends Component {
     const realmUrl = this.createRealmUrl();
     const url = `${realmUrl}/protocol/openid-connect/token`;
     const { refreshToken } = this.state;
-    const { clientId } = this.props;
+    const { clientId, clientSecret } = this.props;
 
     const redirectUrl = keycloakUtils.getValidRedirectUri({
       excludeSearch: true,
@@ -349,6 +358,9 @@ class KeycloakProvider extends Component {
         grant_type: grantType,
         redirect_uri: redirectUrl,
         client_id: clientId,
+        ...clientSecret && {
+          client_secret: clientSecret,
+        },
       }),
     };
 
@@ -390,7 +402,7 @@ class KeycloakProvider extends Component {
 
     const setUserData = new Promise(( resolve, reject ) => {
       try {
-        const decodedIdToken = keycloakUtils.decodeToken( id_token );
+        const decodedIdToken = keycloakUtils.decodeToken( id_token || access_token );
 
         this.setState({
           user: {

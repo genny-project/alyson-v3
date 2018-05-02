@@ -1,6 +1,22 @@
+import { KEYCLOAK_CONFIG_FETCH_REQUEST, KEYCLOAK_CONFIG_FETCH_SUCCESS, KEYCLOAK_CONFIG_FETCH_FAILURE } from '../../../constants';
+
+export const fetchKeycloakConfig = () => ({
+  type: KEYCLOAK_CONFIG_FETCH_REQUEST,
+});
+
+export const fetchKeycloakConfigSuccess = config => ({
+  type: KEYCLOAK_CONFIG_FETCH_SUCCESS,
+  payload: config,
+});
+
+export const fetchKeycloakConfigFailure = error => ({
+  type: KEYCLOAK_CONFIG_FETCH_FAILURE,
+  payload: error,
+});
+
 /*
 
-These actions are not in use.
+The actions below are not in use.
 
 Please use the Keycloak context pattern instead.
 

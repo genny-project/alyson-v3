@@ -19,6 +19,10 @@ class Url {
       window.location.href = this.url;
   }
 
+  getUrl() {
+    return this.url;
+  }
+
   append( string ) {
     this.url += string;
 
