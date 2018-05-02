@@ -48,6 +48,10 @@ const routes = [
     path: '/chat',
     component: Pages.Chat,
   },
+  {
+    path: '/settings',
+    component: Pages.Settings,
+  },
 ];
 
 export default routes;

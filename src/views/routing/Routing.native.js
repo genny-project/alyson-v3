@@ -13,6 +13,7 @@ const AuthenticatedStack = StackNavigator({
   alerts: Pages.Alerts,
   profile: Pages.Profile,
   chat: Pages.Chat,
+  settings: Pages.Settings,
 }, {
   initialRouteName: 'home',
   navigationOptions: ({ navigation }) => ({

@@ -34,7 +34,7 @@ const HeaderRight = () => (
             {
               text: 'Settings',
               icon: 'settings',
-              href: 'home',
+              href: 'settings',
             },
             {
               text: 'Logout',
