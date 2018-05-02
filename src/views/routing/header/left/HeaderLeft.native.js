@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withNavigation } from 'react-navigation';
 import { object } from 'prop-types';
 import config from '../../../../config';
-import { Link, Button, Box, Heading } from '../../../components';
+import { Button, Box, Heading } from '../../../components';
 import { LayoutConsumer } from '../../../layout';
 
 class HeaderLeft extends Component {
@@ -61,21 +61,18 @@ class HeaderLeft extends Component {
               />
             )}
 
-            <Link to="home">
-              <Heading
-                size="lg"
-                marginY={0}
-                color="white"
-                onPress={this.handlePopToTop}
-              >
-                {(
-                  index > 0 &&
-                  routeName !== 'home'
-                )
-                  ? layout.title
-                  : config.app.name}
-              </Heading>
-            </Link>
+            <Heading
+              size="lg"
+              marginY={0}
+              color="white"
+            >
+              {(
+                index > 0 &&
+                routeName !== 'home'
+              )
+                ? layout.title
+                : config.app.name}
+            </Heading>
           </Box>
         )}
       </LayoutConsumer>

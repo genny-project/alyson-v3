@@ -2,7 +2,6 @@
 import React from 'react';
 import { DrawerNavigator, StackNavigator, SwitchNavigator } from 'react-navigation';
 import CardStackStyleInterpolator from 'react-navigation/src/views/CardStack/CardStackStyleInterpolator';
-import { sidebar } from '../../config';
 import * as Pages from '../../views/pages';
 import Sidebar from './sidebar';
 import Header from './header';
@@ -16,8 +15,8 @@ const AuthenticatedStack = StackNavigator({
   settings: Pages.Settings,
 }, {
   initialRouteName: 'home',
-  navigationOptions: ({ navigation }) => ({
-    header: <Header navigation={navigation} />,
+  navigationOptions: props => ({
+    header: <Header {...props} />,
   }),
   transitionConfig: () => ({
     screenInterpolator: sceneProps => {
@@ -31,7 +30,7 @@ const AuthenticatedDrawer = DrawerNavigator({
 }, {
   initialRouteName: 'authenticated',
   contentComponent: props => (
-    <Sidebar {...props} items={sidebar} />
+    <Sidebar {...props} />
   ),
 });
 
