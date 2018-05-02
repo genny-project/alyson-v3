@@ -7,4 +7,7 @@ export default {
     realm: 'pleased',
     clientId: 'pleased',
   },
+  app: {
+    name: 'Genny',
+  },
 };

@@ -117,7 +117,7 @@ class KeycloakProvider extends Component {
     isAuthenticated: false,
     isAuthenticating: false,
     isCheckingCallback: false,
-    isCheckingStorage: false,
+    isCheckingStorage: true,
     accessToken: null,
     refreshToken: null,
     refreshTimer: null,

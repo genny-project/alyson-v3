@@ -5,7 +5,10 @@ import Layout from '../../layout';
 class Alerts extends Component {
   render() {
     return (
-      <Layout title="Alerts">
+      <Layout
+        title="Alerts"
+        appColor="dark"
+      >
         <Box
           justifyContent="center"
           alignItems="center"

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { withNavigation } from 'react-navigation';
 import { object } from 'prop-types';
+import config from '../../../../config';
 import { Link, Button, Box, Heading } from '../../../components';
+import { LayoutConsumer } from '../../../layout';
 
 class HeaderLeft extends Component {
   static propTypes = {
@@ -31,43 +33,52 @@ class HeaderLeft extends Component {
     const { routeName } = routes[index];
 
     return (
-      <Box
-        alignItems="center"
-      >
-        {(
-          index > 0 &&
-          routeName !== 'home'
-        ) ? (
-          <Button
-            onPress={this.handleBack}
-            size="lg"
-            color="transparent"
-            textColor="white"
-            icon="arrow-back"
-            paddingX={10}
-          />
-        ) : (
-          <Button
-            onPress={this.handleToggleMenu}
-            size="lg"
-            color="transparent"
-            textColor="white"
-            icon="menu"
-            paddingX={10}
-          />
-        )}
-
-        <Link to="home">
-          <Heading
-            size="lg"
-            marginY={0}
-            color="white"
-            onPress={this.handlePopToTop}
+      <LayoutConsumer>
+        {layout => (
+          <Box
+            alignItems="center"
           >
-            Genny
-          </Heading>
-        </Link>
-      </Box>
+            {(
+              index > 0 &&
+              routeName !== 'home'
+            ) ? (
+              <Button
+                onPress={this.handleBack}
+                size="lg"
+                color="transparent"
+                textColor="white"
+                icon="arrow-back"
+                paddingX={10}
+              />
+            ) : (
+              <Button
+                onPress={this.handleToggleMenu}
+                size="lg"
+                color="transparent"
+                textColor="white"
+                icon="menu"
+                paddingX={10}
+              />
+            )}
+
+            <Link to="home">
+              <Heading
+                size="lg"
+                marginY={0}
+                color="white"
+                onPress={this.handlePopToTop}
+              >
+                {(
+                  index > 0 &&
+                  routeName !== 'home'
+                )
+                  ? layout.title
+                  : config.app.name}
+              </Heading>
+            </Link>
+          </Box>
+        )}
+      </LayoutConsumer>
     );
   }
 }

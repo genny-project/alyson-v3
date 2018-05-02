@@ -5,7 +5,10 @@ import Layout from '../../layout';
 class Profile extends Component {
   render() {
     return (
-      <Layout title="Profile">
+      <Layout
+        title="Profile"
+        appColor="dark"
+      >
         <Box
           justifyContent="center"
           alignItems="center"

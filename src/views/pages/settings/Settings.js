@@ -7,6 +7,7 @@ class Settings extends Component {
     return (
       <Layout
         title="Settings"
+        appColor="dark"
       >
         <Box
           justifyContent="center"

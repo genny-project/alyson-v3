@@ -5,7 +5,10 @@ import Layout from '../../layout';
 class Chat extends Component {
   render() {
     return (
-      <Layout title="Chat">
+      <Layout
+        title="Chat"
+        appColor="dark"
+      >
         <Box
           justifyContent="center"
           alignItems="center"

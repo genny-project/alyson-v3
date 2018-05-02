@@ -1,13 +1,8 @@
 import React, { Component, Fragment } from 'react';
-import { oneOf, node, object } from 'prop-types';
+import { oneOf, node, object, string } from 'prop-types';
 import { LayoutConsumer } from '../layout';
 
 class Layout extends Component {
-  static defaultProps = {
-    appColor: 'dark',
-    backgroundColor: 'grey',
-  }
-
   static propTypes = {
     children: node,
     appColor: oneOf(
@@ -16,19 +11,30 @@ class Layout extends Component {
     // backgroundColor: oneOf(
       // ['white', 'grey']
     // ),
+    title: string,
     layout: object,
   }
 
   componentDidMount() {
-    const { appColor, layout } = this.props;
+    this.checkForLayoutChanges();
+  }
 
-    /* TODO: fix bug on Android when setting backgroundColor */
+  checkForLayoutChanges() {
+    const { layout, title, appColor } = this.props;
 
-    // if ( layout.backgroundColor !== backgroundColor )
-      // layout.setBackgroundColor( backgroundColor );
+    if (
+      typeof title === 'string' &&
+      title.length > 0
+    ) {
+      layout.setTitle( title );
+    }
 
-    if ( layout.appColor !== appColor )
+    if (
+      typeof appColor === 'string' &&
+      appColor.length > 0
+    ) {
       layout.setAppColor( appColor );
+    }
   }
 
   render() {

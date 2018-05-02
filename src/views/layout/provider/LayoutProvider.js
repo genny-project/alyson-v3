@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { node } from 'prop-types';
+import config from '../../../config';
 import LayoutContext from '../context';
 
 class LayoutProvider extends Component {
@@ -33,13 +34,8 @@ class LayoutProvider extends Component {
     }
   }
 
-    /* eslint-enable react/sort-comp */
-
-  state = {
-    appColor: '#232323',
-    backgroundColor: '#232323',
-    setBackgroundColor: this.setBackgroundColor,
-    setAppColor: this.setAppColor,
+  setTitle = title => {
+    this.setState({ title });
   }
 
   appColors = {
@@ -50,6 +46,17 @@ class LayoutProvider extends Component {
   backgroundColors = {
     white: '#FFF',
     grey: '#fafafa',
+  }
+
+  /* eslint-enable react/sort-comp */
+
+  state = {
+    appColor: this.appColors.dark,
+    backgroundColor: this.backgroundColors.grey,
+    title: config.app.name,
+    setBackgroundColor: this.setBackgroundColor,
+    setAppColor: this.setAppColor,
+    setTitle: this.setTitle,
   }
 
   render() {

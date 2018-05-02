@@ -17,7 +17,10 @@ class Home extends Component {
     const { isFetchingToken, accessToken, refreshToken, user } = this.props.keycloak;
 
     return (
-      <Layout title="Home">
+      <Layout
+        title="Home"
+        appColor="dark"
+      >
         <Box
           flexDirection="column"
           alignItems="center"

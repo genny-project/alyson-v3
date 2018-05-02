@@ -1,24 +1,14 @@
 import React, { Component } from 'react';
-import { object } from 'prop-types';
-import { Link, Button, Redirect, Box, KeycloakConsumer } from '../../components';
+import { Link, Button, Box } from '../../components';
 import Layout from '../../layout';
 
 class Splash extends Component {
-  static propTypes = {
-    keycloak: object,
-  }
-
   static navigationOptions = {
     title: 'Splash',
     drawerLabel: 'Splash',
   }
 
   render() {
-    const { isAuthenticated } = this.props.keycloak;
-
-    if ( isAuthenticated )
-      return <Redirect to="app" />;
-
     return (
       <Layout
         title="Splash"
@@ -48,10 +38,4 @@ class Splash extends Component {
   }
 }
 
-export default props => (
-  <KeycloakConsumer>
-    {keycloak => (
-      <Splash {...props} keycloak={keycloak} />
-    )}
-  </KeycloakConsumer>
-);
+export default Splash;
