@@ -1,3 +1,4 @@
+/* eslint-disable new-cap */
 import Vertx from './Vertx';
 import MessageHandler from './MessageHandler';
 import * as events from './events';
@@ -35,7 +36,7 @@ class Bridge {
     this.log( 'Sending auth init...' );
 
     Vertx.sendMessage(
-      events.authInit( token )
+      events.AUTH_INIT( token )
     );
   }
 }

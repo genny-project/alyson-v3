@@ -1,4 +1,4 @@
-export const authInit = token => ({
+export const AUTH_INIT = token => ({
   event_type: 'AUTH_INIT',
   msg_type: 'EVT_MSG',
   token,
@@ -7,7 +7,7 @@ export const authInit = token => ({
   },
 });
 
-export const redirectReturn = token => ({
+export const REDIRECT_RETURN = token => ({
   event_type: 'REDIRECT_RETURN',
   msg_type: 'EVT_MSG',
   token,
@@ -16,21 +16,21 @@ export const redirectReturn = token => ({
   },
 });
 
-export const sendCode = ( event, data, token ) => ({
+export const SEND_CODE = ( event, data, token ) => ({
   event_type: event,
   msg_type: 'EVT_MSG',
   token: token,
   data: data,
 });
 
-export const logout = ( event, data, token ) => ({
+export const LOGOUT = ( event, data, token ) => ({
   event_type: event,
   msg_type: 'EVT_MSG',
   token: token,
   data: data,
 });
 
-export const accounts = ( event, data, token ) => ({
+export const ACCOUNTS = ( event, data, token ) => ({
   event_type: event,
   msg_type: 'EVT_MSG',
   token: token,
