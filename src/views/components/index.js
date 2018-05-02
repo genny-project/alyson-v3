@@ -13,3 +13,4 @@ export { default as Dropdown } from './dropdown';
 export { default as PopupMenu } from './popup-menu';
 
 export * from './keycloak';
+export * from './vertx';

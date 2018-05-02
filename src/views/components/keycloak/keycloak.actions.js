@@ -14,6 +14,20 @@ export const fetchKeycloakConfigFailure = error => ({
   payload: error,
 });
 
+export const attemptAuth = () => ({
+  type: 'AUTH_SUCCESS',
+});
+
+export const attemptAuthSuccess = data => ({
+  type: 'AUTH_ATTEMPT_SUCCESS',
+  payload: data,
+});
+
+export const attemptAuthFailure = error => ({
+  type: 'AUTH_ATTEMPT_FAILURE',
+  payload: error,
+});
+
 /*
 
 The actions below are not in use.

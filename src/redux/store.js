@@ -7,4 +7,6 @@ const store = createStore(
   middleware
 );
 
+window.store = store;
+
 export default store;

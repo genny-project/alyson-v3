@@ -3,9 +3,13 @@ import { Platform, Linking } from 'react-native';
 import { string, any } from 'prop-types';
 import queryString from 'query-string';
 import uuid from 'uuid/v4';
+import * as actions from '../../../../redux/actions';
+import store from '../../../../redux/store';
 import KeycloakContext from '../context';
 import { Url, Storage } from '../../../../utils';
 import * as keycloakUtils from '../../../../utils/keycloak';
+
+const TOKEN_REFRESH_TIMER = 30000;
 
 class KeycloakProvider extends Component {
   static propTypes = {
@@ -189,6 +193,12 @@ class KeycloakProvider extends Component {
         });
 
         this.startTokenRefresh();
+
+        store.dispatch(
+          actions.attemptAuthSuccess({
+            accessToken: accessTokenHasExpired ? null : accessToken,
+          })
+        );
       }
 
       if ( this.state.resolve )
@@ -306,13 +316,17 @@ class KeycloakProvider extends Component {
 
       this.setState({ promise: null });
     }
+
+    store.dispatch(
+      actions.attemptAuthSuccess( code )
+    );
   }
 
   startTokenRefresh( code ) {
     this.handleTokenRefresh( code );
 
     this.setState({
-      refreshTimer: setInterval( this.handleTokenRefresh, 5000 ), // 5 seconds
+      refreshTimer: setInterval( this.handleTokenRefresh, TOKEN_REFRESH_TIMER ),
     });
   }
 
