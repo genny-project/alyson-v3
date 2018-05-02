@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Platform } from 'react-native';
+import { View } from 'react-native';
 import { any, oneOf, oneOfType, string, number, array, func } from 'prop-types';
 
 const Box = ({
@@ -32,7 +32,10 @@ const Box = ({
   left,
   zIndex,
   transform,
-  transition,
+  transitionDuration,
+  transitionProperty,
+  transitionTimingFunction,
+  transitionDelay,
   opacity,
   ...restProps
 }) => {
@@ -66,27 +69,16 @@ const Box = ({
     zIndex,
     transform,
     opacity,
+    transitionDuration,
+    transitionProperty,
+    transitionTimingFunction,
+    transitionDelay,
   };
-
-  const webStyle = Platform.OS === 'web' ? {
-    transition,
-  } : {};
-
-  const nativeStyle = (
-    Platform.OS === 'android' ||
-    Platform.OS === 'ios'
-  ) ? {
-
-  } : {};
 
   return (
     <View
       {...restProps}
-      style={[
-        style,
-        webStyle,
-        nativeStyle,
-      ]}
+      style={style}
     >
       {children}
     </View>
@@ -143,7 +135,10 @@ Box.propTypes = {
   left: number,
   zIndex: number,
   transform: array,
-  transition: string,
+  transitionDuration: string,
+  transitionProperty: string,
+  transitionTimingFunction: string,
+  transitionDelay: string,
   opacity: number,
   onPress: func,
 };

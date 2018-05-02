@@ -21,7 +21,8 @@ const Sidebar = ({ sidebar, closeSidebar }) => (
       transform={[
         { translateX: sidebar.isOpen ? 300 : 0 },
       ]}
-      transition="300ms ease transform"
+      transitionDuration="300ms"
+      transitionProperty="transform"
     >
       <ScrollView
         paddingY={40}
