@@ -22,7 +22,7 @@ class Dropdown extends Component {
   handleSelect = item => {
     if (
       item &&
-      typeof item === 'object' &&
+      item instanceof Object &&
       item.href
     ) {
       this.props.navigation.navigate( item.href );
