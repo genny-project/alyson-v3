@@ -1,6 +1,7 @@
 /* eslint-disable new-cap */
 import React from 'react';
 import { DrawerNavigator, StackNavigator, SwitchNavigator } from 'react-navigation';
+import CardStackStyleInterpolator from 'react-navigation/src/views/CardStack/CardStackStyleInterpolator';
 import { sidebar } from '../../config';
 import * as Pages from '../../views/pages';
 import Sidebar from './sidebar';
@@ -16,6 +17,11 @@ const AuthenticatedStack = StackNavigator({
   initialRouteName: 'home',
   navigationOptions: ({ navigation }) => ({
     header: <Header navigation={navigation} />,
+  }),
+  transitionConfig: () => ({
+    screenInterpolator: sceneProps => {
+      return CardStackStyleInterpolator.forHorizontal( sceneProps );
+    },
   }),
 });
 
