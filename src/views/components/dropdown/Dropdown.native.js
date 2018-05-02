@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { array, string, bool, number } from 'prop-types';
+import { withNavigation } from 'react-navigation';
+import { array, string, number, func, object } from 'prop-types';
 import { Box, Icon, Text, PopupMenu } from '../../components';
-// import DropdownItem from './item';
 
 class Dropdown extends Component {
   static defaultProps = {
@@ -12,42 +12,34 @@ class Dropdown extends Component {
   static propTypes = {
     items: array.isRequired,
     text: string.isRequired,
-    facingRight: bool,
     padding: number,
     paddingX: number,
     paddingY: number,
+    onSelect: func,
+    navigation: object,
   }
 
-  state = {
-    isOpen: false,
-  }
-
-  handleOpen = () => {
-    this.setState({ isOpen: true });
-  }
-
-  handleClose = () => {
-    this.setState({ isOpen: false });
-  }
-
-  handleToggle = () => {
-    if ( this.picker ) {
-      // this.picker.click();
-      // this.picker.click();
+  handleSelect = item => {
+    if (
+      item &&
+      typeof item === 'object' &&
+      item.href
+    ) {
+      this.props.navigation.navigate( item.href );
     }
-  }
 
-  handleValueChange = itemValue => {
-    console.warn( new Error( itemValue ));
+    if ( this.props.onSelect )
+      this.props.onSelect( item );
   }
 
   render() {
-    const { items, text, iconWhenTextHidden, facingRight, padding, paddingX, paddingY } = this.props; // eslint-disable-line
+    const { items, text, padding, paddingX, paddingY } = this.props;
 
     return (
       <PopupMenu
         items={items}
         deriveTextFromItems={item => item.text}
+        onSelect={this.handleSelect}
       >
         {({ showPopupMenu, setAnchorRef }) => (
           <TouchableOpacity
@@ -84,4 +76,4 @@ class Dropdown extends Component {
   }
 }
 
-export default Dropdown;
+export default withNavigation( Dropdown );

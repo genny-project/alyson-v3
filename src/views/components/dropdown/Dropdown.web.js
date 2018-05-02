@@ -1,14 +1,21 @@
 import React, { Component, Fragment } from 'react';
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
-import { array, string, bool } from 'prop-types';
+import { array, string, bool, number } from 'prop-types';
 import { Box, Text, Icon } from '../../components';
 import DropdownItem from './item';
 
 class Dropdown extends Component {
+  static defaultProps = {
+    padding: 20,
+  }
+
   static propTypes = {
     items: array.isRequired,
     text: string.isRequired,
     facingRight: bool,
+    padding: number,
+    paddingX: number,
+    paddingY: number,
   }
 
   state = {
@@ -28,7 +35,7 @@ class Dropdown extends Component {
   }
 
   render() {
-    const { items, text, facingRight } = this.props;
+    const { items, text, facingRight, padding, paddingX, paddingY } = this.props;
     const { isOpen } = this.state;
 
     return (
@@ -60,13 +67,17 @@ class Dropdown extends Component {
             <Box
               justifyContent="space-between"
               alignItems="center"
-              padding={20}
+              padding={padding}
+              paddingX={paddingX}
+              paddingY={paddingY}
             >
               <Text
                 color="white"
               >
                 {text}
               </Text>
+
+              <Box width={5} />
 
               <Icon
                 name="expand-more"
