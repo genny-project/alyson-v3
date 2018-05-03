@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { TouchableOpacity, TouchableWithoutFeedback, Modal } from 'react-native';
 import { array, string, bool, number } from 'prop-types';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 import { Box, Text, Icon } from '../../components';
 import DropdownItem from './item';
 
@@ -20,6 +21,10 @@ class Dropdown extends Component {
 
   state = {
     isOpen: false,
+    buttonX: 0,
+    buttonY: 0,
+    buttonHeight: 0,
+    buttonWidth: 0,
   }
 
   handleOpen = () => {
@@ -34,33 +39,24 @@ class Dropdown extends Component {
     this.setState( state => ({ isOpen: !state.isOpen }));
   }
 
+  handleLayout = ({ nativeEvent }) => {
+    const { height, width, x, y } = nativeEvent.layout;
+
+    this.setState({
+      buttonX: x,
+      buttonY: y,
+      buttonHeight: height,
+      buttonWidth: width,
+    });
+  }
+
   render() {
     const { items, text, facingRight, padding, paddingX, paddingY } = this.props;
-    const { isOpen } = this.state;
+    const { isOpen, buttonX, buttonY, buttonHeight, buttonWidth } = this.state; // eslint-disable-line no-unused-vars
 
     return (
       <Fragment>
-        {isOpen && (
-          <TouchableWithoutFeedback
-            onPress={this.handleClose}
-          >
-            <Box
-              position="fixed"
-              top={0}
-              left={0}
-              height="100%"
-              width="100%"
-              zIndex={74}
-              backgroundColor="#000"
-              opacity={0.1}
-            />
-          </TouchableWithoutFeedback>
-        )}
-
-        <Box
-          position="relative"
-          zIndex={755}
-        >
+        <Box zIndex={110}>
           <TouchableOpacity
             onPress={this.handleToggle}
           >
@@ -70,6 +66,7 @@ class Dropdown extends Component {
               padding={padding}
               paddingX={paddingX}
               paddingY={paddingY}
+              onLayout={this.handleLayout}
             >
               <Text
                 color="white"
@@ -85,20 +82,45 @@ class Dropdown extends Component {
               />
             </Box>
           </TouchableOpacity>
+        </Box>
 
-          {isOpen && (
+        <Modal
+          animationType="fade"
+          visible={isOpen}
+          transparent
+        >
+          <TouchableWithoutFeedback
+            onPress={this.handleClose}
+          >
             <Box
-              position="absolute"
-              top="100%"
-              backgroundColor="#232323"
-              flexDirection="column"
-              minWidth={170}
-              {...facingRight
+              flex={1}
+              justifyContent="center"
+              alignItems="center"
+              backgroundColor="#000"
+              opacity={0.5}
+              width="100%"
+              zIndex={10}
+            />
+          </TouchableWithoutFeedback>
+
+          <Box
+            position="absolute"
+            top={(
+              // TODO: improve positioning
+              buttonHeight + (
+                isIphoneX() ? 44 : 20
+              )
+            )}
+            backgroundColor="#232323"
+            flexDirection="column"
+            minWidth={170}
+            zIndex={10}
+            {...facingRight
                 ? { right: 0 }
                 : { left: 0 }
               }
-            >
-              {(
+          >
+            {(
                 items &&
                 items instanceof Array &&
                 items.length > 0
@@ -118,9 +140,8 @@ class Dropdown extends Component {
                   onPress={this.handleClose}
                 />
               )}
-            </Box>
-          )}
-        </Box>
+          </Box>
+        </Modal>
       </Fragment>
     );
   }

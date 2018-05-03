@@ -58,6 +58,7 @@
     "react-dom": "16.3.0-alpha.1",
     "react-helmet": "^5.2.0",
     "react-native": "0.54.0",
+    "react-native-iphone-x-helper": "^1.0.2",
     "react-native-material-menu": "^0.3.1",
     "react-native-modal-picker": "0.0.16",
     "react-native-modal-selector": "0.0.27",
