@@ -1,8 +1,13 @@
 /* eslint-disable new-cap */
+import { prefixedLog } from '../../utils';
 import { store } from '../../redux';
 import * as events from './events';
 
 class MessageHandler {
+  constructor() {
+    this.log = prefixedLog( 'MessageHandler' );
+  }
+
   validMessageTypes = [
     'DATA_MSG',
     'CMD_MSG',
@@ -15,20 +20,6 @@ class MessageHandler {
     EVT_MSG: 'event_type',
   }
 
-  log( message, level = 'info' ) {
-    if ( level === 'info' )
-      console.info( `[MessageHandler] ${message}` );
-
-    else if ( level === 'error' )
-      console.error( `[MessageHandler] ${message}` );
-
-    else if ( level === 'warning' )
-      console.warn( `[MessageHandler] ${message}` );
-
-    else
-      console.log( `[MessageHandler] ${message}` ); // eslint-disable-line no-console
-  }
-
   onMessage = message => {
     if ( !message ) return;
 
@@ -36,7 +27,10 @@ class MessageHandler {
     const isValidMessage = this.validMessageTypes.includes( msg_type );
 
     if ( !isValidMessage ) {
-      this.log( `Ignoring message of type ${msg_type}. Must be one of the following: ${this.validMessageTypes.join( '|' )}` );
+      this.log(
+        `Ignoring message of type ${msg_type}. Must be one of the following: ${this.validMessageTypes.join( '|' )}`,
+        'warn'
+      );
       return;
     }
 
@@ -57,7 +51,7 @@ class MessageHandler {
     if ( !action ) {
       this.log(
         `Could not find action for type of '${eventType}'! (derived from message type '${msg_type}')`,
-        'warning'
+        'warn'
       );
 
       return;

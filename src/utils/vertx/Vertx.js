@@ -1,9 +1,14 @@
 import EventBus from 'vertx3-eventbus-client';
 import decodeToken from 'jwt-decode';
+import { prefixedLog } from '../../utils';
 import { store } from '../../redux';
 import * as actions from '../../redux/actions';
 
 class Vertx {
+  constructor() {
+    this.log = prefixedLog( 'Vertx' );
+  }
+
   static constants = {
     RECONNECT_TIMEOUT: 1500,
   }
@@ -24,20 +29,6 @@ class Vertx {
         ? state( this.state )
         : state,
     };
-  }
-
-  log( message, level = 'info' ) {
-    if ( level === 'info' )
-      console.info( `[Vertx] ${message}` );
-
-    else if ( level === 'error' )
-      console.error( `[Vertx] ${message}` );
-
-    else if ( level === 'warning' )
-      console.warn( `[Vertx] ${message}` );
-
-    else
-      console.log( `[Vertx] ${message}` ); // eslint-disable-line no-console
   }
 
   init( url, token ) {
@@ -107,7 +98,7 @@ class Vertx {
     const { reconnectTimeout } = this.state;
     const { RECONNECT_TIMEOUT } = this.constants;
 
-    this.log( 'Closed connection.' );
+    this.log( 'Closed connection.', 'warn' );
 
     if ( reconnectTimeout )
       clearInterval( reconnectTimeout );
@@ -163,7 +154,7 @@ class Vertx {
     this.log( 'Sending a message...' );
 
     if ( !connected ) {
-      this.log( 'Message not sent, not connected to Vertx.' );
+      this.log( 'Message not sent, not connected to Vertx.', 'warn' );
 
       this.pushToMessageQueue( message );
     }

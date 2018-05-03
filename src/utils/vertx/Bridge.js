@@ -1,6 +1,7 @@
 /* eslint-disable new-cap */
 import axios from 'axios';
 import config from '../../config';
+import { prefixedLog } from '../../utils';
 import Vertx from './Vertx';
 import MessageHandler from './MessageHandler';
 import * as events from './events';
@@ -8,6 +9,8 @@ import * as events from './events';
 class Bridge {
   constructor() {
     this.messageHandler = new MessageHandler();
+
+    this.log = prefixedLog( 'Bridge' );
   }
 
   initVertx( url, token ) {
@@ -20,24 +23,12 @@ class Bridge {
     Vertx.init( url, token );
   }
 
-  log( message, level = 'info' ) {
-    if ( level === 'info' )
-      console.info( `[Bridge] ${message}` );
-
-    else if ( level === 'error' )
-      console.error( `[Bridge] ${message}` );
-
-    else if ( level === 'warning' )
-      console.warn( `[Bridge] ${message}` );
-
-    else
-      console.log( `[Bridge] ${message}` ); // eslint-disable-line no-console
-  }
-
   sendAuthInit( token ) {
     this.log( 'Sending auth init...' );
 
-    axios.post( `${config.genny.host}/${config.genny.bridge.endpoints.events}/init?url=${window.location.origin}&hi`, {
+    const origin = window.location ? window.location.origin : 'http://localhost:3000';
+
+    axios.post( `${config.genny.host}/${config.genny.bridge.endpoints.events}/init?url=${origin}`, {
       method: 'POST',
       responseType: 'json',
       timeout: 30000,
