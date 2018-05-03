@@ -51,6 +51,14 @@ const imageLoaderConfiguration = {
   },
 };
 
+const styleLoaderConfiguration = {
+  test: /\.css$/,
+  use: [
+    { loader: 'style-loader' },
+    { loader: 'css-loader' },
+  ],
+};
+
 module.exports = {
   context: path.resolve( __dirname, 'src' ),
 
@@ -70,6 +78,7 @@ module.exports = {
     rules: [
       babelLoaderConfiguration,
       imageLoaderConfiguration,
+      styleLoaderConfiguration,
     ],
   },
 
