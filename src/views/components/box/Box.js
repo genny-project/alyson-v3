@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { any, oneOf, oneOfType, string, number, array, func } from 'prop-types';
 
 const Box = ({
@@ -69,6 +69,9 @@ const Box = ({
     zIndex,
     transform,
     opacity,
+  };
+
+  const webStyle = Platform.OS !== 'web' ? {} : {
     transitionDuration,
     transitionProperty,
     transitionTimingFunction,
@@ -78,7 +81,10 @@ const Box = ({
   return (
     <View
       {...restProps}
-      style={style}
+      style={[
+        style,
+        webStyle,
+      ]}
     >
       {children}
     </View>
@@ -129,10 +135,16 @@ Box.propTypes = {
   position: oneOf(
     ['fixed', 'absolute', 'relative', 'static']
   ),
-  top: number,
-  right: number,
+  top: oneOfType(
+    [number, string]
+  ),
+  right: oneOfType(
+    [number, string]
+  ),
   bottom: number,
-  left: number,
+  left: oneOfType(
+    [number, string]
+  ),
   zIndex: number,
   transform: array,
   transitionDuration: string,
