@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withNavigation } from 'react-navigation';
 import { object } from 'prop-types';
+import { connect } from 'react-redux';
 import config from '../../../../config';
 import { Button, Box, Heading } from '../../../components';
 import { LayoutConsumer } from '../../../layout';
@@ -8,6 +9,8 @@ import { LayoutConsumer } from '../../../layout';
 class HeaderLeft extends Component {
   static propTypes = {
     navigation: object,
+    baseEntities: object,
+    aliases: object,
   }
 
   handleToggleMenu = () => {
@@ -29,8 +32,10 @@ class HeaderLeft extends Component {
   }
 
   render() {
+    const { baseEntities, aliases } = this.props;
     const { index, routes } = this.props.navigation.state;
     const { routeName } = routes[index];
+    const projectAttributes = baseEntities.attributes[aliases.PROJECT];
 
     return (
       <LayoutConsumer>
@@ -71,7 +76,13 @@ class HeaderLeft extends Component {
                 routeName !== 'home'
               )
                 ? layout.title
-                : config.app.name}
+                : (
+                  projectAttributes &&
+                  projectAttributes.PRI_NAME &&
+                  projectAttributes.PRI_NAME.valueString
+                ) || (
+                  config.app.name
+                )}
             </Heading>
           </Box>
         )}
@@ -80,4 +91,13 @@ class HeaderLeft extends Component {
   }
 }
 
-export default withNavigation( HeaderLeft );
+export { HeaderLeft };
+
+const mapStateToProps = state => ({
+  baseEntities: state.vertx.baseEntities,
+  aliases: state.vertx.aliases,
+});
+
+export default withNavigation(
+  connect( mapStateToProps )( HeaderLeft )
+);
