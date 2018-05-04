@@ -151,6 +151,19 @@ class KeycloakProvider extends Component {
       this.checkCallback();
   }
 
+  componentDidUpdate( prevProps, prevState ) {
+    if (
+      !prevState.accessToken &&
+      this.state.accessToken
+    ) {
+      store.dispatch(
+        actions.attemptAuthSuccess({
+          accessToken: this.state.accessToken,
+        })
+      );
+    }
+  }
+
   componentWillUnmount() {
     if ( this.state.refreshTimer )
       clearInterval( this.state.refreshTimer );
@@ -193,12 +206,6 @@ class KeycloakProvider extends Component {
         });
 
         this.startTokenRefresh();
-
-        store.dispatch(
-          actions.attemptAuthSuccess({
-            accessToken: accessTokenHasExpired ? null : accessToken,
-          })
-        );
       }
 
       if ( this.state.resolve )
@@ -304,7 +311,7 @@ class KeycloakProvider extends Component {
   }
 
   handleAuthSuccess = async code => {
-    await this.asyncSetState({
+    this.setState({
       isAuthenticating: false,
       isAuthenticated: true,
     });
@@ -316,10 +323,6 @@ class KeycloakProvider extends Component {
 
       this.setState({ promise: null });
     }
-
-    store.dispatch(
-      actions.attemptAuthSuccess( code )
-    );
   }
 
   startTokenRefresh( code ) {
