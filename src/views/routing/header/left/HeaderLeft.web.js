@@ -7,6 +7,8 @@ import config from '../../../../config';
 import { Link, Button, Box, Heading } from '../../../components';
 import { toggleSidebar } from '../../../../redux/actions';
 
+const LOADING_TEXT_DURATION = 1000;
+
 class HeaderLeft extends Component {
   static propTypes = {
     toggleSidebar: func,
@@ -22,10 +24,17 @@ class HeaderLeft extends Component {
     this.startProjectNameTimer();
   }
 
+  componentWillUnmount() {
+    if ( this.timer != null )
+     clearTimeout( this.timer );
+  }
+
   startProjectNameTimer() {
-    setTimeout(() => {
-      this.setState({ showLoadingText: false });
-    }, 1000 );
+    this.timer = setTimeout(() => {
+      this.setState({
+        showLoadingText: false,
+      });
+    }, LOADING_TEXT_DURATION );
   }
 
   render() {
