@@ -20,6 +20,8 @@ const reducer = ( state = initialState, { type, payload }) => { // eslint-disabl
      * want to separate the actual base entity attributes into its own property, as stated below.
      *
      * The `attributes` property in the reducer refers to the actual attributes of the base entity.
+     *
+     * TODO: explain `links`
      */
     case 'BASE_ENTITY_MESSAGE':
       return {
@@ -30,6 +32,8 @@ const reducer = ( state = initialState, { type, payload }) => { // eslint-disabl
           ...payload.items.reduce(( resultant, current ) => {
             /* Shortcut to remove properties inside the `current` object. */
             const { baseEntityAttributes, ...wantedData } = current; // eslint-disable-line no-unused-vars
+
+            wantedData.links = wantedData.links.map( link => link.link.linkValue );
 
             resultant[current.code] = wantedData;
 
@@ -49,6 +53,20 @@ const reducer = ( state = initialState, { type, payload }) => { // eslint-disabl
 
               resultant[current.code] = baseEntityAttributes;
             }
+
+            return resultant;
+          }, {}),
+        },
+
+        links: {
+          ...state.links,
+          ...payload.items.reduce(( resultant, current ) => {
+            current.links.forEach( link => {
+              resultant[link.link.linkValue] = ({
+                ...state.links[link.link.linkValue],
+                [link.link.targetCode]: link,
+              });
+            });
 
             return resultant;
           }, {}),
