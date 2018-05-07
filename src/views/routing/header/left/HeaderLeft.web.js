@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { func, object } from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import dlv from 'dlv';
 import config from '../../../../config';
 import { Link, Button, Box, Heading } from '../../../components';
 import { toggleSidebar } from '../../../../redux/actions';
@@ -13,9 +14,25 @@ class HeaderLeft extends Component {
     aliases: object,
   }
 
+  state = {
+    showLoadingText: true,
+  }
+
+  componentDidMount() {
+    this.startProjectNameTimer();
+  }
+
+  startProjectNameTimer() {
+    setTimeout(() => {
+      this.setState({ showLoadingText: false });
+    }, 1000 );
+  }
+
   render() {
     const { toggleSidebar, baseEntities, aliases } = this.props;
-    const projectAttributes = baseEntities.attributes[aliases.PROJECT];
+    const { showLoadingText } = this.state;
+    const projectAlias = dlv( aliases, 'PROJECT' );
+    const projectName = dlv( baseEntities, `attributes.${projectAlias}.PRI_NAME.valueString` );
 
     return (
       <Box
@@ -36,12 +53,10 @@ class HeaderLeft extends Component {
             marginY={0}
             color="white"
           >
-            {(
-              projectAttributes &&
-              projectAttributes.PRI_NAME &&
-              projectAttributes.PRI_NAME.valueString
-            ) || (
-              config.app.name
+            {projectName || (
+              showLoadingText
+                ? 'Loading...'
+                : config.app.name
             )}
           </Heading>
         </Link>
