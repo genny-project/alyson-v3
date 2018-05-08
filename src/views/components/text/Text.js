@@ -7,13 +7,6 @@ const Text = ({
   children,
   color = 'black',
   decoration = 'none',
-  margin,
-  marginX,
-  marginY = 0,
-  marginTop,
-  marginRight,
-  marginBottom,
-  marginLeft,
   fontWeight,
   height,
   size = 'sm',
@@ -30,15 +23,9 @@ const Text = ({
 
   const style = {
     textDecorationLine: decoration,
-    margin,
-    marginHorizontal: marginX,
-    marginVertical: marginY,
-    marginTop,
-    marginRight,
-    marginBottom,
-    marginLeft,
     fontWeight,
     height,
+    fontSize: textSizes[size],
   };
 
   return (
@@ -46,7 +33,6 @@ const Text = ({
       {...restProps}
       style={[
         styles[color],
-        { fontSize: textSizes[size] },
         style,
       ]}
     >
@@ -56,7 +42,6 @@ const Text = ({
 };
 
 Text.propTypes = {
-  children: string,
   color: oneOf(
     ['white', 'black', 'red', 'blue', 'green']
   ),
@@ -73,6 +58,9 @@ Text.propTypes = {
   fontWeight: string,
   size: string,
   height: oneOfType(
+    [number, string]
+  ),
+  children: oneOfType(
     [number, string]
   ),
 };

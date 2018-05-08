@@ -11,6 +11,10 @@ export { default as Heading } from './heading';
 export { default as Input } from './input';
 export { default as Dropdown } from './dropdown';
 export { default as PopupMenu } from './popup-menu';
+export { default as Ratings } from './ratings';
+export { default as Date } from './date';
+export { default as Currency } from './currency';
+export { default as Address } from './address';
 
 export * from './keycloak';
 export * from './vertx';

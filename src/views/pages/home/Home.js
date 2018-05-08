@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { object } from 'prop-types';
-import { Text, Button, Link, Box, KeycloakConsumer } from '../../components';
+import { Text, Button, Link, Box, KeycloakConsumer, Date } from '../../components';
 import Layout from '../../layout';
 
 class Home extends Component {
@@ -30,7 +30,7 @@ class Home extends Component {
         >
           <Text>Home</Text>
 
-          <Link to="logout">
+          <Link to="generic">
             <Button color="red">
               Logout
             </Button>
@@ -49,6 +49,10 @@ class Home extends Component {
           {isFetchingToken && (
             <Text>Fetching token...</Text>
           )}
+
+          <Date>
+            {new Date()}
+          </Date>
         </Box>
       </Layout>
     );

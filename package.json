@@ -54,6 +54,7 @@
     "expo": "^26.0.0",
     "jwt-decode": "^2.2.0",
     "lodash.range": "^3.2.0",
+    "moment": "^2.22.1",
     "prop-types": "^15.6.1",
     "react": "16.3.0-alpha.1",
     "react-dom": "16.3.0-alpha.1",
