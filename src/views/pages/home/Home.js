@@ -49,10 +49,6 @@ class Home extends Component {
           {isFetchingToken && (
             <Text>Fetching token...</Text>
           )}
-
-          <Date>
-            {new Date()}
-          </Date>
         </Box>
       </Layout>
     );

@@ -10,11 +10,7 @@ const Date = ({
   ...restProps
 }) => (
   <Text {...restProps}>
-    {formatDate(
-      children,
-      format,
-      options,
-    )}
+    {formatDate( children, format, options )}
   </Text>
 );
 

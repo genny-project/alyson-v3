@@ -1,12 +1,12 @@
 import React from 'react';
-import { TextInput } from 'react-native';
+import { TextInput, Platform } from 'react-native';
 import { string, oneOf, number, shape, bool, func } from 'prop-types';
 import { Box, Icon } from '../../../components';
 import styles from './InputText.style';
 
 const InputText = ({
   autoCapitalize = 'sentences',
-  autoComplete = true,
+  autoComplete = 'no',
   autoCorrect = true,
   autoFocus = false,
   blurOnSubmit = true,
@@ -58,6 +58,14 @@ const InputText = ({
     : warning ? 'yellow'
     : 'grey';
 
+  const nativeProps = {
+    onLayout,
+  };
+
+  const webProps = {
+
+  };
+
   return (
     <Box
       position="relative"
@@ -78,7 +86,6 @@ const InputText = ({
         onChange={onChange}
         onFocus={onFocus}
         onKeyPress={onKeyPress}
-        onLayout={onLayout}
         onSelectionChange={onSelectionChange}
         onSubmitEditing={onSubmitEditing}
         placeholder={placeholder}
@@ -97,6 +104,11 @@ const InputText = ({
         ]}
         value={value}
         underlineColorAndroid="transparent"
+        {...Platform.select({
+          ios: nativeProps,
+          android: nativeProps,
+          web: webProps,
+        })}
       />
 
       {icon && (

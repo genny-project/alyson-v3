@@ -4,4 +4,4 @@ export { default as Api } from './api';
 export { default as prefixedLog } from './prefixed-log';
 
 export * from './vertx';
-export * from './format-text';
+export * from './format';
