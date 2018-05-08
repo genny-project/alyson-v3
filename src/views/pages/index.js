@@ -8,3 +8,4 @@ export { default as Chat } from './chat';
 export { default as Alerts } from './alerts';
 export { default as Profile } from './profile';
 export { default as Settings } from './settings';
+export { default as Generic } from './generic';

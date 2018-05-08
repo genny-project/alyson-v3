@@ -15,6 +15,7 @@ export { default as Ratings } from './ratings';
 export { default as Date } from './date';
 export { default as Currency } from './currency';
 export { default as Address } from './address';
+export { default as LayoutLoader } from './layout-loader';
 
 export * from './keycloak';
 export * from './vertx';

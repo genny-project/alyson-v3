@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { object } from 'prop-types';
-import { Text, Button, Link, Box, KeycloakConsumer, Date } from '../../components';
+import { Text, Button, Link, Box, KeycloakConsumer } from '../../components';
 import Layout from '../../layout';
 
 class Home extends Component {
@@ -30,7 +30,13 @@ class Home extends Component {
         >
           <Text>Home</Text>
 
-          <Link to="generic">
+          <Link to="profile/:id">
+            <Button color="blue">
+              Generic page
+            </Button>
+          </Link>
+
+          <Link to="logout">
             <Button color="red">
               Logout
             </Button>

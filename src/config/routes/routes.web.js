@@ -4,11 +4,6 @@ import * as Pages from '../../views/pages';
 
 const routes = [
   {
-    path: '/',
-    component: Pages.Home,
-    exact: true,
-  },
-  {
     path: '/login',
     component: Pages.Login,
   },
@@ -37,20 +32,8 @@ const routes = [
     component: Pages.Loading,
   },
   {
-    path: '/alerts',
-    component: Pages.Alerts,
-  },
-  {
-    path: '/profile',
-    component: Pages.Profile,
-  },
-  {
-    path: '/chat',
-    component: Pages.Chat,
-  },
-  {
-    path: '/settings',
-    component: Pages.Settings,
+    path: '*',
+    component: Pages.Generic,
   },
 ];
 
