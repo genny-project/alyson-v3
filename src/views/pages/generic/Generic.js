@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Platform } from 'react-native';
+import { object } from 'prop-types';
 import { location } from '../../../utils';
 import { LayoutLoader } from '../../components';
 
@@ -125,16 +127,23 @@ const layouts = {
   },
 };
 
-class Genny extends Component {
+class Generic extends Component {
+  static propTypes = {
+    navigation: object,
+  }
+
   render() {
-    const base = location.getBasePath();
+    const layout =
+      Platform.OS === 'web'
+        ? location.getBasePath()
+        : this.props.navigation.state.params.layout;
 
     return (
       <LayoutLoader
-        layout={layouts[base]}
+        layout={layouts[layout]}
       />
     );
   }
 }
 
-export default Genny;
+export default Generic;

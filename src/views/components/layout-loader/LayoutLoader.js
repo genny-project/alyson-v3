@@ -47,6 +47,9 @@ class LayoutLoader extends PureComponent {
 
     console.log({ layout }); // eslint-disable-line no-console
 
+    if ( !layout )
+      return <Text>No layout specified</Text>;
+
     return (
       <Layout {...layout.layout}>
         {layout.children && (

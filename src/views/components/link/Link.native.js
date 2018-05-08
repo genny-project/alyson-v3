@@ -2,6 +2,7 @@ import React, { cloneElement } from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { any, bool, func, string, object } from 'prop-types';
+import { routes } from '../../../config';
 
 const Link = ({
   children = 'Link',
@@ -15,7 +16,15 @@ const Link = ({
   const handlePress = event => {
     if ( disabled ) return;
 
-    navigation.navigate( to );
+    if ( routes[to] )
+      navigation.navigate( to );
+    else {
+      navigation.navigate({
+        routeName: 'generic',
+        params: { layout: to },
+        key: to,
+      });
+    }
 
     if ( onPress )
       onPress( event );

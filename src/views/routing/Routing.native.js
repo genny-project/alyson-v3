@@ -3,18 +3,19 @@ import React from 'react';
 import { DrawerNavigator, StackNavigator, SwitchNavigator } from 'react-navigation';
 import CardStackStyleInterpolator from 'react-navigation/src/views/CardStack/CardStackStyleInterpolator';
 import * as Pages from '../../views/pages';
+import { routes } from '../../config';
 import Sidebar from './sidebar';
 import Header from './header';
 
 const AuthenticatedStack = StackNavigator({
-  home: Pages.Home,
-  logout: Pages.Logout,
-  alerts: Pages.Alerts,
-  profile: Pages.Profile,
-  chat: Pages.Chat,
-  settings: Pages.Settings,
+  ...routes,
+  generic: Pages.Generic,
 }, {
-  initialRouteName: 'home',
+  initialRouteName: 'generic',
+  initialRouteParams: {
+    layout: 'home',
+    test: true,
+  },
   navigationOptions: props => ({
     header: <Header {...props} />,
   }),
