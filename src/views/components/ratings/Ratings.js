@@ -13,10 +13,10 @@ const Ratings = ({
         key={i}
         name={(
           rating >= i
-          ? 'star'
-          : rating - 0.5 >= i
-            ? 'star_half'
-            : 'star_border'
+            ? 'star'
+            : rating - 0.5 >= i
+              ? 'star_half'
+              : 'star_border'
         )}
       />
     ))
