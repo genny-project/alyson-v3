@@ -41,6 +41,16 @@ const InputText = ({
   warning = false,
   icon,
 }) => {
+  const status =
+    error ? styles.error
+    : success ? styles.success
+    : warning ? styles.warning
+    : styles.default;
+
+  const hasIconStyle = icon
+    ? styles.inputWithIcon
+    : {};
+
   const inputStyle = {
     margin,
     marginHorizontal: marginX,
@@ -97,10 +107,8 @@ const InputText = ({
         style={[
           styles.input,
           inputStyle,
-          ...error && styles.error,
-          ...success && styles.success,
-          ...warning && styles.warning,
-          ...icon && styles.inputWithIcon,
+          status,
+          hasIconStyle,
         ]}
         value={value}
         underlineColorAndroid="transparent"

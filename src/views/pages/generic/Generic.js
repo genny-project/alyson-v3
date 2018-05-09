@@ -22,8 +22,7 @@ const layouts = {
         },
         children: [
           {
-            component: 'Text',
-            children: 'Home',
+            component: 'Form',
           },
         ],
       },

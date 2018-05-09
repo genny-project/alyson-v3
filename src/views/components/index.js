@@ -17,6 +17,7 @@ export { default as Currency } from './currency';
 export { default as Address } from './address';
 export { default as LayoutLoader } from './layout-loader';
 export { default as Timeout } from './timeout';
+export { default as Form } from './form';
 
 export * from './keycloak';
 export * from './vertx';
