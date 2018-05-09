@@ -18,6 +18,7 @@ const InputText = ({
   multiline = false,
   onBlur,
   onChange,
+  onChangeText,
   onFocus,
   onKeyPress,
   onLayout,
@@ -94,6 +95,7 @@ const InputText = ({
         multiline={multiline}
         onBlur={onBlur}
         onChange={onChange}
+        onChangeText={onChangeText}
         onFocus={onFocus}
         onKeyPress={onKeyPress}
         onSelectionChange={onSelectionChange}
@@ -155,6 +157,7 @@ InputText.propTypes = {
   multiline: bool,
   onBlur: func,
   onChange: func,
+  onChangeText: func,
   onFocus: func,
   onKeyPress: func,
   onLayout: func,
