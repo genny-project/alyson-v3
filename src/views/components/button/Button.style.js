@@ -16,6 +16,9 @@ const styles = StyleSheet.create({
   transparent: {
     backgroundColor: 'transparent',
   },
+  disabled: {
+    backgroundColor: 'lightgrey',
+  },
 });
 
 export default styles;

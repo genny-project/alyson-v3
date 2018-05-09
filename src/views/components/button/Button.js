@@ -1,5 +1,5 @@
 import React, { createElement } from 'react';
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { TouchableOpacity, TouchableWithoutFeedback, TouchableNativeFeedback, Platform } from 'react-native';
 import { string, bool, func, oneOf, number } from 'prop-types';
 import Text from '../text';
 import Icon from '../icon';
@@ -17,6 +17,9 @@ const Button = ({
   padding,
   paddingX = 15,
   paddingY = 10,
+  accessible = true,
+  accessibilityLabel,
+  accessibilityRole = 'button',
 }) => {
   const textColors = {
     red: 'white',
@@ -24,6 +27,7 @@ const Button = ({
     blue: 'white',
     white: 'black',
     transparent: 'black',
+    disabled: 'white',
   };
 
   const textSizes = {
@@ -51,12 +55,21 @@ const Button = ({
   );
 
   return createElement(
-    silent ? TouchableWithoutFeedback : TouchableOpacity,
+    silent
+      ? TouchableWithoutFeedback
+      : (
+        Platform.OS === 'android'
+          ? TouchableNativeFeedback
+          : TouchableOpacity
+      ),
     {
       disabled,
       onPress,
+      accessible,
+      accessibilityLabel,
+      accessibilityRole,
       style: [
-        styles[color],
+        disabled ? styles.disabled : styles[color],
         {
           padding,
           paddingHorizontal: paddingX,
@@ -86,6 +99,9 @@ Button.propTypes = {
   padding: number,
   paddingX: number,
   paddingY: number,
+  accessibilityLabel: string,
+  accessibilityRole: string,
+  accessible: bool,
 };
 
 export default Button;

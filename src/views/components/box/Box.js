@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Platform } from 'react-native';
-import { any, oneOf, oneOfType, string, number, array, func } from 'prop-types';
+import { any, oneOf, oneOfType, string, number, array, func, bool } from 'prop-types';
 
 const Box = ({
   children,
@@ -37,6 +37,9 @@ const Box = ({
   transitionTimingFunction,
   transitionDelay,
   opacity,
+  accessible,
+  accessibilityRole,
+  accessibilityLabel,
   ...restProps
 }) => {
   const style = {
@@ -81,6 +84,9 @@ const Box = ({
   return (
     <View
       {...restProps}
+      accessible={accessible}
+      accessibilityRole={accessibilityRole}
+      accessibilityLabel={accessibilityLabel}
       style={[
         style,
         webStyle,
@@ -153,6 +159,9 @@ Box.propTypes = {
   transitionDelay: string,
   opacity: number,
   onPress: func,
+  accessible: bool,
+  accessibilityRole: string,
+  accessibilityLabel: string,
 };
 
 export default Box;

@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { Formik } from 'formik';
 import { Input, Box, Text, Button } from '../index';
@@ -13,13 +13,25 @@ class Form extends Component {
   doValidate = values => {
     const errors = {};
 
-    if ( !values.firstName )
+    if (
+      !values.firstName ||
+      values.firstName.length < 3
+    ) {
       errors.firstName = 'First name is required!';
+    }
 
-    if ( !values.lastName )
+    if (
+      !values.lastName ||
+      values.lastName.length < 3
+    ) {
       errors.lastName = 'Last name is required!';
+    }
 
     return errors;
+  }
+
+  handleChange = ( field, setFieldValue ) => text => {
+    setFieldValue( field, text );
   }
 
   render() {
@@ -42,16 +54,19 @@ class Form extends Component {
           isValid,
           setFieldValue,
         }) => (
-          <Fragment>
+          <Box
+            flexDirection="column"
+          >
             <Input
               type="text"
               placeholder="e.g. John"
               label="First name"
               icon="person"
               error={touched.firstName && errors.firstName}
-              onChangeText={text => setFieldValue( 'firstName', text )}
+              onChangeText={this.handleChange( 'firstName', setFieldValue )}
               onBlur={handleBlur}
               value={values.firstName}
+              disabled={isSubmitting}
             />
 
             {(
@@ -65,10 +80,11 @@ class Form extends Component {
               type="text"
               placeholder="e.g. Smith"
               icon="group"
-              error={touched && errors.lastName}
-              onChangeText={text => setFieldValue( 'lastName', text )}
+              error={touched.lastName && errors.lastName}
+              onChangeText={this.handleChange( 'lastName', setFieldValue )}
               onBlur={handleBlur}
               value={values.lastName}
+              disabled={isSubmitting}
             />
 
             {(
@@ -79,7 +95,7 @@ class Form extends Component {
             )}
 
             <Button
-              disabled={!isValid}
+              disabled={!isValid || isSubmitting}
               color="green"
               onPress={handleSubmit}
             >
@@ -92,7 +108,7 @@ class Form extends Component {
                 <Text>Submitting...</Text>
               </Box>
             )}
-          </Fragment>
+          </Box>
         )}
       </Formik>
     );
