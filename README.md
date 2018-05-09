@@ -1,3 +1,13 @@
+## Installation
+
+1. `npm install` - Install the dependencies
+2. `npm run start-web` - Run the web project on `locahost:3000`
+3. `npm run start-native` - Start the native project on Expo
+    - Press `i` to run on an iOS simulator
+    - Press `a` to run on an Android simulator or device (if setup)
+
+---
+
 This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app).
 
 Below you'll find information about performing common tasks. The most recent version of this guide is available [here](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/README.md).
