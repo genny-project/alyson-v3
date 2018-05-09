@@ -48,13 +48,16 @@ class Form extends Component {
               placeholder="e.g. John"
               label="First name"
               icon="person"
-              error={touched && errors.firstName}
+              error={touched.firstName && errors.firstName}
               onChangeText={text => setFieldValue( 'firstName', text )}
               onBlur={handleBlur}
               value={values.firstName}
             />
 
-            {errors.firstName && (
+            {(
+              touched.firstName &&
+              errors.firstName
+            ) && (
               <Text color="red">{errors.firstName}</Text>
             )}
 
@@ -68,7 +71,10 @@ class Form extends Component {
               value={values.lastName}
             />
 
-            {errors.lastName && (
+            {(
+              touched.lastName &&
+              errors.lastName
+            ) && (
               <Text color="red">{errors.lastName}</Text>
             )}
 
