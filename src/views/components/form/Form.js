@@ -54,8 +54,8 @@ class Form extends Component {
               value={values.firstName}
             />
 
-            {errors.fistName && (
-              <Text color="red">{errors.fistName}</Text>
+            {errors.firstName && (
+              <Text color="red">{errors.firstName}</Text>
             )}
 
             <Input
