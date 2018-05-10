@@ -21,9 +21,9 @@ const query = [
     query: {
       team: 'Pleased Property',
     },
-  },
-  {
-    operator: 'count',
+    projection: {
+      name: true,
+    },
   },
 ];
 
