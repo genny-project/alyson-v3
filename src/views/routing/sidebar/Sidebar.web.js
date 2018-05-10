@@ -67,6 +67,10 @@ Sidebar.propTypes = {
   headerImage: string,
 };
 
+Sidebar.defaultProps = {
+  headerImage: ' ',
+};
+
 export { Sidebar };
 
 const mapStateToProps = state => ({
