@@ -17,6 +17,14 @@ class DataQuery {
 
     /* Apply each of the operators to the data */
     query.forEach( q => {
+      if ( q.as ) {
+        output = {
+          ...output,
+          [q.as]: Operators[q.operator]( output, q ),
+        };
+        return;
+      }
+
       output = Operators[q.operator]( output, q );
     });
 

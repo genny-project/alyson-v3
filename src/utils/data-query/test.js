@@ -50,14 +50,6 @@ const query = [
         },
       },
     },
-    projection: {
-      name: true,
-    },
-  },
-  {
-
-    operator: 'distinct',
-    field: 'name',
   },
 ];
 
