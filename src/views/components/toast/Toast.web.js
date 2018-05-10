@@ -11,61 +11,30 @@ const Toast = ({
     return (
 
       <View
-        style={toastType === 'primary' ? styles.primary 
-        : toastType === 'error' ? styles.error 
-        :  toastType === 'warning' ? styles.warning 
-        : toastType === 'success' ? styles.success : styles.primary}
+        style={
+            toastType === 'primary' ?
+            styles.primary : toastType === 'error' ? 
+            styles.error :  toastType === 'warning' ? 
+            styles.warning : toastType === 'success' ? 
+            styles.success : styles.primary
+           }
       >
-        <View
-          style={
-          {
-              color:'white',
-              margin:'0 auto',
-              display: 'flex',
-              flexFlow: 'row nowrap',
-              justifyContent: 'space-around',
-              alignItems: 'center',
-            }
-        }
-        > 
+        <View style={styles.wrapper} > 
 
           <Icon
-            name={toastType === 'primary' ? 'done'
-      : toastType === 'success' ? 'check_circle_outline'
-      : toastType === 'warning' ? 'warning'
-      : toastType === 'error' ? 'error'
-      : 'done'}
-            style={
-          {
-            display:'flex',
-            flexDirection:'column',
-            justifyContent:'center',
-            border:'1px solid red',
-            padding:'0 10px',
-            flexShrink: 0,
-          }
-        }
+            name={
+                toastType === 'primary' ? 'done'
+                : toastType === 'success' ? 'check_circle_outline'
+                : toastType === 'warning' ? 'warning'
+                : toastType === 'error' ? 'error'
+                : 'done'
+             }
+            style={styles.iconCustom}
           />
           <View
-            style={{
-            flexBasis : 100,
-            width:'80%',
-        }}
+            style={styles.textWrapperCustom}
           >
-            <Text
-              style={
-            {
-                display:'flex',
-                flexDirection:'column',
-                justifyContent:'center',
-                padding:'0 10px',
-                alignContent: 'center',
-                flexGrow: 0,
-                textAlign: 'left',
-                lineHeight:'1.6em',
-            }
-        }
-            >
+            <Text style={styles.textCustom}>
               {text}
             </Text>
           </View>
