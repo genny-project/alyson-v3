@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import { string, bool, array, number, oneOf } from 'prop-types';
+import { string, bool, array, number, oneOf, any } from 'prop-types';
 import { Box, Text, Icon } from '../../components';
 
 class BucketList extends Component {
   static defaultProps = {
-    items: [],
     color: 'success',
-    gutter: 10,
     contentPadding: 10,
     contentBackground: 'grey',
     showHeader: true,
@@ -22,11 +20,11 @@ class BucketList extends Component {
     legendPadding: 10,
     legendMargin: 10,
     legendColor: 'black',
+    roundCorners: true,
   }
 
   static propTypes = {
-    items: array,
-    gutter: number,
+    children: any,
     contentPadding: number,
     color: oneOf(
       ['warning', 'success', 'error']
@@ -45,15 +43,15 @@ class BucketList extends Component {
     legendPadding: number,
     legendMargin: number,
     legendColor: string,
+    roundCorners: bool,
   }
 
   render() {
     const {
-      items,
+      children,
       color,
       contentBackground,
       contentPadding,
-      gutter,
       showHeader,
       headerText,
       headerIcon,
@@ -67,6 +65,7 @@ class BucketList extends Component {
       legendPadding,
       legendMargin,
       legendColor,
+      roundCorners,
     } = this.props;
     
     const statusColors = { 
@@ -110,11 +109,10 @@ class BucketList extends Component {
                 color={headerColor}
               >
                 {headerText} ({(
-                  items &&
-                  items instanceof Array &&
-                  items.length > 0 
+                  children &&
+                  children.length > 0 
                 ) ? (
-                  `${items.length}`
+                  `${children.length}`
                 ) : (
                   '0'
                 )})
@@ -129,34 +127,11 @@ class BucketList extends Component {
           padding={contentPadding}
         >
           {(
-            items &&
-            items instanceof Array &&
-            items.length > 0 
+            children &&
+            children.length > 0 
           ) ? (
-            items.map(( item, index ) => {
-              return (
-                <Box
-                  key={item && item.id}
-                  alignItems='center'
-                  justifyContent='center'
-                  width='100%'
-                  height={200}
-                  backgroundColor='red'
-                  marginBottom={
-                    index < items.length - 1 ?
-                    gutter :
-                    null
-                  }
-                >
-                  {(
-                    item &&
-                    item.content &&
-                    (
-                      <Text>{item.content}</Text>
-                    )
-                  )}
-                </Box>
-              );
+            children.map(( child ) => {
+              return ( child );
             })
           ) : (
             <Text>
@@ -185,7 +160,7 @@ class BucketList extends Component {
                 justifyContent='center'
                 width='100%'
                 backgroundColor={legendBackground}
-                borderRadius={5}
+                borderRadius={roundCorners ? 5 : 0}
                 padding={legendPadding}
               >
                 <Box
