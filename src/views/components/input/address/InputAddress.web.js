@@ -23,7 +23,7 @@ class InputAddress extends Component {
       administrative_area_level_1: 'state',
     },
     injectCustomAddressComponents: {
-      street_name: '{{street_number}} {{street_name}}',
+      street_address: '{{street_number}} {{street_name}}',
     },
   }
 
