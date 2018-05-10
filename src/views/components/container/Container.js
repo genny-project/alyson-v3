@@ -3,7 +3,6 @@ import { any, string } from 'prop-types';
 import Box from '../box';
 
 const Container = ({
-
   children,
   size = 'sm',
 }) => {
