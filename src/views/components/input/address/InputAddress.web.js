@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { func, number, object } from 'prop-types';
 import debounce from 'lodash.debounce';
-import { Input } from '../../index';
+import { Input, GoogleConsumer } from '../../index';
 
 class InputAddress extends Component {
   static defaultProps = {
@@ -13,13 +13,14 @@ class InputAddress extends Component {
     inputProps: object,
     onChange: func,
     debounceTimer: number,
+    google: object,
   }
 
   constructor( props ) {
     super( props );
 
-    this.fetchAddresses = debounce(
-      this.fetchAddresses,
+    this.autocompleteAddress = debounce(
+      this.autocompleteAddress,
       this.props.debounceTimer
     );
   }
@@ -30,8 +31,28 @@ class InputAddress extends Component {
     error: null,
   }
 
-  fetchAddresses = address => {
-    console.log( 'fetching addresses...', address ); // eslint-disable-line no-console
+  autocompleteAddress = async address => {
+    const { google } = this.props;
+
+    try {
+      const items = await google.autocompleteAddress( address );
+
+      this.setState({ items });
+    }
+    catch ( error ) {
+      console.warn( error );
+    }
+  }
+
+  geocodeAddress = async address => {
+    const { google } = this.props;
+
+    try {
+      await google.geocodeAddress( address );
+    }
+    catch ( error ) {
+      console.warn( error );
+    }
   }
 
   handleChange = item => {
@@ -42,7 +63,7 @@ class InputAddress extends Component {
   }
 
   handleType = text => {
-    this.fetchAddresses( text );
+    this.autocompleteAddress( text );
   }
 
   render() {
@@ -60,9 +81,16 @@ class InputAddress extends Component {
           ...inputProps,
         }}
         onType={this.handleType}
+        itemStringKey="description"
       />
     );
   }
 }
 
-export default InputAddress;
+export default props => (
+  <GoogleConsumer>
+    {google => (
+      <InputAddress {...props} google={google} />
+    )}
+  </GoogleConsumer>
+);

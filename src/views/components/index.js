@@ -23,3 +23,4 @@ export { default as Label } from './label';
 
 export * from './keycloak';
 export * from './vertx';
+export * from './google';
