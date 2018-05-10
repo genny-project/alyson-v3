@@ -146,12 +146,13 @@ class GoogleProvider extends Component {
     const { apiUrl } = config.google.maps;
     const scriptTag = document.createElement( 'script' );
 
-    scriptTag.src = `${apiUrl}?${queryString.stringify({
+    const apiUrlQuery = queryString.stringify({
       key: apiKey,
       libraries: 'places',
       callback: initCallbackName,
-    })}`;
+    });
 
+    scriptTag.src = `${apiUrl}?${apiUrlQuery}`;
     scriptTag.async = true;
     scriptTag.id = scriptTagId;
 
