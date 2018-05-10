@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import { node, string } from 'prop-types';
+import queryString from 'query-string';
 import config from '../../../../config';
 import GoogleContext from '../context';
 
 class GoogleProvider extends Component {
   static defaultProps = {
     initCallbackName: '__googleProvider_initCallback__',
+    scriptTagId: '__script__google-maps',
   }
 
   static propTypes = {
     children: node,
     initCallbackName: string,
+    scriptTagId: string,
   }
 
   /* eslint-disable react/sort-comp */
@@ -131,20 +134,26 @@ class GoogleProvider extends Component {
   }
 
   injectGoogleMapsScript() {
-    const isAlreadyInjected = !!document.getElementById( '__script__google-maps' );
+    const { scriptTagId } = this.props;
+    const isAlreadyInjected = !!document.getElementById( scriptTagId );
 
     if ( isAlreadyInjected )
       throw new Error( 'Attempted to inject Google Maps script when the script has already been injected.' );
 
     const apiKey = 'AIzaSyC5HjeRqeoqbxHEQWieE0g9hLaN6snjorA'; // TODO: remove hardcode
 
+    const { initCallbackName } = this.props;
     const { apiUrl } = config.google.maps;
     const scriptTag = document.createElement( 'script' );
-    const { initCallbackName } = this.props;
 
-    scriptTag.src = `${apiUrl}?key=${apiKey}&libraries=places&callback=${initCallbackName}`;
+    scriptTag.src = `${apiUrl}?${queryString.stringify({
+      key: apiKey,
+      libraries: 'places',
+      callback: initCallbackName,
+    })}`;
+
     scriptTag.async = true;
-    scriptTag.id = '__script__google-maps';
+    scriptTag.id = scriptTagId;
 
     document.body.appendChild( scriptTag );
   }
