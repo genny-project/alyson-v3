@@ -40,6 +40,13 @@ const Box = ({
   accessible,
   accessibilityRole,
   accessibilityLabel,
+  borderTopWidth,
+  borderRightWidth,
+  borderBottomWidth,
+  borderLeftWidth,
+  borderWidth,
+  borderColor,
+  borderStyle,
   ...restProps
 }) => {
   const style = {
@@ -72,6 +79,13 @@ const Box = ({
     zIndex,
     transform,
     opacity,
+    borderTopWidth,
+    borderRightWidth,
+    borderBottomWidth,
+    borderLeftWidth,
+    borderWidth,
+    borderColor,
+    borderStyle,
   };
 
   const webStyle = Platform.OS !== 'web' ? {} : {
@@ -162,6 +176,13 @@ Box.propTypes = {
   accessible: bool,
   accessibilityRole: string,
   accessibilityLabel: string,
+  borderTopWidth: number,
+  borderRightWidth: number,
+  borderBottomWidth: number,
+  borderLeftWidth: number,
+  borderWidth: number,
+  borderColor: string,
+  borderStyle: string,
 };
 
 export default Box;

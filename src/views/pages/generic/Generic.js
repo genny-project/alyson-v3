@@ -22,7 +22,29 @@ const layouts = {
         },
         children: [
           {
-            component: 'Label',
+            component: 'Input',
+            props: {
+              type: 'autocomplete',
+              items: [
+                {
+                  name: 'One',
+                  value: 'one',
+                },
+                {
+                  name: 'Two',
+                  value: 'two',
+                },
+              ],
+            },
+          },
+          {
+            component: 'Input',
+            props: {
+              type: 'autocomplete',
+              items: [
+                'One', 'Two',
+              ],
+            },
           },
         ],
       },
