@@ -24,30 +24,7 @@ const layouts = {
           {
             component: 'Input',
             props: {
-              type: 'autocomplete',
-              items: [
-                {
-                  name: 'One',
-                  value: {
-                    text: 'one',
-                  },
-                },
-                {
-                  name: 'Two',
-                  value: {
-                    text: 'two',
-                  },
-                },
-              ],
-            },
-          },
-          {
-            component: 'Input',
-            props: {
-              type: 'autocomplete',
-              items: [
-                'One', 'Two',
-              ],
+              type: 'address',
             },
           },
         ],

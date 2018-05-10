@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { func, string, number, oneOfType, array, bool } from 'prop-types';
+import { func, string, number, oneOfType, array, bool, object } from 'prop-types';
 import Downshift from 'downshift';
 import { Text, Box, Input } from '../../index';
 
 class InputAutocomplete extends Component {
   static defaultProps = {
     inputType: 'text',
-    placeholder: 'Type here...',
     itemStringKey: 'name',
+    inputProps: {},
   }
 
   static propTypes = {
@@ -16,7 +16,6 @@ class InputAutocomplete extends Component {
     handleFilter: func,
     handleSort: func,
     inputType: string,
-    placeholder: string,
     value: oneOfType(
       [number, string]
     ),
@@ -28,6 +27,8 @@ class InputAutocomplete extends Component {
     items: array,
     borderBetweenItems: bool,
     onChange: func,
+    onType: func,
+    inputProps: object,
   }
 
   handleFilter = inputValue => dropdownItem => {
@@ -65,7 +66,7 @@ class InputAutocomplete extends Component {
   }
 
   render() {
-    const { inputType, items, itemStringKey, placeholder, borderBetweenItems } = this.props;
+    const { inputType, items, itemStringKey, borderBetweenItems, inputProps, onType } = this.props;
 
     return (
       <Downshift
@@ -96,11 +97,10 @@ class InputAutocomplete extends Component {
               position="relative"
             >
               <Input
-                {...getInputProps({
-                  placeholder,
-                })}
+                {...getInputProps( inputProps )}
                 type={inputType}
                 clearButtonMode="while-editing"
+                onChangeText={onType}
               />
 
               {isOpen && (

@@ -3,6 +3,7 @@ import { string } from 'prop-types';
 import Text from '../text';
 import InputText from './text';
 import InputAutocomplete from './autocomplete';
+import InputAddress from './address';
 
 const Input = props => {
   const { type } = props;
@@ -13,6 +14,9 @@ const Input = props => {
 
     case 'autocomplete':
       return <InputAutocomplete {...props} />;
+
+    case 'address':
+      return <InputAddress {...props} />;
 
     default:
       return <Text>Invalid type `{type}` specified in Input</Text>;
