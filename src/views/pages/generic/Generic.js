@@ -28,11 +28,15 @@ const layouts = {
               items: [
                 {
                   name: 'One',
-                  value: 'one',
+                  value: {
+                    text: 'one',
+                  },
                 },
                 {
                   name: 'Two',
-                  value: 'two',
+                  value: {
+                    text: 'two',
+                  },
                 },
               ],
             },

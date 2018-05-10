@@ -24,6 +24,7 @@ class InputAutocomplete extends Component {
       [number, string]
     ),
     itemStringKey: string,
+    itemValueKey: string,
     items: array,
     borderBetweenItems: bool,
     onChange: func,
@@ -137,7 +138,7 @@ class InputAutocomplete extends Component {
                           <TouchableOpacity
                             {...getItemProps({ item: idom })}
                             key={idom}
-                            onPress={() => selectItem( idom )}
+                            onPress={() => selectItem( item )}
                           >
                             <Box
                               {...( highlightedIndex === index ) && {
