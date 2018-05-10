@@ -18,6 +18,7 @@ export { default as Address } from './address';
 export { default as LayoutLoader } from './layout-loader';
 export { default as Timeout } from './timeout';
 export { default as Form } from './form';
+export { default as Container } from './container';
 
 export * from './keycloak';
 export * from './vertx';
