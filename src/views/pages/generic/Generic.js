@@ -22,7 +22,7 @@ const layouts = {
         },
         children: [
           {
-            component: 'Form',
+            component: 'Label',
           },
         ],
       },
