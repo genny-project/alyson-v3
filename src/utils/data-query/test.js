@@ -3,15 +3,40 @@ import DataQuery from './DataQuery';
 const data = [
   {
     name: 'Matt',
-    team: 'Pleased Property',
+    team: {
+      name: 'Pleased Property',
+      counts: {
+        staff: 3,
+      },
+      skills: [
+        { name: 'backend' }, { type: 'infrastructure' },
+      ],
+    },
   },
   {
     name: 'Callan',
-    team: 'Pleased Property',
+    team: {
+      name: 'Pleased Property',
+      counts: {
+        staff: 3,
+      },
+      skills: [
+        { name: 'frontend' },
+      ],
+    },
   },
   {
     name: 'Loris',
-    team: 'Genny',
+    team: {
+      name: 'Genny',
+      counts: {
+        staff: 12,
+        bob: 100,
+      },
+      skills: [
+        { name: 'frontend' }, { name: 'backend' }, { name: 'mobile' },
+      ],
+    },
   },
 ];
 
@@ -19,7 +44,11 @@ const query = [
   {
     operator: 'find',
     query: {
-      team: 'Pleased Property',
+      team: {
+        counts: {
+          staff: { $or: [{ $eq: 2 }, { $eq: 12 }] },
+        },
+      },
     },
     projection: {
       name: true,
