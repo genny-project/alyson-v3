@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { oneOf, string } from 'prop-types';
-import {Icon} from '../../components';
+import { Icon } from '../../components';
 import styles from './Toast.type';
 
 const Toast = ({
@@ -16,38 +16,44 @@ const Toast = ({
         :  toastType === 'warning' ? styles.warning 
         : toastType === 'success' ? styles.success : styles.primary}
       >
-      <View style={
+        <View
+          style={
           {
               color:'white',
               margin:'0 auto',
               display: 'flex',
               flexFlow: 'row nowrap',
               justifyContent: 'space-around',
-              alignItems: 'center'
+              alignItems: 'center',
             }
-        }> 
+        }
+        > 
 
-      <Icon name={toastType === 'primary' ? 'done'
+          <Icon
+            name={toastType === 'primary' ? 'done'
       : toastType === 'success' ? 'check_circle_outline'
       : toastType === 'warning' ? 'warning'
       : toastType === 'error' ? 'error'
       : 'done'}
-      style={
+            style={
           {
             display:'flex',
             flexDirection:'column',
             justifyContent:'center',
             border:'1px solid red',
             padding:'0 10px',
-            flexShrink: 0
+            flexShrink: 0,
           }
         }
-      />
-        <View style={{
+          />
+          <View
+            style={{
             flexBasis : 100,
-            width:'80%'
-        }}>
-        <Text style={
+            width:'80%',
+        }}
+          >
+            <Text
+              style={
             {
                 display:'flex',
                 flexDirection:'column',
@@ -56,13 +62,14 @@ const Toast = ({
                 alignContent: 'center',
                 flexGrow: 0,
                 textAlign: 'left',
-                lineHeight:'1.6em'
+                lineHeight:'1.6em',
             }
-        }>
-           {text}
-        </Text>
-    </View>
-      </View>
+        }
+            >
+              {text}
+            </Text>
+          </View>
+        </View>
       </View>
     );
 };

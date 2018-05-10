@@ -9,6 +9,7 @@ const base = {
         width:300,
         height:'auto',
         color : '#f9f3f3',
+
 };
 
 const toastTypes = StyleSheet.create({
