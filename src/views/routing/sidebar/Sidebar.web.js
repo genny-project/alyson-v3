@@ -1,15 +1,17 @@
 import React, { Fragment } from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
-import { object, func } from 'prop-types';
+import { object, func, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Box, ScrollView } from '../../components';
 import { sidebar as sidebarItems } from '../../../config';
 import { closeSidebar } from '../../../redux/actions';
 import SidebarMenu from './menu';
+import { Image } from 'react-native-web';
 
-const Sidebar = ({ sidebar, closeSidebar }) => (
-  <Fragment>
+const Sidebar = ({ sidebar, closeSidebar, headerImage }) => (
+  <Fragment>    
+
     <Box
       position="fixed"
       left={-300}
@@ -27,7 +29,12 @@ const Sidebar = ({ sidebar, closeSidebar }) => (
       <ScrollView
         paddingY={40}
         flex={1}
+        flexDirection
       >
+        <Image 
+          resizeMode="contain"
+          source={{ uri: headerImage, width: '100%', height: 200 }}
+        /> 
         <SidebarMenu
           items={sidebarItems}
         />
@@ -57,6 +64,7 @@ const Sidebar = ({ sidebar, closeSidebar }) => (
 Sidebar.propTypes = {
   sidebar: object,
   closeSidebar: func,
+  headerImage: string,
 };
 
 export { Sidebar };
