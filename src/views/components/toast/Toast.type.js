@@ -3,8 +3,8 @@ import { StyleSheet } from 'react-native';
 const base = {
         paddingLeft: 10,
         paddingRight: 10,
-        paddingTop: 30,
-        paddingBottom: 40,
+        paddingTop: 15,
+        paddingBottom: 15,
         textAlign : 'center',
         width:300,
         height:'auto',
@@ -20,6 +20,7 @@ const toastTypes = StyleSheet.create({
   success: {
       ...base,
     backgroundColor: '#2ecc71',
+    
   },
   warning: {
       ...base,
@@ -28,6 +29,7 @@ const toastTypes = StyleSheet.create({
   error: {
       ...base,
     backgroundColor: '#e74c3c',
+    
   },
 });
 
