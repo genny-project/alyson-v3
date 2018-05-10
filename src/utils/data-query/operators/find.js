@@ -1,18 +1,19 @@
 /* Import all of the find operators */
 import * as findOperators from './findOperators';
+import { injectContext } from './helpers';
 
 const VALID_OPERATORS = Object.keys( findOperators );
 
 export default ( data, options ) => {
   /* Get the query and other options */
-  const { query, projection } = options;
+  const { query, projection, context } = options;
 
   /* Make sure that a query was provided */
   if ( !query ) {
     throw new Error( 'A query object must be provided' );
   }
 
-  const output = arrayMatch( data, query );
+  const output = arrayMatch( data, query, context );
 
   /* Apply the projection if it is applied */
   if ( projection ) {
@@ -29,7 +30,7 @@ export default ( data, options ) => {
   return output;
 };
 
-const doesValueMatch = ( key, actualValue, expectedValue ) => {
+const doesValueMatch = ( key, actualValue, expectedValue, context ) => {
   /* Check whether the query is actually a set of operators */
   if ( isOperatorObject( expectedValue )) {
     return matchesOperators( actualValue, expectedValue );
@@ -37,27 +38,27 @@ const doesValueMatch = ( key, actualValue, expectedValue ) => {
 
   switch ( typeof( expectedValue )) {
     case 'object':
-      return ( typeof( actualValue ) === 'object' && actualValue.length ) ? arrayMatch( actualValue, expectedValue ).length > 0 : objectMatch( actualValue, expectedValue );
+      return ( typeof( actualValue ) === 'object' && actualValue.length ) ? arrayMatch( actualValue, expectedValue, context ).length > 0 : objectMatch( actualValue, expectedValue, context );
     default:
       return valueCompare( actualValue, expectedValue );
   }
 };
 
-const arrayMatch = ( data, query ) => {
+const arrayMatch = ( data, query, context ) => {
   /* Filter the output */
   const output = data.filter( item => {
-    return objectMatch( item, query );
+    return objectMatch( item, query, context );
   });
 
   return output;
 };
 
-const objectMatch = ( item, query ) => {
+const objectMatch = ( item, query, context ) => {
   /* Get all of the keys for the query */
   const queryKeys = Object.keys( query );
   return !queryKeys.filter( queryKey => {
-    const expectedValue = query[queryKey];
-    return !doesValueMatch( queryKey, item[queryKey], expectedValue );
+    const expectedValue = context ? injectContext( query[queryKey], context ) : query[queryKey];
+    return !doesValueMatch( queryKey, item[queryKey], expectedValue, context );
   }).length;
 };
 

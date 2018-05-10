@@ -51,6 +51,48 @@ const query = [
       },
     },
   },
+  {
+    operator: 'map',
+    fields: 'team',
+  },
+  {
+    operator: 'dedupe',
+    field: 'name',
+  },
+  {
+    operator: 'map',
+    fields: {
+      name: 'name',
+      staffMemberCount: 'counts.staff',
+    },
+  },
+  {
+    operator: 'fetch',
+    as: 'teamMembers',
+    query: {
+      team: {
+        name: '{{name}}',
+      },
+    },
+  },
+  {
+    operator: 'scope',
+    path: 'teamMembers',
+    scope: {
+      operator: 'map',
+      fields: {
+        name: 'name',
+      },
+    },
+  },
+  {
+    operator: 'scope',
+    path: 'teamMembers',
+    scope: {
+      operator: 'count',
+    },
+    as: 'teamMemberCount',
+  },
 ];
 
 window.testQuery = () => {
