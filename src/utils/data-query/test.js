@@ -46,13 +46,18 @@ const query = [
     query: {
       team: {
         counts: {
-          staff: { $or: [{ $eq: 2 }, { $eq: 12 }] },
+          staff: { $gt: 0 },
         },
       },
     },
     projection: {
       name: true,
     },
+  },
+  {
+
+    operator: 'distinct',
+    field: 'name',
   },
 ];
 
