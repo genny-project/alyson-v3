@@ -59,8 +59,6 @@ class InputAutocomplete extends Component {
   }
 
   handleChange = item => {
-    console.log( item ); // eslint-disable-line no-console
-
     if ( this.props.onChange )
       this.props.onChange( item );
   }

@@ -42,7 +42,7 @@ class GoogleProvider extends Component {
     });
   }
 
-  geocodeAddress = ( address, options = {}) => {
+  geocodeAddress = ( location, options = {}) => {
     const {} = options; // eslint-disable-line
     const { geocoder, geocodeOK } = this.state;
 
@@ -53,7 +53,7 @@ class GoogleProvider extends Component {
         );
       }
 
-      geocoder.geocode({ address }, ( results, status ) => {
+      geocoder.geocode( location, ( results, status ) => {
         if ( status === geocodeOK )
           return resolve( results );
 
