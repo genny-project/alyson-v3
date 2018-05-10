@@ -38,7 +38,7 @@ class Api {
     );
 
     return this.eventCall({
-      url: `init?url=${origin}`,
+      url: 'init?url=https://v2.channel40.com.au',
     });
   }
 }
