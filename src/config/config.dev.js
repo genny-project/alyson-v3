@@ -3,7 +3,7 @@ export default {
     name: 'Genny',
   },
   genny: {
-    host: 'http://localhost:8088',
+    host: 'https://bridge-v3.channel40.com.au',
     bridge: {
       port: '8088',
       endpoints: {
