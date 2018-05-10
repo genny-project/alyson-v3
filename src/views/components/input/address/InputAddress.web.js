@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
-import { func, string, number } from 'prop-types';
+import { func, number, object } from 'prop-types';
 import debounce from 'lodash.debounce';
 import { Input } from '../../index';
 
 class InputAddress extends Component {
   static defaultProps = {
     inputType: 'text',
-    placeholder: 'Search an address...',
     debounceTimer: 300,
   }
 
   static propTypes = {
-    placeholder: string,
+    inputProps: object,
     onChange: func,
     debounceTimer: number,
   }
@@ -47,7 +46,7 @@ class InputAddress extends Component {
   }
 
   render() {
-    const { placeholder } = this.props;
+    const { inputProps } = this.props;
     const { items } = this.state;
 
     return (
@@ -56,7 +55,9 @@ class InputAddress extends Component {
         items={items}
         borderBetweenItems
         inputProps={{
-          placeholder,
+          placeholder: 'Type an address...',
+          icon: 'place',
+          ...inputProps,
         }}
         onType={this.handleType}
       />
