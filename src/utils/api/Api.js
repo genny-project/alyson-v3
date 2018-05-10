@@ -30,7 +30,7 @@ class Api {
   }
 
   getKeycloakConfig = () => {
-    const origin = process.env.NODE_ENV !== 'production'
+    process.env.NODE_ENV !== 'production'
     ? 'http://localhost:3000'
     : (
       process.env.FORCE_REACT_ORIGIN ||

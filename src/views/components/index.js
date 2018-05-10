@@ -19,6 +19,7 @@ export { default as LayoutLoader } from './layout-loader';
 export { default as Timeout } from './timeout';
 export { default as Form } from './form';
 export { default as Label } from './label';
+export { default as Toast } from './toast';
 
 export * from './keycloak';
 export * from './vertx';
