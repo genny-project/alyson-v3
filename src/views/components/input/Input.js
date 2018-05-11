@@ -5,6 +5,7 @@ import InputText from './text';
 import InputAutocomplete from './autocomplete';
 import InputAddress from './address';
 import Switch from './switch';
+import InputDropdown from './dropdown';
 
 const Input = props => {
   const { type } = props;
@@ -20,6 +21,9 @@ const Input = props => {
 
     case 'address':
       return <InputAddress {...props} />;
+
+    case 'dropdown':
+      return <InputDropdown {...props} />;
 
     default:
       return <Text>Invalid type `{type}` specified in Input</Text>;

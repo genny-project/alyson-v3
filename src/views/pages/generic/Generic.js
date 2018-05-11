@@ -271,6 +271,32 @@ const layouts = {
             component: 'Text',
             children: 'Alerts',
           },
+          {
+            component: 'Input',
+            props: {
+              type: 'dropdown',
+              items: [
+                'One',
+                'Two',
+              ],
+            },
+          },
+          {
+            component: 'Input',
+            props: {
+              type: 'dropdown',
+              items: [
+                {
+                  label: 'One',
+                  value: 'one',
+                },
+                {
+                  label: 'Two',
+                  value: 'two',
+                },
+              ],
+            },
+          },
         ],
       },
     ],

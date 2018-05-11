@@ -24,7 +24,11 @@ class Recursive extends PureComponent {
 
     return Object.keys( props ).reduce(( result, current ) => ({
       ...result,
-      [current]: typeof( props[current] ) === 'string' && props[current].startsWith( '_' ) ? dlv( context, props[current].substring( 1 )) : curlyBracketParse( props[current], path => dlv( context, path )),
+      [current]: ( typeof props[current] === 'string' )
+        ? ( props[current].startsWith( '_' )
+            ? dlv( context, props[current].substring( 1 ))
+            : curlyBracketParse( props[current], path => dlv( context, path )))
+        : props[current],
     }), {});
   }
 
