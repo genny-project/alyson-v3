@@ -4,7 +4,9 @@ import { Text } from '../../components';
 class BucketView extends Component {
   render() {
     return (
-      <Text>Bucket View Native TODO</Text>
+      <Text>
+        Bucket View Native TODO
+      </Text>
     );
   }
 }

@@ -10,7 +10,12 @@ class Loading extends Component {
   }
 
   render() {
-    const { isAuthenticated, isAuthenticating, isCheckingStorage, isCheckingCallback } = this.props.keycloak;
+    const {
+      isAuthenticated,
+      isAuthenticating,
+      isCheckingStorage,
+      isCheckingCallback,
+    } = this.props.keycloak;
 
     if ( isAuthenticated ) {
       return <Redirect to="app" />;

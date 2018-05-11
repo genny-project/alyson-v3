@@ -15,7 +15,9 @@ class Alerts extends Component {
           flex={1}
           flexDirection="column"
         >
-          <Text>Alerts</Text>
+          <Text>
+Alerts
+          </Text>
 
           <Input
             type="text"

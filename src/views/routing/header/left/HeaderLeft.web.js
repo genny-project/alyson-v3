@@ -26,7 +26,7 @@ class HeaderLeft extends Component {
 
   componentWillUnmount() {
     if ( this.timer != null )
-     clearTimeout( this.timer );
+      clearTimeout( this.timer );
   }
 
   startProjectNameTimer() {

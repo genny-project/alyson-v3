@@ -20,7 +20,11 @@ class Logout extends Component {
       return <Redirect to="auth" />;
 
     if ( error )
-      return <Text>An error has occurred!</Text>;
+      return (
+        <Text>
+An error has occurred!
+        </Text>
+      );
 
     return (
       <Layout
@@ -35,7 +39,9 @@ class Logout extends Component {
           flexDirection="column"
         >
           <ActivityIndicator />
-          <Text>Logging you out...</Text>
+          <Text>
+Logging you out...
+          </Text>
         </Box>
       </Layout>
     );

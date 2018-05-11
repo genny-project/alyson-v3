@@ -79,6 +79,7 @@ module.exports = {
     "indent": ["error", 2, {
       SwitchCase: 1,
       VariableDeclarator: 1,
+      MemberExpression: 'off',
       outerIIFEBody: 1,
       FunctionDeclaration: {
         parameters: 1,
@@ -147,7 +148,7 @@ module.exports = {
     'switch-colon-spacing': ['error', { after: true, before: false }],
     'eqeqeq': ['error', 'always', { null: 'ignore' }],
     'no-else-return': ['error', { allowElseIf: false }],
-    'no-param-reassign': ['error', { props: true }],
+    'no-param-reassign': ['error', { props: false }],
     'yoda': 'error',
     'react/jsx-boolean-value': ['error', 'never', { always: [] }],
     'react/jsx-closing-bracket-location': ['error', 'line-aligned'],
@@ -229,6 +230,13 @@ module.exports = {
     'react/jsx-one-expression-per-line': 'error',
     'react/no-access-state-in-setstate': 'error',
     'react/no-this-in-sfc': 'error',
+    'computed-property-spacing': ['error', 'never'],
+    'padding-line-between-statements': [
+      "error",
+      { blankLine: "always", prev: ["const", "let", "var"], next: "*"},
+      { blankLine: "any",    prev: ["const", "let", "var"], next: ["const", "let", "var"]},
+      { blankLine: "always", prev: "*", next: "return" },
+  ],
   },
   globals: {
     describe: true,

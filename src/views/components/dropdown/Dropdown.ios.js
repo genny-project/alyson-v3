@@ -21,10 +21,7 @@ class Dropdown extends Component {
 
   state = {
     isOpen: false,
-    buttonX: 0,
-    buttonY: 0,
     buttonHeight: 0,
-    buttonWidth: 0,
   }
 
   handleOpen = () => {
@@ -40,19 +37,16 @@ class Dropdown extends Component {
   }
 
   handleLayout = ({ nativeEvent }) => {
-    const { height, width, x, y } = nativeEvent.layout;
+    const { height } = nativeEvent.layout;
 
     this.setState({
-      buttonX: x,
-      buttonY: y,
       buttonHeight: height,
-      buttonWidth: width,
     });
   }
 
   render() {
     const { items, text, facingRight, padding, paddingX, paddingY } = this.props;
-    const { isOpen, buttonX, buttonY, buttonHeight, buttonWidth } = this.state; // eslint-disable-line no-unused-vars
+    const { isOpen, buttonHeight } = this.state;
 
     return (
       <Fragment>

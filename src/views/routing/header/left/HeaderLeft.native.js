@@ -55,16 +55,16 @@ class HeaderLeft extends Component {
                 icon="arrow-back"
                 paddingX={10}
               />
-            ) : (
-              <Button
-                onPress={this.handleToggleMenu}
-                size="lg"
-                color="transparent"
-                textColor="white"
-                icon="menu"
-                paddingX={10}
-              />
-            )}
+              ) : (
+                <Button
+                  onPress={this.handleToggleMenu}
+                  size="lg"
+                  color="transparent"
+                  textColor="white"
+                  icon="menu"
+                  paddingX={10}
+                />
+              )}
 
             <Heading
               size="lg"
