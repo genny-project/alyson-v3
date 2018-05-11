@@ -34,7 +34,9 @@ class Loading extends Component {
             flexDirection="column"
           >
             <ActivityIndicator />
-            <Text>Loading...</Text>
+            <Text>
+              Loading...
+            </Text>
           </Box>
         </Layout>
       );

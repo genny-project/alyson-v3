@@ -116,15 +116,15 @@ class Dropdown extends Component {
             minWidth={170}
             zIndex={10}
             {...facingRight
-                ? { right: 0 }
-                : { left: 0 }
-              }
+              ? { right: 0 }
+              : { left: 0 }
+            }
           >
             {(
-                items &&
-                items instanceof Array &&
-                items.length > 0
-              ) ? (
+              items &&
+              items instanceof Array &&
+              items.length > 0
+            ) ? (
                 items.map( item => (
                   <DropdownItem
                     text={item.text}

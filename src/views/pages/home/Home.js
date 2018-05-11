@@ -28,7 +28,9 @@ class Home extends Component {
           flex={1}
           height="100%"
         >
-          <Text>Home</Text>
+          <Text>
+            Home
+          </Text>
 
           <Link to="logout">
             <Button color="red">
@@ -36,18 +38,28 @@ class Home extends Component {
             </Button>
           </Link>
 
-          <Text>{accessToken ? accessToken.substr( -20 ) : 'No access token'}</Text>
-          <Text>{refreshToken ? refreshToken.substr( -20 ) : 'No refresh token'}</Text>
+          <Text>
+            {accessToken ? accessToken.substr( -20 ) : 'No access token'}
+          </Text>
+          <Text>
+            {refreshToken ? refreshToken.substr( -20 ) : 'No refresh token'}
+          </Text>
 
           {user && (
             <Fragment>
-              <Text>{user.fullName}</Text>
-              <Text>{user.email}</Text>
+              <Text>
+                {user.fullName}
+              </Text>
+              <Text>
+                {user.email}
+              </Text>
             </Fragment>
           )}
 
           {isFetchingToken && (
-            <Text>Fetching token...</Text>
+            <Text>
+              Fetching token...
+            </Text>
           )}
         </Box>
       </Layout>
