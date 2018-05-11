@@ -1,7 +1,8 @@
 import React from 'react';
 import { any } from 'prop-types';
 import Layout from '../../../layout';
-import { Box, Text } from '../../../components';
+import { Box, Text, Button } from '../../../components';
+import { refresh } from '../../../../utils';
 
 const AuthenticatedAppError = ({ error }) => ( // eslint-disable-line no-unused-vars
   <Layout
@@ -17,7 +18,19 @@ const AuthenticatedAppError = ({ error }) => ( // eslint-disable-line no-unused-
       flexDirection="column"
     >
       {/* TODO: improve the error message */}
-      <Text>Damn! Something's shat itself.</Text>
+      <Text>Failed to load the page!</Text>
+      <Text>Please refresh the page to try again.</Text>
+      <Box  
+        marginTop={20}
+      >
+        <Button
+          color='green'
+          size='md'
+          onPress={refresh}
+        >
+          Refresh
+        </Button>
+      </Box>
     </Box>
   </Layout>
 );
