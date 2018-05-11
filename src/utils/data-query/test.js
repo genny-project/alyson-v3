@@ -1,102 +1,118 @@
 import DataQuery from './DataQuery';
-
-const data = [
-  {
-    name: 'Matt',
-    team: {
-      name: 'Pleased Property',
-      counts: {
-        staff: 3,
-      },
-      skills: [
-        { name: 'backend' }, { type: 'infrastructure' },
-      ],
-    },
-  },
-  {
-    name: 'Callan',
-    team: {
-      name: 'Pleased Property',
-      counts: {
-        staff: 3,
-      },
-      skills: [
-        { name: 'frontend' },
-      ],
-    },
-  },
-  {
-    name: 'Loris',
-    team: {
-      name: 'Genny',
-      counts: {
-        staff: 12,
-        bob: 100,
-      },
-      skills: [
-        { name: 'frontend' }, { name: 'backend' }, { name: 'mobile' },
-      ],
-    },
-  },
-];
+import store from '../../redux/store';
 
 const query = [
   {
-    operator: 'find',
-    query: {
-      team: {
-        counts: {
-          staff: { $gt: 0 },
-        },
-      },
+    operator: 'getBE',
+    id: 'GRP_DASHBOARD',
+    as: 'dashboard',
+  },
+  {
+    operator: 'scope',
+    path: 'dashboard.links',
+    scope: {
+      operator: 'getBE',
+      basePath: 'baseEntities.data',
+      as: 'be',
+      id: '{{link.targetCode}}',
     },
   },
   {
     operator: 'map',
-    fields: 'team',
+    fields: 'dashboard.links',
   },
   {
-    operator: 'dedupe',
-    field: 'name',
+    operator: 'sort',
+    by: 'weight',
+    direction: 'asc',
+  },
+  {
+    operator: 'map',
+    fields: 'be',
+  },
+  {
+    operator: 'scope',
+    path: 'links',
+    scope: {
+      operator: 'getBE',
+      basePath: 'baseEntities.data',
+      as: 'be',
+      id: '{{link.targetCode}}',
+    },
   },
   {
     operator: 'map',
     fields: {
       name: 'name',
-      staffMemberCount: 'counts.staff',
+      items: 'links',
     },
   },
   {
-    operator: 'fetch',
-    as: 'teamMembers',
-    query: {
-      team: {
-        name: '{{name}}',
+    operator: 'scope',
+    path: 'items',
+    scope: {
+      operator: 'find',
+      query: {
+        be: { $exists: true },
       },
     },
   },
   {
     operator: 'scope',
-    path: 'teamMembers',
+    path: 'items',
     scope: {
       operator: 'map',
       fields: {
-        name: 'name',
+        linkValue: 'link.linkValue',
+        item: 'be',
       },
     },
   },
   {
     operator: 'scope',
-    path: 'teamMembers',
+    path: 'items',
     scope: {
-      operator: 'count',
+      operator: 'populateLinkValues',
+      field: 'item',
+      as: 'links',
     },
-    as: 'teamMemberCount',
   },
+  {
+    operator: 'scope',
+    path: 'items',
+    scope: {
+      operator: 'populateAttributes',
+      path: 'links',
+    },
+  },
+  {
+    operator: 'scope',
+    path: 'items',
+    scope: {
+      operator: 'populateAttributes',
+      path: 'item',
+      single: true,
+    },
+  },
+  // {
+  //   operator: 'populateAttributes',
+  //   path: 'item',
+  // },
+  // {
+  //   operator: 'scope',
+  //   path: 'items',
+  //   scope: {
+  //     operator: 'map',
+  //     append: true,
+  //     fields: {
+  //
+  //     },
+  //   },
+  // }
 ];
 
 window.testQuery = () => {
-  const dataQuery = new DataQuery( data );
+  const dataQuery = new DataQuery( store.getState().vertx );
   const result = dataQuery.query( query );
   return result;
 };

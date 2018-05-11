@@ -74,7 +74,7 @@ class ScrollView extends Component {
     const { isRefreshing } = this.state;
 
     const wrapperStyle = {
-      flex,
+      // flex,
       height,
       width,
     };

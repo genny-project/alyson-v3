@@ -30,12 +30,6 @@ class Home extends Component {
         >
           <Text>Home</Text>
 
-          <Link to="profile/:id">
-            <Button color="blue">
-              Generic page
-            </Button>
-          </Link>
-
           <Link to="logout">
             <Button color="red">
               Logout
