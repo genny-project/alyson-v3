@@ -1,15 +1,37 @@
 import React, { createElement } from 'react';
 import { TouchableOpacity, TouchableWithoutFeedback, TouchableNativeFeedback, Platform } from 'react-native';
 import { string, bool, func, oneOf, number } from 'prop-types';
-import Text from '../text';
-import Icon from '../icon';
-import styles from './Button.style';
+import { Text, Icon, Box } from '../index';
+
+const buttonColors = {
+  red: 'red',
+  green: 'green',
+  blue: 'blue',
+  white: 'white',
+  transparent: 'transparent',
+  disabled: 'lightgrey',
+};
+
+const textColors = {
+  red: 'white',
+  green: 'white',
+  blue: 'white',
+  white: 'black',
+  transparent: 'black',
+  disabled: 'white',
+};
+
+const textSizes = {
+  sm: 'xs',
+  md: 'sm',
+  lg: 'md',
+};
 
 const Button = ({
   children = 'Button Text',
   disabled,
   onPress,
-  color = 'transparent',
+  color = 'green',
   silent = false,
   icon,
   textColor,
@@ -21,21 +43,6 @@ const Button = ({
   accessibilityLabel,
   accessibilityRole = 'button',
 }) => {
-  const textColors = {
-    red: 'white',
-    green: 'white',
-    blue: 'white',
-    white: 'black',
-    transparent: 'black',
-    disabled: 'white',
-  };
-
-  const textSizes = {
-    sm: 'xs',
-    md: 'sm',
-    lg: 'md',
-  };
-
   const child = ( icon != null ) ? (
     <Icon
       color={textColor || textColors[color]}
@@ -54,6 +61,21 @@ const Button = ({
     children || null
   );
 
+  const childWrapper = (
+    <Box
+      backgroundColor={(
+        disabled
+          ? buttonColors.disabled
+          : buttonColors[color]
+      )}
+      padding={padding}
+      paddingX={paddingX}
+      paddingY={paddingY}
+    >
+      {child}
+    </Box>
+  );
+
   return createElement(
     silent
       ? TouchableWithoutFeedback
@@ -68,16 +90,13 @@ const Button = ({
       accessible,
       accessibilityLabel,
       accessibilityRole,
-      style: [
-        disabled ? styles.disabled : styles[color],
-        {
-          padding,
-          paddingHorizontal: paddingX,
-          paddingVertical: paddingY,
-        },
-      ],
+      background: (
+        Platform.OS === 'android'
+          ? TouchableNativeFeedback.Ripple( textColors[color], false ) // eslint-disable-line new-cap
+          : undefined
+      ),
     },
-    child
+    childWrapper
   );
 };
 

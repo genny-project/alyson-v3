@@ -59,7 +59,7 @@ const Box = ({
     width,
     minWidth,
     maxWidth,
-    flex,
+    flex: typeof flex === 'number' ? flex : undefined,
     flexDirection,
     padding,
     paddingHorizontal: paddingX,

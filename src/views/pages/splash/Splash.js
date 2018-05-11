@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Button, Box } from '../../components';
+import { Link, Box, Button } from '../../components';
 import Layout from '../../layout';
 
 class Splash extends Component {
@@ -22,14 +22,10 @@ class Splash extends Component {
           flexDirection="column"
         >
           <Link to="login">
-            <Button color="green">
+            <Button
+              color="red"
+            >
               Login
-            </Button>
-          </Link>
-
-          <Link to="register">
-            <Button color="white">
-              Register
             </Button>
           </Link>
         </Box>

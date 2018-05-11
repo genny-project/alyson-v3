@@ -145,7 +145,17 @@ class KeycloakProvider extends Component {
   }
 
   componentDidMount = () => {
-    this.checkStorage();
+    /**
+     * TODO:
+     *
+     * Fix casting bug on Android
+     *
+     * Issue seems to be with the tokens being used from storage
+     */
+    if ( Platform.OS !== 'android' )
+      this.checkStorage();
+    else
+      this.setState({ isCheckingStorage: false });
 
     if ( Platform.OS === 'web' )
       this.checkCallback();
@@ -200,8 +210,8 @@ class KeycloakProvider extends Component {
         await this.asyncSetState({
           sessionState: state,
           sessionNonce: nonce,
-          accessToken: accessTokenHasExpired ? null : accessToken,
-          refreshToken,
+          accessToken: accessTokenHasExpired ? null : accessToken, // <-- HERE FIXME:
+          refreshToken, // <-- AND HERE IS WHERE IT BREAKS ANDROID FIXME:
           isAuthenticated: true,
         });
 
