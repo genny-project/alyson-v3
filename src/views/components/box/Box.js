@@ -40,6 +40,7 @@ const Box = ({
   accessible,
   accessibilityRole,
   accessibilityLabel,
+  borderRadius,
   ...restProps
 }) => {
   const style = {
@@ -72,6 +73,7 @@ const Box = ({
     zIndex,
     transform,
     opacity,
+    borderRadius,
   };
 
   const webStyle = Platform.OS !== 'web' ? {} : {
@@ -139,7 +141,7 @@ Box.propTypes = {
   marginLeft: number,
   backgroundColor: string,
   position: oneOf(
-    ['fixed', 'absolute', 'relative', 'static']
+    ['fixed', 'absolute', 'relative', 'static', 'sticky']
   ),
   top: oneOfType(
     [number, string]
@@ -162,6 +164,9 @@ Box.propTypes = {
   accessible: bool,
   accessibilityRole: string,
   accessibilityLabel: string,
+  borderRadius: oneOf(
+    [2, 5, 10, '50%']
+  ),
 };
 
 export default Box;
