@@ -26,3 +26,4 @@ export { default as BucketView } from './bucket-view';
 
 export * from './keycloak';
 export * from './vertx';
+export * from './google';

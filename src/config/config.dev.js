@@ -13,4 +13,9 @@ export default {
       },
     },
   },
+  google: {
+    maps: {
+      apiUrl: 'https://maps.googleapis.com/maps/api/js',
+    },
+  },
 };

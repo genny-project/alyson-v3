@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextInput, Platform } from 'react-native';
 import { string, oneOf, number, shape, bool, func } from 'prop-types';
+import { objectClean } from '../../../../utils';
 import { Box, Icon } from '../../../components';
 import styles from './InputText.style';
 
@@ -36,6 +37,13 @@ const InputText = ({
   marginRight,
   marginBottom,
   marginLeft,
+  padding = 10,
+  paddingX,
+  paddingY,
+  paddingTop,
+  paddingRight,
+  paddingBottom,
+  paddingLeft,
   value,
   error = false,
   success = false,
@@ -52,7 +60,7 @@ const InputText = ({
     ? styles.inputWithIcon
     : {};
 
-  const inputStyle = {
+  const inputStyle = objectClean({
     margin,
     marginHorizontal: marginX,
     marginVertical: marginY,
@@ -60,7 +68,18 @@ const InputText = ({
     marginRight,
     marginBottom,
     marginLeft,
-  };
+    padding,
+    paddingHorizontal: paddingX,
+    paddingVertical: paddingY,
+    paddingTop,
+    paddingRight: (
+      paddingRight ||
+      ( hasIconStyle && 40 ) ||
+      null
+    ),
+    paddingBottom,
+    paddingLeft,
+  });
 
   const statusColor =
     disabled ? 'lightGrey'
@@ -183,6 +202,13 @@ InputText.propTypes = {
   success: bool,
   warning: bool,
   icon: string,
+  padding: number,
+  paddingX: number,
+  paddingY: number,
+  paddingTop: number,
+  paddingRight: number,
+  paddingBottom: number,
+  paddingLeft: number,
 };
 
 export default InputText;
