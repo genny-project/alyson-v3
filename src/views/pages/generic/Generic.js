@@ -275,6 +275,12 @@ const layouts = {
             component: 'Input',
             props: {
               type: 'dropdown',
+            },
+          },
+          {
+            component: 'Input',
+            props: {
+              type: 'dropdown',
               items: [
                 'One',
                 'Two',
