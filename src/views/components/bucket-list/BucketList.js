@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { string, bool, array, number, any } from 'prop-types';
 import { Box, Text, Icon } from '../../components';
 
@@ -8,7 +8,7 @@ const statusColors = {
   success: '#5cb85c',
 };
 
-class BucketList extends Component {
+class BucketList extends PureComponent {
   static defaultProps = {
     contentPadding: 10,
     contentGutter: 10,
@@ -95,7 +95,7 @@ class BucketList extends Component {
             margin={headerPadding}
             zIndex={5}
           >
-            {headerIcon && (
+            {headerIcon ? (
               <Box
                 marginRight={5}
               >
@@ -104,9 +104,9 @@ class BucketList extends Component {
                   color={headerColor}
                 />
               </Box>
-            )}
+            ) : null}
 
-            {headerText && (
+            {headerText ? (
               <Text
                 fontWeight='bold'
                 color={headerColor}
@@ -120,7 +120,7 @@ class BucketList extends Component {
                   ? `(${children.length})`
                   : '(0)'}
               </Text>
-            )}
+            ) : null}
           </Box>
         )}
 

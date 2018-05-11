@@ -5,8 +5,12 @@ import { injectContext } from './helpers';
 const VALID_OPERATORS = Object.keys( findOperators );
 
 export default ( data, options ) => {
+  if ( !data ) {
+    return data;
+  }
+
   /* Get the query and other options */
-  const { query, projection, context } = options;
+  const { query, projection, context, single } = options;
 
   /* Make sure that a query was provided */
   if ( !query ) {
@@ -27,7 +31,7 @@ export default ( data, options ) => {
     });
   }
 
-  return output;
+  return single ? output[0] : output;
 };
 
 const doesValueMatch = ( key, actualValue, expectedValue, context ) => {

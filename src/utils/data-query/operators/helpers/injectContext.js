@@ -11,5 +11,5 @@ export default ( value, context ) => {
 };
 
 const curlyBracketParse = ( input, method ) => {
-  return input.split( '{{' ).map( i => i.includes( '}}' ) ? method( i.split( '}}' )[0] ) : i ).join( '' );
+  return input.split( '{{' ).map( i => i.includes( '}}' ) ? `${method( i.split( '}}' )[0] )}${i.split( '}}' ).slice( 1 )}` : i ).join( '' );
 };
