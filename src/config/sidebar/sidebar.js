@@ -49,6 +49,11 @@ export default [
     icon: 'person',
   },
   {
+    name: 'Commons',
+    path: 'commons',
+    icon: 'pan-tool',
+  },
+  {
     name: 'Logout',
     path: 'logout',
     icon: 'power-settings-new',

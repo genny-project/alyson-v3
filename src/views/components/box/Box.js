@@ -47,6 +47,7 @@ const Box = ({
   borderWidth,
   borderColor,
   borderStyle,
+  borderRadius,
   ...restProps
 }) => {
   const style = {
@@ -86,6 +87,7 @@ const Box = ({
     borderWidth,
     borderColor,
     borderStyle,
+    borderRadius,
   };
 
   const webStyle = Platform.OS !== 'web' ? {} : {
@@ -153,7 +155,7 @@ Box.propTypes = {
   marginLeft: number,
   backgroundColor: string,
   position: oneOf(
-    ['fixed', 'absolute', 'relative', 'static']
+    ['fixed', 'absolute', 'relative', 'static', 'sticky']
   ),
   top: oneOfType(
     [number, string]
@@ -183,6 +185,9 @@ Box.propTypes = {
   borderWidth: number,
   borderColor: string,
   borderStyle: string,
+  borderRadius: oneOf(
+    [2, 5, 10, '50%']
+  ),
 };
 
 export default Box;

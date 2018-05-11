@@ -4,6 +4,7 @@ import Text from '../text';
 import InputText from './text';
 import InputAutocomplete from './autocomplete';
 import InputAddress from './address';
+import Switch from './switch';
 
 const Input = props => {
   const { type } = props;
@@ -11,6 +12,8 @@ const Input = props => {
   switch ( type ) {
     case 'text':
       return <InputText {...props} />;
+    case 'switch':
+      return <Switch {...props} />;
 
     case 'autocomplete':
       return <InputAutocomplete {...props} />;

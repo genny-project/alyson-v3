@@ -6,6 +6,28 @@ import * as events from './events';
 class MessageHandler {
   constructor() {
     this.log = prefixedLog( 'MessageHandler' );
+    this.lastBe = new Date().getTime();
+    this.beBatch = [];
+
+    setInterval(() => {
+      if ( new Date().getTime() - this.lastBe > 200 && this.beBatch.length ) {
+        /* Get the template */
+        const message = this.beBatch.reduce(( output, current ) => {
+          return {
+            ...output,
+            payload: {
+              ...output.payload,
+              items: [...output.payload.items, ...current.payload.items],
+            },
+          };
+        }, this.beBatch[0] );
+        store.dispatch( message );
+        // this.beBatch.forEach( message => {
+        //   store.dispatch( message );
+        // });
+        this.beBatch = [];
+      }
+    }, 200 );
   }
 
   validMessageTypes = [
@@ -57,9 +79,13 @@ class MessageHandler {
       return;
     }
 
-    store.dispatch(
-      action( message )
-    );
+    if ( message.data_type === 'BaseEntity' && !message.delete ) {
+      /* Add to a batch */
+      this.beBatch.push( action( message ));
+      this.lastBe = new Date().getTime();
+    } else {
+      store.dispatch( action( message ));
+    }
   }
 }
 
