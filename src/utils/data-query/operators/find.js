@@ -5,6 +5,10 @@ import { injectContext } from './helpers';
 const VALID_OPERATORS = Object.keys( findOperators );
 
 export default ( data, options ) => {
+  if ( !data ) {
+    return data;
+  }
+
   /* Get the query and other options */
   const { query, projection, context, single } = options;
 

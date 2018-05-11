@@ -1,6 +1,10 @@
 import { injectContext } from './helpers';
 
 export default ( data, options, allData ) => {
+  if ( !data ) {
+    return data;
+  }
+
   return data.length ? data.map( item => lookupBE( item, options, allData )) : lookupBE( data, options, allData );
 };
 

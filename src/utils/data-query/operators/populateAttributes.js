@@ -2,6 +2,10 @@ import dlv from 'dlv';
 import dset from 'dset';
 
 export default ( data, options, allData ) => {
+  if ( !data ) {
+    return data;
+  }
+  
   const { fields, path, single } = options;
 
   if ( path ) {
