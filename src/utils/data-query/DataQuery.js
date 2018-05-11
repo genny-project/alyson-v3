@@ -1,5 +1,5 @@
 import * as Operators from './operators';
-import dlv from 'dlv';
+// import dlv from 'dlv';
 
 class DataQuery {
   constructor( data, datastore ) {
