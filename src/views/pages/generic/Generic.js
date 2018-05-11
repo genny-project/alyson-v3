@@ -176,6 +176,33 @@ const layouts = {
       },
     ],
   },
+  commons: {
+    layout: {
+      title: 'commons',
+      appColor: 'dark',
+    },
+    children: [
+      {
+        component: 'Box',
+        props: {
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex: 1,
+          height: '100%',
+        },
+        children: [
+          {
+            component: 'Input',
+            props:{
+              type: 'switch',
+              color: 'red',
+            },
+          },
+        ],
+      },
+    ],
+  },
   settings: {
     layout: {
       title: 'Settings',
