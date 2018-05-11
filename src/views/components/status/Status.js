@@ -1,5 +1,5 @@
 import React from 'react';
-import { oneOf, string } from 'prop-types';
+import { oneOf, string, number, oneOfType } from 'prop-types';
 import { Box, Text, Icon } from '../../components';
 
 const statusColor = {
@@ -15,45 +15,47 @@ const Status = ({
   text,
   width = 10,
   height = 10,
-  iconName,
+  icon,
   iconColor = 'black',
-}) => {
-  return (
-    <Box
-      backgroundColor={statusColor[color]}
-      height={height}
-      width={width}
-      justifyContent='center'
-      alignItems='center'
-    >
-      {( text &&
-        text.length > 0
-      ) ? (
-        <Text>
-          {text}
-        </Text>
-      ) : (
-        iconName
-      ) ? (
-        <Icon
-          name={iconName}
-          color={iconColor}
-        />
-      ) :
-        null
-      }
-    </Box>
-  );
-};
+}) => (
+  <Box
+    backgroundColor={statusColor[color]}
+    height={height}
+    width={width}
+    justifyContent='center'
+    alignItems='center'
+  >
+    {(
+      text &&
+      typeof text === 'string' &&
+      text.length > 0
+    ) ? (
+      <Text>{text}</Text>
+    ) : (
+      icon &&
+      typeof icon === 'string' &&
+      icon.length > 0
+    ) ? (
+      <Icon
+        name={icon}
+        color={iconColor}
+      />
+    ) : null}
+  </Box>
+);
 
 Status.propTypes = {
   color : oneOf(
     ['error','warning','success','info', 'disabled']
   ),
-  width : string,
-  height : string,
+  width : oneOfType(
+    [number, string]
+  ),
+  height : oneOfType(
+    [number, string]
+  ),
   text : string,
-  iconName : string,
+  icon : string,
   iconColor : string,
 };
 
