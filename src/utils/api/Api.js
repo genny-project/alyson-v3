@@ -30,12 +30,12 @@ class Api {
   }
 
   getKeycloakConfig = () => {
-    const origin = process.env.NODE_ENV !== 'production'
-    ? 'http://localhost:3000'
-    : (
-      process.env.FORCE_REACT_ORIGIN ||
-      'http://localhost:3000' // FIXME: Hardcoded for native, originally was `window.location.origin`
-    );
+    // const origin = process.env.NODE_ENV !== 'production'
+    // ? 'http://localhost:3000'
+    // : (
+    //   process.env.FORCE_REACT_ORIGIN ||
+    //   'http://localhost:3000' // FIXME: Hardcoded for native, originally was `window.location.origin`
+    // );
 
     return this.eventCall({
       url: 'init?url=https://v2.channel40.com.au',

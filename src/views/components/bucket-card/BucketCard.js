@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Image } from 'react-native';
 import { any, string, number, bool } from 'prop-types';
 import { Box } from '../../components';
@@ -9,7 +9,7 @@ const statusColors = {
   success: '#5cb85c',
 };
 
-class BucketCard extends Component {
+class BucketCard extends PureComponent {
   static defaultProps = {
     cardBackground: 'white',
     cardPadding: 10,
@@ -91,7 +91,7 @@ class BucketCard extends Component {
           {(
             showImage &&
             image
-          ) && (
+          ) ? (
             <Box
               marginRight={imageMargin}
             >
@@ -104,7 +104,7 @@ class BucketCard extends Component {
                 }}
               />
             </Box>
-          )}
+          ) : null}
 
           <Box
             flex={1}
@@ -121,18 +121,18 @@ class BucketCard extends Component {
           {(
             showStatus &&
             status
-          ) && (
+          ) ? (
             <Box
               marginLeft={statusMargin}
             >
               <Box
                 width={10}
                 height='100%'
-                backgroundColor={statusColors[status]}
+                backgroundColor={statusColors[status] || status}
                 borderRadius={5}
               />
             </Box>
-          )}
+          ) : null}
         </Box>
 
         <Box

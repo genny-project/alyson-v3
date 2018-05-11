@@ -33,8 +33,6 @@ const reducer = ( state = initialState, { type, payload }) => { // eslint-disabl
             /* Shortcut to remove properties inside the `current` object. */
             const { baseEntityAttributes, ...wantedData } = current; // eslint-disable-line no-unused-vars
 
-            wantedData.links = wantedData.links.map( link => link.link.linkValue );
-
             resultant[current.code] = wantedData;
 
             return resultant;

@@ -88,7 +88,7 @@ class Vertx {
   handleIncomingMessage = message => {
     const { incomingMessageHandler } = this.state;
 
-    this.log( 'Receiving a message' );
+    // this.log( 'Receiving a message' );
 
     if ( incomingMessageHandler )
       incomingMessageHandler( message );

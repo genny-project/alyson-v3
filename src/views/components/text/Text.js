@@ -4,6 +4,7 @@ import { string, number, oneOf, oneOfType } from 'prop-types';
 import styles from './Text.style';
 
 const textSizes = {
+  xxs: 12,
   xs: 14,
   sm: 16,
   md: 18,

@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { TouchableOpacity, TouchableWithoutFeedback, Animated } from 'react-native';
 import { array, string, bool, number } from 'prop-types';
 import { Box, Text, Icon } from '../../components';
 import DropdownItem from './item';
@@ -20,41 +20,78 @@ class Dropdown extends Component {
 
   state = {
     isOpen: false,
+    fadeAnim: new Animated.Value( 0 ),
+    dropdownScaleY: new Animated.Value( 0 ),
   }
 
   handleOpen = () => {
-    this.setState({ isOpen: true });
+    this.setState({ isOpen: true });  
+    Animated.parallel( [
+      Animated.timing(
+        this.state.fadeAnim,            
+        {
+          toValue: 1,                   
+          duration: 100,              
+        }
+      ),
+      Animated.timing(
+        this.state.dropdownScaleY,            
+        {
+          toValue: 1,                   
+          duration: 120,              
+        }
+      ),
+
+    ] ).start();
   }
 
   handleClose = () => {
-    this.setState({ isOpen: false });
-  }
+    Animated.parallel( [
+      Animated.timing(
+        this.state.fadeAnim,            
+        {
+          toValue: 0,                   
+          duration: 250,              
+        }
+      ),
+      Animated.timing(
+        this.state.dropdownScaleY,            
+        {
+          toValue: 0,                   
+          duration: 300,              
+        }
+      ),
 
-  handleToggle = () => {
-    this.setState( state => ({ isOpen: !state.isOpen }));
+    ] ).start(() => this.setState({ isOpen: false }));
   }
 
   render() {
     const { items, text, facingRight, padding, paddingX, paddingY } = this.props;
-    const { isOpen } = this.state;
+    const { isOpen, fadeAnim, dropdownScaleY } = this.state;
 
     return (
       <Fragment>
         {isOpen && (
-          <TouchableWithoutFeedback
-            onPress={this.handleClose}
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+            }}
           >
-            <Box
-              position="fixed"
-              top={0}
-              left={0}
-              height="100%"
-              width="100%"
-              zIndex={74}
-              backgroundColor="#000"
-              opacity={0.1}
-            />
-          </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback
+              onPress={this.handleClose}
+            >
+              <Box
+                position="fixed"
+                top={0}
+                left={0}
+                height="100%"
+                width="100%"
+                zIndex={74}
+                backgroundColor="#000"
+                opacity={0.1}
+              />
+            </TouchableWithoutFeedback>
+          </Animated.View>
         )}
 
         <Box
@@ -62,7 +99,7 @@ class Dropdown extends Component {
           zIndex={755}
         >
           <TouchableOpacity
-            onPress={this.handleToggle}
+            onPress={this.handleOpen}
           >
             <Box
               justifyContent="space-between"
@@ -87,18 +124,31 @@ class Dropdown extends Component {
           </TouchableOpacity>
 
           {isOpen && (
-            <Box
-              position="absolute"
-              top="100%"
-              backgroundColor="#232323"
-              flexDirection="column"
-              minWidth={170}
-              {...facingRight
+            <Animated.View
+              style={{
+                transform: [{ 
+                  scaleY: dropdownScaleY,
+                }, {
+                  scaleX: dropdownScaleY,
+                }],
+                opacity: fadeAnim,
+                position: 'absolute',
+                height: '100%',
+                width: '100%',
+              }}
+            >
+              <Box
+                position="absolute"
+                top="100%"
+                backgroundColor="#232323"
+                flexDirection="column"
+                minWidth={170}
+                {...facingRight
                 ? { right: 0 }
                 : { left: 0 }
               }
-            >
-              {(
+              >
+                {(
                 items &&
                 items instanceof Array &&
                 items.length > 0
@@ -118,7 +168,8 @@ class Dropdown extends Component {
                   onPress={this.handleClose}
                 />
               )}
-            </Box>
+              </Box>
+            </Animated.View>
           )}
         </Box>
       </Fragment>

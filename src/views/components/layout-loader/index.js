@@ -1,1 +1,1 @@
-export { default } from './LayoutLoader';
+export { default } from './LayoutLoader.container';

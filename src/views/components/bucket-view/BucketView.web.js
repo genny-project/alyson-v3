@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { string, number, any } from 'prop-types';
 import { Box, Text } from '../../components';
 
-class BucketView extends Component {
+class BucketView extends PureComponent {
   static defaultProps = {
     padding: 20,
     gutter: 10,
@@ -17,10 +17,10 @@ class BucketView extends Component {
 
   render() {
     const {
-      children,
       padding,
       gutter,
       backgroundColor,
+      children,
     } = this.props;
 
     return (
@@ -36,7 +36,7 @@ class BucketView extends Component {
         >
           {(
             children &&
-            children.length > 0 
+            children.length > 0
           ) ? (
             children.map(( child, index ) => {
               return (
