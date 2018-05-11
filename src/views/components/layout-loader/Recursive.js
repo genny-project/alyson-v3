@@ -54,7 +54,13 @@ class Recursive extends PureComponent {
           this.injectContextIntoProps( context, props ),
           repeatedChildren && (
             repeatedChildren instanceof Array
-              ? repeatedChildren.map( child => <Recursive context={context} {...child} /> ) // eslint-disable-line react/jsx-key
+              ? repeatedChildren.map(( child, index ) => (
+                <Recursive
+                  context={context}
+                  {...child}
+                  key={`${child.component}_${index}`} // eslint-disable-line react/no-array-index-key
+                />
+              ))
               : typeof repeatedChildren === 'object'
                 ? <Recursive context={context} {...repeatedChildren}  />
                 : repeatedChildren

@@ -51,7 +51,7 @@ const Button = ({
       {children}
     </Text>
   ) : (
-    children
+    children || null
   );
 
   return createElement(
