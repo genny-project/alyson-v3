@@ -22,6 +22,7 @@ export { default as Container } from './container';
 export { default as Label } from './label';
 export { default as BucketCard } from './bucket-card';
 export { default as BucketList } from './bucket-list';
+export { default as BucketView } from './bucket-view';
 
 export * from './keycloak';
 export * from './vertx';

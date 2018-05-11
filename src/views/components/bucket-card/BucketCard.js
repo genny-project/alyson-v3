@@ -11,7 +11,6 @@ const statusColors = {
 
 class BucketCard extends Component {
   static defaultProps = {
-    marginBottom: 10,
     cardBackground: 'white',
     cardPadding: 10,
     headerBackground: 'white',
@@ -22,7 +21,6 @@ class BucketCard extends Component {
     contentAlign: 'center',
     roundCorners: true,
     showImage: true,
-    image: 'http://blogs.smh.com.au/entertainment/getflickd/44655_native.jpeg.jpg',
     imageMargin: 10,
     showStatus: true,
     status: 'success',
@@ -46,8 +44,6 @@ class BucketCard extends Component {
     showStatus: bool,
     status: string,
     statusMargin: number,
-    id: string,
-    marginBottom: number,
   }
 
   render() {
@@ -68,8 +64,6 @@ class BucketCard extends Component {
       showStatus,
       status,
       statusMargin,
-      id,
-      marginBottom,
     } = this.props;
 
     const isChildrenArray = (
@@ -82,12 +76,10 @@ class BucketCard extends Component {
 
     return (
       <Box
-        key={id}
         alignItems='center'
         justifyContent='center'
         width='100%'
         backgroundColor={cardBackground}
-        marginBottom={marginBottom}
         flexDirection='column'
         padding={cardPadding}
         borderRadius={roundCorners ? 5 : 0}
