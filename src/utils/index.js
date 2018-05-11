@@ -8,4 +8,5 @@ export { default as location } from './location';
 
 export * from './vertx';
 export * from './format';
+export * from './page';
 export * from './object';

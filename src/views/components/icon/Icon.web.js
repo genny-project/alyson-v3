@@ -13,7 +13,7 @@ const Icon = ({
     whiteSpace: 'nowrap',
     fontWeight: 'normal',
     fontStyle: 'normal',
-    lineHeight: 1,
+    lineHeight: '1rem',
     direction: 'ltr',
   };
 
