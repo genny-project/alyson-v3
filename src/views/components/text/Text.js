@@ -5,7 +5,7 @@ import styles from './Text.style';
 
 const Text = ({
   children,
-  color = 'black',
+  color,
   decoration = 'none',
   fontWeight,
   height,

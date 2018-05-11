@@ -22,7 +22,11 @@ const layouts = {
         },
         children: [
           {
-            component: 'Label',
+            component: 'Toast',
+            props:{
+              text: 'This is the toast test. This is the toast test.This is the toast test.This is the toast test.This is the toast test.This is the toast test. eeeeededde',
+              toastType: 'warning',
+            },
           },
         ],
       },
