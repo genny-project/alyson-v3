@@ -1,21 +1,21 @@
 import React, { Component } from 'react';
-import { string, bool, array, number, oneOf, any } from 'prop-types';
+import { string, bool, array, number, any } from 'prop-types';
 import { Box, Text, Icon } from '../../components';
 
 class BucketList extends Component {
   static defaultProps = {
-    color: 'success',
     contentPadding: 10,
+    contentGutter: 10,
     contentBackground: 'grey',
     showHeader: true,
     headerText: 'Bucket Title',
-    headerIcon: 'email',
     headerColor: 'white',
     headerHeight: 50,
     headerBackground: 'darkgrey',
     headerPadding: 0,
     showLegend: true,
     legend: [],
+    legendText: 'Bucket Legend',
     legendBackground: 'white',
     legendPadding: 10,
     legendMargin: 10,
@@ -26,9 +26,7 @@ class BucketList extends Component {
   static propTypes = {
     children: any,
     contentPadding: number,
-    color: oneOf(
-      ['warning', 'success', 'error']
-    ),
+    contentGutter: number,
     contentBackground: string,
     showHeader: bool,
     headerText: string,
@@ -39,6 +37,8 @@ class BucketList extends Component {
     headerPadding: number,
     showLegend: bool,
     legend: array,
+    legendText: string,
+    legendIcon: string,
     legendBackground: string,
     legendPadding: number,
     legendMargin: number,
@@ -49,9 +49,9 @@ class BucketList extends Component {
   render() {
     const {
       children,
-      color,
       contentBackground,
       contentPadding,
+      contentGutter,
       showHeader,
       headerText,
       headerIcon,
@@ -61,6 +61,8 @@ class BucketList extends Component {
       headerPadding,
       showLegend,
       legend,
+      legendText,
+      legendIcon,
       legendBackground,
       legendPadding,
       legendMargin,
@@ -79,7 +81,7 @@ class BucketList extends Component {
         flexDirection='column'
         justifyContent='flex-start'
         width='100%'
-        height='100%'
+        // height='
         backgroundColor={contentBackground}
       >
         { showHeader && (
@@ -92,6 +94,7 @@ class BucketList extends Component {
             position='sticky'
             top={0}
             margin={headerPadding}
+            zIndex={5}
           >
             { headerIcon && (
               <Box
@@ -130,9 +133,14 @@ class BucketList extends Component {
             children &&
             children.length > 0 
           ) ? (
-            children.map(( child ) => {
-              return ( child );
-            })
+            children.map(( child, index ) => (
+              <Box
+                key={child.props.id}
+                marginBottom={index < children.length - 1 ? contentGutter : null}
+              >
+                {child}
+              </Box>
+            ))
           ) : (
             <Text>
               No Items To Display
@@ -165,13 +173,26 @@ class BucketList extends Component {
               >
                 <Box
                   justifyContent='center'
+                  alignItems='center'
                 >
-                  <Text
-                    fontWeight='bold'
-                    color={legendColor}
-                  >
-                    Legend
-                  </Text>  
+                  { legendIcon && (
+                    <Box
+                      marginRight={5}
+                    >
+                      <Icon
+                        name={legendIcon}
+                        color={legendColor}
+                      />
+                    </Box>
+                  )}
+                  { legendText && (
+                    <Text
+                      fontWeight='bold'
+                      color={legendColor}
+                    >
+                      {legendText}
+                    </Text>
+                  )}
                 </Box>
                 {
                   legend.map(( item ) => (
@@ -190,7 +211,7 @@ class BucketList extends Component {
                         </Text>
                       </Box>
                       <Box
-                        backgroundColor={statusColors[color]}
+                        backgroundColor={statusColors[item.status]}
                         width={10}
                         height={10}
                         borderRadius='50%'
