@@ -89,9 +89,9 @@ class Api {
     //   'http://localhost:3000' // FIXME: Hardcoded for native, originally was `window.location.origin`
     // );
 
-    // return this.eventCall({
-    //   url: 'init?url=https://v2.channel40.com.au',
-    // });
+    return this.eventCall({
+      url: 'init?url=https://v2.channel40.com.au',
+    });
   }
 }
 
