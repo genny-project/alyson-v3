@@ -52,19 +52,19 @@ class Recursive extends PureComponent {
         return createElement(
           Components[component],
           this.injectContextIntoProps( context, props ),
-          repeatedChildren && (
+          repeatedChildren ? (
             repeatedChildren instanceof Array
               ? repeatedChildren.map(( child, index ) => (
                 <Recursive
-                  context={context}
                   {...child}
+                  context={context}
                   key={`${child.component}_${index}`} // eslint-disable-line react/no-array-index-key
                 />
               ))
               : typeof repeatedChildren === 'object'
                 ? <Recursive context={context} {...repeatedChildren}  />
                 : repeatedChildren
-          ),
+          ) : null,
         );
       }
 
