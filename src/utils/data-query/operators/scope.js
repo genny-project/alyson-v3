@@ -2,24 +2,29 @@ import * as operators from './';
 import dlv from 'dlv';
 import dset from 'dset';
 
-export default ( data, options ) => {
+export default ( data, options, allData ) => {
+  return data.length ? data.map( item => {
+    return getSingleItemScoped( item, options, allData );
+  }) : getSingleItemScoped( data, options, allData );
+};
+
+const getSingleItemScoped = ( item, options, allData ) => {
   const { scope, path, as } = options;
-  return data.map( item => {
-    /* Create a copy of the object that we can modify */
-    const result = { ...item };
 
-    /* Get the data for the path */
-    const pathData = dlv( result, path );
+  /* Create a copy of the object that we can modify */
+  const result = { ...item };
 
-    /* Get the scope operator */
-    const { operator } = scope;
+  /* Get the data for the path */
+  const pathData = dlv( result, path );
 
-    /* Run the operator on the path data */
-    const processed = operators[operator]( pathData, scope );
+  /* Get the scope operator */
+  const { operator } = scope;
 
-    /* Place the processed data back at the path */
-    dset( result, as ? as : path, processed );
+  /* Run the operator on the path data */
+  const processed = operators[operator]( pathData, scope, allData );
 
-    return result;
-  });
+  /* Place the processed data back at the path */
+  dset( result, as ? as : path, processed );
+
+  return result;
 };
