@@ -11,30 +11,30 @@ const Toast = ({
   return (
     <View
       style={
-                  toastType === 'primary' ?
-                    styles.primary : 
-                   toastType === 'error' ?
-                     styles.error : 
-                    toastType === 'warning' ?
-                      styles.warning : 
-                     toastType === 'success' ?
-                       styles.success : 
-                     styles.primary
-                }
+        toastType === 'primary' ?
+          styles.primary :
+          toastType === 'error' ?
+            styles.error :
+            toastType === 'warning' ?
+              styles.warning :
+              toastType === 'success' ?
+                styles.success :
+                styles.primary
+      }
     >
       <View style={styles.wrapper} >
         <Icon
           name={
-              toastType === 'primary' ?
-                'done' : 
-                 toastType === 'success' ?
-                  'done' : 
-                    toastType === 'warning' ?
-                      'warning' : 
-                      toastType === 'error' ?
-                         'error' : 
-                        'done'
-                  }
+            toastType === 'primary' ?
+              'done' :
+              toastType === 'success' ?
+                'done' :
+                toastType === 'warning' ?
+                  'warning' :
+                  toastType === 'error' ?
+                    'error' :
+                    'done'
+          }
           style={styles.iconCustom}
         />
         <View style={styles.textWrapperCustom} >
@@ -48,10 +48,10 @@ const Toast = ({
 };
 
 Toast.propTypes = {
-    toastType: oneOf(
-        ['primary', 'success', 'warning', 'error']
-    ),
-    text: string,
+  toastType: oneOf(
+    ['primary', 'success', 'warning', 'error']
+  ),
+  text: string,
 };
 
 export default Toast;

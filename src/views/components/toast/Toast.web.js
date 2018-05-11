@@ -5,57 +5,63 @@ import { Icon } from '../../components';
 import styles from './Toast.type';
 
 const Toast = ({
-    text,
-    toastType,
+  text,
+  toastType,
 }) => {
-    return (
+  return (
 
-      <View
-        style={
-            toastType === 'primary' ?
+    <View 
+      style={
+        toastType === 'primary' ?
             styles.primary : 
-              toastType === 'error' ? 
-              styles.error :  
-                toastType === 'warning' ? 
-                styles.warning :
-                  toastType === 'success' ? 
-                  styles.success :
-                    styles.primary
-           }
+          toastType === 'error' ?
+             styles.error : 
+           toastType === 'warning' ?
+              styles.warning : 
+             toastType === 'success' ?
+                styles.success : 
+              styles.primary
+      }
+    >
+      <View 
+        style={styles.wrapper}
       >
-        <View style={styles.wrapper} > 
 
-          <Icon
-            name={
-                toastType === 'primary' ? 
-                 'done' : 
-                   toastType === 'success' ? 
-                     'done_all' :
-                     toastType === 'warning' ? 
-                       'warning' :
-                       toastType === 'error' ? 
-                         'error' :
-                           'done'
-             }
-            style={styles.iconCustom}
-          />
-          <View
-            style={styles.textWrapperCustom}
-          >
-            <Text style={styles.textCustom}>
-              {text}
-            </Text>
-          </View>
-        </View>
-      </View>
-    );
+        <Icon 
+          name={
+         toastType === 'primary' ?
+          'done' : 
+          toastType === 'success' ?
+            'done_all' : 
+            toastType === 'warning' ?
+              'warning' : 
+              toastType === 'error' ?
+                'error' : 
+              'done'
+         }
+          style={styles.iconCustom}
+        />  
+        <View 
+          style={styles.textWrapperCustom}
+        >
+          <Text 
+            style={styles.textCustom}
+          > 
+            {
+               text
+            } 
+          </Text>  
+        </View>  
+      </View>  
+    </View>
+  );
 };
 
 Toast.propTypes = {
-    toastType: oneOf(
-        ['primary', 'success', 'warning', 'error']   
-    ),
-    text: string,
+  toastType: oneOf(
+    ['primary', 'success', 'warning', 'error']
+  ),
+  text: string,
 };
 
 export default Toast;
