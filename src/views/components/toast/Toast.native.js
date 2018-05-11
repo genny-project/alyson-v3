@@ -9,7 +9,8 @@ const Toast = ({
   toastType,
 }) => {
   return (
-          < View style = {
+    <View
+      style={
                   toastType === 'primary' ?
                     styles.primary : 
                    toastType === 'error' ?
@@ -19,9 +20,11 @@ const Toast = ({
                      toastType === 'success' ?
                        styles.success : 
                      styles.primary
-                } >
-          <View style = {styles.wrapper} >
-            <Icon name = {
+                }
+    >
+      <View style={styles.wrapper} >
+        <Icon
+          name={
               toastType === 'primary' ?
                 'done' : 
                  toastType === 'success' ?
@@ -32,13 +35,13 @@ const Toast = ({
                          'error' : 
                         'done'
                   }
-              style = {styles.iconCustom}
-            />
-         <View style={styles.textWrapperCustom} >
-            <Text style={styles.textCustom} >
-                {text}
-            </Text>
-          </View>
+          style={styles.iconCustom}
+        />
+        <View style={styles.textWrapperCustom} >
+          <Text style={styles.textCustom} >
+            {text}
+          </Text>
+        </View>
       </View>
     </View>
   );

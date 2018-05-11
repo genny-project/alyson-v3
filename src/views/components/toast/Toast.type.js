@@ -1,6 +1,5 @@
 import { StyleSheet, Platform } from 'react-native';
 
-
 const base = {
         paddingLeft: 10,
         paddingRight: 10,
