@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import { string, bool, array, number, oneOf, any } from 'prop-types';
 import { Box, Text, Icon } from '../../components';
 
+const statusColors = {
+  error: '#cc0000',
+  warning: '#FFCC00',
+  success: '#5cb85c',
+};
+
 class BucketList extends Component {
   static defaultProps = {
     color: 'success',
@@ -67,12 +73,6 @@ class BucketList extends Component {
       legendColor,
       roundCorners,
     } = this.props;
-    
-    const statusColors = { 
-      error: '#cc0000',
-      warning: '#FFCC00',
-      success: '#5cb85c',
-    };
 
     return (
       <Box
@@ -82,7 +82,7 @@ class BucketList extends Component {
         height='100%'
         backgroundColor={contentBackground}
       >
-        { showHeader && (
+        {showHeader && (
           <Box
             justifyContent='center'
             alignItems='center'
@@ -93,7 +93,7 @@ class BucketList extends Component {
             top={0}
             margin={headerPadding}
           >
-            { headerIcon && (
+            {headerIcon && (
               <Box
                 marginRight={5}
               >
@@ -103,23 +103,25 @@ class BucketList extends Component {
                 />
               </Box>
             )}
-            { headerText && (
+
+            {headerText && (
               <Text
                 fontWeight='bold'
                 color={headerColor}
               >
-                {headerText} ({(
+                {headerText}&nbsp;
+                {(
                   children &&
-                  children.length > 0 
-                ) ? (
-                  `${children.length}`
-                ) : (
-                  '0'
-                )})
+                  children instanceof Array &&
+                  children.length > 0
+                )
+                  ? `(${children.length})`
+                  : '(0)'}
               </Text>
             )}
           </Box>
         )}
+
         <Box
           justifyContent='center'
           width='100%'
@@ -128,80 +130,80 @@ class BucketList extends Component {
         >
           {(
             children &&
-            children.length > 0 
-          ) ? (
-            children.map(( child ) => {
-              return ( child );
-            })
-          ) : (
-            <Text>
-              No Items To Display
-            </Text>
-          )}
+            children instanceof Array &&
+            children.length > 0
+          )
+            ? children
+            : (
+              <Text
+                align="center"
+                color="white"
+              >
+                No Items To Display
+              </Text>
+            )}
         </Box>
 
         {(
           showLegend &&
           legend &&
           legend instanceof Array &&
-          legend.length > 0 ) &&
-          (
+          legend.length > 0
+        ) && (
+          <Box
+            flexDirection='column'
+            justifyContent='center'
+            alignItems='center'
+            position='sticky'
+            bottom={0}
+            width='100%'
+            padding={legendMargin}
+          >
             <Box
               flexDirection='column'
               justifyContent='center'
-              alignItems='center'
-              position='sticky'
-              bottom={0}
               width='100%'
-              padding={legendMargin}
+              backgroundColor={legendBackground}
+              borderRadius={roundCorners ? 5 : 0}
+              padding={legendPadding}
             >
               <Box
-                flexDirection='column'
                 justifyContent='center'
-                width='100%'
-                backgroundColor={legendBackground}
-                borderRadius={roundCorners ? 5 : 0}
-                padding={legendPadding}
               >
-                <Box
-                  justifyContent='center'
+                <Text
+                  fontWeight='bold'
+                  color={legendColor}
                 >
-                  <Text
-                    fontWeight='bold'
-                    color={legendColor}
-                  >
-                    Legend
-                  </Text>  
-                </Box>
-                {
-                  legend.map(( item ) => (
-                    <Box
-                      key={item && item.id}
-                      alignItems='center'
-                    >
-                      <Box
-                        flex={1}
-                        justifyContent='center'
-                      >
-                        <Text
-                          color={legendColor}
-                        >
-                          {item.text}
-                        </Text>
-                      </Box>
-                      <Box
-                        backgroundColor={statusColors[color]}
-                        width={10}
-                        height={10}
-                        borderRadius='50%'
-                      />
-                    </Box>
-                  ))
-                }
+                  Legend
+                </Text>
               </Box>
+
+              {legend.map(( item ) => (
+                <Box
+                  key={item && item.id}
+                  alignItems='center'
+                >
+                  <Box
+                    flex={1}
+                    justifyContent='center'
+                  >
+                    <Text
+                      color={legendColor}
+                    >
+                      {item.text}
+                    </Text>
+                  </Box>
+                  <Box
+                    backgroundColor={statusColors[color]}
+                    width={10}
+                    height={10}
+                    borderRadius='50%'
+                  />
+                </Box>
+              ))}
             </Box>
-          )
-        }
+          </Box>
+        )}
       </Box>
     );
   }

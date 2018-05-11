@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
+import { Image } from 'react-native';
 import { any, string, number, bool } from 'prop-types';
 import { Box } from '../../components';
-import { Image } from 'react-native';
+
+const statusColors = {
+  error: '#cc0000',
+  warning: '#FFCC00',
+  success: '#5cb85c',
+};
 
 class BucketCard extends Component {
   static defaultProps = {
@@ -65,15 +71,14 @@ class BucketCard extends Component {
       id,
       marginBottom,
     } = this.props;
-    
-    const statusColors = { 
-      error: '#cc0000',
-      warning: '#FFCC00',
-      success: '#5cb85c',
-    };
 
-    const firstChild = children[0];
-    const otherChildren = children.filter(( x, index ) => ( index != 0 ));
+    const isChildrenArray = (
+      children &&
+      children instanceof Array
+    );
+
+    const firstChild = isChildrenArray && children[0];
+    const otherChildren = isChildrenArray && children.slice( 1 );
 
     return (
       <Box
@@ -93,16 +98,22 @@ class BucketCard extends Component {
         >
           {(
             showImage &&
-            image ) &&
+            image
+          ) && (
             <Box
               marginRight={imageMargin}
             >
               <Image
-                style={{ width: 50, height: 50, borderRadius: 5 }}
                 source={{ uri: image }}
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 5,
+                }}
               />
             </Box>
-          }
+          )}
+
           <Box
             flex={1}
             width='100%'
@@ -112,11 +123,13 @@ class BucketCard extends Component {
             backgroundColor={headerBackground}
             padding={headerPadding}
           >
-            {firstChild}  
+            {firstChild}
           </Box>
+
           {(
             showStatus &&
-            status ) &&
+            status
+          ) && (
             <Box
               marginLeft={statusMargin}
             >
@@ -127,8 +140,9 @@ class BucketCard extends Component {
                 borderRadius={5}
               />
             </Box>
-          }      
+          )}
         </Box>
+
         <Box
           width='100%'
         >
@@ -140,9 +154,7 @@ class BucketCard extends Component {
             flexDirection='column'
             width='100%'
           >
-            {otherChildren.map(( child ) => {
-              return ( child );
-            })}
+            {otherChildren}
           </Box>
         </Box>
       </Box>

@@ -3,6 +3,15 @@ import { Text as NativeText } from 'react-native';
 import { string, number, oneOf, oneOfType } from 'prop-types';
 import styles from './Text.style';
 
+const textSizes = {
+  xs: 14,
+  sm: 16,
+  md: 18,
+  lg: 20,
+  xl: 24,
+  xxl: 32,
+};
+
 const Text = ({
   children,
   color = 'black',
@@ -10,22 +19,15 @@ const Text = ({
   fontWeight,
   height,
   size = 'sm',
+  align,
   ...restProps
 }) => {
-  const textSizes = {
-    xs: 14,
-    sm: 16,
-    md: 18,
-    lg: 20,
-    xl: 24,
-    xxl: 32,
-  };
-
   const style = {
     textDecorationLine: decoration,
     fontWeight,
     height,
     fontSize: textSizes[size],
+    textAlign: align,
   };
 
   return (
@@ -62,6 +64,9 @@ Text.propTypes = {
   ),
   children: oneOfType(
     [number, string]
+  ),
+  align: oneOf(
+    ['auto', 'left', 'right', 'center', 'justify']
   ),
 };
 
