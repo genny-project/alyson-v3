@@ -13,21 +13,29 @@ const Toast = ({
       <View
         style={
             toastType === 'primary' ?
-            styles.primary : toastType === 'error' ? 
-            styles.error :  toastType === 'warning' ? 
-            styles.warning : toastType === 'success' ? 
-            styles.success : styles.primary
+            styles.primary : 
+              toastType === 'error' ? 
+              styles.error :  
+                toastType === 'warning' ? 
+                styles.warning :
+                  toastType === 'success' ? 
+                  styles.success :
+                    styles.primary
            }
       >
         <View style={styles.wrapper} > 
 
           <Icon
             name={
-                toastType === 'primary' ? 'done'
-                : toastType === 'success' ? 'check_circle_outline'
-                : toastType === 'warning' ? 'warning'
-                : toastType === 'error' ? 'error'
-                : 'done'
+                toastType === 'primary' ? 
+                 'done' : 
+                   toastType === 'success' ? 
+                     'done_all' :
+                     toastType === 'warning' ? 
+                       'warning' :
+                       toastType === 'error' ? 
+                         'error' :
+                           'done'
              }
             style={styles.iconCustom}
           />

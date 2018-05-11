@@ -24,7 +24,7 @@ const layouts = {
           {
             component: 'Toast',
             props:{
-              text: 'This is the toast test. This is the toast test.This is the toast test.This is the toast test.This is the toast test.This is the toast test. eeeeededde',
+              text: 'Warning!! This is the toast test. test test test test test test test test test test.',
               toastType: 'warning',
             },
           },

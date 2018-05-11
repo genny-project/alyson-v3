@@ -1,4 +1,5 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+
 
 const base = {
         paddingLeft: 10,
@@ -13,9 +14,13 @@ const base = {
 
 const wrapper = {
        color:'white',
-       margin:'0 auto',
+       ...Platform.select({
+         native: {
+             height: 120,
+           },
+         }),
        display: 'flex',
-       flexFlow: 'row nowrap',
+       flexDirection: 'row',
        justifyContent: 'space-around',
        alignItems: 'center',
 };
@@ -24,7 +29,6 @@ const iconCustom = {
       display:'flex',
       flexDirection:'column',
       justifyContent:'center',
-      border:'1px solid red',
       padding:'0 10px',
       flexShrink: 0,
 };
@@ -34,14 +38,26 @@ const textWrapperCustom = {
 };
 
 const textCustom = {
+      color: '#FFFFFF',
       display:'flex',
       flexDirection:'column',
       justifyContent:'center',
-      padding:'0 10px',
+      ...Platform.select({
+        web : {
+          padding: '0 10px',
+        }, 
+        native: {   
+          fontWeight: 100,
+          paddingTop: 1,
+          paddingBottom: 1,
+          paddingRight: 1,
+          paddingLeft: 1,
+        },
+      }),
       alignContent: 'center',
       flexGrow: 0,
       textAlign: 'left',
-      lineHeight:'1.6em',
+      lineHeight:  Platform.OS === 'web' ? '1.6em' : 20,
 };
 
 const toastTypes = StyleSheet.create({
