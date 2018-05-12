@@ -6,6 +6,7 @@ class InputDropdown extends Component {
   static defaultProps = {
     itemStringKey: 'label',
     itemValueKey: 'value',
+    itemIdKey: 'id',
   }
 
   static propTypes = {
@@ -13,6 +14,7 @@ class InputDropdown extends Component {
     onChange: func,
     itemStringKey: string,
     itemValueKey: string,
+    itemIdKey: string,
     disabled: bool,
     items: oneOfType(
       [
@@ -54,7 +56,7 @@ class InputDropdown extends Component {
   }
 
   render() {
-    const { items, itemStringKey, itemValueKey, disabled } = this.props;
+    const { items, itemStringKey, itemValueKey, itemIdKey, disabled } = this.props;
     const { value } = this.state;
 
     const validItems = (
@@ -80,7 +82,7 @@ class InputDropdown extends Component {
               <Picker.Item
                 key={(
                   isItemObject
-                    ? ( item.id || item[itemStringKey] )
+                    ? ( item[itemIdKey] || item[itemStringKey] )
                     : item
                 )}
                 label={isItemObject ? item[itemStringKey] : item}
