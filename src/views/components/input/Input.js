@@ -26,7 +26,13 @@ const Input = props => {
       return <InputDropdown {...props} />;
 
     default:
-      return <Text>Invalid type `{type}` specified in Input</Text>;
+      return (
+        <Text>
+Invalid type `
+          {type}
+` specified in Input
+        </Text>
+      );
   }
 };
 

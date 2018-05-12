@@ -78,8 +78,8 @@ class InputAutocomplete extends Component {
         )}
         itemToString={item => (
           item == null ? ''
-          : typeof item === 'string' ? item
-          : item[itemStringKey]
+            : typeof item === 'string' ? item
+              : item[itemStringKey]
         )}
         onChange={this.handleChange}
         onOuterClick={this.handleOuterClick}
@@ -177,46 +177,48 @@ class InputAutocomplete extends Component {
                     items &&
                     items instanceof Array &&
                     items
-                      .filter( this.handleFilter( inputValue )) // TODO: optimize filtering so it isn't performed twice
+                      // TODO: optimize filtering so it isn't performed twice
+                      .filter( this.handleFilter( inputValue ))
                       .length > 0
                   ) ? (
-                    items
-                      .filter( this.handleFilter( inputValue ))
-                      .map( item => {
-                        const idom =
-                          typeof item === 'string'
+                      items
+                        .filter( this.handleFilter( inputValue ))
+                        .map( item => {
+                          const idom = typeof item === 'string'
                             ? item
                             : item[itemStringKey];
 
-                        return (
-                          <TouchableOpacity
-                            {...getItemProps({ item: idom })}
-                            key={idom}
-                            onPress={() => selectItem( item )}
-                          >
-                            <Box
-                              padding={15}
-                              borderBottomWidth={1}
-                              borderColor="#DDD"
-                              borderStyle="solid"
+                          return (
+                            <TouchableOpacity
+                              {...getItemProps({ item: idom })}
+                              key={idom}
+                              onPress={() => selectItem( item )}
                             >
-                              <Text
-                                fontWeight={selectedItem === idom ? 'bold' : 'normal'}
+                              <Box
+                                padding={15}
+                                borderBottomWidth={1}
+                                borderColor="#DDD"
+                                borderStyle="solid"
                               >
-                                {idom}
-                              </Text>
-                            </Box>
-                          </TouchableOpacity>
-                      );
-                    })
-                  ) : (
-                    <Box
-                      paddingX={15}
-                      paddingY={10}
-                    >
-                      <Text>No results</Text>
-                    </Box>
-                  )}
+                                <Text
+                                  fontWeight={selectedItem === idom ? 'bold' : 'normal'}
+                                >
+                                  {idom}
+                                </Text>
+                              </Box>
+                            </TouchableOpacity>
+                          );
+                        })
+                    ) : (
+                      <Box
+                        paddingX={15}
+                        paddingY={10}
+                      >
+                        <Text>
+                          No results
+                        </Text>
+                      </Box>
+                    )}
                 </SafeAreaView>
               </Modal>
             </Box>

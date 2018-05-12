@@ -48,5 +48,5 @@ export default configReducer;
 
 // TODO: use me when another sub-reducer is made
 // export default combineReducers({
-  // configReducer,
+// configReducer,
 // });

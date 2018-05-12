@@ -21,6 +21,7 @@ class MessageHandler {
             },
           };
         }, this.beBatch[0] );
+
         store.dispatch( message );
         // this.beBatch.forEach( message => {
         //   store.dispatch( message );
@@ -53,6 +54,7 @@ class MessageHandler {
         `Ignoring message of type ${msg_type}. Must be one of the following: ${this.validMessageTypes.join( '|' )}`,
         'warn'
       );
+
       return;
     }
 
@@ -63,6 +65,7 @@ class MessageHandler {
       messages.length > 0
     ) {
       messages.forEach( this.onMessage );
+
       return;
     }
 

@@ -1,9 +1,9 @@
 import React from 'react';
+import { Image } from 'react-native';
+import { string } from 'prop-types';
 import { ScrollView, Box } from '../../components';
 import SidebarMenu from './menu';
 import { sidebar as sidebarItems } from '../../../config';
-import { Image } from 'react-native';
-import { string } from 'prop-types';
 
 const Sidebar = props => (
   <Box
@@ -13,8 +13,8 @@ const Sidebar = props => (
     backgroundColor="#232323"
   >
 
-    <Box flex={1} >
-      <Image 
+    <Box flex={1}>
+      <Image
         style={{
           resizeMode: 'contain',
         }}
@@ -24,15 +24,15 @@ const Sidebar = props => (
 
     </Box>
 
-    <Box flex={4} >
-      <ScrollView >
+    <Box flex={4}>
+      <ScrollView>
         <SidebarMenu
           items={sidebarItems}
         />
       </ScrollView>
 
     </Box>
-    
+
   </Box>
 );
 

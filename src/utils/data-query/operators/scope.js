@@ -1,6 +1,6 @@
-import * as operators from './';
 import dlv from 'dlv';
 import dset from 'dset';
+import * as operators from './';
 
 export default ( data, options, allData ) => {
   return data.length ? data.map( item => {

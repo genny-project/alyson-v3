@@ -3,11 +3,11 @@ import { oneOf, string, number, oneOfType } from 'prop-types';
 import { Box, Text, Icon } from '../../components';
 
 const statusColor = {
-  warning : '#FFCC00',
-  info : '#03A9F4',
-  success : '#5cb85c',
-  error : '#cc0000',
-  disabled : '#808080',
+  warning: '#FFCC00',
+  info: '#03A9F4',
+  success: '#5cb85c',
+  error: '#cc0000',
+  disabled: '#808080',
 };
 
 const Status = ({
@@ -22,41 +22,43 @@ const Status = ({
     backgroundColor={statusColor[color]}
     height={height}
     width={width}
-    justifyContent='center'
-    alignItems='center'
+    justifyContent="center"
+    alignItems="center"
   >
     {(
       text &&
       typeof text === 'string' &&
       text.length > 0
     ) ? (
-      <Text>{text}</Text>
-    ) : (
-      icon &&
+      <Text>
+        {text}
+      </Text>
+      ) : (
+        icon &&
       typeof icon === 'string' &&
       icon.length > 0
-    ) ? (
-      <Icon
-        name={icon}
-        color={iconColor}
-      />
-    ) : null}
+      ) ? (
+        <Icon
+          name={icon}
+          color={iconColor}
+        />
+        ) : null}
   </Box>
 );
 
 Status.propTypes = {
-  color : oneOf(
+  color: oneOf(
     ['error','warning','success','info', 'disabled']
   ),
-  width : oneOfType(
+  width: oneOfType(
     [number, string]
   ),
-  height : oneOfType(
+  height: oneOfType(
     [number, string]
   ),
-  text : string,
-  icon : string,
-  iconColor : string,
+  text: string,
+  icon: string,
+  iconColor: string,
 };
 
 export default Status;

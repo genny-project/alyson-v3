@@ -114,5 +114,6 @@ const query = [
 window.testQuery = () => {
   const dataQuery = new DataQuery( store.getState().vertx );
   const result = dataQuery.query( query );
+
   return result;
 };

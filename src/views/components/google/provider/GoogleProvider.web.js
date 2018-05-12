@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-state */
 import React, { Component } from 'react';
 import { node, string } from 'prop-types';
 import queryString from 'query-string';

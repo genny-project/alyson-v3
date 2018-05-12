@@ -18,14 +18,18 @@ const AuthenticatedAppError = ({ error }) => ( // eslint-disable-line no-unused-
       flexDirection="column"
     >
       {/* TODO: improve the error message */}
-      <Text>Failed to load the page!</Text>
-      <Text>Please refresh the page to try again.</Text>
+      <Text>
+Failed to load the page!
+      </Text>
+      <Text>
+Please refresh the page to try again.
+      </Text>
       <Box  
         marginTop={20}
       >
         <Button
-          color='green'
-          size='md'
+          color="green"
+          size="md"
           onPress={refresh}
         >
           Refresh

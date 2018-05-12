@@ -73,7 +73,9 @@ class Form extends Component {
               touched.firstName &&
               errors.firstName
             ) && (
-              <Text color="red">{errors.firstName}</Text>
+              <Text color="red">
+                {errors.firstName}
+              </Text>
             )}
 
             <Input
@@ -91,7 +93,9 @@ class Form extends Component {
               touched.lastName &&
               errors.lastName
             ) && (
-              <Text color="red">{errors.lastName}</Text>
+              <Text color="red">
+                {errors.lastName}
+              </Text>
             )}
 
             <Button
@@ -105,7 +109,9 @@ class Form extends Component {
             {isSubmitting && (
               <Box>
                 <ActivityIndicator />
-                <Text>Submitting...</Text>
+                <Text>
+Submitting...
+                </Text>
               </Box>
             )}
           </Box>
