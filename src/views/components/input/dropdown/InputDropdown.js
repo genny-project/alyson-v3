@@ -65,7 +65,7 @@ class InputDropdown extends Component {
 
     return (
       <Picker
-        enabled={!disabled || validItems}
+        enabled={!disabled && validItems}
         onValueChange={this.handleChange}
         selectedValue={value}
       >
