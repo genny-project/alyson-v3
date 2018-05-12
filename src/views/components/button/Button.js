@@ -92,7 +92,7 @@ const Button = ({
       accessibilityRole,
       background: (
         Platform.OS === 'android'
-          ? TouchableNativeFeedback.Ripple( textColors[color], false ) // eslint-disable-line new-cap
+          ? TouchableNativeFeedback.Ripple( textColors[color], false )
           : undefined
       ),
     },

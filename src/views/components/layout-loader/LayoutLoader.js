@@ -41,8 +41,10 @@ class LayoutLoader extends PureComponent {
               key={`${child.component}_${index}`} // eslint-disable-line react/no-array-index-key
             />
           ))
-          : layout.children
-        ) : null}
+          : (
+            layout.children ||
+            null
+          )}
       </Layout>
     );
   }

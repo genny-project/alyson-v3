@@ -42,11 +42,11 @@ class Recursive extends PureComponent {
 
   render() {
     const { component, props, children, context, repeat } = this.props;
-    
+
     const injectedRepeat = repeat
       ? dlv( context, repeat.substring( 1 ))
       : null;
-    
+
     const repeatedChildren = (
       injectedRepeat &&
       injectedRepeat instanceof Array
@@ -85,7 +85,8 @@ class Recursive extends PureComponent {
           ) : (
             children ? (
               children instanceof Array
-                ? children.map(( child, index ) => <Recursive {...child} key={index} /> ) // eslint-disable-line react/no-array-index-key
+                // eslint-disable-next-line react/no-array-index-key
+                ? children.map(( child, index ) => <Recursive {...child} key={index} /> )
                 : typeof children === 'object'
                   ? <Recursive {...children} />
                   : children
