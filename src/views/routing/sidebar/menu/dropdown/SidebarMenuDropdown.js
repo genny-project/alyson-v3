@@ -26,7 +26,7 @@ class SidebarMenuDropdown extends Component {
           name={name}
         />
 
-        {isOpen( name ) && (
+        {isOpen( name ) ? (
           <View style={styles.nested}>
             {items.map( item => (
               item.isDropdown ? (
@@ -47,7 +47,7 @@ class SidebarMenuDropdown extends Component {
               )
             ))}
           </View>
-        )}
+        ) : null}
       </View>
     );
   }

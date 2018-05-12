@@ -44,32 +44,54 @@ class Recursive extends PureComponent {
   render() {
     const { component, props, children, context, repeat } = this.props;
 
-    const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;
-    const repeatedChildren = injectedRepeat && Array.isArray( injectedRepeat )
-      ? injectedRepeat.map( child => ({
-        ...children,
-        props: {
-          ...children.props, ...child,
-        },
-        context: {
-          ...context,
-          repeater: child,
-        },
-      }))
-      : children;
+    const injectedRepeat = repeat
+      ? dlv( context, repeat.substring( 1 ))
+      : null;
+
+    const repeatedChildren = (
+      injectedRepeat &&
+      injectedRepeat instanceof Array
+    )
+      ? (
+        injectedRepeat.map( child => ({
+          ...children,
+          props: {
+            ...children.props, ...child,
+          },
+          context: {
+            ...context,
+            repeater: child,
+          },
+        }))
+      )
+      : null;
 
     if ( component ) {
       if ( Components[component] ) {
         return createElement(
           Components[component],
           this.injectContextIntoProps( context, props ),
-          repeatedChildren && (
+          repeatedChildren ? (
             repeatedChildren instanceof Array
-              // eslint-disable-next-line react/jsx-key
-              ? repeatedChildren.map( child => <Recursive context={context} {...child} /> )
+              ? repeatedChildren.map(( child, index ) => (
+                <Recursive
+                  {...child}
+                  context={context}
+                  key={`${child.component}_${index}`} // eslint-disable-line react/no-array-index-key
+                />
+              ))
               : typeof repeatedChildren === 'object'
                 ? <Recursive context={context} {...repeatedChildren}  />
                 : repeatedChildren
+          ) : (
+            children ? (
+              children instanceof Array
+                // eslint-disable-next-line react/no-array-index-key
+                ? children.map(( child, index ) => <Recursive {...child} key={index} /> )
+                : typeof children === 'object'
+                  ? <Recursive {...children} />
+                  : children
+            ) : null
           ),
         );
       }

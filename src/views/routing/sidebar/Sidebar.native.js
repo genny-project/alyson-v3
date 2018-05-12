@@ -12,8 +12,7 @@ const Sidebar = props => (
     paddingY={20}
     backgroundColor="#232323"
   >
-
-    <Box flex={1}>
+    <Box>
       <Image
         style={{
           resizeMode: 'contain',
@@ -21,18 +20,15 @@ const Sidebar = props => (
         flex={1}
         source={{ uri: props.headerImage }}
       />
-
     </Box>
 
-    <Box flex={4}>
+    <Box>
       <ScrollView>
         <SidebarMenu
           items={sidebarItems}
         />
       </ScrollView>
-
     </Box>
-
   </Box>
 );
 

@@ -72,7 +72,7 @@ module.exports = {
     'comma-style': ['error', 'last'],
     'comma-dangle': ['error', 'always-multiline'],
     'radix': ['error', 'always'],
-    'new-cap': 'error',
+    'new-cap': 'off',
     'react/display-name': 0,
     'no-multiple-empty-lines': ['error', { max: 1 }],
     'no-console': ["error", { allow: ['warn', 'error', 'info'] }],
