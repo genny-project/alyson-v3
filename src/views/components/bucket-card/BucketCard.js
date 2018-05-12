@@ -76,16 +76,16 @@ class BucketCard extends PureComponent {
 
     return (
       <Box
-        alignItems='center'
-        justifyContent='center'
-        width='100%'
+        alignItems="center"
+        justifyContent="center"
+        width="100%"
         backgroundColor={cardBackground}
-        flexDirection='column'
+        flexDirection="column"
         padding={cardPadding}
         borderRadius={roundCorners ? 5 : 0}
       >
         <Box
-          width='100%'
+          width="100%"
           marginBottom={10}
         >
           {(
@@ -104,14 +104,14 @@ class BucketCard extends PureComponent {
                 }}
               />
             </Box>
-          ) : null}
+            ) : null}
 
           <Box
             flex={1}
-            width='100%'
-            justifyContent='centre'
+            width="100%"
+            justifyContent="centre"
             alignItems={headerAlign}
-            flexDirection='column'
+            flexDirection="column"
             backgroundColor={headerBackground}
             padding={headerPadding}
           >
@@ -127,24 +127,24 @@ class BucketCard extends PureComponent {
             >
               <Box
                 width={10}
-                height='100%'
+                height="100%"
                 backgroundColor={statusColors[status] || status}
                 borderRadius={5}
               />
             </Box>
-          ) : null}
+            ) : null}
         </Box>
 
         <Box
-          width='100%'
+          width="100%"
         >
           <Box
             padding={contentPadding}
             backgroundColor={contentBackground}
-            justifyContent='centre'
+            justifyContent="centre"
             alignItems={contentAlign}
-            flexDirection='column'
-            width='100%'
+            flexDirection="column"
+            width="100%"
           >
             {otherChildren}
           </Box>

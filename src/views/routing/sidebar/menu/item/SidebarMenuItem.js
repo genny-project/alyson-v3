@@ -50,14 +50,14 @@ class SidebarMenuItem extends Component {
             </Text>
           </Box>
 
-          {iconRight && (
+          {iconRight ? (
             <Box paddingX={15}>
               <Icon
                 name={iconRight}
                 color="white"
               />
             </Box>
-          )}
+          ) : null}
         </Box>
       </TouchableOpacity>
     );

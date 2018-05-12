@@ -1,39 +1,37 @@
 import React, { Component } from 'react';
-import { any, array, bool } from 'prop-types';
-import { Box, Text, Icon } from '../../components';
+import { any, array, bool, string, number, oneOf } from 'prop-types';
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions } from 'react-native';
+import { Box, Text, Icon } from '../../components';
 
-const initialLayout = {
-  height: 20,
-  width: Dimensions.get( 'window' ).width,
-};
-
-const style = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  tabBar: {
-    backgroundColor: 'darkgray',
-    // height: 100,
-    flexGrow: 0,
-    flexShrink: 1,
-    flexBasis: 100,
-  },
-});
-
-class TabViewExample extends Component {
+class Tabs extends Component {
   static defaultProps = {
-    tabs: [
-      { key: 0, title: 'Tab 1', icon: 'email' },
-      { key: 1, title: 'Tab 2', icon: 'photo' },
-    ],
+    tabs: [],
+    height: '100%',
+    width: '100%',
+    tabHeight: 60,
+    tabBarBackground: 'lightgray',
+    activeTabBackground: 'gray',
+    iconColor: 'white',
+    textColor: 'white',
     bottomTabs: false,
   }
 
   static propTypes = {
     children: any,
     tabs: array,
+    height: oneOf(
+      [string, number]
+    ),
+    width: oneOf(
+      [string, number]
+    ),
+    tabBarBackground: string,
+    tabBackground: string,
+    activeTabBackground: string,
+    tabHeight: number, 
+    iconColor: string,
+    textColor: string,
     bottomTabs: bool,
   }
 
@@ -44,6 +42,7 @@ class TabViewExample extends Component {
     ) {
       return { routes: nextProps.tabs };
     }
+
     return null;
   }
 
@@ -55,45 +54,74 @@ class TabViewExample extends Component {
   handleIndexChange = index => this.setState({ index });
 
   renderIcon = ({ route }) => {
-    return <Icon name={route.icon} />;
+    return route.icon ? <Icon name={route.icon} size="sm" color={this.props.iconColor} /> : null;
   }
 
   renderHeader = props => {   
+    const { 
+      tabHeight,
+      tabBarBackground,
+      activeTabBackground,
+      textColor,
+    } = this.props;
+
     return ( 
       <TabBar 
         {...props} 
-        style={style.tabBar}
+        style={{
+          backgroundColor: tabBarBackground,
+          flexBasis: tabHeight,
+        }}
         scrollEnabled
         renderIcon={this.renderIcon}
+        tabStyle={{
+          flexGrow: 1,
+          alignItems: 'center',
+        }}
+        labelStyle={{
+          color: textColor,
+        }}
+        indicatorStyle={{
+          height: tabHeight,
+          backgroundColor: activeTabBackground,
+        }}
       />
     );
   };
 
   renderScene = ({ route }) => {
     const { children } = this.props;
+
     return (
-      <Box flex={1} >
+      <Box flex={1}>
         {(
           children &&
-          children.length > 0
-        ) ? (
+          children.length > 0 &&
           children[route.key]
-        ) : (
-          <Text>
-            No Items To Display
-          </Text>
-        )}
+        ) ? (
+            children[route.key]
+          ) : (
+            <Text>
+              No Items To Display
+            </Text>
+          )}
       </Box>
     );
   }
 
   render() {
-    const { bottomTabs } = this.props;
+    const { bottomTabs, height, width } = this.props;
+    const { index, routes } = this.state;
+
+    const initialLayout = {
+      height: 20,
+      width: Dimensions.get( 'window' ).width,
+    };
 
     return (
       <TabViewAnimated
-        style={style.container}
-        navigationState={this.state}
+        style={{ height: height, width: width }}
+        navigationState={{ index, routes }}
         renderScene={this.renderScene}
         {...bottomTabs ? {
           renderFooter: this.renderHeader,
@@ -107,4 +135,4 @@ class TabViewExample extends Component {
   }
 }
 
-export default TabViewExample;
+export default Tabs;

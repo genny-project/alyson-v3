@@ -23,6 +23,7 @@ export default ( data, options ) => {
   if ( projection ) {
     return output.map( item => {
       const output = {};
+
       Object.keys( projection ).forEach( key => {
         output[key] = item[key];
       });
@@ -60,8 +61,10 @@ const arrayMatch = ( data, query, context ) => {
 const objectMatch = ( item, query, context ) => {
   /* Get all of the keys for the query */
   const queryKeys = Object.keys( query );
+
   return !queryKeys.filter( queryKey => {
     const expectedValue = context ? injectContext( query[queryKey], context ) : query[queryKey];
+
     return !doesValueMatch( queryKey, item[queryKey], expectedValue, context );
   }).length;
 };

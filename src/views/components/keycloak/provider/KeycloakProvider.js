@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-state */
 import React, { Component } from 'react';
 import { Platform, Linking } from 'react-native';
 import { string, any } from 'prop-types';
@@ -34,6 +35,7 @@ class KeycloakProvider extends Component {
 
     if ( !isValidUrl ) {
       console.warn( `Attempted to open invalid login URL: ${LoginUrl.getUrl()}` );
+
       return;
     }
 
@@ -145,7 +147,17 @@ class KeycloakProvider extends Component {
   }
 
   componentDidMount = () => {
-    this.checkStorage();
+    /**
+     * TODO:
+     *
+     * Fix casting bug on Android
+     *
+     * Issue seems to be with the tokens being used from storage
+     */
+    if ( Platform.OS !== 'android' )
+      this.checkStorage();
+    else
+      this.setState({ isCheckingStorage: false });
 
     if ( Platform.OS === 'web' )
       this.checkCallback();
@@ -200,8 +212,8 @@ class KeycloakProvider extends Component {
         await this.asyncSetState({
           sessionState: state,
           sessionNonce: nonce,
-          accessToken: accessTokenHasExpired ? null : accessToken,
-          refreshToken,
+          accessToken: accessTokenHasExpired ? null : accessToken, // <-- HERE FIXME:
+          refreshToken, // <-- AND HERE IS WHERE IT BREAKS ANDROID FIXME:
           isAuthenticated: true,
         });
 
@@ -392,7 +404,7 @@ class KeycloakProvider extends Component {
 
       /* FIXME: fix check */
       // if ( session_state === sessionState )
-        this.handleTokenRefreshSuccess( responseJson );
+      this.handleTokenRefreshSuccess( responseJson );
     }
     catch ( error ) {
       this.handleError( error );
@@ -402,19 +414,27 @@ class KeycloakProvider extends Component {
     }
   }
 
-  handleTokenRefreshSuccess = async ({ access_token, refresh_token, id_token, expires_in, refresh_expires_in }) => {
+  handleTokenRefreshSuccess = async ({
+    access_token,
+    refresh_token,
+    id_token,
+    expires_in,
+    refresh_expires_in,
+  }) => {
     const currentTime = new Date().getTime();
     const accessExpiresInSeconds = expires_in * 1000; // Convert from seconds to ms
     const refreshExpiresInSeconds = refresh_expires_in * 1000; // Convert from seconds to ms
 
     const setTokens = new Promise( resolve => {
-      this.setState({
-        refreshToken: refresh_token,
-        refreshTokenExpiresOn: currentTime + refreshExpiresInSeconds,
-        accessToken: access_token,
-        accessTokenExpiresOn: currentTime + accessExpiresInSeconds,
-        idToken: id_token,
-      }, resolve );
+      if ( Platform.OS !== 'android' ) {
+        this.setState({
+          refreshToken: refresh_token,
+          refreshTokenExpiresOn: currentTime + refreshExpiresInSeconds,
+          accessToken: access_token,
+          accessTokenExpiresOn: currentTime + accessExpiresInSeconds,
+          idToken: id_token,
+        }, resolve );
+      }
     });
 
     const setUserData = new Promise(( resolve, reject ) => {

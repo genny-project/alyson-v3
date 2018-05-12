@@ -59,14 +59,14 @@ class Storage {
       if ( key == null )
         return reject( 'Argument 0 passed to `Storage.stringifyAndSet( key, value )` is either `null` or `undefined`.' );
 
-        const stringifiedValue = JSON.stringify( value );
+      const stringifiedValue = JSON.stringify( value );
 
-        AsyncStorage
-          .setItem( key, stringifiedValue )
-          .then( resolve )
-          .catch( reject );
+      AsyncStorage
+        .setItem( key, stringifiedValue )
+        .then( resolve )
+        .catch( reject );
     });
   }
 }
 
-export default new Storage;
+export default new Storage();

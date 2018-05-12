@@ -30,7 +30,11 @@ class Login extends Component {
       return <Redirect to="app" />;
 
     if ( error )
-      return <Text>An error has occurred!</Text>;
+      return (
+        <Text>
+An error has occurred!
+        </Text>
+      );
 
     return (
       <Layout
@@ -45,7 +49,9 @@ class Login extends Component {
           flexDirection="column"
         >
           <ActivityIndicator />
-          <Text>Logging you in...</Text>
+          <Text>
+Logging you in...
+          </Text>
         </Box>
       </Layout>
     );

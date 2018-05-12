@@ -25,35 +25,38 @@ class BucketView extends PureComponent {
 
     return (
       <Box
-        width='100%'
+        width="100%"
         padding={padding}
         flex={1}
         backgroundColor={backgroundColor}
       >
         <Box
-          width='100%'
+          width="100%"
           flex={1}
         >
           {(
-            children &&
+            children != null &&
+            children instanceof Array &&
             children.length > 0
           ) ? (
-            children.map(( child, index ) => {
-              return (
+              children.map(( child, index ) => (
                 <Box
-                  key={child.props.id}
+                  key={child.props.id || index}
                   flex={1}
-                  marginRight={index < children.length - 1 ? gutter : null}
+                  marginRight={(
+                  index < children.length - 1
+                    ? gutter
+                    : null
+                )}
                 >
                   {child}
                 </Box>
-              );
-            })
-          ) : (
-            <Text>
-              No Items To Display
-            </Text>
-          )}
+              ))
+            ) : (
+              <Text>
+              No items to display
+              </Text>
+            )}
         </Box>
       </Box>
     );

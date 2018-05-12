@@ -50,7 +50,7 @@ class Tabs extends PureComponent {
     this.setState({ currentChild: index });
     if ( this.props.onPress ) this.props.onPress();
   }
-  
+
   render() {
     const {
       children,
@@ -65,44 +65,46 @@ class Tabs extends PureComponent {
 
     return (
       <Box
-        flexDirection='column'
+        flexDirection="column"
         flex={1}
         height={height}
         width={width}
       >
         <Box
-          justifyContent='flex-start'
+          justifyContent="flex-start"
           flex={0}
-          backgroundColor='gray'
+          backgroundColor="gray"
         >
           {(
             tabs &&
             tabs instanceof Array &&
             tabs.length > 0
           ) ? (
-            tabs.map(( tab, index ) => (
-              <Box
-                key={tab.id}
-                padding={10}
-                backgroundColor={index === currentChild ? 'darkgray' : 'gray'}
-              >
-                <Button
-                  onPress={() => this.handlePress( index )}
-                  style={{ flexDirection: 'row' }}
-                  icon={tab.icon}
-                  textColor='white'
+              tabs.map(( tab, index ) => (
+                <Box
+                  key={tab.id}
+                  padding={10}
+                  backgroundColor={index === currentChild ? 'darkgray' : 'gray'}
                 >
-                  {tab.text}
-                </Button>
-              </Box>
-            ))
-          ) : (
-            <Text>No Items</Text>
-          )}
+                  <Button
+                    onPress={() => this.handlePress( index )}
+                    style={{ flexDirection: 'row' }}
+                    icon={tab.icon}
+                    textColor="white"
+                  >
+                    {tab.text}
+                  </Button>
+                </Box>
+              ))
+            ) : (
+              <Text>
+                No Items
+              </Text>
+            )}
         </Box>
         <Box
           padding={10}
-          backgroundColor='darkgray'
+          backgroundColor="darkgray"
         >
           {children[currentChild]}
         </Box>

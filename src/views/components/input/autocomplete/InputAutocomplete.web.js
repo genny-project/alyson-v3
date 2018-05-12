@@ -74,8 +74,8 @@ class InputAutocomplete extends Component {
         )}
         itemToString={item => (
           item == null ? ''
-          : typeof item === 'string' ? item
-          : item[itemStringKey]
+            : typeof item === 'string' ? item
+              : item[itemStringKey]
         )}
         onChange={this.handleChange}
       >
@@ -124,54 +124,55 @@ class InputAutocomplete extends Component {
                       .filter( this.handleFilter( inputValue ))
                       .length > 0
                   ) ? (
-                    items
-                      .filter( this.handleFilter( inputValue ))
-                      .map(( item, index ) => {
-                        const idom =
-                          typeof item === 'string'
+                      items
+                        .filter( this.handleFilter( inputValue ))
+                        .map(( item, index ) => {
+                          const idom = typeof item === 'string'
                             ? item
                             : item[itemStringKey];
 
-                        return (
-                          <TouchableOpacity
-                            {...getItemProps({ item: idom })}
-                            key={idom}
-                            onPress={() => selectItem( item )}
-                          >
-                            <Box
-                              {...( highlightedIndex === index ) && {
-                                backgroundColor: 'yellow',
-                              }}
-                              paddingX={15}
-                              paddingY={10}
-                              {...(
-                                borderBetweenItems &&
-                                index > 0
-                              ) && {
-                                borderTopWidth: 1,
-                                borderColor: '#DDD',
-                                borderStyle: 'solid',
-                              }}
+                          return (
+                            <TouchableOpacity
+                              {...getItemProps({ item: idom })}
+                              key={idom}
+                              onPress={() => selectItem( item )}
                             >
-                              <Text
-                                {...( selectedItem === idom ) && {
-                                  fontWeight: 'bold',
+                              <Box
+                                {...( highlightedIndex === index ) && {
+                                  backgroundColor: 'yellow',
+                                }}
+                                paddingX={15}
+                                paddingY={10}
+                                {...(
+                                  borderBetweenItems &&
+                                  index > 0
+                                ) && {
+                                  borderTopWidth: 1,
+                                  borderColor: '#DDD',
+                                  borderStyle: 'solid',
                                 }}
                               >
-                                {idom}
-                              </Text>
-                            </Box>
-                          </TouchableOpacity>
-                      );
-                    })
-                  ) : (
-                    <Box
-                      paddingX={15}
-                      paddingY={10}
-                    >
-                      <Text>No results</Text>
-                    </Box>
-                  )}
+                                <Text
+                                  {...( selectedItem === idom ) && {
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  {idom}
+                                </Text>
+                              </Box>
+                            </TouchableOpacity>
+                          );
+                        })
+                    ) : (
+                      <Box
+                        paddingX={15}
+                        paddingY={10}
+                      >
+                        <Text>
+                          No results
+                        </Text>
+                      </Box>
+                    )}
                 </Box>
               )}
             </Box>

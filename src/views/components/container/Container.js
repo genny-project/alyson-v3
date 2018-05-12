@@ -14,13 +14,13 @@ const Container = ({
 
   return (
     <Box
-      justifyContent='center'
-      width='100%'
+      justifyContent="center"
+      width="100%"
     >
       <Box
         maxWidth={containerWidth[size]}
-        justifyContent='center'
-        width='100%'
+        justifyContent="center"
+        width="100%"
       >
         {children}
       </Box>

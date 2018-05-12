@@ -9,7 +9,7 @@ class Vertx {
     this.log = prefixedLog( 'Vertx' );
   }
 
-  static constants = {
+  constants = {
     RECONNECT_TIMEOUT: 1500,
   }
 
