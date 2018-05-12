@@ -20,12 +20,13 @@ class Recursive extends PureComponent {
   handleReduce = ( result, current ) => {
     const { props, context } = this.props;
 
-    const value = (
-      typeof( props[current] ) === 'string' &&
-      props[current].startsWith( '_' )
-    )
-      ? dlv( context, props[current].substring( 1 ))
-      : curlyBracketParse( props[current], path => dlv( context, path ));
+    const value = typeof props[current] === 'string'
+      ? (
+        props[current].startsWith( '_' )
+          ? dlv( context, props[current].substring( 1 ))
+          : curlyBracketParse( props[current], path => dlv( context, path ))
+      )
+      : props[current];
 
     return {
       ...result,
