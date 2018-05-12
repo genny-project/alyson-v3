@@ -19,18 +19,24 @@ class LayoutLoader extends PureComponent {
     const { layout, data } = this.props;
 
     if ( !layout )
-      return <Text>No layout specified</Text>;
+      return (
+        <Text>
+          No layout specified
+        </Text>
+      );
 
     /* Calculate the data for the layout */
     const context = { query: new DataQuery( data ).query( layout.query || [] ) };
 
     return (
       <Layout {...layout.layout} context={context}>
-        {layout.children && (
+        {(
+          layout.children &&
           layout.children instanceof Array
-          ? layout.children.map( child => <Recursive {...child} context={context} /> ) // eslint-disable-line react/jsx-key
-          : layout.children
-        )}
+        )
+          // eslint-disable-next-line react/jsx-key
+          ? layout.children.map( child => <Recursive {...child} context={context} /> )
+          : layout.children}
       </Layout>
     );
   }

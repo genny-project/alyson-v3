@@ -10,7 +10,12 @@ class Loading extends Component {
   }
 
   render() {
-    const { isAuthenticated, isAuthenticating, isCheckingStorage, isCheckingCallback } = this.props.keycloak;
+    const {
+      isAuthenticated,
+      isAuthenticating,
+      isCheckingStorage,
+      isCheckingCallback,
+    } = this.props.keycloak;
 
     if ( isAuthenticated ) {
       return <Redirect to="app" />;
@@ -34,7 +39,9 @@ class Loading extends Component {
             flexDirection="column"
           >
             <ActivityIndicator />
-            <Text>Loading...</Text>
+            <Text>
+              Loading...
+            </Text>
           </Box>
         </Layout>
       );

@@ -14,7 +14,9 @@ class Chat extends Component {
           alignItems="center"
           flex={1}
         >
-          <Text>Chat</Text>
+          <Text>
+Chat
+          </Text>
         </Box>
       </Layout>
     );

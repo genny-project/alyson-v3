@@ -15,7 +15,9 @@ class Commons extends Component {
           flex={1}
           flexDirection="column"
         >
-          <Text>Commons</Text>
+          <Text>
+Commons
+          </Text>
 
           <Input
             type="text"

@@ -6,6 +6,7 @@ class Storage {
 
       try {
         const item = localStorage.getItem( key );
+
         resolve( item );
       }
       catch ( error ) {
@@ -19,13 +20,13 @@ class Storage {
       if ( key == null )
         return reject( 'Argument 0 passed to `Storage.set( key, value )` is either `null` or `undefined`.' );
 
-        try {
-          localStorage.setItem( key, value );
-          resolve();
-        }
-        catch ( error ) {
-          reject( error );
-        }
+      try {
+        localStorage.setItem( key, value );
+        resolve();
+      }
+      catch ( error ) {
+        reject( error );
+      }
     });
   }
 
@@ -34,13 +35,13 @@ class Storage {
       if ( key == null )
         return reject( 'Argument passed to `Storage.remove( key )` is either `null` or `undefined`.' );
 
-        try {
-          localStorage.removeItem( key );
-          resolve();
-        }
-        catch ( error ) {
-          reject( error );
-        }
+      try {
+        localStorage.removeItem( key );
+        resolve();
+      }
+      catch ( error ) {
+        reject( error );
+      }
     });
   }
 
@@ -66,17 +67,18 @@ class Storage {
       if ( key == null )
         return reject( 'Argument 0 passed to `Storage.stringifyAndSet( key, value )` is either `null` or `undefined`.' );
 
-        const stringifiedValue = JSON.stringify( value );
+      const stringifiedValue = JSON.stringify( value );
 
-        try {
-          const item = localStorage.setItem( key, stringifiedValue );
-          resolve( item );
-        }
-        catch ( error ) {
-          reject( error );
-        }
+      try {
+        const item = localStorage.setItem( key, stringifiedValue );
+
+        resolve( item );
+      }
+      catch ( error ) {
+        reject( error );
+      }
     });
   }
 }
 
-export default new Storage;
+export default new Storage();

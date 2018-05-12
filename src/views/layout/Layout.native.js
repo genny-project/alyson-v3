@@ -9,7 +9,7 @@ class Layout extends Component {
       ['light', 'dark']
     ),
     // backgroundColor: oneOf(
-      // ['white', 'grey']
+    // ['white', 'grey']
     // ),
     title: string,
     layout: object,

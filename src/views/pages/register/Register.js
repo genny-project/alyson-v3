@@ -30,7 +30,11 @@ class Register extends Component {
       return <Redirect to="app" />;
 
     if ( error )
-      return <Text>{error}</Text>;
+      return (
+        <Text>
+          {error}
+        </Text>
+      );
 
     return (
       <Layout
@@ -45,7 +49,9 @@ class Register extends Component {
           flexDirection="column"
         >
           <ActivityIndicator />
-          <Text>Preparing to register...</Text>
+          <Text>
+Preparing to register...
+          </Text>
         </Box>
       </Layout>
     );

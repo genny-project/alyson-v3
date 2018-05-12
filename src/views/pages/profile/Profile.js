@@ -14,7 +14,9 @@ class Profile extends Component {
           alignItems="center"
           flex={1}
         >
-          <Text>Profile</Text>
+          <Text>
+Profile
+          </Text>
         </Box>
       </Layout>
     );
