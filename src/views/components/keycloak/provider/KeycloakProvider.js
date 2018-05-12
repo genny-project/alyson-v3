@@ -418,13 +418,15 @@ class KeycloakProvider extends Component {
     const refreshExpiresInSeconds = refresh_expires_in * 1000; // Convert from seconds to ms
 
     const setTokens = new Promise( resolve => {
-      this.setState({
-        refreshToken: refresh_token,
-        refreshTokenExpiresOn: currentTime + refreshExpiresInSeconds,
-        accessToken: access_token,
-        accessTokenExpiresOn: currentTime + accessExpiresInSeconds,
-        idToken: id_token,
-      }, resolve );
+      if ( Platform.OS !== 'android' ) {
+        this.setState({
+          refreshToken: refresh_token,
+          refreshTokenExpiresOn: currentTime + refreshExpiresInSeconds,
+          accessToken: access_token,
+          accessTokenExpiresOn: currentTime + accessExpiresInSeconds,
+          idToken: id_token,
+        }, resolve );
+      }
     });
 
     const setUserData = new Promise(( resolve, reject ) => {
