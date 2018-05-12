@@ -90,7 +90,7 @@ class Api {
     // );
 
     return this.eventCall({
-      url: 'init?url=https://v2.channel40.com.au',
+      url: 'init?url=http://app-staging.outcome-hub.com',
     });
   }
 }

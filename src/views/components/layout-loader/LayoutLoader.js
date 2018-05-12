@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
-import { Text } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { shape, object, any } from 'prop-types';
 import Layout from '../../layout';
 import DataQuery from '../../../utils/data-query';
+import { Box, Text } from '../../components';
 import Recursive from './Recursive';
 
 class LayoutLoader extends PureComponent {
@@ -18,12 +19,23 @@ class LayoutLoader extends PureComponent {
   render() {
     const { layout, data } = this.props;
 
-    if ( !layout )
+    if ( !layout ) {
       return (
-        <Text>
-          No layout specified
-        </Text>
+        <Box
+          justifyContent="center"
+          alignItems="center"
+          height="100%"
+          flex={1}
+          flexDirection="column"
+        >
+          <ActivityIndicator />
+
+          <Text>
+            Loading...
+          </Text>
+        </Box>
       );
+    }
 
     /* Calculate the data for the layout */
     const context = { query: new DataQuery( data ).query( layout.query || [] ) };
