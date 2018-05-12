@@ -70,6 +70,7 @@ class InputDropdown extends Component {
         enabled={!disabled && validItems}
         onValueChange={this.handleChange}
         selectedValue={value}
+        style={{ width: 200, height: 50 }}
       >
         {validItems ? (
           items.map( item => {
