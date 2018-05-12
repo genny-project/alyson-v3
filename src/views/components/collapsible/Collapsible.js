@@ -24,6 +24,7 @@ class Collapsible extends Component {
     ) {
       return { isOpen: nextProps.open };
     }
+
     return null;
   }
 
@@ -47,8 +48,8 @@ class Collapsible extends Component {
 
     return (
       <Box
-        justifyContent='center'
-        flexDirection='column'
+        justifyContent="center"
+        flexDirection="column"
       >
         {showHeader ? (
           <TouchableOpacity
@@ -56,19 +57,19 @@ class Collapsible extends Component {
           >
             {
               header ?
-              header : (
-                <Box
-                  justifyContent='center'
-                  transform={[
-                    { rotate: isOpen ? '180deg' : '0deg' },
-                  ]}
-                >
-                  <Icon
-                    name='keyboard_arrow_down'
-                    color='black'
-                  />
-                </Box>
-              )
+                header : (
+                  <Box
+                    justifyContent="center"
+                    transform={[
+                      { rotate: isOpen ? '180deg' : '0deg' },
+                    ]}
+                  >
+                    <Icon
+                      name="keyboard_arrow_down"
+                      color="black"
+                    />
+                  </Box>
+                )
             }
           </TouchableOpacity>
         ) : null}

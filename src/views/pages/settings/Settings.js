@@ -15,7 +15,9 @@ class Settings extends Component {
           flex={1}
           flexDirection="column"
         >
-          <Text>Settings</Text>
+          <Text>
+Settings
+          </Text>
         </Box>
       </Layout>
     );

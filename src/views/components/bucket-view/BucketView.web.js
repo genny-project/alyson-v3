@@ -25,13 +25,13 @@ class BucketView extends PureComponent {
 
     return (
       <Box
-        width='100%'
+        width="100%"
         padding={padding}
         flex={1}
         backgroundColor={backgroundColor}
       >
         <Box
-          width='100%'
+          width="100%"
           flex={1}
         >
           {(

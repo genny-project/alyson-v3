@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-state */
 import React, { Component } from 'react';
 import { node } from 'prop-types';
 import { Api } from '../../../../utils';

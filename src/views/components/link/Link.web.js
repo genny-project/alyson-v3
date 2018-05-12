@@ -18,6 +18,7 @@ const Link = ({
     if ( disabled ) {
       event.preventDefault();
       event.stopPropagation();
+
       return false;
     }
 

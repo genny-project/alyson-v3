@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-state */
 import React, { Component } from 'react';
 import { Platform, Linking } from 'react-native';
 import { string, any } from 'prop-types';
@@ -34,6 +35,7 @@ class KeycloakProvider extends Component {
 
     if ( !isValidUrl ) {
       console.warn( `Attempted to open invalid login URL: ${LoginUrl.getUrl()}` );
+
       return;
     }
 
@@ -402,7 +404,7 @@ class KeycloakProvider extends Component {
 
       /* FIXME: fix check */
       // if ( session_state === sessionState )
-        this.handleTokenRefreshSuccess( responseJson );
+      this.handleTokenRefreshSuccess( responseJson );
     }
     catch ( error ) {
       this.handleError( error );
@@ -412,7 +414,13 @@ class KeycloakProvider extends Component {
     }
   }
 
-  handleTokenRefreshSuccess = async ({ access_token, refresh_token, id_token, expires_in, refresh_expires_in }) => {
+  handleTokenRefreshSuccess = async ({
+    access_token,
+    refresh_token,
+    id_token,
+    expires_in,
+    refresh_expires_in,
+  }) => {
     const currentTime = new Date().getTime();
     const accessExpiresInSeconds = expires_in * 1000; // Convert from seconds to ms
     const refreshExpiresInSeconds = refresh_expires_in * 1000; // Convert from seconds to ms

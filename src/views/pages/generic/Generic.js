@@ -194,7 +194,7 @@ const layouts = {
         children: [
           {
             component: 'Input',
-            props:{
+            props: {
               type: 'switch',
               color: 'red',
             },

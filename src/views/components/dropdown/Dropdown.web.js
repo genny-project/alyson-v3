@@ -25,20 +25,20 @@ class Dropdown extends Component {
   }
 
   handleOpen = () => {
-    this.setState({ isOpen: true });  
+    this.setState({ isOpen: true });
     Animated.parallel( [
       Animated.timing(
-        this.state.fadeAnim,            
+        this.state.fadeAnim,
         {
-          toValue: 1,                   
-          duration: 100,              
+          toValue: 1,
+          duration: 100,
         }
       ),
       Animated.timing(
-        this.state.dropdownScaleY,            
+        this.state.dropdownScaleY,
         {
-          toValue: 1,                   
-          duration: 120,              
+          toValue: 1,
+          duration: 120,
         }
       ),
 
@@ -48,17 +48,17 @@ class Dropdown extends Component {
   handleClose = () => {
     Animated.parallel( [
       Animated.timing(
-        this.state.fadeAnim,            
+        this.state.fadeAnim,
         {
-          toValue: 0,                   
-          duration: 250,              
+          toValue: 0,
+          duration: 250,
         }
       ),
       Animated.timing(
-        this.state.dropdownScaleY,            
+        this.state.dropdownScaleY,
         {
-          toValue: 0,                   
-          duration: 300,              
+          toValue: 0,
+          duration: 300,
         }
       ),
 
@@ -126,7 +126,7 @@ class Dropdown extends Component {
           {isOpen && (
             <Animated.View
               style={{
-                transform: [{ 
+                transform: [{
                   scaleY: dropdownScaleY,
                 }, {
                   scaleX: dropdownScaleY,
@@ -144,30 +144,30 @@ class Dropdown extends Component {
                 flexDirection="column"
                 minWidth={170}
                 {...facingRight
-                ? { right: 0 }
-                : { left: 0 }
+                  ? { right: 0 }
+                  : { left: 0 }
               }
               >
                 {(
-                items &&
+                  items &&
                 items instanceof Array &&
                 items.length > 0
-              ) ? (
-                items.map( item => (
-                  <DropdownItem
-                    text={item.text}
-                    icon={item.icon}
-                    key={item.text}
-                    href={item.href}
-                    onPress={this.handleClose}
-                  />
-                ))
-              ) : (
-                <DropdownItem
-                  text="No items to show."
-                  onPress={this.handleClose}
-                />
-              )}
+                ) ? (
+                    items.map( item => (
+                      <DropdownItem
+                        text={item.text}
+                        icon={item.icon}
+                        key={item.text}
+                        href={item.href}
+                        onPress={this.handleClose}
+                      />
+                    ))
+                  ) : (
+                    <DropdownItem
+                      text="No items to show."
+                      onPress={this.handleClose}
+                    />
+                  )}
               </Box>
             </Animated.View>
           )}

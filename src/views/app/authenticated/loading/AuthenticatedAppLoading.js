@@ -18,7 +18,9 @@ const AuthenticatedAppError = () => ( // eslint-disable-line no-unused-vars
     >
       <ActivityIndicator />
 
-      <Text>Loading authentication...</Text>
+      <Text>
+Loading authentication...
+      </Text>
     </Box>
   </Layout>
 );

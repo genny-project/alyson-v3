@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Text from '../text';
 import { string } from 'prop-types';
+import Text from '../text';
 
 class Label extends Component {
   static propTypes = {
@@ -11,7 +11,9 @@ class Label extends Component {
     const { text, ...restProps } = this.props;
 
     return (
-      <Text {...restProps}>{text}</Text>
+      <Text {...restProps}>
+        {text}
+      </Text>
     );
   }
 }

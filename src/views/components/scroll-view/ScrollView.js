@@ -102,12 +102,12 @@ class ScrollView extends Component {
             Platform.OS === 'android'
           ) &&
           enableRefresh && (
-            refreshControlElement ||
+            refreshControlElement || (
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={onRefresh}
             />
-          )
+            ))
         ) || null}
       >
         {children}

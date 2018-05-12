@@ -78,19 +78,19 @@ class BucketList extends PureComponent {
 
     return (
       <Box
-        flexDirection='column'
-        justifyContent='flex-start'
-        width='100%'
+        flexDirection="column"
+        justifyContent="flex-start"
+        width="100%"
         backgroundColor={contentBackground}
       >
         {showHeader && (
           <Box
-            justifyContent='center'
-            alignItems='center'
-            width='100%'
+            justifyContent="center"
+            alignItems="center"
+            width="100%"
             height={headerHeight}
             backgroundColor={headerBackground}
-            position='sticky'
+            position="sticky"
             top={0}
             margin={headerPadding}
             zIndex={5}
@@ -108,10 +108,11 @@ class BucketList extends PureComponent {
 
             {headerText ? (
               <Text
-                fontWeight='bold'
+                fontWeight="bold"
                 color={headerColor}
               >
-                {headerText}&nbsp;
+                {headerText}
+                &nbsp;
                 {(
                   children &&
                   children instanceof Array &&
@@ -125,9 +126,9 @@ class BucketList extends PureComponent {
         )}
 
         <Box
-          justifyContent='center'
-          width='100%'
-          flexDirection='column'
+          justifyContent="center"
+          width="100%"
+          flexDirection="column"
           padding={contentPadding}
         >
           {(
@@ -135,22 +136,22 @@ class BucketList extends PureComponent {
             children instanceof Array &&
             children.length > 0
           ) ? (
-            children.map(( child, index ) => (
-              <Box
-                key={child.props.id}
-                marginBottom={index < children.length - 1 ? contentGutter : null}
+              children.map(( child, index ) => (
+                <Box
+                  key={child.props.id}
+                  marginBottom={index < children.length - 1 ? contentGutter : null}
+                >
+                  {child}
+                </Box>
+              ))
+            ) : (
+              <Text
+                align="center"
+                color="white"
               >
-                {child}
-              </Box>
-            ))
-          ) : (
-            <Text
-              align="center"
-              color="white"
-            >
               No Items To Display
-            </Text>
-          )}
+              </Text>
+            )}
         </Box>
 
         {(
@@ -160,27 +161,27 @@ class BucketList extends PureComponent {
           legend.length > 0
         ) && (
           <Box
-            flexDirection='column'
-            justifyContent='center'
-            alignItems='center'
-            position='sticky'
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            position="sticky"
             bottom={0}
-            width='100%'
+            width="100%"
             padding={legendMargin}
           >
             <Box
-              flexDirection='column'
-              justifyContent='center'
-              width='100%'
+              flexDirection="column"
+              justifyContent="center"
+              width="100%"
               backgroundColor={legendBackground}
               borderRadius={roundCorners ? 5 : 0}
               padding={legendPadding}
             >
               <Box
-                justifyContent='center'
+                justifyContent="center"
               >
                 <Text
-                  fontWeight='bold'
+                  fontWeight="bold"
                   color={legendColor}
                 >
                   Legend
@@ -190,11 +191,11 @@ class BucketList extends PureComponent {
               {legend.map(( item ) => (
                 <Box
                   key={item && item.id}
-                  alignItems='center'
+                  alignItems="center"
                 >
                   <Box
                     flex={1}
-                    justifyContent='center'
+                    justifyContent="center"
                     alignItems="center"
                   >
                     <Text
@@ -213,7 +214,7 @@ class BucketList extends PureComponent {
 
                       {legendText && (
                         <Text
-                          fontWeight='bold'
+                          fontWeight="bold"
                           color={legendColor}
                         >
                           {legendText}
@@ -226,7 +227,7 @@ class BucketList extends PureComponent {
                     backgroundColor={statusColors[item.status]}
                     width={10}
                     height={10}
-                    borderRadius='50%'
+                    borderRadius="50%"
                   />
                 </Box>
               ))}
