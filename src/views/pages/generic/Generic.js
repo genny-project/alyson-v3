@@ -283,10 +283,9 @@ class Generic extends Component {
   }
 
   render() {
-    const layout =
-    Platform.OS === 'web'
-    ? location.getBasePath()
-    : this.props.navigation.state.params.layout;
+    const layout = Platform.OS === 'web'
+      ? location.getBasePath()
+      : this.props.navigation.state.params.layout;
 
     return (
       <LayoutLoader

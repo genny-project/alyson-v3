@@ -64,7 +64,15 @@ class Recursive extends PureComponent {
               : typeof repeatedChildren === 'object'
                 ? <Recursive context={context} {...repeatedChildren}  />
                 : repeatedChildren
-          ) : null,
+          ) : (
+            children && (
+              children instanceof Array
+                ? children.map( child => <Recursive {...child} /> ) // eslint-disable-line react/jsx-key
+                : typeof children === 'object'
+                  ? <Recursive {...children} />
+                  : children
+            )
+          ),
         );
       }
 
