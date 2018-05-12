@@ -35,23 +35,26 @@ class BucketView extends PureComponent {
           flex={1}
         >
           {(
-            children &&
+            children != null &&
+            children instanceof Array &&
             children.length > 0
           ) ? (
-              children.map(( child, index ) => {
-                return (
-                  <Box
-                    key={child.props.id}
-                    flex={1}
-                    marginRight={index < children.length - 1 ? gutter : null}
-                  >
-                    {child}
-                  </Box>
-                );
-              })
+              children.map(( child, index ) => (
+                <Box
+                  key={child.props.id || index}
+                  flex={1}
+                  marginRight={(
+                  index < children.length - 1
+                    ? gutter
+                    : null
+                )}
+                >
+                  {child}
+                </Box>
+              ))
             ) : (
               <Text>
-                No Items To Display
+              No items to display
               </Text>
             )}
         </Box>

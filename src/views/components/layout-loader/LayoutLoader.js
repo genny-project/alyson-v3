@@ -31,12 +31,20 @@ class LayoutLoader extends PureComponent {
     return (
       <Layout {...layout.layout} context={context}>
         {(
-          layout.children &&
+          layout.children != null &&
           layout.children instanceof Array
         )
-          // eslint-disable-next-line react/jsx-key
-          ? layout.children.map( child => <Recursive {...child} context={context} /> )
-          : layout.children}
+          ? layout.children.map(( child, index ) => (
+            <Recursive
+              {...child}
+              context={context}
+              key={`${child.component}_${index}`} // eslint-disable-line react/no-array-index-key
+            />
+          ))
+          : (
+            layout.children ||
+            null
+          )}
       </Layout>
     );
   }
