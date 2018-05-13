@@ -12,27 +12,27 @@ class BucketView extends Component {
     tabs: array,
   }
 
-  getTabs = ( children ) => {
-    return [children.map(( child, index ) => {
-      return { 
-        key: index,
-        title: `Tab ${index + 1}`,
-      };
-    })];
-  }
-
   render() {
     const {
       children,
       tabs,
     } = this.props;
 
-    const tabData = tabs ? tabs : this.getTabs( children );
+    const tabData = (
+      tabs instanceof Array &&
+      tabs.length > 0 
+    ) ? 
+      tabs : 
+      children.map(( child, index ) => {
+        return { 
+          key: index,
+          title: `Tab ${index + 1}`,
+        };
+      });
     
-    // console.log(tabData);
-
     return (
       <Tabs
+        bottomTabs
         tabs={tabData}
       >
         {children}

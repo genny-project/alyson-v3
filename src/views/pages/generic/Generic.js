@@ -23,6 +23,30 @@ const layouts = {
         children: [
           {
             component: 'BucketView',
+            props: {
+              tabs: [
+                {
+                  key: 0,
+                  title: 'Tab 1',
+                },
+                {
+                  key: 1,
+                  title: 'Tab 2',
+                },
+                {
+                  key: 2,
+                  title: 'Tab 3',
+                },
+                {
+                  key: 3,
+                  title: 'Tab 4',
+                },
+                {
+                  key: 4,
+                  title: 'Tab 5',
+                },
+              ],
+            },
             children: [
               {
                 component: 'BucketList',

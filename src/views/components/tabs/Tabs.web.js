@@ -1,44 +1,60 @@
 import React, { PureComponent } from 'react';
-import { string, oneOfType, array, number, any, func } from 'prop-types';
-import { Box, Text, Button } from '../../components';
+import { string, oneOfType, array, number, any, func, oneOf } from 'prop-types';
+import { TouchableOpacity } from 'react-native';
+import { Icon, Box, Text } from '../../components';
+
+const tabBarHeight = {
+  sm: 30,
+  md: 50,
+  lg: 70,
+};
+
+const tabBarLocation = {
+  top: 'column',
+  bottom: 'column-reverse',
+  left: 'row',
+  right: 'row-reverse',
+};
+
+const tabBarDirection = {
+  top: 'row',
+  bottom: 'row',
+  left: 'column',
+  right: 'column',
+};
 
 class Tabs extends PureComponent {
   static defaultProps = {
     width: '100%',
     height: '100%',
+    padding: 0,
     tabs: [
-      {
-        text: 'Tab 1',
-        icon: 'email',
-        id: 1,
-      },
-      {
-        text: 'Tab 2',
-        icon: 'photo',
-        id: 2,
-      },
-      {
-        text: 'Tab 3',
-        icon: 'phone',
-        id: 3,
-      },
-      {
-        text: 'Tab 4',
-        icon: 'phone',
-        id: 4,
-      },
     ],
+    tabBarSize: 'md',
+    tabBarBackground: 'lightgray',
+    activeTabBackground: 'darkgrey',
+    textColor: 'white',
+    tabBarSide: 'top',
   }
 
   static propTypes = {
     children: any,
+    tabs: array,
+    padding: number,
     width: oneOfType(
       [string, number]
     ),
     height: oneOfType(
       [string, number]
     ),
-    tabs: array,
+    tabBarBackground: string,
+    tabBackground: string,
+    activeTabBackground: string,
+    tabBarSize: string, 
+    textColor: string,
+    tabBarSide: oneOf(
+      ['top', 'bottom', 'left', 'right']
+    ),
     onPress: func,
   }
 
@@ -56,7 +72,14 @@ class Tabs extends PureComponent {
       children,
       width,
       height,
+      padding,
       tabs,
+      tabBarBackground,
+      tabBackground,
+      activeTabBackground,
+      tabBarSize,
+      textColor,
+      tabBarSide,
     } = this.props;
 
     const {
@@ -65,15 +88,21 @@ class Tabs extends PureComponent {
 
     return (
       <Box
-        flexDirection="column"
+        flexDirection={tabBarLocation[tabBarSide]}
         flex={1}
         height={height}
         width={width}
       >
         <Box
-          justifyContent="flex-start"
+          flexDirection={tabBarDirection[tabBarSide]}
           flex={0}
-          backgroundColor="gray"
+          height={
+            tabBarSide === 'top' ||
+            tabBarSide === 'bottom' ? 
+              tabBarHeight[tabBarSize] :
+              null
+          }
+          backgroundColor={tabBarBackground}
         >
           {(
             tabs &&
@@ -84,16 +113,29 @@ class Tabs extends PureComponent {
                 <Box
                   key={tab.id}
                   padding={10}
-                  backgroundColor={index === currentChild ? 'darkgray' : 'gray'}
+                  height={tabBarHeight[tabBarSize] || null}
+                  backgroundColor={index === currentChild ? activeTabBackground : tabBackground}
                 >
-                  <Button
+                  <TouchableOpacity
                     onPress={() => this.handlePress( index )}
                     style={{ flexDirection: 'row' }}
-                    icon={tab.icon}
-                    textColor="white"
+                    height={tabBarHeight[tabBarSize] || null}
                   >
-                    {tab.text}
-                  </Button>
+                    {
+                      tab.icon ?
+                        ( 
+                          <Icon
+                            name={tab.icon}
+                          />
+                        ) :
+                        null
+                    }
+                    <Text
+                      color={textColor}
+                    >
+                      {tab.title}
+                    </Text>
+                  </TouchableOpacity>
                 </Box>
               ))
             ) : (
@@ -103,8 +145,9 @@ class Tabs extends PureComponent {
             )}
         </Box>
         <Box
-          padding={10}
-          backgroundColor="darkgray"
+          padding={padding}
+          flex={1}
+          backgroundColor={activeTabBackground}
         >
           {children[currentChild]}
         </Box>

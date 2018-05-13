@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
-import { any, array, bool, string, number, oneOf } from 'prop-types';
+import { any, array, bool, string, number, oneOfType, func } from 'prop-types';
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
 import { Dimensions } from 'react-native';
 import { Box, Text, Icon } from '../../components';
+
+const tabBarHeight = {
+  sm: 40,
+  md: 50,
+  lg: 60,
+};
 
 class Tabs extends Component {
   static defaultProps = {
     tabs: [],
     height: '100%',
     width: '100%',
-    tabHeight: 60,
+    tabBarSize: 'md',
     tabBarBackground: 'lightgray',
-    activeTabBackground: 'gray',
+    activeTabBackground: 'darkgrey',
     iconColor: 'white',
     textColor: 'white',
     bottomTabs: false,
@@ -20,19 +26,20 @@ class Tabs extends Component {
   static propTypes = {
     children: any,
     tabs: array,
-    height: oneOf(
+    height: oneOfType(
       [string, number]
     ),
-    width: oneOf(
+    width: oneOfType(
       [string, number]
     ),
     tabBarBackground: string,
     tabBackground: string,
     activeTabBackground: string,
-    tabHeight: number, 
+    tabBarSize: string, 
     iconColor: string,
     textColor: string,
     bottomTabs: bool,
+    onPress: func,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -53,13 +60,17 @@ class Tabs extends Component {
 
   handleIndexChange = index => this.setState({ index });
 
+  handlePress = () => {
+    if ( this.props.onPress ) this.props.onPress();
+  }
+
   renderIcon = ({ route }) => {
     return route.icon ? <Icon name={route.icon} size="sm" color={this.props.iconColor} /> : null;
   }
 
   renderHeader = props => {   
     const { 
-      tabHeight,
+      tabBarSize,
       tabBarBackground,
       activeTabBackground,
       textColor,
@@ -67,10 +78,11 @@ class Tabs extends Component {
 
     return ( 
       <TabBar 
-        {...props} 
+        {...props}
+        onTabPress={this.handlePress}
         style={{
           backgroundColor: tabBarBackground,
-          flexBasis: tabHeight,
+          flexBasis: tabBarHeight[tabBarSize],
         }}
         scrollEnabled
         renderIcon={this.renderIcon}
@@ -82,7 +94,7 @@ class Tabs extends Component {
           color: textColor,
         }}
         indicatorStyle={{
-          height: tabHeight,
+          height: tabBarHeight[tabBarSize],
           backgroundColor: activeTabBackground,
         }}
       />
