@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { string, bool, array, number, any } from 'prop-types';
-import { Box, Text, Icon } from '../../components';
+import { Box, Text, Icon, ScrollView } from '../../components';
 
 const statusColors = {
   error: '#cc0000',
@@ -125,7 +125,7 @@ class BucketList extends PureComponent {
           </Box>
         )}
 
-        <Box
+        <ScrollView
           justifyContent="center"
           width="100%"
           flexDirection="column"
@@ -152,7 +152,7 @@ class BucketList extends PureComponent {
               No Items To Display
               </Text>
             )}
-        </Box>
+        </ScrollView>
 
         {(
           showLegend &&
