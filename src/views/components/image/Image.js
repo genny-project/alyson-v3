@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image as NativeImage } from 'react-native';
-import { Box, Icon } from '../../components';
 import { string } from 'prop-types';
+import { Box, Icon } from '../../components';
 
 const Image = ({
   width,
@@ -20,23 +20,22 @@ const Image = ({
       />
     );
   }
-  else {
-    return (
-      <Box
-        width={width}
-        height={height}
-        backgroundColor='gray'
-        justifyContent='center'
-        alignItems='center'
-      >
-        <Icon
-          name='photo'
-          color='white'
-          size='lg'
-        />
-      </Box>
-    );
-  }
+
+  return (
+    <Box
+      width={width}
+      height={height}
+      backgroundColor="gray"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Icon
+        name="photo"
+        color="white"
+        size="lg"
+      />
+    </Box>
+  );
 };
 
 Image.propTypes = {

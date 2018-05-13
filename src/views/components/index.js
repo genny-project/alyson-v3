@@ -25,6 +25,7 @@ export { default as BucketCard } from './bucket-card';
 export { default as BucketList } from './bucket-list';
 export { default as BucketView } from './bucket-view';
 export { default as Tabs } from './tabs';
+export { default as Image } from './image';
 
 export * from './keycloak';
 export * from './vertx';
