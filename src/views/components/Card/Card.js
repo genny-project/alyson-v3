@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
-import { Image } from 'react-native';
 import { any, string, number, bool } from 'prop-types';
-import { Box } from '../../components';
+import { Box, Image } from '../../components';
 
 const statusColors = {
   error: '#cc0000',
@@ -9,7 +8,7 @@ const statusColors = {
   success: '#5cb85c',
 };
 
-class BucketCard extends PureComponent {
+class Card extends PureComponent {
   static defaultProps = {
     cardBackground: 'white',
     cardPadding: 10,
@@ -96,12 +95,9 @@ class BucketCard extends PureComponent {
               marginRight={imageMargin}
             >
               <Image
-                source={{ uri: image }}
-                style={{
-                  width: 50,
-                  height: 50,
-                  borderRadius: 5,
-                }}
+                source="image"
+                width={50}
+                height={50}
               />
             </Box>
             ) : null}
@@ -154,4 +150,4 @@ class BucketCard extends PureComponent {
   }
 }
 
-export default BucketCard;
+export default Card;
