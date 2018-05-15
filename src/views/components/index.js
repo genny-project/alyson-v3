@@ -24,6 +24,8 @@ export { default as RefreshControl } from './refresh-control';
 export { default as StatusBar } from './status-bar';
 export { default as ScrollView } from './scroll-view';
 export { default as Tabs } from './tabs';
+export { default as Image } from './image';
+export { default as ErrorBoundary } from './error-boundary';
 export { default as Text } from './text';
 export { default as Timeout } from './timeout';
 

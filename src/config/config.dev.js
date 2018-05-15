@@ -4,7 +4,7 @@ export default {
   },
   genny: {
     // host: 'https://bridge-v3.channel40.com.au',
-    host: 'http://bridge-channel40-staging.outcome-hub.com',
+    host: 'https://bridge-channel40-staging.outcome-hub.com',
     bridge: {
       // port: '8088',
       port: '80',
