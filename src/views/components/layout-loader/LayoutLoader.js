@@ -26,7 +26,7 @@ class LayoutLoader extends PureComponent {
 
     if ( !layout ) {
       return (
-        <Timeout duration={30000}>
+        <Timeout duration={60000}>
           {({ isTimeUp, secondsElapsed }) => (
             <Box
               justifyContent="center"
@@ -37,13 +37,15 @@ class LayoutLoader extends PureComponent {
             >
               {isTimeUp ? (
                 <Fragment>
-                  <Text>
+                  <Text align="center">
                     Sorry! We were unable to load this page.
                   </Text>
 
-                  <Text>
+                  <Text align="center">
                     Please check your internet connection and try again.
                   </Text>
+
+                  <Box height={20} />
 
                   <Button
                     color="blue"
@@ -54,17 +56,20 @@ class LayoutLoader extends PureComponent {
                 </Fragment>
               ) : (
                 <Fragment>
-                  <ActivityIndicator />
+                  <ActivityIndicator size="large" />
 
-                  <Text>
+                  <Box height={10} />
+
+                  <Text align="center">
                     Loading...
                   </Text>
 
                   {secondsElapsed > 5 ? (
-                    <Text>
-                      {secondsElapsed > 20 ? 'Still loading - slowly...'
-                        : secondsElapsed > 10 ? 'Still loading...'
-                          : 'This is taking longer than usual...'}
+                    <Text align="center">
+                      {secondsElapsed > 30 ? 'Still loading - please wait a little longer...'
+                        : secondsElapsed > 20 ? 'Still loading - please wait...'
+                          : secondsElapsed > 10 ? 'Still loading...'
+                            : 'This is taking longer than usual...'}
                     </Text>
                   ) : null}
                 </Fragment>
