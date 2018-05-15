@@ -41,6 +41,8 @@ class LayoutLoader extends PureComponent {
                     Sorry! We were unable to load this page.
                   </Text>
 
+                  <Box height={10} />
+
                   <Text align="center">
                     Please check your internet connection and try again.
                   </Text>
@@ -63,6 +65,8 @@ class LayoutLoader extends PureComponent {
                   <Text align="center">
                     Loading...
                   </Text>
+
+                  <Box height={10} />
 
                   {secondsElapsed > 5 ? (
                     <Text align="center">
