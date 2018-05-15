@@ -8,7 +8,7 @@ const statusColors = {
   success: '#5cb85c',
 };
 
-class BucketList extends PureComponent {
+class List extends PureComponent {
   static defaultProps = {
     contentPadding: 10,
     contentGutter: 10,
@@ -239,4 +239,4 @@ class BucketList extends PureComponent {
   }
 }
 
-export default BucketList;
+export default List;

@@ -2,10 +2,13 @@ const reducer = ( state = {}, { type, payload }) => {
   switch ( type ) {
     case 'BASE_ENTITY_MESSAGE': {
       if (
-        payload.aliasCode &&
-        payload.items &&
+        payload.aliasCode != null &&
+        typeof payload.aliasCode === 'string' &&
+        payload.items != null &&
         payload.items instanceof Array &&
-        payload.items.length === 1 // Only alias this if there is 1 item in the message.
+        payload.items.length > 0 &&
+        payload.items[0].code != null &&
+        typeof payload.items[0].code === 'string'
       ) {
         return {
           ...state,
