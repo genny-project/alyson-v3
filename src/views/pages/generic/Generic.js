@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import { object } from 'prop-types';
 import { connect } from 'react-redux';
 import { location } from '../../../utils';
-import { LayoutLoader } from '../../components';
+import { LayoutLoader, Redirect, KeycloakConsumer } from '../../components';
 /* eslint-disable */
 
 const layouts = {
@@ -624,6 +624,9 @@ class Generic extends Component {
   }
 
   render() {
+    if ( !this.props.keycloak.isAuthenticated )
+      return <Redirect to="auth" />;
+
     const currentUrl = Platform.OS === 'web'
       ? location.getBasePath()
       : this.props.navigation.state.params.layout;
@@ -680,4 +683,10 @@ const mapStateToProps = state => ({
   baseEntities: state.vertx.baseEntities,
 });
 
-export default connect( mapStateToProps )( Generic );
+export default connect( mapStateToProps )(
+  props => (
+    <KeycloakConsumer>
+      {keycloak => <Generic {...props} keycloak={keycloak} />}
+    </KeycloakConsumer>
+  )
+);

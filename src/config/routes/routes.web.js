@@ -1,34 +1,41 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect } from '../../views/components';
 import * as Pages from '../../views/pages';
 
 const routes = [
   {
     path: '/login',
+    exact: true,
     component: Pages.Login,
   },
   {
     path: '/logout',
+    exact: true,
     component: Pages.Logout,
   },
   {
     path: '/register',
+    exact: true,
     component: Pages.Register,
   },
   {
-    path: '/splash',
+    path: '/',
+    exact: true,
     component: Pages.Splash,
   },
   {
     path: '/auth',
-    component: () => <Redirect to="/splash" />,
+    exact: true,
+    component: () => <Redirect to="splash" />,
   },
   {
     path: '/app',
-    component: () => <Redirect to="/" />,
+    exact: true,
+    component: () => <Redirect to="home" />,
   },
   {
     path: '/loading',
+    exact: true,
     component: Pages.Loading,
   },
   {
