@@ -63,10 +63,14 @@
     "lodash.debounce": "^4.0.8",
     "lodash.range": "^3.2.0",
     "moment": "^2.22.1",
+    "prettier-bytes": "^1.0.4",
     "prop-types": "^15.6.1",
+    "rc-time-picker": "^3.3.1",
     "react": "16.3.0-alpha.1",
+    "react-day-picker": "^7.1.9",
     "react-dom": "16.3.0-alpha.1",
     "react-helmet": "^5.2.0",
+    "react-modal": "^3.4.4",
     "react-native": "0.54.0",
     "react-native-gesture-handler": "^1.0.0-alpha.43",
     "react-native-iphone-x-helper": "^1.0.2",
@@ -87,6 +91,7 @@
     "redux-observable": "^0.18.0",
     "rxjs": "^5.5.10",
     "style-loader": "^0.21.0",
+    "uppy": "^0.24.4",
     "vertx3-eventbus-client": "^3.5.1"
   },
   "husky": {

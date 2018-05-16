@@ -1,13 +1,20 @@
 import React from 'react';
 import { Image as NativeImage } from 'react-native';
-import { string } from 'prop-types';
+import { string, oneOf } from 'prop-types';
 import { Box, Icon } from '../../components';
 
 const Image = ({
   width,
   height,
   source,
+  shape,
 }) => {
+  const borderRadius = {
+    square: 0,
+    rounded: 5,
+    circle: '50%',
+  };
+  
   if (
     source &&
     typeof source === 'string' &&
@@ -16,11 +23,11 @@ const Image = ({
     return (
       <NativeImage
         source={source}
-        style={{ width, height }}
+        style={{ width, height, borderRadius: borderRadius[shape] }}
       />
     );
   }
-
+  
   return (
     <Box
       width={width}
@@ -28,6 +35,7 @@ const Image = ({
       backgroundColor="gray"
       justifyContent="center"
       alignItems="center"
+      borderRadius={borderRadius[shape]}
     >
       <Icon
         name="photo"
@@ -42,6 +50,9 @@ Image.propTypes = {
   width: string,
   height: string,
   source: string,
+  shape: oneOf(
+    ['square', 'rounded', 'circle']
+  ),
 };
 
 export default Image;

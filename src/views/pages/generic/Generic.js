@@ -24,469 +24,17 @@ const layouts = {
         },
         children: [
           {
-            component: 'BucketView',
+            component: 'Container',
             props: {
-              tabs: [
-                {
-                  key: 0,
-                  title: 'Tab 1',
-                },
-                {
-                  key: 1,
-                  title: 'Tab 2',
-                },
-                {
-                  key: 2,
-                  title: 'Tab 3',
-                },
-                {
-                  key: 3,
-                  title: 'Tab 4',
-                },
-                {
-                  key: 4,
-                  title: 'Tab 5',
-                },
-              ],
+              size: 'sm'
             },
             children: [
               {
-                component: 'BucketList',
+                component: 'Form',
                 props: {
-                  headerText: 'Header1',
                 },
-                children: [
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                component: 'BucketList',
-                props: {
-                  headerText: 'Header2',
-                },
-                children: [
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                component: 'BucketList',
-                props: {
-                  headerText: 'Header2',
-                },
-                children: [
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                component: 'BucketList',
-                props: {
-                  headerText: 'Header2',
-                },
-                children: [
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                component: 'BucketList',
-                props: {
-                  headerText: 'Header2',
-                },
-                children: [
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    component: 'BucketCard',
-                    children: [
-                      {
-                        component: 'Label',
-                        props: {
-                          text: 'Header',
-                        },
-                      },
-                      {
-                        component: 'Label',
-                        props: {
-                          size: 'xxs',
-                          text: 'Content',
-                        },
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
+              }
+            ]
           },
         ],
       },
@@ -624,51 +172,52 @@ class Generic extends Component {
   }
 
   render() {
-    const currentUrl = Platform.OS === 'web'
+    const layout = Platform.OS === 'web'
       ? location.getBasePath()
       : this.props.navigation.state.params.layout;
 
-    const { attributes, data } = this.props.baseEntities;
+    // const { attributes, data } = this.props.baseEntities;
 
-    console.log({ currentUrl });
+    // console.log({ currentUrl });
 
-    const layoutAttribute = Object.keys( attributes ).find( attribute => {
-      if ( attribute.startsWith( 'LAY' )) {
-        console.log({ attribute });
-        const layoutUrl = attributes[attribute].PRI_LAYOUT_URI.valueString.replace( /\//g, '' );
+    // const layoutAttribute = Object.keys( attributes ).find( attribute => {
+    //   if ( attribute.startsWith( 'LAY' )) {
+    //     console.log({ attribute });
+    //     const layoutUrl = attributes[attribute].PRI_LAYOUT_URI.valueString.replace( /\//g, '' );
 
-        if ( layoutUrl === currentUrl ) {
-          return true;
-        }
-      }
+    //     if ( layoutUrl === currentUrl ) {
+    //       return true;
+    //     }
+    //   }
 
-      return false;
-    });
+    //   return false;
+    // });
 
-    console.log({ layoutAttribute });
+    // console.log({ layoutAttribute });
 
-    const layout = (
-      attributes[layoutAttribute] != null &&
-      attributes[layoutAttribute].PRI_LAYOUT_DATA &&
-      attributes[layoutAttribute].PRI_LAYOUT_DATA.valueString
-    );
+    // const layout = (
+    //   attributes[layoutAttribute] != null &&
+    //   attributes[layoutAttribute].PRI_LAYOUT_DATA &&
+    //   attributes[layoutAttribute].PRI_LAYOUT_DATA.valueString
+    // );
 
-    console.log({ layout });
+    // console.log({ layout });
 
-    let parsed = null;
+    // let parsed = null;
 
-    try {
-      parsed = JSON.parse( layout );
-    }
-    catch ( error ) {
-      console.warn( 'Unable to parse layout', layout );
-    }
+    // try {
+    //   parsed = JSON.parse( layout );
+    // }
+    // catch ( error ) {
+    //   console.warn( 'Unable to parse layout', layout );
+    // }
 
-    console.log({ parsed });
+    // console.log({ parsed });
 
     return (
       <LayoutLoader
-        layout={parsed}
+        //layout={parsed}
+        layout={layouts[layout]}
       />
     );
   }
