@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Box, Button } from '../../components';
+import { Link, Box, Button, KeycloakConsumer, Redirect } from '../../components';
 import Layout from '../../layout';
 
 class Splash extends Component {
@@ -10,26 +10,32 @@ class Splash extends Component {
 
   render() {
     return (
-      <Layout
-        title="Splash"
-        appColor="light"
-        hideHeader
-      >
-        <Box
-          justifyContent="center"
-          alignItems="center"
-          flex={1}
-          flexDirection="column"
-        >
-          <Link to="login">
-            <Button
-              color="red"
+      <KeycloakConsumer>
+        {({ isAuthenticated }) => isAuthenticated ? (
+          <Redirect to="home" />
+        ) : (
+          <Layout
+            title="Splash"
+            appColor="light"
+            hideHeader
+          >
+            <Box
+              justifyContent="center"
+              alignItems="center"
+              flex={1}
+              flexDirection="column"
             >
-              Login
-            </Button>
-          </Link>
-        </Box>
-      </Layout>
+              <Link to="login">
+                <Button
+                  color="red"
+                >
+                  Login
+                </Button>
+              </Link>
+            </Box>
+          </Layout>
+        )}
+      </KeycloakConsumer>
     );
   }
 }
