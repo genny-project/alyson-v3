@@ -19,6 +19,48 @@ class Generic extends Component {
     if ( !this.props.keycloak.isAuthenticated )
       return <Redirect to={`auth?redirectURL=${currentUrl}`} />;
 
+    const home = {
+      layout: {
+        title: 'Home',
+        appColor: 'dark',
+      },
+      children: [
+        {
+          component: 'Box',
+          props: {
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+            height: '100%',
+          },
+          children: [
+            {
+              component: 'Container',
+              props: {
+                size: 'sm',
+                flexDirection: 'column',
+              },
+              children: [
+                {
+                  component: 'Input',
+                  props: {
+                    type: 'image',
+                  },
+                },
+                {
+                  component: 'Input',
+                  props: {
+                    type: 'file',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
     return (
       <LayoutFetcher currentUrl={currentUrl}>
         { layout => (
