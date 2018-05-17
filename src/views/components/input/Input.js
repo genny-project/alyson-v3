@@ -9,7 +9,8 @@ import InputScroll from './scroll';
 import InputRating from './rating';
 import InputText from './text';
 import Switch from './switch';
-import Text from '../text';
+import InputDropdown from './dropdown';
+import { Text } from '../index';
 
 const Input = props => {
   const { type } = props;
@@ -39,6 +40,9 @@ const Input = props => {
     case 'address':
       return <InputAddress {...props} />;
 
+    case 'dropdown':
+      return <InputDropdown {...props} />;
+
     case 'checkbox':
       return <CheckBox {...props} />;
 
@@ -67,7 +71,7 @@ const Input = props => {
 };
 
 Input.propTypes = {
-  type: string,
+  type: string.isRequired,
 };
 
 export default Input;
