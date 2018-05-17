@@ -9,9 +9,9 @@ class MessageHandler {
     this.lastBe = new Date().getTime();
     this.beBatch = [];
 
-    setInterval(() => {
+    /* setInterval(() => {
       if ( new Date().getTime() - this.lastBe > 200 && this.beBatch.length ) {
-        /* Get the template */
+
         const message = this.beBatch.reduce(( output, current ) => {
           return {
             ...output,
@@ -28,7 +28,7 @@ class MessageHandler {
         // });
         this.beBatch = [];
       }
-    }, 200 );
+    }, 200 ); */
   }
 
   validMessageTypes = [
@@ -50,7 +50,7 @@ class MessageHandler {
     const isValidMessage = this.validMessageTypes.includes( msg_type );
 
     if (
-      !isValidMessage &&
+      !isValidMessage &&	
       data_type !== 'QBulkMessage'
     ) {
       this.log(
@@ -87,11 +87,16 @@ class MessageHandler {
 
     if ( message.data_type === 'BaseEntity' && !message.delete ) {
       /* Add to a batch */
-      this.beBatch.push( action( message ));
+      // this.beBatch.push( action( message ));
+
       this.lastBe = new Date().getTime();
     } else {
-      store.dispatch( action( message ));
+      // store.dispatch( action( message ));
     }
+
+    store.dispatch(
+      action( message )
+    );
   }
 }
 
