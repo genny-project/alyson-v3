@@ -4,7 +4,7 @@ import { DatePickerIOS } from 'react-native';
 import moment from 'moment';
 import { Box } from '../../../components';
 
-class DatePicker extends Component {  
+class DatePicker extends Component {
   static defaultProps = {
     // value: '',
     minuteInterval: 10,
@@ -23,8 +23,8 @@ class DatePicker extends Component {
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
-    if ( 
-      nextProps.value !== prevState.value && 
+    if (
+      nextProps.value !== prevState.value &&
       nextProps.value != null
     ) {
       if ( moment( nextProps.value ).isValid()) {
@@ -36,9 +36,9 @@ class DatePicker extends Component {
 
     return null;
   }
-  
+
   state = {
-    value: null,
+    value: new Date(),
   };
 
   handleChange = ( value ) => {
@@ -59,11 +59,11 @@ class DatePicker extends Component {
       height: '100%',
       width: '100%',
     };
-    
+
     return (
       <Box
         justifyContent="center"
-        aligntItems="center"
+        alignItems="center"
         width="100%"
         flex={1}
       >

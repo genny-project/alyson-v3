@@ -17,26 +17,44 @@ const Input = props => {
   switch ( type ) {
     case 'text':
       return <InputText {...props} />;
+
+    case 'email':
+      return <InputText icon="mail" {...props} />;
+
+    case 'mobile':
+      return <InputText icon="phone_iphone" {...props} />;
+
     case 'switch':
       return <Switch {...props} />;
+
     case 'scroll':
       return <InputScroll {...props} />;
+
     case 'rating':
       return <InputRating {...props} />;
+
     case 'autocomplete':
       return <InputAutocomplete {...props} />;
+
     case 'address':
       return <InputAddress {...props} />;
+
     case 'checkbox':
       return <CheckBox {...props} />;
+
     case 'radio':
       return <CheckBox {...props} radio />;
+
     case 'file':
       return <InputFile {...props} />;
+
     case 'date':
-      return <DatePicker {...props} />;
+    case 'java.time.localdate':
+      return <DatePicker date {...props} />;
+
     case 'datetime':
-      return <DatePicker {...props} />;
+      return <DatePicker date time {...props} />;
+
     default:
       return (
         <Text>

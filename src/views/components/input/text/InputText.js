@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { TextInput, Platform } from 'react-native';
-import { string, oneOf, number, shape, bool, func, any } from 'prop-types';
+import { string, oneOf, number, shape, bool, func, any, oneOfType } from 'prop-types';
 import { objectClean } from '../../../../utils';
 import { Box, Icon } from '../../../components';
 import styles from './InputText.style';
 
-class Input extends Component {  
+class Input extends Component {
   static defaultProps = {
     autoCapitalize: 'sentences',
     autoComplete: 'no',
@@ -78,10 +78,10 @@ class Input extends Component {
     paddingBottom: number,
     paddingLeft: number,
     forwardedRef: any,
+    width: oneOfType(
+      [number, string]
+    ),
   }
-
-  state = {
-  };
 
   render() {
     const {
@@ -129,6 +129,7 @@ class Input extends Component {
       warning,
       icon,
       forwardedRef,
+      width,
     } = this.props;
 
     const status =
@@ -180,6 +181,7 @@ class Input extends Component {
     return (
       <Box
         position="relative"
+        width={width}
       >
         <TextInput
           autoCapitalize={autoCapitalize}
