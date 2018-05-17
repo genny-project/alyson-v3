@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { string, func, number, oneOf } from 'prop-types';
+import { string, func, number, bool } from 'prop-types';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import moment from 'moment';
@@ -9,10 +9,9 @@ import 'rc-time-picker/assets/index.css';
 
 import { Box, Input } from '../../../components';
 
-class DatePicker extends Component {  
+class DatePicker extends Component {
   static defaultProps = {
     minuteInterval: 10,
-    type: 'datetime',
   }
 
   static propTypes = {
@@ -20,25 +19,24 @@ class DatePicker extends Component {
     maximumDate: string,
     minimumDate: string,
     minuteInterval: number,
-    type: oneOf(
-      ['date', 'time', 'datetime']
-    ),
+    date: bool,
+    time: bool,
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
-    if ( 
-      nextProps.value !== prevState.value && 
+    if (
+      nextProps.value !== prevState.value &&
       nextProps.value != null
     ) {
       if ( moment( nextProps.value ).isValid()) {
-        return { 
+        return {
           value: moment( nextProps.value ),
           hour: moment( nextProps.value ).format( 'HH' ),
           minute: moment( nextProps.value ).format( 'mm' ),
         };
       }
 
-      return { 
+      return {
         value: moment(),
         hour: moment().format( 'HH' ),
         minute: moment().format( 'mm' ),
@@ -49,8 +47,11 @@ class DatePicker extends Component {
   }
 
   state = {
-  };
-  
+    value: null,
+    hour: null,
+    minute: null,
+  }
+
   handleDayChange = ( value ) => {
     const newValue = moment( value ).hour( this.state.hour ).minute( this.state.minute ).format();
 
@@ -73,59 +74,47 @@ class DatePicker extends Component {
 
   render() {
     const {
-      type,
       minuteInterval,
       minimumDate,
       maximumDate,
+      date,
+      time,
     } = this.props;
-
-    // state = {
-    // };
 
     return (
       <Box
         flexDirection="row"
       >
-        {
-          type &&
-          type.includes( 'date' )
-            ? (
-              <DayPickerInput
-                onDayChange={this.handleDayChange}
-                component={MyInput}
-                style={{ flexGrow: 1 }}
-                fromMonth={minimumDate}
-                toMonth={maximumDate}
-              /> 
-            )
-            : null
-        }
-        {
-          type &&
-          type.includes( 'time' )
-            ? (
-              <TimePicker
-                showSecond={false}
-                value={this.state.value}
-                className="xxx"
-                minuteStep={minuteInterval}
-                onChange={this.handleTimeChange}
-                format="h:mm a"
-                use12Hours
-                // inputReadOnly
-                style={{ flexGrow: 1 }}
-              />
-            )
-            : null
-        }
+        {date ? (
+          <DayPickerInput
+            onDayChange={this.handleDayChange}
+            component={MyInput}
+            style={{ flexGrow: 1 }}
+            fromMonth={minimumDate}
+            toMonth={maximumDate}
+          />
+        ) : null}
+
+        {time ? (
+          <TimePicker
+            showSecond={false}
+            value={this.state.value}
+            className="xxx"
+            minuteStep={minuteInterval}
+            onChange={this.handleTimeChange}
+            format="h:mm a"
+            use12Hours
+            // inputReadOnly
+            style={{ flexGrow: 1 }}
+          />
+        ) : null}
       </Box>
     );
   }
 }
 
-/* eslint-disable */
+/* eslint-disable react/no-multi-comp */
 class MyInput extends Component {
-
   static defaultProps = {
     value: '',
   }
@@ -135,8 +124,8 @@ class MyInput extends Component {
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
-    if ( 
-      nextProps.value !== prevState.value && 
+    if (
+      nextProps.value !== prevState.value &&
       nextProps.value != null
     ) {
       if ( moment( nextProps.value ).isValid()) {
@@ -148,7 +137,7 @@ class MyInput extends Component {
 
     return null;
   }
-  
+
   state = {
     value: null,
   }
@@ -158,14 +147,14 @@ class MyInput extends Component {
   }
 
   render() {
+    const { value } = this.state;
+
     return (
       <Input
         {...this.props}
-        forwardedRef={el => {
-          this.input = el;
-        }}
+        forwardedRef={input => this.input = input}
         type="text"
-        value={this.state.value.format('YYYY-MM-DD')}
+        value={value.format( 'YYYY-MM-DD' )}
       />
     );
   }
