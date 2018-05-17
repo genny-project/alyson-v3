@@ -5,6 +5,7 @@ import Box from '../box';
 const Container = ({
   children,
   size = 'sm',
+  ...restProps
 }) => {
   const containerWidth = {
     sm: 800,
@@ -14,16 +15,13 @@ const Container = ({
 
   return (
     <Box
+      maxWidth={containerWidth[size]}
       justifyContent="center"
       width="100%"
+      marginX="auto"
+      {...restProps}
     >
-      <Box
-        maxWidth={containerWidth[size]}
-        justifyContent="center"
-        width="100%"
-      >
-        {children}
-      </Box>
+      {children}
     </Box>
   );
 };

@@ -49,7 +49,6 @@ class MessageHandler {
     const { msg_type, data_type, messages } = message;
     const isValidMessage = this.validMessageTypes.includes( msg_type );
 
-    console.warn( message );
     if (
       !isValidMessage &&
       data_type !== 'QBulkMessage'

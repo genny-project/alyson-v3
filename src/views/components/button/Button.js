@@ -1,6 +1,6 @@
 import React, { createElement } from 'react';
 import { TouchableOpacity, TouchableWithoutFeedback, TouchableNativeFeedback, Platform } from 'react-native';
-import { string, bool, func, oneOf, number } from 'prop-types';
+import { string, bool, func, oneOf, number, oneOfType } from 'prop-types';
 import { Text, Icon, Box } from '../index';
 
 const buttonColors = {
@@ -42,6 +42,8 @@ const Button = ({
   accessible = true,
   accessibilityLabel,
   accessibilityRole = 'button',
+  width,
+  height,
 }) => {
   const child = ( icon != null ) ? (
     <Icon
@@ -54,6 +56,8 @@ const Button = ({
       color={textColor || textColors[color]}
       decoration="none"
       size={textSizes[size]}
+      align="center"
+      width="100%"
     >
       {children}
     </Text>
@@ -76,6 +80,11 @@ const Button = ({
     </Box>
   );
 
+  const style = {
+    height,
+    width,
+  };
+
   return createElement(
     silent
       ? TouchableWithoutFeedback
@@ -95,6 +104,7 @@ const Button = ({
           ? TouchableNativeFeedback.Ripple( textColors[color], false )
           : undefined
       ),
+      style,
     },
     childWrapper
   );
@@ -121,6 +131,12 @@ Button.propTypes = {
   accessibilityLabel: string,
   accessibilityRole: string,
   accessible: bool,
+  width: oneOfType(
+    [number, string]
+  ),
+  height: oneOfType(
+    [number, string]
+  ),
 };
 
 export default Button;
