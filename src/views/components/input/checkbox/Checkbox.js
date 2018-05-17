@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { array, bool, func, string, oneOfType } from 'prop-types';
-import { CheckBox as NativeCheckBox, TouchableOpacity } from 'react-native';
-import { Box, Text } from '../../../components';
+import { 
+  // CheckBox as NativeCheckBox,
+  TouchableOpacity } from 'react-native';
+import { Box, Text, Icon } from '../../../components';
 
 class CheckBox extends Component {  
   static defaultProps = {
@@ -48,15 +50,16 @@ class CheckBox extends Component {
       }
 
       return {
-        value: item,
+        value: [item],
       };
     }, () => {
+      // console.log( this.state.value );
       if ( this.props.onChangeValue ) this.props.onChangeValue( this.state.value );
     });
   }
 
   render() {
-    const { items, horizontal, radio } = this.props;
+    const { items, horizontal } = this.props;
     const { value } = this.state;
 
     return (
@@ -80,22 +83,36 @@ class CheckBox extends Component {
                   alignItems="center"
                   padding={5}
                 > 
-                  <NativeCheckBox 
+                  {/* <NativeCheckBox 
                     style={{ marginRight: 5, height: 20, width: 20 }}
                     color="black"
+                    disabled={false}
                     value={(
                       radio
                         ? value === item
                         : value.includes( item )
                     )}
                     onValueChange={this.handleValueChange( item )}
-                  />
+                  /> */}
                   <TouchableOpacity
                     onPress={this.handleValueChange( item )}
                   >
-                    <Text>
-                      {item}
-                    </Text>
+                    <Box
+                      flexDirection="row"
+                      alignItems="center"
+                      paddingX={5}
+                    > 
+                      <Icon
+                        color="black"
+                        name={value.includes( item )
+                          ? 'check-box'
+                          : 'check-box-outline-blank'
+                        }
+                      />
+                      <Text>
+                        {item}
+                      </Text>
+                    </Box>
                   </TouchableOpacity>
                 </Box>
               );

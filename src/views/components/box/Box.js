@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Platform } from 'react-native';
 import { any, oneOf, oneOfType, string, number, array, func, bool } from 'prop-types';
+import { objectClean } from '../../../utils';
 
 const Box = ({
   children,
@@ -50,7 +51,7 @@ const Box = ({
   borderRadius,
   ...restProps
 }) => {
-  const style = {
+  const style = objectClean({
     justifyContent,
     alignItems,
     height,
@@ -88,7 +89,7 @@ const Box = ({
     borderColor,
     borderStyle,
     borderRadius,
-  };
+  });
 
   const webStyle = Platform.OS !== 'web' ? {} : {
     transitionDuration,

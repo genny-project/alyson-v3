@@ -134,13 +134,13 @@ class Form extends Component {
             >
               Submit
             </Button>
-
             {isSubmitting && (
               <Box>
                 <ActivityIndicator />
                 <Text>
                   Submitting...
                 </Text>
+
               </Box>
             )}
           </Box>
