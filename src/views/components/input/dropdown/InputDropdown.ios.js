@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { TouchableOpacity, Modal, Picker } from 'react-native';
+import { TouchableOpacity, Modal, Picker, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
 import { oneOfType, arrayOf, string, any, shape, number, func, bool } from 'prop-types';
 import { Box, Text } from '../../index';
 
@@ -57,6 +57,10 @@ class InputDropdown extends Component {
       this.props.onChange( value );
   }
 
+  handleClose = () => {
+    this.setState({ isOpen: false });
+  }
+
   handleToggle = () => {
     this.setState( state => ({ isOpen: !state.isOpen }));
   }
@@ -90,40 +94,92 @@ class InputDropdown extends Component {
         <Modal
           visible={isOpen}
           animationType="slide"
-          presentationStyle="formSheet"
+          transparent
         >
-          <Box>
-            <Picker
-              enabled={validItems && !disabled}
-              onValueChange={this.handleChange}
-              selectedValue={value}
-              style={{
-                height: '100%',
-                width: '100%',
-              }}
+          <SafeAreaView
+            style={{
+              flex: 1,
+            }}
+          >
+            <TouchableWithoutFeedback
+              onPress={this.handleClose}
             >
-              {validItems ? (
-                items.map( item => {
-                  const isItemObject = (
-                    item != null &&
-                    typeof item === 'object'
-                  );
+              <Box
+                position="absolute"
+                top={0}
+                left={0}
+                height="100%"
+                width="100%"
+              />
+            </TouchableWithoutFeedback>
 
-                  return (
-                    <Picker.Item
-                      key={(
-                        isItemObject
-                          ? ( item[itemIdKey] || item[itemStringKey] )
-                          : item
-                      )}
-                      label={isItemObject ? item[itemStringKey] : item}
-                      value={isItemObject ? item[itemValueKey] : item}
-                    />
-                  );
-                })
-              ) : null}
-            </Picker>
-          </Box>
+            <Box
+              height="40%"
+              width="100%"
+              position="absolute"
+              bottom={0}
+              left={0}
+              backgroundColor="white"
+              flexDirection="column"
+            >
+              <Box
+                justifyContent="flex-end"
+                alignItems="center"
+                borderTopWidth={1}
+                borderBottomWidth={1}
+                borderStyle="solid"
+                borderColor="grey"
+                paddingX={5}
+              >
+                <TouchableOpacity
+                  onPress={this.handleClose}
+                >
+                  <Box padding={10}>
+                    <Text fontWeight="bold">
+                      Done
+                    </Text>
+                  </Box>
+                </TouchableOpacity>
+              </Box>
+
+              <Box
+                justifyContent="center"
+                alignItems="center"
+                flex={1}
+                height="100%"
+              >
+                <Picker
+                  enabled={validItems && !disabled}
+                  onValueChange={this.handleChange}
+                  selectedValue={value}
+                  style={{
+                    width: '100%',
+                  }}
+                >
+                  {validItems ? (
+                    items.map( item => {
+                      const isItemObject = (
+                        item != null &&
+                        typeof item === 'object'
+                      );
+
+                      return (
+                        <Picker.Item
+                          key={(
+                            isItemObject
+                              ? ( item[itemIdKey] || item[itemStringKey] )
+                              : item
+                          )}
+                          label={isItemObject ? item[itemStringKey] : item}
+                          value={isItemObject ? item[itemValueKey] : item}
+                        />
+                      );
+                    })
+                  ) : null}
+                </Picker>
+              </Box>
+            </Box>
+          </SafeAreaView>
         </Modal>
       </Fragment>
     );
