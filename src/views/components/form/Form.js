@@ -4,11 +4,13 @@ import { string, object } from 'prop-types';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import { Input, Box, Text, Button, Heading } from '../index';
+/* eslint-disable */
 
 class Form extends Component {
   static propTypes = {
     questionGroupCode: string,
     asks: object,
+    baseEntities: object,
   }
 
   getQuestionGroup() {
@@ -49,6 +51,27 @@ class Form extends Component {
     const { setSubmitting } = form;
 
     setSubmitting( true );
+  }
+
+  renderInput = input => {
+    const { definitions } = this.props.baseEntities;
+    const { questionCode, attributeCode, name } = input;
+    const { dataType } = definitions.data[attributeCode];
+
+    return (
+      <Box
+        key={questionCode}
+        flexDirection="column"
+      >
+        <Text>
+          {name}
+        </Text>
+
+        <Input
+          type={dataType.toLowerCase()}
+        />
+      </Box>
+    );
   }
 
   render() {
@@ -102,56 +125,7 @@ class Form extends Component {
               {questionGroup.name}
             </Heading>
 
-            {questionGroup.childAsks.map( childAsk => (
-              <Box
-                key={childAsk.questionCode}
-              >
-                <Text>
-                  {childAsk.name}
-                </Text>
-              </Box>
-            ))}
-
-            <Input
-              type="text"
-              placeholder="e.g. John"
-              label="First name"
-              icon="person"
-              error={touched.firstName && errors.firstName}
-              onChangeText={this.handleChange( 'firstName', setFieldValue )}
-              onBlur={handleBlur}
-              value={values.firstName}
-              disabled={isSubmitting}
-            />
-
-            {(
-              touched.firstName &&
-              errors.firstName
-            ) && (
-              <Text color="red">
-                {errors.firstName}
-              </Text>
-            )}
-
-            <Input
-              type="text"
-              placeholder="e.g. Smith"
-              icon="group"
-              error={touched.lastName && errors.lastName}
-              onChangeText={this.handleChange( 'lastName', setFieldValue )}
-              onBlur={handleBlur}
-              value={values.lastName}
-              disabled={isSubmitting}
-            />
-
-            {(
-              touched.lastName &&
-              errors.lastName
-            ) && (
-              <Text color="red">
-                {errors.lastName}
-              </Text>
-            )}
+            {questionGroup.childAsks.map( this.renderInput )}
 
             <Button
               disabled={!isValid || isSubmitting}
