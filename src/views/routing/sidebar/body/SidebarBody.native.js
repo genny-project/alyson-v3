@@ -4,7 +4,7 @@ import { string, array } from 'prop-types';
 import { ScrollView, Box } from '../../../components';
 import SidebarMenu from './menu';
 
-const Sidebar = ({ headerImage, sidebarItems }) => (
+const Sidebar = ({ headerImage, items }) => (
   <Box
     flex={1}
     flexDirection="column"
@@ -24,7 +24,7 @@ const Sidebar = ({ headerImage, sidebarItems }) => (
     <Box>
       <ScrollView>
         <SidebarMenu
-          items={sidebarItems}
+          items={items}
         />
       </ScrollView>
     </Box>
@@ -33,7 +33,7 @@ const Sidebar = ({ headerImage, sidebarItems }) => (
 
 Sidebar.propTypes = {
   headerImage: string,
-  sidebarItems: array,
+  items: array,
 };
 
 export default Sidebar;

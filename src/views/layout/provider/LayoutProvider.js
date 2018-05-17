@@ -35,6 +35,14 @@ class LayoutProvider extends Component {
     }
   }
 
+  setSidebarVisibility = visible => {
+    this.setState({ hideSidebar: visible });
+  }
+
+  setHeaderVisibility = visible => {
+    this.setState({ hideHeader: visible });
+  }
+
   setTitle = title => {
     this.setState({ title });
   }
@@ -58,6 +66,10 @@ class LayoutProvider extends Component {
     setBackgroundColor: this.setBackgroundColor,
     setAppColor: this.setAppColor,
     setTitle: this.setTitle,
+    setSidebarVisibility: this.setSidebarVisibility,
+    setHeaderVisibility: this.setHeaderVisibility,
+    hideSidebar: false,
+    hideNavbar: false,
   }
 
   render() {

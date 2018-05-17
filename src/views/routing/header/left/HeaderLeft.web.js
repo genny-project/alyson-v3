@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import dlv from 'dlv';
 import config from '../../../../config';
 import { Link, Button, Box, Heading } from '../../../components';
+import { LayoutConsumer } from '../../../layout';
 import { toggleSidebar } from '../../../../redux/actions';
 
 const LOADING_TEXT_DURATION = 1000;
@@ -44,32 +45,40 @@ class HeaderLeft extends Component {
     const projectName = dlv( baseEntities, `attributes.${projectAlias}.PRI_NAME.valueString` );
 
     return (
-      <Box
-        alignItems="center"
-      >
-        <Button
-          onPress={toggleSidebar}
-          size="lg"
-          color="transparent"
-          textColor="white"
-          icon="menu"
-          paddingX={10}
-        />
-
-        <Link to="home">
-          <Heading
-            size="md"
-            marginY={0}
-            color="white"
+      <LayoutConsumer>
+        {layout => (
+          <Box
+            alignItems="center"
           >
-            {projectName || (
-              showLoadingText
-                ? 'Loading...'
-                : config.app.name
+            {!layout.hideSidebar ? (
+              <Button
+                onPress={toggleSidebar}
+                size="lg"
+                color="transparent"
+                textColor="white"
+                icon="menu"
+                paddingX={10}
+              />
+            ) : (
+              <Box width={10} />
             )}
-          </Heading>
-        </Link>
-      </Box>
+
+            <Link to="home">
+              <Heading
+                size="md"
+                marginY={0}
+                color="white"
+              >
+                {projectName || (
+                  showLoadingText
+                    ? 'Loading...'
+                    : config.app.name
+                )}
+              </Heading>
+            </Link>
+          </Box>
+        )}
+      </LayoutConsumer>
     );
   }
 }
