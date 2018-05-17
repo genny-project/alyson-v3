@@ -1,35 +1,32 @@
 import React, { Component } from 'react';
-import { Platform } from 'react-native';
+// import { Platform } from 'react-native';
 import { object } from 'prop-types';
 import { connect } from 'react-redux';
-import { location } from '../../../utils';
+// import { location } from '../../../utils';
 import { LayoutLoader, Redirect, KeycloakConsumer } from '../../components';
-/* eslint-disable */
 
 class Generic extends Component {
   static propTypes = {
-    navigation: object,
+    // navigation: object,
     baseEntities: object,
+    keycloak: object,
   }
 
   render() {
     if ( !this.props.keycloak.isAuthenticated )
       return <Redirect to="auth" />;
 
-    const currentUrl = Platform.OS === 'web'
-      ? location.getBasePath()
-      : this.props.navigation.state.params.layout;
+    // const currentUrl = Platform.OS === 'web'
+    //   ? location.getBasePath()
+    //   : this.props.navigation.state.params.layout;
 
-    const { attributes, data } = this.props.baseEntities;
-
-    console.log({ currentUrl });
+    const { attributes } = this.props.baseEntities;
 
     const layoutAttribute = Object.keys( attributes ).find( attribute => {
       if ( attribute.startsWith( 'LAY' )) {
-        console.log({ attribute });
-        const layoutUrl = attributes[attribute].PRI_LAYOUT_URI.valueString.replace( /\//g, '' );
+        const layoutUrl = attributes[attribute].PRI_LAYOUT_URI && attributes[attribute].PRI_LAYOUT_URI.valueString.replace( /\//g, '' );
 
-        if ( layoutUrl === currentUrl ) {
+        if ( layoutUrl === 'homebucketview' ) {
           return true;
         }
       }
@@ -37,15 +34,11 @@ class Generic extends Component {
       return false;
     });
 
-    console.log({ layoutAttribute });
-
     const layout = (
       attributes[layoutAttribute] != null &&
       attributes[layoutAttribute].PRI_LAYOUT_DATA &&
       attributes[layoutAttribute].PRI_LAYOUT_DATA.valueString
     );
-
-    console.log({ layout });
 
     let parsed = null;
 
@@ -55,8 +48,6 @@ class Generic extends Component {
     catch ( error ) {
       console.warn( 'Unable to parse layout', layout );
     }
-
-    console.log({ parsed });
 
     return (
       <LayoutLoader
