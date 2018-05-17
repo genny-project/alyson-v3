@@ -1,13 +1,20 @@
 import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
+import { string, object } from 'prop-types';
 import { Formik } from 'formik';
-import { Input, Box, Text, Button, ScrollView } from '../index';
+import { connect } from 'react-redux';
+import { Input, Box, Text, Button, Heading } from '../index';
 
 class Form extends Component {
-  handleSubmit = ( values, form ) => {
-    const { setSubmitting } = form;
+  static propTypes = {
+    questionGroupCode: string,
+    asks: object,
+  }
 
-    setSubmitting( true );
+  getQuestionGroup() {
+    const { questionGroupCode, asks } = this.props;
+
+    return asks[questionGroupCode];
   }
 
   doValidate = values => {
@@ -38,194 +45,143 @@ class Form extends Component {
     setFieldValue( field, text );
   }
 
+  handleSubmit = ( values, form ) => {
+    const { setSubmitting } = form;
+
+    setSubmitting( true );
+  }
+
   render() {
-    return (
-      <ScrollView>
-        <Formik
-          initialValues={{
-            firstName: '',
-            lastName: '',
-            options: [],
-            rating: 4,
-            terms: false,
-            actions: 'abscond',
-            date: '',
-            datetime: '',
-          }}
-          validate={this.doValidate}
-          onSubmit={this.handleSubmit}
+    const questionGroup = this.getQuestionGroup();
+
+    if ( !questionGroup ) {
+      return (
+        <Box
+          flexDirection="column"
+          width="100%"
         >
-          {({
-            values,
-            errors,
-            touched,
-            handleBlur,
-            handleSubmit,
-            isSubmitting,
-            isValid,
-            setFieldValue,
-          }) => (
-            <Box
-              flexDirection="column"
-              width="100%"
+          <ActivityIndicator size="large" />
+
+          <Text>
+            Loading form...
+          </Text>
+        </Box>
+      );
+    }
+
+    return (
+      <Formik
+        initialValues={{
+          firstName: '',
+          lastName: '',
+          options: [],
+          rating: 4,
+          terms: false,
+          actions: 'abscond',
+          date: '',
+          datetime: '',
+        }}
+        validate={this.doValidate}
+        onSubmit={this.handleSubmit}
+      >
+        {({
+          values,
+          errors,
+          touched,
+          handleBlur,
+          handleSubmit,
+          isSubmitting,
+          isValid,
+          setFieldValue,
+        }) => (
+          <Box
+            flexDirection="column"
+            width="100%"
+          >
+            <Heading>
+              {questionGroup.name}
+            </Heading>
+
+            {questionGroup.childAsks.map( childAsk => (
+              <Box
+                key={childAsk.questionCode}
+              >
+                <Text>
+                  {childAsk.name}
+                </Text>
+              </Box>
+            ))}
+
+            <Input
+              type="text"
+              placeholder="e.g. John"
+              label="First name"
+              icon="person"
+              error={touched.firstName && errors.firstName}
+              onChangeText={this.handleChange( 'firstName', setFieldValue )}
+              onBlur={handleBlur}
+              value={values.firstName}
+              disabled={isSubmitting}
+            />
+
+            {(
+              touched.firstName &&
+              errors.firstName
+            ) && (
+              <Text color="red">
+                {errors.firstName}
+              </Text>
+            )}
+
+            <Input
+              type="text"
+              placeholder="e.g. Smith"
+              icon="group"
+              error={touched.lastName && errors.lastName}
+              onChangeText={this.handleChange( 'lastName', setFieldValue )}
+              onBlur={handleBlur}
+              value={values.lastName}
+              disabled={isSubmitting}
+            />
+
+            {(
+              touched.lastName &&
+              errors.lastName
+            ) && (
+              <Text color="red">
+                {errors.lastName}
+              </Text>
+            )}
+
+            <Button
+              disabled={!isValid || isSubmitting}
+              color="green"
+              onPress={handleSubmit}
             >
-              <Input
-                type="text"
-                placeholder="e.g. John"
-                label="First name"
-                icon="person"
-                error={touched.firstName && errors.firstName}
-                onChangeText={this.handleChange( 'firstName', setFieldValue )}
-                onBlur={handleBlur}
-                value={values.firstName}
-                disabled={isSubmitting}
-              />
+              Submit
+            </Button>
 
-              {(
-                touched.firstName &&
-                errors.firstName
-              ) && (
-                <Text color="red">
-                  {errors.firstName}
-                </Text>
-              )}
-
-              <Input
-                type="text"
-                placeholder="e.g. Smith"
-                icon="group"
-                error={touched.lastName && errors.lastName}
-                onChangeText={this.handleChange( 'lastName', setFieldValue )}
-                onBlur={handleBlur}
-                value={values.lastName}
-                disabled={isSubmitting}
-              />
-
-              {(
-                touched.lastName &&
-                errors.lastName
-              ) && (
-                <Text color="red">
-                  {errors.lastName}
-                </Text>
-              )}
-
-              {values.terms ? (
+            {isSubmitting && (
+              <Box>
+                <ActivityIndicator />
                 <Text>
-                  Terms scrolled to bottom!
+                  Submitting...
                 </Text>
-              ) : null}
-
-              <Input
-                type="scroll"
-                disabled={isSubmitting}
-                onScrollEnd={this.handleChange( 'terms', setFieldValue )}
-              >
-                <Text>
-                  Lorem ipsum dolor sit amet, ad ornatus propriae vim, saepe sadipscing an eam.
-                  Alia tibique dissentiet id quo, in pro mollis oblique persequeris.
-                  Agam splendide adolescens ea sea, eleifend salutatus sadipscing nam an.
-                  An erat denique maiestatis usu.
-                  Lorem ipsum dolor sit amet, ad ornatus propriae vim, saepe sadipscing an eam.
-                  Alia tibique dissentiet id quo, in pro mollis oblique persequeris.
-                  Agam splendide adolescens ea sea, eleifend salutatus sadipscing nam an.
-                  An erat denique maiestatis usu.
-                  Lorem ipsum dolor sit amet, ad ornatus propriae vim, saepe sadipscing an eam.
-                  Alia tibique dissentiet id quo, in pro mollis oblique persequeris.
-                  Agam splendide adolescens ea sea, eleifend salutatus sadipscing nam an.
-                  An erat denique maiestatis usu.
-                  Lorem ipsum dolor sit amet, ad ornatus propriae vim, saepe sadipscing an eam.
-                  Alia tibique dissentiet id quo, in pro mollis oblique persequeris.
-                  Agam splendide adolescens ea sea, eleifend salutatus sadipscing nam an.
-                  An erat denique maiestatis usu.
-                  Lorem ipsum dolor sit amet, ad ornatus propriae vim, saepe sadipscing an eam.
-                  Alia tibique dissentiet id quo, in pro mollis oblique persequeris.
-                  Agam splendide adolescens ea sea, eleifend salutatus sadipscing nam an.
-                  An erat denique maiestatis usu.
-                  Lorem ipsum dolor sit amet, ad ornatus propriae vim, saepe sadipscing an eam.
-                  Alia tibique dissentiet id quo, in pro mollis oblique persequeris.
-                  Agam splendide adolescens ea sea, eleifend salutatus sadipscing nam an.
-                  An erat denique maiestatis usu.
-                  Lorem ipsum dolor sit amet, ad ornatus propriae vim, saepe sadipscing an eam.
-                  Alia tibique dissentiet id quo, in pro mollis oblique persequeris.
-                  Agam splendide adolescens ea sea, eleifend salutatus sadipscing nam an.
-                  An erat denique maiestatis usu.
-                  Lorem ipsum dolor sit amet, ad ornatus propriae vim, saepe sadipscing an eam.
-                  Alia tibique dissentiet id quo, in pro mollis oblique persequeris.
-                  Agam splendide adolescens ea sea, eleifend salutatus sadipscing nam an.
-                  An erat denique maiestatis usu.
-                  Lorem ipsum dolor sit amet, ad ornatus propriae vim, saepe sadipscing an eam.
-                  Alia tibique dissentiet id quo, in pro mollis oblique persequeris.
-                  Agam splendide adolescens ea sea, eleifend salutatus sadipscing nam an.
-                  An erat denique maiestatis usu.
-                  Lorem ipsum dolor sit amet, ad ornatus propriae vim, saepe sadipscing an eam.
-                  Alia tibique dissentiet id quo, in pro mollis oblique persequeris.
-                  Agam splendide adolescens ea sea, eleifend salutatus sadipscing nam an.
-                  An erat denique maiestatis usu.
-                </Text>
-              </Input>
-              
-              <Input
-                type="rating"
-                onChange={this.handleChange( 'rating', setFieldValue )}
-                value={values.rating}
-              />
-
-              <Input
-                type="checkbox"
-                // onChangeText={this.handleChange( 'rating', setFieldValue )}
-                items={['aggrieve', 'abscond', 'acquiesce', 'acquire']}
-                onChangeValue={this.handleChange( 'options', setFieldValue )}
-                value={values.options}
-              />
-
-              <Input
-                type="radio"
-                // onChangeText={this.handleChange( 'rating', setFieldValue )}
-                items={['aggrieve', 'abscond', 'acquiesce', 'acquire']}
-                // onChangeText={this.handleChange( 'checkbox', setFieldValue )}
-                onChangeValue={this.handleChange( 'actions', setFieldValue )}
-                value={values.actions}
-              />
-
-              <Input
-                type="file"
-              />
-
-              <Input
-                type="date"
-                onChangeValue={this.handleChange( 'date', setFieldValue )}
-                value={values.date}
-              />
-
-              <Input
-                type="datetime"
-                onChangeValue={this.handleChange( 'datetime', setFieldValue )}
-                value={values.datetime}
-              />
-
-              <Button
-                disabled={!isValid || isSubmitting}
-                color="green"
-                onPress={handleSubmit}
-              >
-                Submit
-              </Button>
-
-              {isSubmitting && (
-                <Box>
-                  <ActivityIndicator />
-                  <Text>
-                    Submitting...
-                  </Text>
-                </Box>
-              )}
-            </Box>
-          )}
-        </Formik>
-      </ScrollView>
+              </Box>
+            )}
+          </Box>
+        )}
+      </Formik>
     );
   }
 }
 
-export default Form;
+export { Form };
+
+const mapStateToProps = state => ({
+  baseEntities: state.vertx.baseEntities,
+  aliases: state.vertx.aliases,
+  asks: state.vertx.asks,
+});
+
+export default connect( mapStateToProps )( Form );
