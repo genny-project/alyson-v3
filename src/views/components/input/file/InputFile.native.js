@@ -14,26 +14,23 @@ class InputFile extends Component {
   };
 
   handlePress = async () => {
-    Expo.Permissions.askAsync( Expo.Permissions.CAMERA_ROLL ).then(
-      () => {
-        Expo.Permissions.askAsync( Expo.Permissions.CAMERA ).then(
-          () => {
-            // Expo.ImagePicker.launchCameraAsync(options)
-            ImagePicker.launchImageLibraryAsync({
-              allowsEditing: true,
-              aspect: [4, 3],
-            }).then(
-              ( result ) => {
-                if ( !result.cancelled ) {
-                  this.setState({ image: result.uri });
-                }
-              }
-            );
-          }
-        );
+    await Expo.Permissions.askAsync( Expo.Permissions.CAMERA_ROLL );
+    await Expo.Permissions.askAsync( Expo.Permissions.CAMERA );
+    // Expo.ImagePicker.launchCameraAsync(options)
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+      });
+
+      if ( !result.cancelled ) {
+        this.setState({ image: result.uri });
       }
-    );
-  };
+    }
+    catch ( e ) {
+      // do nothing
+    }
+  }
 
   render() {
     const { image } = this.state;
