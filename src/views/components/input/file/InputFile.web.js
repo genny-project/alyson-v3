@@ -288,7 +288,7 @@ class InputFile extends Component {
         <InputFileTouchable
           onPress={this.handleOpenModal}
           text={
-            `Click to Upload a${validFiles.length > 0 ? 'nother' : ''} ${imageOnly ? 'image' : 'file'} `
+            `Click to Upload a${validFiles.length > 0 ? 'nother' : imageOnly ? 'n' : ''} ${imageOnly ? 'image' : 'file'} `
           }
         />
       </Box>
