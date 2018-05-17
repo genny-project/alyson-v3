@@ -99,6 +99,7 @@ class InputAutocomplete extends Component {
                 type={inputType}
                 clearButtonMode="while-editing"
                 onChangeText={onType}
+                width="100%"
               />
 
               {isOpen && (
