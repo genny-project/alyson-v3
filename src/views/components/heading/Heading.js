@@ -9,6 +9,7 @@ const Heading = ({
   fontWeight = 'bold',
   size = 'md',
   onPress,
+  align,
 }) => {
   return (
     <Text
@@ -17,6 +18,7 @@ const Heading = ({
       fontWeight={fontWeight}
       size={size}
       onPress={onPress}
+      align={align}
     >
       {children}
     </Text>
@@ -34,6 +36,7 @@ Heading.propTypes = {
   fontWeight: string,
   size: string,
   onPress: func,
+  align: string,
 };
 
 export default Heading;

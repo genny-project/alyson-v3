@@ -1,3 +1,4 @@
+import { push } from 'react-router-redux';
 import * as actions from './vertx.actions';
 import { Bridge } from '../../../utils';
 
@@ -21,6 +22,14 @@ const middleware = store => next => action => {
     const { accessToken } = store.getState().keycloak;
 
     Bridge.sendAuthInit( accessToken );
+  }
+
+  if ( action.type === 'ROUTE_CHANGE' ) {
+    const { code } = action.payload;
+
+    store.dispatch(
+      push( code )
+    );
   }
 };
 

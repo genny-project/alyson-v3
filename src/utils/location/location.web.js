@@ -1,15 +1,13 @@
 const getBasePath = () => {
   const { pathname } = window.location;
-  const split = pathname.split( '/' );
 
-  if (
-    split.length === 0 ||
-    split[1] === ''
-  ) {
-    return 'home';
-  }
+  if ( pathname === '/' )
+    return 'splash';
 
-  return split[1];
+  if ( pathname.endsWith( '/' ))
+    return pathname.substr( 0, pathname.length - 1 );
+
+  return pathname;
 };
 
 export default {

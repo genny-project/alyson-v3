@@ -20,7 +20,7 @@ class Layout extends Component {
   }
 
   checkForLayoutChanges() {
-    const { layout, title, appColor } = this.props;
+    const { layout, title, appColor, hideSidebar, hideHeader } = this.props;
 
     if (
       typeof title === 'string' &&
@@ -34,6 +34,14 @@ class Layout extends Component {
       appColor.length > 0
     ) {
       layout.setAppColor( appColor );
+    }
+
+    if ( hideSidebar !== layout.hideSidebar ) {
+      layout.setSidebarVisibility( hideSidebar );
+    }
+
+    if ( hideHeader !== layout.hideHeader ) {
+      layout.setHeaderVisibility( hideHeader );
     }
   }
 
