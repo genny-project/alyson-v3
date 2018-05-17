@@ -53,8 +53,12 @@ class DatePicker extends Component {
   }
 
   handleDayChange = ( value ) => {
-    const newValue = moment( value ).hour( this.state.hour ).minute( this.state.minute ).format();
-
+    let newValue = moment( value ).format();
+    
+    if ( this.props.time ) {
+      newValue = moment( value ).hour( this.state.hour ).minute( this.state.minute ).format();
+    }
+    
     if ( this.props.onChangeValue ) {
       this.props.onChangeValue( newValue );
     }

@@ -1,14 +1,13 @@
 import React, { Fragment } from 'react';
 import { TouchableWithoutFeedback, Image } from 'react-native';
-import { object, func, string } from 'prop-types';
+import { object, func, string, array } from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Box, ScrollView } from '../../components';
-import { sidebar as sidebarItems } from '../../../config';
-import { closeSidebar } from '../../../redux/actions';
+import { Box, ScrollView } from '../../../components';
+import { closeSidebar } from '../../../../redux/actions';
 import SidebarMenu from './menu';
 
-const Sidebar = ({ sidebar, closeSidebar, headerImage }) => (
+const Sidebar = ({ sidebar, closeSidebar, headerImage, sidebarItems }) => (
   <Fragment>
 
     <Box
@@ -64,6 +63,7 @@ Sidebar.propTypes = {
   sidebar: object,
   closeSidebar: func,
   headerImage: string,
+  sidebarItems: array,
 };
 
 Sidebar.defaultProps = {

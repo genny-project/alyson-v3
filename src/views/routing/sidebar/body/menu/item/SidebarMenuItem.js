@@ -3,8 +3,8 @@ import { TouchableOpacity } from 'react-native';
 import { func, string } from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link, Box, Icon, Text } from '../../../../components';
-import { closeSidebar } from '../../../../../redux/actions';
+import { Link, Box, Icon, Text } from '../../../../../components';
+import { closeSidebar } from '../../../../../../redux/actions';
 
 class SidebarMenuItem extends Component {
   static propTypes = {

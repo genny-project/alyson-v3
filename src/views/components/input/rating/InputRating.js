@@ -7,7 +7,7 @@ import { Icon, Box } from '../../../components';
 class InputRating extends Component {
   static defaultProps = {
     numberOfStars: 5,
-    color: 'lightgrey',
+    color: 'lightGrey',
   }
 
   static propTypes = {
@@ -38,7 +38,7 @@ class InputRating extends Component {
               name={(
                 value >= i + 1
                   ? 'star'
-                  : 'star_border'
+                  : 'star-border'
               )}
               color={color}
             />

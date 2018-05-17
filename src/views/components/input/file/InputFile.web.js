@@ -352,8 +352,8 @@ class InputFile extends Component {
             padding={10}
             width="100%"
             borderStyle="solid"
-            borderColor="red"
-            borderWidth={1}
+            borderColor="lightGrey"
+            borderWidth={2}
           > 
             <Box
               marginRight={10}
