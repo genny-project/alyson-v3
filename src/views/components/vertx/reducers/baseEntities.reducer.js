@@ -67,6 +67,39 @@ const handleReduceDefinitionTypes = ( resultant, current ) => {
   return resultant;
 };
 
+const handleReduceAskQuestionData = ( resultant, current ) => {
+  /* Shortcut to remove properties inside the `current` object. */
+  const { dataType, ...wantedData } = current.question.attribute; // eslint-disable-line
+
+  resultant[current.question.attributeCode] = wantedData;
+
+  if (
+    wantedData.childAsks != null &&
+    wantedData.childAsks instanceof Array &&
+    wantedData.childAsks.length > 0
+  ) {
+    return wantedData.childAsks.reduce( handleReduceAskQuestionData, resultant );
+  }
+
+  return resultant;
+};
+
+const handleReduceAskQuestionTypes = ( resultant, current ) => {
+  const { dataType, childAsks } = current.question.attribute;
+
+  resultant[dataType.typeName] = dataType;
+
+  if (
+    childAsks != null &&
+    childAsks instanceof Array &&
+    childAsks.length > 0
+  ) {
+    return childAsks.reduce( handleReduceAskQuestionTypes, resultant );
+  }
+
+  return resultant;
+};
+
 const reducer = ( state = initialState, { type, payload }) => {
   switch ( type ) {
     /**
@@ -113,10 +146,18 @@ const reducer = ( state = initialState, { type, payload }) => {
 
     /**
      * TODO:
-     * Insert the `question` property (need to go recursively) into `definitions`
+     * Documentation
      */
     case 'ASK_DATA':
-      return state;
+      return {
+        ...state,
+
+        definitions: {
+          ...state.definitions,
+          data: payload.items.reduce( handleReduceAskQuestionData, state.definitions.data ),
+          types: payload.items.reduce( handleReduceAskQuestionTypes, state.definitions.types ),
+        },
+      };
 
     default:
       return state;
