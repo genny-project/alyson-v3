@@ -82,10 +82,16 @@ class Form extends Component {
         <Box
           flexDirection="column"
           width="100%"
+          justifyContent="center"
+          alignItems="center"
         >
           <ActivityIndicator size="large" />
 
-          <Text>
+          <Box height={10} />
+
+          <Text
+            align="center"
+          >
             Loading form...
           </Text>
         </Box>
@@ -134,13 +140,13 @@ class Form extends Component {
             >
               Submit
             </Button>
+
             {isSubmitting && (
               <Box>
                 <ActivityIndicator />
                 <Text>
                   Submitting...
                 </Text>
-
               </Box>
             )}
           </Box>

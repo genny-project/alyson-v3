@@ -1,7 +1,6 @@
 import React from 'react';
 import { string, bool, any, func } from 'prop-types';
-import { TouchableWithoutFeedback } from 'react-native';
-import { Bridge } from '../../../utils/vertx';
+import { Bridge } from '../../../utils';
 
 const EventLink = ({
   children = 'Event',
@@ -21,12 +20,13 @@ const EventLink = ({
     const valueString = (
       value &&
       typeof value === 'string'
-    ) ? value
+    )
+      ? value
       : JSON.stringify( value );
 
-    Bridge.sendBtnClick( 
+    Bridge.sendButtonEvent(
       'BTN_CLICK', {
-        buttonCode: buttonCode,
+        code: buttonCode,
         value: valueString || null,
       }
     );
@@ -41,13 +41,14 @@ const EventLink = ({
     });
   }
 
-  return (
-    <TouchableWithoutFeedback
-      onPress={handlePress}
-    >
-      {children}
-    </TouchableWithoutFeedback>
-  );
+  return React.Children.map( children, child => (
+    React.cloneElement( child, {
+      props: {
+        ...child.props,
+        onPress: handlePress,
+      },
+    })
+  ));
 };
 
 EventLink.propTypes = {
