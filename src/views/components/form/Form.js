@@ -193,6 +193,10 @@ class Form extends Component {
               />
 
               <Input
+                type="address"
+              />
+
+              <Input
                 type="date"
                 onChangeValue={this.handleChange( 'date', setFieldValue )}
                 value={values.date}
