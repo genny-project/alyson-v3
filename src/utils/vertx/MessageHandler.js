@@ -59,7 +59,7 @@ class MessageHandler {
     }
 
     if (
-      data_type === 'QDataBulkMessage' &&
+      data_type === 'QBulkMessage' &&
       messages != null &&
       messages instanceof Array &&
       messages.length > 0
