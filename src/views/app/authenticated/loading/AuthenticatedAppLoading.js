@@ -16,10 +16,12 @@ const AuthenticatedAppError = () => ( // eslint-disable-line no-unused-vars
       flex={1}
       flexDirection="column"
     >
-      <ActivityIndicator />
+      <ActivityIndicator size="large" />
 
-      <Text>
-Loading authentication...
+      <Box height={20} />
+
+      <Text align="center">
+        Loading authentication...
       </Text>
     </Box>
   </Layout>

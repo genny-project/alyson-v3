@@ -1,11 +1,10 @@
 import React from 'react';
 import { Image } from 'react-native';
-import { string } from 'prop-types';
-import { ScrollView, Box } from '../../components';
+import { string, array } from 'prop-types';
+import { ScrollView, Box } from '../../../components';
 import SidebarMenu from './menu';
-import { sidebar as sidebarItems } from '../../../config';
 
-const Sidebar = props => (
+const Sidebar = ({ headerImage, sidebarItems }) => (
   <Box
     flex={1}
     flexDirection="column"
@@ -18,7 +17,7 @@ const Sidebar = props => (
           resizeMode: 'contain',
         }}
         flex={1}
-        source={{ uri: props.headerImage }}
+        source={{ uri: headerImage }}
       />
     </Box>
 
@@ -34,6 +33,7 @@ const Sidebar = props => (
 
 Sidebar.propTypes = {
   headerImage: string,
+  sidebarItems: array,
 };
 
 export default Sidebar;

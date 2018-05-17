@@ -29,6 +29,9 @@ class InputAutocomplete extends Component {
     onChange: func,
     onType: func,
     inputProps: object,
+    width: oneOfType(
+      [number, string]
+    ),
   }
 
   handleFilter = inputValue => dropdownItem => {
@@ -68,7 +71,7 @@ class InputAutocomplete extends Component {
   }
 
   render() {
-    const { inputType, items, itemStringKey, inputProps, onType } = this.props;
+    const { inputType, items, itemStringKey, inputProps, onType, width } = this.props;
 
     return (
       <Downshift
@@ -99,6 +102,7 @@ class InputAutocomplete extends Component {
           return (
             <Box
               {...getRootProps( undefined, { suppressRefError: true })}
+              width={width}
             >
               <Input
                 {...inputProps}

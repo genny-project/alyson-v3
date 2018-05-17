@@ -1,16 +1,28 @@
 import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
+import { string, object } from 'prop-types';
 import { Formik } from 'formik';
-import { Input, Box, Text, Button } from '../index';
+import { connect } from 'react-redux';
+import { Input, Box, Text, Button, Heading } from '../index';
+/* eslint-disable */
 
 class Form extends Component {
-  handleSubmit = ( values, form ) => {
-    const { setSubmitting } = form;
+  static propTypes = {
+    questionGroupCode: string,
+    asks: object,
+    baseEntities: object,
+  }
 
-    setSubmitting( true );
+  getQuestionGroup() {
+    const { questionGroupCode, asks } = this.props;
+
+    return asks[questionGroupCode];
   }
 
   doValidate = values => {
+    /**
+     *  use validation methods received from backend
+     */
     const errors = {};
 
     if (
@@ -31,15 +43,66 @@ class Form extends Component {
   }
 
   handleChange = ( field, setFieldValue ) => text => {
+    // console.log(field, text);
     setFieldValue( field, text );
   }
 
+  handleSubmit = ( values, form ) => {
+    const { setSubmitting } = form;
+
+    setSubmitting( true );
+  }
+
+  renderInput = input => {
+    const { definitions } = this.props.baseEntities;
+    const { questionCode, attributeCode, name } = input;
+    const { dataType } = definitions.data[attributeCode];
+
+    return (
+      <Box
+        key={questionCode}
+        flexDirection="column"
+      >
+        <Text>
+          {name}
+        </Text>
+
+        <Input
+          type={dataType.toLowerCase()}
+        />
+      </Box>
+    );
+  }
+
   render() {
+    const questionGroup = this.getQuestionGroup();
+
+    if ( !questionGroup ) {
+      return (
+        <Box
+          flexDirection="column"
+          width="100%"
+        >
+          <ActivityIndicator size="large" />
+
+          <Text>
+            Loading form...
+          </Text>
+        </Box>
+      );
+    }
+
     return (
       <Formik
         initialValues={{
           firstName: '',
           lastName: '',
+          options: [],
+          rating: 4,
+          terms: false,
+          actions: 'abscond',
+          date: '',
+          datetime: '',
         }}
         validate={this.doValidate}
         onSubmit={this.handleSubmit}
@@ -56,47 +119,13 @@ class Form extends Component {
         }) => (
           <Box
             flexDirection="column"
+            width="100%"
           >
-            <Input
-              type="text"
-              placeholder="e.g. John"
-              label="First name"
-              icon="person"
-              error={touched.firstName && errors.firstName}
-              onChangeText={this.handleChange( 'firstName', setFieldValue )}
-              onBlur={handleBlur}
-              value={values.firstName}
-              disabled={isSubmitting}
-            />
+            <Heading>
+              {questionGroup.name}
+            </Heading>
 
-            {(
-              touched.firstName &&
-              errors.firstName
-            ) && (
-              <Text color="red">
-                {errors.firstName}
-              </Text>
-            )}
-
-            <Input
-              type="text"
-              placeholder="e.g. Smith"
-              icon="group"
-              error={touched.lastName && errors.lastName}
-              onChangeText={this.handleChange( 'lastName', setFieldValue )}
-              onBlur={handleBlur}
-              value={values.lastName}
-              disabled={isSubmitting}
-            />
-
-            {(
-              touched.lastName &&
-              errors.lastName
-            ) && (
-              <Text color="red">
-                {errors.lastName}
-              </Text>
-            )}
+            {questionGroup.childAsks.map( this.renderInput )}
 
             <Button
               disabled={!isValid || isSubmitting}
@@ -105,13 +134,13 @@ class Form extends Component {
             >
               Submit
             </Button>
-
             {isSubmitting && (
               <Box>
                 <ActivityIndicator />
                 <Text>
-Submitting...
+                  Submitting...
                 </Text>
+
               </Box>
             )}
           </Box>
@@ -121,4 +150,12 @@ Submitting...
   }
 }
 
-export default Form;
+export { Form };
+
+const mapStateToProps = state => ({
+  baseEntities: state.vertx.baseEntities,
+  aliases: state.vertx.aliases,
+  asks: state.vertx.asks,
+});
+
+export default connect( mapStateToProps )( Form );

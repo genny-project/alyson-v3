@@ -3,7 +3,7 @@ import { Redirect as ReactRouterRedirect } from 'react-router-dom';
 import { string } from 'prop-types';
 
 const Redirect = ({ to }) => {
-  let route = to === 'home'
+  let route = to === 'splash'
     ? '/'
     : `/${to}`;
 

@@ -1,11 +1,16 @@
 import React from 'react';
 import { string } from 'prop-types';
-import Text from '../text';
-import InputText from './text';
-import InputAutocomplete from './autocomplete';
 import InputAddress from './address';
+import InputAutocomplete from './autocomplete';
+import CheckBox from './checkbox';
+import DatePicker from './datepicker';
+import InputFile from './file';
+import InputScroll from './scroll';
+import InputRating from './rating';
+import InputText from './text';
 import Switch from './switch';
 import InputDropdown from './dropdown';
+import { Text } from '../index';
 
 const Input = props => {
   const { type } = props;
@@ -13,8 +18,21 @@ const Input = props => {
   switch ( type ) {
     case 'text':
       return <InputText {...props} />;
+
+    case 'email':
+      return <InputText icon="mail" {...props} />;
+
+    case 'mobile':
+      return <InputText icon="phone_iphone" {...props} />;
+
     case 'switch':
       return <Switch {...props} />;
+
+    case 'scroll':
+      return <InputScroll {...props} />;
+
+    case 'rating':
+      return <InputRating {...props} />;
 
     case 'autocomplete':
       return <InputAutocomplete {...props} />;
@@ -25,19 +43,35 @@ const Input = props => {
     case 'dropdown':
       return <InputDropdown {...props} />;
 
+    case 'checkbox':
+      return <CheckBox {...props} />;
+
+    case 'radio':
+      return <CheckBox {...props} radio />;
+
+    case 'file':
+      return <InputFile {...props} />;
+
+    case 'date':
+    case 'java.time.localdate':
+      return <DatePicker date {...props} />;
+
+    case 'datetime':
+      return <DatePicker date time {...props} />;
+
     default:
       return (
         <Text>
-Invalid type `
+          Invalid type `
           {type}
-` specified in Input
+          ` specified in Input
         </Text>
       );
   }
 };
 
 Input.propTypes = {
-  type: string,
+  type: string.isRequired,
 };
 
 export default Input;

@@ -18,17 +18,32 @@ class Timeout extends Component {
     const { duration } = this.props;
 
     this.timeout = setTimeout( this.finishTimeout, duration );
+    this.secondsTimer = setInterval( this.incrementSecondsTimer, 1000 );
   }
 
   finishTimeout = () => {
     this.setState({ isTimeUp: true });
 
-    this.clearTimeout();
+    this.clearTimeouts();
   }
 
-  clearTimeout() {
+  clearTimeouts() {
     if ( this.timeout != null )
       clearTimeout( this.timeout );
+
+    if ( this.secondsTimer != null )
+      clearTimeout( this.secondsTimer );
+  }
+
+  incrementSecondsTimer = () => {
+    const { isTimeUp } = this.state;
+
+    if ( isTimeUp ) {
+      clearTimeout( this.secondsTimer );
+    }
+    else {
+      this.setState( state => ({ secondsElapsed: state.secondsElapsed + 1 }));
+    }
   }
 
   /* eslint-enable react/sort-comp */
@@ -37,7 +52,8 @@ class Timeout extends Component {
     isTimeUp: false,
     startTimeout: this.startTimeout,
     finishTimeout: this.finishTimeout,
-    clearTimeout: this.clearTimeout,
+    clearTimeouts: this.clearTimeouts,
+    secondsElapsed: 0,
   }
 
   componentDidMount() {
@@ -48,7 +64,7 @@ class Timeout extends Component {
   }
 
   componentWillUnmount() {
-    this.clearTimeout();
+    this.clearTimeouts();
   }
 
   render() {
@@ -56,7 +72,8 @@ class Timeout extends Component {
       isTimeUp: this.state.isTimeUp,
       startTimeout: this.state.startTimeout,
       finishTimeout: this.state.finishTimeout,
-      clearTimeout: this.state.clearTimeout,
+      clearTimeouts: this.state.clearTimeouts,
+      secondsElapsed: this.state.secondsElapsed,
     });
   }
 }
