@@ -9,7 +9,6 @@ import SidebarMenu from './menu';
 
 const Sidebar = ({ sidebar, closeSidebar, headerImage, sidebarItems }) => (
   <Fragment>
-
     <Box
       position="fixed"
       left={-300}

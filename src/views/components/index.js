@@ -9,6 +9,7 @@ export { default as Container } from './container';
 export { default as Currency } from './currency';
 export { default as Date } from './date';
 export { default as Dropdown } from './dropdown';
+export { default as EventLink } from './event-link';
 export { default as Form } from './form';
 export { default as Heading } from './heading';
 export { default as Image } from './image';

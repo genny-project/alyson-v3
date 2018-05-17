@@ -49,9 +49,10 @@ const Box = ({
   borderColor,
   borderStyle,
   borderRadius,
+  cleanStyleObject,
   ...restProps
 }) => {
-  const style = objectClean({
+  const style = {
     justifyContent,
     alignItems,
     height,
@@ -89,7 +90,7 @@ const Box = ({
     borderColor,
     borderStyle,
     borderRadius,
-  });
+  };
 
   const webStyle = Platform.OS !== 'web' ? {} : {
     transitionDuration,
@@ -105,7 +106,9 @@ const Box = ({
       accessibilityRole={accessibilityRole}
       accessibilityLabel={accessibilityLabel}
       style={[
-        style,
+        cleanStyleObject
+          ? objectClean( style )
+          : style,
         webStyle,
       ]}
     >
@@ -189,6 +192,7 @@ Box.propTypes = {
   borderRadius: oneOf(
     [2, 5, 10, '50%']
   ),
+  cleanStyleObject: bool,
 };
 
 export default Box;
