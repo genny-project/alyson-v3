@@ -49,7 +49,10 @@ class MessageHandler {
     const { msg_type, data_type, messages } = message;
     const isValidMessage = this.validMessageTypes.includes( msg_type );
 
-    if ( !isValidMessage ) {
+    if (
+      !isValidMessage &&	
+      data_type !== 'QBulkMessage'
+    ) {
       this.log(
         `Ignoring message of type ${msg_type}. Must be one of the following: ${this.validMessageTypes.join( '|' )}`,
         'warn'
@@ -59,7 +62,7 @@ class MessageHandler {
     }
 
     if (
-      data_type === 'QDataBulkMessage' &&
+      data_type === 'QBulkMessage' &&
       messages != null &&
       messages instanceof Array &&
       messages.length > 0
