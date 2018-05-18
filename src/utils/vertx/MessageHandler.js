@@ -50,7 +50,7 @@ class MessageHandler {
     const isValidMessage = this.validMessageTypes.includes( msg_type );
 
     if (
-      !isValidMessage &&	
+      !isValidMessage &&
       data_type !== 'QBulkMessage'
     ) {
       this.log(
