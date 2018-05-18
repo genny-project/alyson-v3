@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+// import axios from 'axios';
 import Expo, { ImagePicker, DocumentPicker } from 'expo';
 import { bool } from 'prop-types';
 import { Box } from '../../../components';
@@ -18,6 +19,23 @@ class InputFile extends Component {
     files: [],
   };
 
+  // uploadImage = () => {
+  //   axios.post({
+  //     method: 'post',
+  //     url: 'https://s3.ap-southeast-2.amazonaws.com/channel40-images',
+  //     data: {
+  //       firstName: 'Fred',
+  //       lastName: 'Flintstone',
+  //     },
+  //   })
+  //   .then(( response ) => {
+  //     // console.log( response );
+  //   })
+  //   .catch(( error ) => {
+  //     // console.log( error );
+  //   });
+  // }
+
   handlePress = async () => {
     const { imageOnly } = this.props;
     
@@ -33,6 +51,7 @@ class InputFile extends Component {
 
         if ( !result.cancelled ) {
           result['id'] = result.uri;
+          this.uploadImage();
           this.setState( state => ({
             files: [
               ...state.files,
@@ -53,6 +72,7 @@ class InputFile extends Component {
 
         if ( result.type !== 'cancel' ) {
           result['id'] = result.uri;
+          this.uploadImage();
           this.setState( state => ({
             files: [
               ...state.files,
