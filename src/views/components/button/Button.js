@@ -42,7 +42,7 @@ const Button = ({
   accessible = true,
   accessibilityLabel,
   accessibilityRole = 'button',
-  width,
+  width = '100%',
   height,
 }) => {
   const child = ( icon != null ) ? (
@@ -75,6 +75,8 @@ const Button = ({
       padding={padding}
       paddingX={paddingX}
       paddingY={paddingY}
+      width="100%"
+      cleanStyleObject
     >
       {child}
     </Box>
@@ -94,6 +96,7 @@ const Button = ({
           : TouchableOpacity
       ),
     {
+      style,
       disabled,
       onPress,
       accessible,
@@ -104,7 +107,6 @@ const Button = ({
           ? TouchableNativeFeedback.Ripple( textColors[color], false )
           : undefined
       ),
-      style,
     },
     childWrapper
   );

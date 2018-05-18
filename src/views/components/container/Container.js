@@ -15,11 +15,12 @@ const Container = ({
 
   return (
     <Box
+      {...restProps}
       maxWidth={containerWidth[size]}
       justifyContent="center"
       width="100%"
       marginX="auto"
-      {...restProps}
+      cleanStyleObject
     >
       {children}
     </Box>
