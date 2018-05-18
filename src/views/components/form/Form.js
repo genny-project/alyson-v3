@@ -3,8 +3,8 @@ import { ActivityIndicator } from 'react-native';
 import { string, object } from 'prop-types';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
+import dlv from 'dlv';
 import { Input, Box, Text, Button, Heading } from '../index';
-/* eslint-disable */
 
 class Form extends Component {
   static propTypes = {
@@ -20,31 +20,40 @@ class Form extends Component {
   }
 
   doValidate = values => {
-    /**
-     *  use validation methods received from backend
-     */
+    const { baseEntities, questionGroupCode, asks } = this.props;
+    const questionGroup = asks[questionGroupCode];
+    const types = dlv( baseEntities, 'definitions.types' );
     const errors = {};
 
-    if (
-      !values.firstName ||
-      values.firstName.length < 3
-    ) {
-      errors.firstName = 'First name is required!';
-    }
+    Object.keys( values ).forEach( value_key => {
+      const dataTypes = dlv( baseEntities, 'definitions.data' );
+      const ask = questionGroup.childAsks.filter( child => child.questionCode === value_key )[0];
+      // console.log( ask );
+      const attributeData = dataTypes[ask.attributeCode];
+      const validationList = types[attributeData.dataType].validationList;
+    
+      if (
+        validationList &&
+        validationList.length > 0
+      ) {
+        const isValid = validationList.every( validation => {
+          return new RegExp( validation.regex ).test( values[value_key] );
+        });
 
-    if (
-      !values.lastName ||
-      values.lastName.length < 3
-    ) {
-      errors.lastName = 'Last name is required!';
-    }
+        // console.log( validationList, values[value_key], isValid );
+
+        if ( !isValid ) {
+          errors[value_key] = 'Error';
+        }
+      }
+    });
 
     return errors;
   }
 
-  handleChange = ( field, setFieldValue ) => text => {
-    // console.log(field, text);
+  handleChange = ( field, setFieldValue, setFieldTouched ) => text => {
     setFieldValue( field, text );
+    setFieldTouched( field, true );
   }
 
   handleSubmit = ( values, form ) => {
@@ -53,22 +62,40 @@ class Form extends Component {
     setSubmitting( true );
   }
 
-  renderInput = input => {
+  renderInput = ( values, errors, touched, setFieldValue, setTouched ) => input  => {
     const { definitions } = this.props.baseEntities;
     const { questionCode, attributeCode, name } = input;
     const { dataType } = definitions.data[attributeCode];
-
+    // console.log(values[questionCode], touched[questionCode], errors[questionCode])
+    
     return (
       <Box
         key={questionCode}
         flexDirection="column"
       >
-        <Text>
-          {name}
-        </Text>
+        <Box
+          key={questionCode}
+          flexDirection="row"
+          justifyContent="flex-start"
+        >
+          <Text>
+            {name}
+          </Text>
 
+          {(
+            touched[questionCode] &&
+            errors[questionCode]
+          ) && (
+            <Text color="red">
+              {errors[questionCode]}
+            </Text>
+          )}
+        </Box>
         <Input
+          onChangeValue={this.handleChange( questionCode, setFieldValue, setTouched )}
+          value={values[questionCode]}
           type={dataType.toLowerCase()}
+          error={touched[questionCode] && errors[questionCode]}
         />
       </Box>
     );
@@ -97,19 +124,15 @@ class Form extends Component {
         </Box>
       );
     }
+    const initialValues = {};
+    
+    questionGroup.childAsks.forEach(( ask ) => {
+      initialValues[ask.questionCode] = '';
+    });
 
     return (
       <Formik
-        initialValues={{
-          firstName: '',
-          lastName: '',
-          options: [],
-          rating: 4,
-          terms: false,
-          actions: 'abscond',
-          date: '',
-          datetime: '',
-        }}
+        initialValues={initialValues}
         validate={this.doValidate}
         onSubmit={this.handleSubmit}
       >
@@ -117,40 +140,50 @@ class Form extends Component {
           values,
           errors,
           touched,
-          handleBlur,
           handleSubmit,
           isSubmitting,
           isValid,
           setFieldValue,
-        }) => (
-          <Box
-            flexDirection="column"
-            width="100%"
-          >
-            <Heading>
-              {questionGroup.name}
-            </Heading>
-
-            {questionGroup.childAsks.map( this.renderInput )}
-
-            <Button
-              disabled={!isValid || isSubmitting}
-              color="green"
-              onPress={handleSubmit}
+          setFieldTouched,
+        }) => {
+          return (
+            <Box
+              flexDirection="column"
+              width="100%"
             >
-              Submit
-            </Button>
+              <Heading>
+                {questionGroup.name}
+              </Heading>
 
-            {isSubmitting && (
-              <Box>
-                <ActivityIndicator />
-                <Text>
-                  Submitting...
-                </Text>
-              </Box>
-            )}
-          </Box>
-        )}
+              {questionGroup.childAsks.map(
+                this.renderInput(
+                  values,
+                  errors,
+                  touched,
+                  setFieldValue,
+                  setFieldTouched
+                )
+              )}
+
+              <Button
+                disabled={!isValid || isSubmitting}
+                color="green"
+                onPress={handleSubmit}
+              >
+                Submit
+              </Button>
+
+              {isSubmitting && (
+                <Box>
+                  <ActivityIndicator />
+                  <Text>
+                    Submitting...
+                  </Text>
+                </Box>
+              )}
+            </Box>
+          );
+        }}
       </Formik>
     );
   }

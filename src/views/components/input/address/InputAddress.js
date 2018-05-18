@@ -197,11 +197,12 @@ class InputAddress extends Component {
   }
 
   render() {
-    const { inputProps } = this.props;
+    const { inputProps, ...restProps } = this.props;
     const { items } = this.state;
 
     return (
       <Input
+        {...restProps}
         type="autocomplete"
         items={items}
         borderBetweenItems

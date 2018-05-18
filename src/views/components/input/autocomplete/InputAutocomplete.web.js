@@ -27,6 +27,7 @@ class InputAutocomplete extends Component {
     items: array,
     borderBetweenItems: bool,
     onChange: func,
+    onChangeValue: func,
     onType: func,
     inputProps: object,
   }
@@ -61,6 +62,9 @@ class InputAutocomplete extends Component {
   handleChange = item => {
     if ( this.props.onChange )
       this.props.onChange( item );
+      
+    if ( this.props.onChangeValue )
+      this.props.onChangeValue( item );
   }
 
   render() {
@@ -98,7 +102,7 @@ class InputAutocomplete extends Component {
                 {...getInputProps( inputProps )}
                 type={inputType}
                 clearButtonMode="while-editing"
-                onChangeText={onType}
+                onChangeValue={onType}
                 width="100%"
               />
 
