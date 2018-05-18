@@ -18,7 +18,7 @@ class Generic extends Component {
 
     const currentUrl = Platform.OS === 'web'
       ? location.getBasePath()
-      : this.props.navigation.state.params.layout;
+      : `/${this.props.navigation.state.params.layout}`;
 
     const { attributes, data } = this.props.baseEntities;
 
