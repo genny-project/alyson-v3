@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { TextInput, Platform } from 'react-native';
-import { string, oneOf, number, shape, bool, func, any, oneOfType } from 'prop-types';
+import { string, oneOf, number, shape, bool, func, any, oneOfType, node } from 'prop-types';
 import { objectClean } from '../../../../utils';
-import { Box, Icon } from '../../../components';
+import { Box, Icon, Text } from '../../../components';
 import styles from './InputText.style';
 
 class Input extends Component {
@@ -81,6 +81,18 @@ class Input extends Component {
     width: oneOfType(
       [number, string]
     ),
+    prefix: oneOfType(
+      [string, node]
+    ),
+    suffix: oneOfType(
+      [string, node]
+    ),
+    prefixIcon: string,
+    suffixIcon: string,
+    prefixColor: string,
+    suffixColor: string,
+    prefixBackground: string,
+    suffixBackground: string,
   }
 
   render() {
@@ -130,6 +142,14 @@ class Input extends Component {
       icon,
       forwardedRef,
       width,
+      prefix,
+      suffix,
+      prefixIcon,
+      suffixIcon,
+      prefixColor,
+      suffixColor,
+      prefixBackground,
+      suffixBackground,
     } = this.props;
 
     const status =
@@ -178,11 +198,58 @@ class Input extends Component {
 
     };
 
+    const childPrefix = ( prefixIcon != null ) ? (
+      <Icon
+        color={prefixColor || 'black'}
+        name={prefixIcon}
+      />
+    ) : ( typeof prefix === 'string' ) ? (
+      <Text
+        color={prefixColor || 'black'}
+        decoration="none"
+        align="center"
+        width="100%"
+      >
+        {prefix}
+      </Text>
+    ) : (
+      prefix || null
+    );
+
+    const childSuffix = ( suffixIcon != null ) ? (
+      <Icon
+        color={suffixColor || 'black'}
+        name={suffixIcon}
+      />
+    ) : ( typeof suffix === 'string' ) ? (
+      <Text
+        color={suffixColor || 'black'}
+        decoration="none"
+        align="center"
+        width="100%"
+      >
+        {suffix}
+      </Text>
+    ) : (
+      suffix || null
+    );
+
     return (
       <Box
         position="relative"
         width={width}
       >
+        {
+          childPrefix &&
+          (
+            <Box
+              prefixBackground={prefixBackground || 'grey'}
+              alignItems="center"
+            >
+              {childPrefix}
+            </Box>
+          )
+        }
         <TextInput
           autoCapitalize={autoCapitalize}
           autoComplete={autoComplete}
@@ -238,6 +305,17 @@ class Input extends Component {
             />
           </Box>
         )}
+        {
+          childSuffix &&
+          (
+            <Box
+              suffixBackground={suffixBackground || 'grey'}
+              alignItems="center"
+            >
+              {childSuffix}
+            </Box>
+          )
+        }
       </Box>
     );
   }

@@ -50,8 +50,15 @@ const Box = ({
   borderStyle,
   borderRadius,
   cleanStyleObject,
+  shape,
   ...restProps
 }) => {
+  const shapeStyle = {
+    square: 0,
+    rounded: 5,
+    circle: '50%',
+  };
+
   const style = {
     justifyContent,
     alignItems,
@@ -90,6 +97,7 @@ const Box = ({
     borderColor,
     borderStyle,
     borderRadius,
+    shapeStyle: shapeStyle[shape],
   };
 
   const webStyle = Platform.OS !== 'web' ? {} : {
@@ -193,6 +201,9 @@ Box.propTypes = {
     [2, 5, 10, '50%']
   ),
   cleanStyleObject: bool,
+  shape: oneOf(
+    ['square', 'rounded', 'pill', 'circle']
+  ),
 };
 
 export default Box;

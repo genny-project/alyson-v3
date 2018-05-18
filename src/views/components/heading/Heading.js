@@ -34,7 +34,9 @@ Heading.propTypes = {
     ['none']
   ),
   fontWeight: string,
-  size: string,
+  size: oneOf(
+    ['xs', 'sm', 'md', 'lg', 'xl']
+  ),
   onPress: func,
   align: string,
 };
