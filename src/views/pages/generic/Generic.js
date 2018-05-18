@@ -40,15 +40,11 @@ class Generic extends Component {
       return false;
     });
 
-    console.log({ layoutAttribute });
-
     const layout = (
       attributes[layoutAttribute] != null &&
       attributes[layoutAttribute].PRI_LAYOUT_DATA &&
       attributes[layoutAttribute].PRI_LAYOUT_DATA.valueString
     );
-
-    console.log({ layout });
 
     let parsed = null;
 
@@ -58,8 +54,6 @@ class Generic extends Component {
     catch ( error ) {
       console.warn( 'Unable to parse layout', layout );
     }
-
-    console.log({ parsed });
 
     return (
       <LayoutLoader

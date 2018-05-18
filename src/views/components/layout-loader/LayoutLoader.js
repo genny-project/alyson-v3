@@ -26,61 +26,68 @@ class LayoutLoader extends PureComponent {
 
     if ( !layout ) {
       return (
-        <Timeout duration={60000}>
-          {({ isTimeUp, secondsElapsed }) => (
-            <Box
-              justifyContent="center"
-              alignItems="center"
-              height="100%"
-              flex={1}
-              flexDirection="column"
-            >
-              {isTimeUp ? (
-                <Fragment>
-                  <Text align="center">
-                    Sorry! We were unable to load this page.
-                  </Text>
-
-                  <Box height={10} />
-
-                  <Text align="center">
-                    Please check your internet connection and try again.
-                  </Text>
-
-                  <Box height={20} />
-
-                  <Button
-                    color="blue"
-                    onPress={this.handleRetry}
-                  >
-                    Retry
-                  </Button>
-                </Fragment>
-              ) : (
-                <Fragment>
-                  <ActivityIndicator size="large" />
-
-                  <Box height={10} />
-
-                  <Text align="center">
-                    Loading...
-                  </Text>
-
-                  <Box height={10} />
-
-                  {secondsElapsed > 5 ? (
+        <Layout
+          title="Loading..."
+          hideHeader
+          hideSidebar
+          appColor="dark"
+        >
+          <Timeout duration={60000}>
+            {({ isTimeUp, secondsElapsed }) => (
+              <Box
+                justifyContent="center"
+                alignItems="center"
+                height="100%"
+                flex={1}
+                flexDirection="column"
+              >
+                {isTimeUp ? (
+                  <Fragment>
                     <Text align="center">
-                      {secondsElapsed > 30 ? 'Still loading - please wait a little longer...'
-                        : secondsElapsed > 20 ? 'Still loading - please wait...'
-                          : secondsElapsed > 10 ? 'Still loading...'
-                            : 'This is taking longer than usual...'}
+                      Sorry! We were unable to load this page.
                     </Text>
-                  ) : null}
-                </Fragment>
-              )}
-            </Box>
-          )}
-        </Timeout>
+
+                    <Box height={10} />
+
+                    <Text align="center">
+                      Please check your internet connection and try again.
+                    </Text>
+
+                    <Box height={20} />
+
+                    <Button
+                      color="blue"
+                      onPress={this.handleRetry}
+                    >
+                      Retry
+                    </Button>
+                  </Fragment>
+                ) : (
+                  <Fragment>
+                    <ActivityIndicator size="large" />
+
+                    <Box height={10} />
+
+                    <Text align="center">
+                      Loading...
+                    </Text>
+
+                    <Box height={10} />
+
+                    {secondsElapsed > 5 ? (
+                      <Text align="center">
+                        {secondsElapsed > 30 ? 'Still loading - please wait a little longer...'
+                          : secondsElapsed > 20 ? 'Still loading - please wait...'
+                            : secondsElapsed > 10 ? 'Still loading...'
+                              : 'This is taking longer than usual...'}
+                      </Text>
+                    ) : null}
+                  </Fragment>
+                )}
+              </Box>
+            )}
+          </Timeout>
+        </Layout>
       );
     }
 
