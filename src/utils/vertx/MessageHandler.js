@@ -1,4 +1,3 @@
-/* eslint-disable new-cap */
 import { prefixedLog } from '../../utils';
 import { store } from '../../redux';
 import * as events from './events';
@@ -9,26 +8,7 @@ class MessageHandler {
     this.lastBe = new Date().getTime();
     this.beBatch = [];
 
-    /* setInterval(() => {
-      if ( new Date().getTime() - this.lastBe > 200 && this.beBatch.length ) {
-
-        const message = this.beBatch.reduce(( output, current ) => {
-          return {
-            ...output,
-            payload: {
-              ...output.payload,
-              items: [...output.payload.items, ...current.payload.items],
-            },
-          };
-        }, this.beBatch[0] );
-
-        store.dispatch( message );
-        // this.beBatch.forEach( message => {
-        //   store.dispatch( message );
-        // });
-        this.beBatch = [];
-      }
-    }, 200 ); */
+    setInterval( this.checkMessageBatch, 200 );
   }
 
   validMessageTypes = [
@@ -41,6 +21,46 @@ class MessageHandler {
     DATA_MSG: 'data_type',
     CMD_MSG: 'cmd_type',
     EVT_MSG: 'event_type',
+  }
+
+  checkMessageBatch = () => {
+    if (
+      this.beBatch.length > 0 &&
+      new Date().getTime() - this.lastBe > 200
+    ) {
+      this.drainMessageBatch();
+    }
+  }
+
+  drainMessageBatch = () => {
+    const message = this.beBatch.reduce( this.handleReduceMessageBatch, this.beBatch[0] );
+
+    store.dispatch( message );
+
+    // this.beBatch.forEach( message => {
+    //   store.dispatch( message );
+    // });
+
+    this.beBatch = [];
+  }
+
+  handleReduceMessageBatch = ( output, current ) => {
+    if ( current.payload.aliasCode ) {
+      store.dispatch( current );
+
+      return output;
+    }
+
+    return {
+      ...output,
+      payload: {
+        ...output.payload,
+        items: [
+          ...output.payload.items,
+          ...current.payload.items,
+        ],
+      },
+    };
   }
 
   onMessage = message => {
@@ -87,16 +107,16 @@ class MessageHandler {
 
     if ( message.data_type === 'BaseEntity' && !message.delete ) {
       /* Add to a batch */
-      // this.beBatch.push( action( message ));
+      this.beBatch.push(
+        action( message )
+      );
 
       this.lastBe = new Date().getTime();
     } else {
-      // store.dispatch( action( message ));
+      store.dispatch(
+        action( message )
+      );
     }
-
-    store.dispatch(
-      action( message )
-    );
   }
 }
 
