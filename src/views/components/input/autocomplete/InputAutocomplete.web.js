@@ -28,6 +28,7 @@ class InputAutocomplete extends Component {
     borderBetweenItems: bool,
     onChange: func,
     onChangeValue: func,
+    onBlur: func,
     onType: func,
     inputProps: object,
   }
@@ -62,13 +63,21 @@ class InputAutocomplete extends Component {
   handleChange = item => {
     if ( this.props.onChange )
       this.props.onChange( item );
-      
+
     if ( this.props.onChangeValue )
       this.props.onChangeValue( item );
   }
 
   render() {
-    const { inputType, items, itemStringKey, borderBetweenItems, inputProps, onType } = this.props;
+    const {
+      inputType,
+      items,
+      itemStringKey,
+      borderBetweenItems,
+      inputProps,
+      onType,
+      onBlur,
+    } = this.props;
 
     return (
       <Downshift
@@ -103,6 +112,7 @@ class InputAutocomplete extends Component {
                 type={inputType}
                 clearButtonMode="while-editing"
                 onChangeValue={onType}
+                onBlur={onBlur}
                 width="100%"
               />
 
