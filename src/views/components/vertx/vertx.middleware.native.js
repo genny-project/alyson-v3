@@ -22,6 +22,10 @@ const middleware = store => next => action => {
 
     Bridge.sendAuthInit( accessToken );
   }
+
+  if ( action.type === 'ROUTE_CHANGE' ) {
+    // const { code } = action.payload;
+  }
 };
 
 export default middleware;

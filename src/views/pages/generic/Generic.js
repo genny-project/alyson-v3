@@ -18,18 +18,21 @@ class Generic extends Component {
 
     const currentUrl = Platform.OS === 'web'
       ? location.getBasePath()
-      : this.props.navigation.state.params.layout;
+      : `/${this.props.navigation.state.params.layout}`;
 
     const { attributes, data } = this.props.baseEntities;
 
-    console.log({ currentUrl });
-
     const layoutAttribute = Object.keys( attributes ).find( attribute => {
       if ( attribute.startsWith( 'LAY' )) {
-        console.log({ attribute });
-        const layoutUrl = attributes[attribute].PRI_LAYOUT_URI.valueString.replace( /\//g, '' );
+        const layoutUrl = attributes[attribute].PRI_LAYOUT_URI.valueString;
 
-        if ( layoutUrl === currentUrl ) {
+        if (
+          layoutUrl === currentUrl ||
+          (
+            layoutUrl.endsWith( '/' ) &&
+            layoutUrl.substr( 0, layoutUrl.length - 1 ) === currentUrl
+          )
+        ) {
           return true;
         }
       }
@@ -37,15 +40,11 @@ class Generic extends Component {
       return false;
     });
 
-    console.log({ layoutAttribute });
-
     const layout = (
       attributes[layoutAttribute] != null &&
       attributes[layoutAttribute].PRI_LAYOUT_DATA &&
       attributes[layoutAttribute].PRI_LAYOUT_DATA.valueString
     );
-
-    console.log({ layout });
 
     let parsed = null;
 
@@ -55,8 +54,6 @@ class Generic extends Component {
     catch ( error ) {
       console.warn( 'Unable to parse layout', layout );
     }
-
-    console.log({ parsed });
 
     return (
       <LayoutLoader

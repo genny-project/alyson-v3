@@ -1,12 +1,13 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { ConnectedRouter } from 'react-router-redux';
 import { renderRoutes } from 'react-router-config';
 import { routes } from '../../config';
+import history from '../../redux/history';
 
 const Routing = () => (
-  <BrowserRouter>
+  <ConnectedRouter history={history}>
     {renderRoutes( routes )}
-  </BrowserRouter>
+  </ConnectedRouter>
 );
 
 export default Routing;

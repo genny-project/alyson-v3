@@ -7,7 +7,7 @@ import { Box, ScrollView } from '../../../components';
 import { closeSidebar } from '../../../../redux/actions';
 import SidebarMenu from './menu';
 
-const Sidebar = ({ sidebar, closeSidebar, headerImage, sidebarItems }) => (
+const Sidebar = ({ sidebar, closeSidebar, headerImage, items }) => (
   <Fragment>
     <Box
       position="fixed"
@@ -33,7 +33,7 @@ const Sidebar = ({ sidebar, closeSidebar, headerImage, sidebarItems }) => (
           source={{ uri: headerImage, width: '100%', height: 200 }}
         />
         <SidebarMenu
-          items={sidebarItems}
+          items={items}
         />
       </ScrollView>
     </Box>
@@ -62,7 +62,7 @@ Sidebar.propTypes = {
   sidebar: object,
   closeSidebar: func,
   headerImage: string,
-  sidebarItems: array,
+  items: array,
 };
 
 Sidebar.defaultProps = {

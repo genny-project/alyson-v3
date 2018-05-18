@@ -7,19 +7,17 @@ import { closeSidebar } from '../../../redux/actions';
 import SidebarBody from './body';
 
 class Sidebar extends Component {
-  static defaultProps = {
-  };
-  
   static propTypes = {
     baseEntities: object,
+    aliases: object,
   }
 
   getLinkedBaseEntities = ( bes, root ) => {
     const links = dlv( bes, `data.${root}.links` );
-    
+
     const arr = [];
-    
-    if ( links && links.length > 0 ) {   
+
+    if ( links && links.length > 0 ) {
       links.sort(( x,y ) => x.weight > y.weight ).forEach(( link ) => {
         const weight = link.weight;
         const code = dlv( link, 'link.targetCode' );
@@ -49,16 +47,26 @@ class Sidebar extends Component {
     });
   }
 
+  getSidebarImage() {
+    const { aliases, baseEntities } = this.props;
+    const projectAttributes = baseEntities.attributes[aliases.PROJECT];
+    const logo = dlv( projectAttributes, 'PRI_LOGO.valueString' );
+
+    return logo;
+  }
+
   render() {
     const {
       baseEntities,
     } = this.props;
 
-    const sidebars = this.getLinkedBaseEntities( baseEntities, 'GRP_ROOT' );
+    const items = this.getLinkedBaseEntities( baseEntities, 'GRP_ROOT' );
+    const logo = this.getSidebarImage();
 
     return (
       <SidebarBody
-        sidebarItems={sidebars}
+        items={items}
+        headerImage={logo}
       />
     );
   }
@@ -69,6 +77,7 @@ export { Sidebar };
 const mapStateToProps = state => ({
   sidebar: state.sidebar,
   baseEntities: state.vertx.baseEntities,
+  aliases: state.vertx.aliases,
 });
 
 const mapDispatchToProps = dispatch => {
