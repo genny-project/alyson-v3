@@ -9,7 +9,7 @@ const getBasePath = () => {
     return 'home';
   }
 
-  return split[1];
+  return split.slice( 1 ).join( '/' );
 };
 
 export default {

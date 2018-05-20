@@ -1,26 +1,26 @@
 import React, { Component } from 'react';
-// import { Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { object } from 'prop-types';
-// import { location } from '../../../utils';
+import { location } from '../../../utils';
 import { LayoutLoader, Redirect, KeycloakConsumer } from '../../components';
 import LayoutFetcher from './LayoutFetcher';
 
 class Generic extends Component {
   static propTypes = {
-    // navigation: object,
+    navigation: object,
     keycloak: object,
   }
 
   render() {
-    if ( !this.props.keycloak.isAuthenticated )
-      return <Redirect to="auth" />;
+    const currentUrl = Platform.OS === 'web'
+      ? `/${location.getBasePath()}`
+      : `/${this.props.navigation.state.params.layout}`;
 
-    // const currentUrl = Platform.OS === 'web'
-    //   ? location.getBasePath()
-    //   : this.props.navigation.state.params.layout;
+    if ( !this.props.keycloak.isAuthenticated )
+      return <Redirect to={`auth?redirectURL=${currentUrl}`} />;
 
     return (
-      <LayoutFetcher>
+      <LayoutFetcher currentUrl={currentUrl}>
         { layout => (
           <LayoutLoader
             layout={layout}

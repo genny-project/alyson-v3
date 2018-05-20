@@ -1,21 +1,29 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { object, func } from 'prop-types';
+import { object, func, string } from 'prop-types';
 
 class LayoutFetcher extends Component {
   static propTypes = {
     baseEntities: object.isRequired,
     children: func.isRequired,
+    currentUrl: string.isRequired,
   };
 
   render() {
-    const { attributes } = this.props.baseEntities;
+    const { currentUrl, baseEntities } = this.props;
+    const { attributes } = baseEntities;
 
     const layoutAttribute = Object.keys( attributes ).find( attribute => {
       if ( attribute.startsWith( 'LAY' )) {
-        const layoutUrl = attributes[attribute].PRI_LAYOUT_URI && attributes[attribute].PRI_LAYOUT_URI.valueString.replace( /\//g, '' );
+        const layoutUrl = attributes[attribute].PRI_LAYOUT_URI.valueString;
 
-        if ( layoutUrl === 'homebucketview' ) {
+        if (
+          layoutUrl === currentUrl ||
+          (
+            layoutUrl.endsWith( '/' ) &&
+            layoutUrl.substr( 0, layoutUrl.length - 1 ) === currentUrl
+          )
+        ) {
           return true;
         }
       }
