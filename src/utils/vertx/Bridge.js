@@ -64,6 +64,18 @@ class Bridge {
     Vertx.sendMessage( eventObject );
   }
 
+  sendAnswer( answer ) {
+    this.sendAnswers( [...answer] );
+  }
+
+  sendAnswers( answers ) {
+    this.sendEvent({
+      event: 'ANSWER',
+      sendWithToken: true,
+      data: answers,
+    });
+  }
+
   sendButtonEvent( eventType, data ) {
     this.sendEvent({
       event: 'BTN',
