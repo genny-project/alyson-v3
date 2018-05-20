@@ -45,8 +45,6 @@ class Recursive extends PureComponent {
       }))
       : children;
 
-    console.log({ component, props, children, context }); // eslint-disable-line no-console
-
     if ( component ) {
       if ( Components[component] ) {
         return createElement(
