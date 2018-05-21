@@ -7,24 +7,22 @@ import Layout from '../../layout';
 class Splash extends Component {
   static propTypes = {
     location: object,
-  };
-
-  static navigationOptions = {
-    title: 'Splash',
-    drawerLabel: 'Splash',
   }
 
   render() {
-    let redirectURL = null ;
-
-    if ( Platform.OS === 'web' ) {
-      redirectURL = this.props.location.search.startsWith( '?redirectURL=/' ) ? this.props.location.search.split( '?redirectURL=/' )[1] : null;
-    }
+    const { location } = this.props;
+    
+    const redirectURL = (
+      Platform.OS === 'web' &&
+      location.search.startsWith( '?redirectURL=/' )
+    )
+      ? location.search.split( '?redirectURL=/' )[1]
+      : 'home';
 
     return (
       <KeycloakConsumer>
         {({ isAuthenticated }) => isAuthenticated ? (
-          <Redirect to={redirectURL ? redirectURL : 'home'} removeRedirectURL />
+          <Redirect to={redirectURL} removeRedirectURL />
         ) : (
           <Layout
             title="Splash"
