@@ -14,7 +14,7 @@ const Image = ({
     rounded: 5,
     circle: '50%',
   };
-  
+
   if (
     source &&
     typeof source === 'string' &&
@@ -27,7 +27,7 @@ const Image = ({
       />
     );
   }
-  
+
   return (
     <Box
       width={width}

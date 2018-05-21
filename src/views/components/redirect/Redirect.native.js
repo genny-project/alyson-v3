@@ -6,10 +6,12 @@ class Redirect extends Component {
   componentDidMount() {
     const { navigation, to, replace } = this.props;
 
+    const newPath = to.includes( '?' ) ? to.split( '?' )[0] : to;
+
     if ( replace )
-      navigation.replace( to );
+      navigation.replace( newPath );
     else
-      navigation.navigate( to );
+      navigation.navigate( newPath );
   }
 
   render() {

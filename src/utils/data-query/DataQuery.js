@@ -24,13 +24,9 @@ class DataQuery {
       }
 
       const result = Operators[q.operator](
-        this.path
-          ? dlv( output, this.path )
-          : output,
+        this.path ? dlv( output, this.path ) : output,
         q,
-        this.data.length
-          ? [...this.data]
-          : { ...this.data },
+        this.data.length ? [...this.data] : { ...this.data }
       );
 
       if ( this.path ) {
