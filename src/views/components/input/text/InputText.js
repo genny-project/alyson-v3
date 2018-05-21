@@ -24,6 +24,8 @@ class Input extends Component {
     error: false,
     success: false,
     warning: false,
+    textSize: 'xs',
+    textAlign: 'left',
   }
 
   static propTypes = {
@@ -81,6 +83,12 @@ class Input extends Component {
     width: oneOfType(
       [number, string]
     ),
+    textSize: oneOf(
+      ['xs','sm','md','lg','xl']
+    ),
+    textAlign: oneOf(
+      ['left', 'center','right']
+    ),
   }
 
   render() {
@@ -130,8 +138,18 @@ class Input extends Component {
       icon,
       forwardedRef,
       width,
+      textSize,
+      textAlign,
     } = this.props;
 
+    const textSizes = {
+      xs: 14,
+      sm: 16,
+      md: 18,
+      lg: 20,
+      xl: 24,
+    };
+  
     const status =
       error ? styles.error
         : success ? styles.success
@@ -140,7 +158,7 @@ class Input extends Component {
 
     const hasIconStyle = icon
       ? styles.inputWithIcon
-      : {};
+      : null;
 
     const inputStyle = objectClean({
       margin,
@@ -161,6 +179,8 @@ class Input extends Component {
       ),
       paddingBottom,
       paddingLeft,
+      fontSize: textSizes[textSize],
+      textAlign: textAlign,
     });
 
     const statusColor =
