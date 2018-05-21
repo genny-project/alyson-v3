@@ -200,12 +200,12 @@ class Input extends Component {
 
     const childPrefix = ( prefixIcon != null ) ? (
       <Icon
-        color={prefixColor || 'black'}
+        color={prefixColor || 'darkGrey'}
         name={prefixIcon}
       />
     ) : ( typeof prefix === 'string' ) ? (
       <Text
-        color={prefixColor || 'black'}
+        color={prefixColor || 'darkGrey'}
         decoration="none"
         align="center"
         width="100%"
@@ -218,12 +218,12 @@ class Input extends Component {
 
     const childSuffix = ( suffixIcon != null ) ? (
       <Icon
-        color={suffixColor || 'black'}
+        color={suffixColor || 'darkGrey'}
         name={suffixIcon}
       />
     ) : ( typeof suffix === 'string' ) ? (
       <Text
-        color={suffixColor || 'black'}
+        color={suffixColor || 'darkGrey'}
         decoration="none"
         align="center"
         width="100%"
@@ -236,81 +236,89 @@ class Input extends Component {
 
     return (
       <Box
-        position="relative"
+        display="flex"
         width={width}
       >
         {
           childPrefix &&
           (
             <Box
-              prefixBackground={prefixBackground || 'grey'}
+              backgroundColor={prefixBackground || 'lightGrey'}
               alignItems="center"
+              flexGrow={0}
+              paddingX={10}
             >
               {childPrefix}
             </Box>
           )
         }
-        <TextInput
-          autoCapitalize={autoCapitalize}
-          autoComplete={autoComplete}
-          autoCorrect={autoCorrect}
-          autoFocus={autoFocus}
-          blurOnSubmit={blurOnSubmit}
-          clearTextOnFocus={clearTextOnFocus}
-          defaultValue={defaultValue}
-          editable={!disabled}
-          keyboardType={keyboardType}
-          maxLength={maxLength}
-          multiline={multiline}
-          onBlur={onBlur}
-          onChange={onChange}
-          onChangeText={onChangeText}
-          onFocus={onFocus}
-          onKeyPress={onKeyPress}
-          onSelectionChange={onSelectionChange}
-          onSubmitEditing={onSubmitEditing}
-          placeholder={placeholder}
-          placeholderTextColor={statusColor}
-          secureTextEntry={secureTextEntry}
-          selection={selection}
-          selectTextOnFocus={selectTextOnFocus}
-          spellCheck={spellCheck}
-          style={[
-            styles.input,
-            inputStyle,
-            status,
-            hasIconStyle,
-          ]}
-          value={value}
-          underlineColorAndroid="transparent"
-          {...Platform.select({
-            ios: nativeProps,
-            android: nativeProps,
-            web: webProps,
-          })}
-          ref={forwardedRef}
-        />
-
-        {icon && (
-          <Box
-            position="absolute"
-            right={10}
-            height="100%"
-            alignItems="center"
-          >
-            <Icon
-              name={icon}
-              color={statusColor}
-              size="md"
-            />
-          </Box>
-        )}
+        <Box
+          position="relative"
+          flex={1}
+        >
+          <TextInput
+            autoCapitalize={autoCapitalize}
+            autoComplete={autoComplete}
+            autoCorrect={autoCorrect}
+            autoFocus={autoFocus}
+            blurOnSubmit={blurOnSubmit}
+            clearTextOnFocus={clearTextOnFocus}
+            defaultValue={defaultValue}
+            editable={!disabled}
+            keyboardType={keyboardType}
+            maxLength={maxLength}
+            multiline={multiline}
+            onBlur={onBlur}
+            onChange={onChange}
+            onChangeText={onChangeText}
+            onFocus={onFocus}
+            onKeyPress={onKeyPress}
+            onSelectionChange={onSelectionChange}
+            onSubmitEditing={onSubmitEditing}
+            placeholder={placeholder}
+            placeholderTextColor={statusColor}
+            secureTextEntry={secureTextEntry}
+            selection={selection}
+            selectTextOnFocus={selectTextOnFocus}
+            spellCheck={spellCheck}
+            style={[
+              styles.input,
+              inputStyle,
+              status,
+              hasIconStyle,
+            ]}
+            value={value}
+            underlineColorAndroid="transparent"
+            {...Platform.select({
+              ios: nativeProps,
+              android: nativeProps,
+              web: webProps,
+            })}
+            ref={forwardedRef}
+          />
+          {icon && (
+            <Box
+              position="absolute"
+              right={10}
+              height="100%"
+              alignItems="center"
+            >
+              <Icon
+                name={icon}
+                color={statusColor}
+                size="md"
+              />
+            </Box>
+          )}
+        </Box>
         {
           childSuffix &&
           (
             <Box
-              suffixBackground={suffixBackground || 'grey'}
+              backgroundColor={suffixBackground || 'lightGrey'}
               alignItems="center"
+              flexGrow={0}
+              paddingX={10}
             >
               {childSuffix}
             </Box>

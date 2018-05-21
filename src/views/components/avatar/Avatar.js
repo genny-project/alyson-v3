@@ -10,16 +10,34 @@ const Avatar = ({
   src,
 }) => {
   const sizes = {
-    sm: 24,
+    sm: 30,
     md: 40,
-    lg: 72,
+    lg: 80,
+  };
+
+  const textSizes = {
+    sm: 'xs',
+    md: 'sm',
+    lg: 'xxl',
+  };
+
+  const borderSizes = {
+    sm: 1,
+    md: 1,
+    lg: 2,
   };
 
   const onlineColor = {
     online: 'green',
     offline: 'grey',
   };
-  
+
+  const position = {
+    sm: 1,
+    md: 1,
+    lg: 1,
+  };
+
   return (
     <Box
       width={sizes[size] || '100%'}
@@ -29,9 +47,11 @@ const Avatar = ({
       alignItems="center"
       borderRadius="50%"
       borderStyle={outline && 'solid'}
-      borderWidth={outline && 2}
+      borderWidth={outline && borderSizes[size] || 2}
       borderColor={outline && 'white'}
       position="relative"
+      cleanStyleObject
+      padding={0}
     >
       {(
         src &&
@@ -41,15 +61,15 @@ const Avatar = ({
         <Image
           source={src}
           shape="circle"
-          width={sizes[size] || '100%'}
-          height={sizes[size] || '100%'}
+          width="100%"
+          height="100%"
         />
         ) : (
           <Text
             color="white"
-            size="lg"
+            size={textSizes[size] || 'md'}
           >
-            {name && name.substr( 0 )}
+            {name && name.substr( 0, 1 )}
           </Text>
         )
       }
@@ -60,14 +80,19 @@ const Avatar = ({
           showOnline.length > 0
         ) && 
           ( <Box
+            width={sizes[size] / 4}
+            height={sizes[size] / 4}
+            // maxWidth={15}
+            // maxHeight={15}
             borderRadius="50%"
             position="absolute"
-            bottom={sizes[size] / 4}
-            right={sizes[size] / 4}
+            bottom={position[size] || 5}
+            right={position[size] || 5}
             borderStyle="solid"
-            borderWidth={1}
+            borderWidth={borderSizes[size] || 2}
             borderColor="white"
             backgroundColor={onlineColor[showOnline]}
+            cleanStyleObject
           /> 
           )
       }
