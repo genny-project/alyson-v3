@@ -18,9 +18,11 @@ const handleReduceAttributeCodes = ( resultantAttributes, currentAttribute ) => 
 
 const handleReduceAttributes = ( resultant, current ) => {
   if ( current.baseEntityAttributes ) {
+    const existing = resultant[current.code] || {};
+
     const baseEntityAttributes = current
       .baseEntityAttributes
-      .reduce( handleReduceAttributeCodes, {});
+      .reduce( handleReduceAttributeCodes, existing );
 
     resultant[current.code] = baseEntityAttributes;
   }

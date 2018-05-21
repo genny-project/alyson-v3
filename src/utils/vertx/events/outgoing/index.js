@@ -7,3 +7,4 @@ export * from './cmd.events.outgoing';
 export * from './gps.events.outgoing';
 export * from './redirect.events.outgoing';
 export * from './treeView.events.outgoing';
+export * from './form.events.outgoing';
