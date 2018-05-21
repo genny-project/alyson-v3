@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { any, string, bool, object } from 'prop-types';
+import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import config from '../../config';
 import LayoutConsumer from './consumer';
 import { Header, Sidebar } from '../routing';
 
@@ -13,6 +13,7 @@ class Layout extends Component {
     hideSidebar: bool,
     layout: object,
     appColor: string,
+    appName: string,
   }
 
   componentDidMount() {
@@ -39,31 +40,40 @@ class Layout extends Component {
     if ( hideSidebar !== layout.hideSidebar ) {
       layout.setSidebarVisibility( hideSidebar );
     }
+    else if ( hideSidebar == null ) {
+      layout.setSidebarVisibility( false );
+    }
 
     if ( hideHeader !== layout.hideHeader ) {
       layout.setHeaderVisibility( hideHeader );
     }
+    else if ( hideHeader == null ) {
+      layout.setHeaderVisibility( false );
+    }
   }
 
   render() {
-    const { children, title, hideHeader, hideSidebar } = this.props;
+    const { children, title, hideHeader, hideSidebar, appName } = this.props;
 
     return (
       <Fragment>
         <Helmet>
           <title>
-            {title === config.app.name
+            {(
+              !appName ||
+              title === appName
+            )
               ? title
-              : `${title} | ${config.app.name}`}
+              : `${title} | ${appName}`}
           </title>
         </Helmet>
 
         {!hideHeader && (
-          <Header />
+        <Header />
         )}
 
         {!hideSidebar && (
-          <Sidebar />
+        <Sidebar />
         )}
 
         {children}
@@ -72,10 +82,18 @@ class Layout extends Component {
   }
 }
 
-export default props => (
-  <LayoutConsumer>
-    {layout => (
-      <Layout {...props} layout={layout} />
-    )}
-  </LayoutConsumer>
+export { Layout };
+
+const mapStateToProps = state => ({
+  appName: state.layout.appName,
+});
+
+export default connect( mapStateToProps )(
+  props => (
+    <LayoutConsumer>
+      {layout => (
+        <Layout {...props} layout={layout} />
+      )}
+    </LayoutConsumer>
+  )
 );
