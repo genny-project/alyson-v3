@@ -29,6 +29,7 @@ class InputAddress extends Component {
   static propTypes = {
     inputProps: object,
     onChange: func,
+    onChangeValue: func,
     debounceTimer: number,
     google: object,
     includeAddressFields: array,
@@ -139,7 +140,14 @@ class InputAddress extends Component {
       const formattedPlace = this.formatPlace( places[0] );
 
       if ( this.props.onChange )
-        this.props.onChange( formattedPlace );
+        this.props.onChange({
+          target: {
+            value: formattedPlace,
+          },
+        });
+
+      if ( this.props.onChangeValue )
+        this.props.onChangeValue( formattedPlace );
     }
     catch ( error ) {
       console.warn( error );
@@ -197,11 +205,12 @@ class InputAddress extends Component {
   }
 
   render() {
-    const { inputProps } = this.props;
+    const { inputProps, ...restProps } = this.props;
     const { items } = this.state;
 
     return (
       <Input
+        {...restProps}
         type="autocomplete"
         items={items}
         borderBetweenItems

@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { oneOf, node, object, string } from 'prop-types';
+import { oneOf, node, object, string, bool } from 'prop-types';
 import { LayoutConsumer } from '../layout';
 
 class Layout extends Component {
@@ -13,6 +13,8 @@ class Layout extends Component {
     // ),
     title: string,
     layout: object,
+    hideHeader: bool,
+    hideSidebar: bool,
   }
 
   componentDidMount() {
@@ -20,7 +22,7 @@ class Layout extends Component {
   }
 
   checkForLayoutChanges() {
-    const { layout, title, appColor } = this.props;
+    const { layout, title, appColor, hideHeader, hideSidebar } = this.props;
 
     if (
       typeof title === 'string' &&
@@ -35,6 +37,9 @@ class Layout extends Component {
     ) {
       layout.setAppColor( appColor );
     }
+
+    layout.setSidebarVisibility( hideSidebar );
+    layout.setHeaderVisibility( hideHeader );
   }
 
   render() {

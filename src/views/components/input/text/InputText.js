@@ -44,7 +44,7 @@ class Input extends Component {
     multiline: bool,
     onBlur: func,
     onChange: func,
-    onChangeText: func,
+    onChangeValue: func,
     onFocus: func,
     onKeyPress: func,
     onLayout: func,
@@ -98,7 +98,7 @@ class Input extends Component {
       multiline,
       onBlur,
       onChange,
-      onChangeText,
+      onChangeValue,
       onFocus,
       onKeyPress,
       onLayout,
@@ -197,7 +197,7 @@ class Input extends Component {
           multiline={multiline}
           onBlur={onBlur}
           onChange={onChange}
-          onChangeText={onChangeText}
+          onChangeText={onChangeValue}
           onFocus={onFocus}
           onKeyPress={onKeyPress}
           onSelectionChange={onSelectionChange}

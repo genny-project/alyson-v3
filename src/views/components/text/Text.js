@@ -21,6 +21,7 @@ const Text = ({
   height,
   size = 'sm',
   align,
+  width,
   ...restProps
 }) => {
   const style = {
@@ -29,6 +30,7 @@ const Text = ({
     height,
     fontSize: textSizes[size],
     textAlign: align,
+    width,
   };
 
   return (
@@ -68,6 +70,9 @@ Text.propTypes = {
   ),
   align: oneOf(
     ['auto', 'left', 'right', 'center', 'justify']
+  ),
+  width: oneOfType(
+    [number, string]
   ),
 };
 

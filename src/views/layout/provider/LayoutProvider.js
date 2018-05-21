@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 import { node } from 'prop-types';
 import config from '../../../config';
+import { store } from '../../../redux';
+import * as actions from '../../../redux/actions';
 import LayoutContext from '../context';
 
 class LayoutProvider extends Component {
@@ -35,6 +37,22 @@ class LayoutProvider extends Component {
     }
   }
 
+  setSidebarVisibility = visible => {
+    this.setState({ hideSidebar: visible });
+
+    store.dispatch(
+      actions.setSidebarVisibility( visible )
+    );
+  }
+
+  setHeaderVisibility = visible => {
+    this.setState({ hideHeader: visible });
+
+    store.dispatch(
+      actions.setHeaderVisibility( visible )
+    );
+  }
+
   setTitle = title => {
     this.setState({ title });
   }
@@ -58,6 +76,10 @@ class LayoutProvider extends Component {
     setBackgroundColor: this.setBackgroundColor,
     setAppColor: this.setAppColor,
     setTitle: this.setTitle,
+    setSidebarVisibility: this.setSidebarVisibility,
+    setHeaderVisibility: this.setHeaderVisibility,
+    hideSidebar: false,
+    hideNavbar: false,
   }
 
   render() {
