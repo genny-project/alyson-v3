@@ -42,7 +42,7 @@ const Button = ({
   accessible = true,
   accessibilityLabel,
   accessibilityRole = 'button',
-  width = '100%',
+  width,
   height,
 }) => {
   const child = ( icon != null ) ? (

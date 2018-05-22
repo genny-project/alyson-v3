@@ -38,8 +38,19 @@ class Layout extends Component {
       layout.setAppColor( appColor );
     }
 
-    layout.setSidebarVisibility( hideSidebar );
-    layout.setHeaderVisibility( hideHeader );
+    if ( hideSidebar !== layout.hideSidebar ) {
+      layout.setSidebarVisibility( hideSidebar );
+    }
+    else if ( hideSidebar == null ) {
+      layout.setSidebarVisibility( false );
+    }
+
+    if ( hideHeader !== layout.hideHeader ) {
+      layout.setHeaderVisibility( hideHeader );
+    }
+    else if ( hideHeader == null ) {
+      layout.setHeaderVisibility( false );
+    }
   }
 
   render() {

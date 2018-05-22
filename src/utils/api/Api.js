@@ -91,9 +91,9 @@ class Api {
 
     return this.eventCall({
       // url: 'init?url=https://v2.channel40.com.au',
-      // url: 'init?url=http://app-staging.outcome-hub.com',
+      url: 'init?url=http://app-staging.outcome-hub.com',
       // url: 'init?url=http://alyson.genny.life',
-      url: 'init?url=http://localhost:3000',
+      // url: 'init?url=http://localhost:3000',
     });
   }
 }
