@@ -10,11 +10,12 @@ import InputRating from './rating';
 import InputText from './text';
 import Switch from './switch';
 import InputDropdown from './dropdown';
+import Passcode from './passcode';
 import { Text } from '../index';
 
 const Input = props => {
   const { type } = props;
-
+  
   switch ( type ) {
     case 'text':
       return <InputText {...props} />;
@@ -23,7 +24,7 @@ const Input = props => {
       return <InputText icon="mail" {...props} />;
 
     case 'mobile':
-      return <InputText icon="phone_iphone" {...props} />;
+      return <InputText icon="phone-iphone" keyboardType="numeric" {...props} />;
 
     case 'switch':
       return <Switch {...props} />;
@@ -54,10 +55,13 @@ const Input = props => {
 
     case 'date':
     case 'java.time.localdate':
-      return <DatePicker date {...props} />;
+      return <DatePicker {...props} date />;
 
     case 'datetime':
-      return <DatePicker date time {...props} />;
+      return <DatePicker {...props} date time />;
+
+    case 'mobileverification':
+      return <Passcode {...props} />;
 
     default:
       return (

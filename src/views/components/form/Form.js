@@ -30,14 +30,11 @@ class Form extends Component {
     const questionGroup = asks[questionGroupCode];
     const types = dlv( baseEntities, 'definitions.types' );
 
-    this.setState({
-      errors: {},
-    });
+    const newState = {};
 
     Object.keys( values ).forEach( value_key => {
       const dataTypes = dlv( baseEntities, 'definitions.data' );
       const ask = questionGroup.childAsks.filter( child => child.questionCode === value_key )[0];
-
       const attributeData = dataTypes[ask.attributeCode];
       const validationList = types[attributeData.dataType].validationList;
 
@@ -50,17 +47,12 @@ class Form extends Component {
         });
 
         if ( !isValid ) {
-          this.setState(( oldState ) => ({
-            errors: {
-              ...oldState.errors,
-              [value_key]: 'Error',
-            },
-          }));
+          newState[value_key] = 'Error';
         }
       }
     });
-
-    return this.state.errors;
+    
+    return newState;
   }
 
   sendAnswer = ( ask, newValue ) => {
@@ -133,11 +125,21 @@ class Form extends Component {
     }
   }
 
+  componentWillReceiveProps( newProps ) {
+    if ( newProps.questionGroupCode === this.props.questionGroupCode ) {
+      this.setState({
+        errors: {},
+        values: {},
+      }, () => {
+        return true;
+      });
+    }
+  }
+
   renderInput = ( values, errors, touched, setFieldValue, setTouched ) => ask => {
     const { definitions } = this.props.baseEntities;
     const { questionCode, attributeCode, name } = ask;
     const { dataType } = definitions.data[attributeCode];
-    // console.log(values[questionCode], touched[questionCode], errors[questionCode])
 
     return (
       <Box
@@ -175,7 +177,7 @@ class Form extends Component {
 
   render() {
     const questionGroup = this.getQuestionGroup();
-
+    
     if ( !questionGroup ) {
       return (
         <Box
@@ -212,6 +214,7 @@ class Form extends Component {
         validate={this.doValidate}
         onSubmit={this.handleSubmit}
         validateOnBlur
+        enableReinitialize
       >
         {({
           values,

@@ -1,7 +1,7 @@
 import React, { createElement, PureComponent } from 'react';
 import { Text } from 'react-native';
-import { object, any, string } from 'prop-types';
 import dlv from 'dlv';
+import { object, any, string } from 'prop-types';
 import * as Components from '../index';
 
 const curlyBracketParse = ( input, method ) => {
@@ -17,90 +17,68 @@ class Recursive extends PureComponent {
     repeat: any,
   }
 
-  handleReduce = ( result, current ) => {
-    const { props, context } = this.props;
-
-    const value = typeof props[current] === 'string'
-      ? (
-        props[current].startsWith( '_' )
-          ? dlv( context, props[current].substring( 1 ))
-          : curlyBracketParse( props[current], path => dlv( context, path ))
-      )
-      : props[current];
-
-    return {
-      ...result,
-      [current]: value,
-    };
-  }
-
   injectContextIntoProps( context, props ) {
-    if ( !props )
+    if ( !props ) {
       return {};
+    }
 
-    return Object.keys( props ).reduce( this.handleReduce, {});
+    /**
+     * Loops through all of the props for this element and inject the context if required.
+     * Additionally parse a handlebars style string and inject variables from the context if needed.
+     * If the prop is not a string, simply return its current value so that functions work
+     * correctly.
+     */
+    const afterProps = Object.keys( props ).reduce(( result, current ) => ({
+      ...result,
+      [current]: typeof( props[current] ) === 'string'
+        ? ( props[current].startsWith( '_' )
+          ? dlv( context, props[current].substring( 1 ))
+          : curlyBracketParse( props[current], path => dlv( context, path )))
+        : props[current],
+    }), {});
+
+    return afterProps;
   }
 
   render() {
     const { component, props, children, context, repeat } = this.props;
 
-    const injectedRepeat = repeat
-      ? dlv( context, repeat.substring( 1 ))
-      : null;
-
-    const repeatedChildren = (
-      injectedRepeat &&
-      injectedRepeat instanceof Array
-    )
-      ? (
-        injectedRepeat.map( child => ({
-          ...children,
-          props: {
-            ...children.props, ...child,
-          },
-          context: {
-            ...context,
-            repeater: child,
-          },
-        }))
-      )
-      : null;
+    const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;
+    const repeatedChildren = injectedRepeat && Array.isArray( injectedRepeat )
+      ? injectedRepeat.map( child => ({
+        ...children,
+        props: {
+          ...children.props, ...child,
+        },
+        context: {
+          ...context,
+          repeater: child,
+        },
+      }))
+      : children;
 
     if ( component ) {
       if ( Components[component] ) {
         return createElement(
           Components[component],
           this.injectContextIntoProps( context, props ),
-          repeatedChildren ? (
+          repeatedChildren && (
             repeatedChildren instanceof Array
-              ? repeatedChildren.map(( child, index ) => (
-                <Recursive
-                  {...child}
-                  context={context}
-                  key={`${child.component}_${index}`} // eslint-disable-line react/no-array-index-key
-                />
-              ))
+              ? repeatedChildren.map( child =>
+                <Recursive context={context} {...child} /> // eslint-disable-line react/jsx-key
+              )
               : typeof repeatedChildren === 'object'
                 ? <Recursive context={context} {...repeatedChildren}  />
                 : repeatedChildren
-          ) : (
-            children ? (
-              children instanceof Array
-                // eslint-disable-next-line react/no-array-index-key
-                ? children.map(( child, index ) => <Recursive {...child} key={index} /> )
-                : typeof children === 'object'
-                  ? <Recursive {...children} />
-                  : children
-            ) : null
           ),
         );
       }
 
       return (
         <Text>
-          Component '
+Component '
           {component}
-          ' does not exist
+' does not exist
         </Text>
       );
     }

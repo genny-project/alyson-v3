@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { string, number, oneOf, func } from 'prop-types';
+import { string, number, bool, func } from 'prop-types';
 import { DatePickerIOS, TouchableOpacity, Modal, SafeAreaView  } from 'react-native';
 import moment from 'moment';
 import { Text, Box, Input } from '../../../components';
@@ -8,7 +8,10 @@ class DatePicker extends Component {
   static defaultProps = {
     // value: '',
     minuteInterval: 10,
-    type: 'date',
+    date: true,
+    defaultDateTimeFormat: 'hh:mm a Do MMM YYYY',
+    defaultTimeFormat: 'hh:mm a',
+    defaultDateFormat: 'DD MMM YYYY',
   }
 
   static propTypes = {
@@ -16,10 +19,13 @@ class DatePicker extends Component {
     maximumDate: string,
     minimumDate: string,
     minuteInterval: number,
-    type: oneOf(
-      ['date', 'time', 'datetime']
-    ),
+    date: bool,
+    time: bool,
     onChangeValue: func,
+    defaultDateTimeFormat: string,
+    defaultTimeFormat: string,
+    defaultDateFormat: string,
+    format: string,
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
@@ -43,7 +49,7 @@ class DatePicker extends Component {
   };
 
   handleChange = ( value ) => {
-    if ( this.props.onChangeValue ) this.props.onChangeValue( value );
+    if ( this.props.onChangeValue ) this.props.onChangeValue( moment( value ).format());
   }
 
   handleFocus = () => {
@@ -63,10 +69,15 @@ class DatePicker extends Component {
       maximumDate,
       minimumDate,
       minuteInterval,
-      type,
+      date,
+      time,
+      format,
+      defaultTimeFormat,
+      defaultDateFormat,
+      defaultDateTimeFormat,
     } = this.props;
 
-    const { 
+    const {
       value,
       isOpen,
     } = this.state;
@@ -76,16 +87,26 @@ class DatePicker extends Component {
       width: '100%',
     };
 
+    const type = `${date ? 'date' : ''}${time ? 'time' : ''}`;
+
+    const displayFormat = format || (
+      ( date && time ) ? defaultDateTimeFormat
+        : ( date ) ? defaultDateFormat
+          : ( time ) ? defaultTimeFormat
+            : ''
+    );
+
+    const displayValue = moment( value ).format( displayFormat );
+
     return (
       <Box
         justifyContent="center"
         alignItems="center"
         width="100%"
-        flex={1}
       >
         <Input
           type="text"
-          value={value}
+          value={displayValue}
           enabled={false}
           onFocus={this.handleFocus}
         />
@@ -121,11 +142,11 @@ class DatePicker extends Component {
                   borderBottomWidth={2}
                 >
                   <Text
-                    color="grey"
+                    color="black"
                     size="md"
                   >
                     Done
-                  </Text>              
+                  </Text>
                 </Box>
               </TouchableOpacity>
               <Box
