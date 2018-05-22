@@ -169,7 +169,7 @@ class Input extends Component {
       lg: 20,
       xl: 24,
     };
-  
+
     const status =
       error ? styles.error
         : success ? styles.success
@@ -290,7 +290,7 @@ class Input extends Component {
             multiline={multiline}
             onBlur={onBlur}
             onChange={onChange}
-            onChangeText={onChangeText}
+            onChangeText={onChangeValue}
             onFocus={onFocus}
             onKeyPress={onKeyPress}
             onSelectionChange={onSelectionChange}

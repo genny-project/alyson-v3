@@ -29,7 +29,7 @@ class LayoutLoader extends PureComponent {
         <Layout
           title="Loading..."
           hideHeader
-          appColor="dark"
+          appColor="light"
         >
           <Timeout duration={60000}>
             {({ isTimeUp, secondsElapsed }) => (

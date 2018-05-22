@@ -10,6 +10,7 @@ const buttonColors = {
   white: 'white',
   transparent: 'transparent',
   disabled: 'lightgrey',
+  black: 'black',
 };
 
 const textColors = {
@@ -19,6 +20,7 @@ const textColors = {
   white: 'black',
   transparent: 'black',
   disabled: 'white',
+  black: 'white',
 };
 
 const textSizes = {
@@ -116,12 +118,8 @@ Button.propTypes = {
   children: string,
   disabled: bool,
   onPress: func,
-  color: oneOf(
-    ['red', 'blue', 'green', 'white', 'transparent']
-  ).isRequired,
-  textColor: oneOf(
-    ['white', 'black']
-  ),
+  color: string,
+  textColor: string,
   silent: bool,
   icon: string,
   size: oneOf(

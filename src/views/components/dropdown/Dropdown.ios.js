@@ -1,13 +1,15 @@
-import React, { Component, Fragment } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { TouchableOpacity, TouchableWithoutFeedback, Modal } from 'react-native';
 import { array, string, bool, number } from 'prop-types';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import { Box, Text, Icon } from '../../components';
 import DropdownItem from './item';
 
-class Dropdown extends Component {
+class Dropdown extends PureComponent {
   static defaultProps = {
     padding: 20,
+    backgroundColor: '#FFF',
+    textColor: '#000',
   }
 
   static propTypes = {
@@ -17,6 +19,8 @@ class Dropdown extends Component {
     padding: number,
     paddingX: number,
     paddingY: number,
+    backgroundColor: string,
+    textColor: string,
   }
 
   state = {
@@ -45,7 +49,17 @@ class Dropdown extends Component {
   }
 
   render() {
-    const { items, text, facingRight, padding, paddingX, paddingY } = this.props;
+    const {
+      items,
+      text,
+      facingRight,
+      padding,
+      paddingX,
+      paddingY,
+      textColor,
+      backgroundColor,
+    } = this.props;
+
     const { isOpen, buttonHeight } = this.state;
 
     return (
@@ -63,7 +77,7 @@ class Dropdown extends Component {
               onLayout={this.handleLayout}
             >
               <Text
-                color="white"
+                color={textColor}
               >
                 {text}
               </Text>
@@ -72,7 +86,7 @@ class Dropdown extends Component {
 
               <Icon
                 name="expand-more"
-                color="white"
+                color={textColor}
               />
             </Box>
           </TouchableOpacity>
@@ -105,7 +119,7 @@ class Dropdown extends Component {
                 isIphoneX() ? 44 : 20
               )
             )}
-            backgroundColor="#232323"
+            backgroundColor={backgroundColor}
             flexDirection="column"
             minWidth={170}
             zIndex={10}
@@ -126,12 +140,14 @@ class Dropdown extends Component {
                     key={item.text}
                     href={item.href}
                     onPress={this.handleClose}
+                    textColor={textColor}
                   />
                 ))
               ) : (
                 <DropdownItem
                   text="No items to show."
                   onPress={this.handleClose}
+                  textColor={textColor}
                 />
               )}
           </Box>

@@ -14,10 +14,15 @@ class LayoutProvider extends Component {
   /* eslint-disable react/sort-comp */
 
   setAppColor = color => {
-    const appColor = this.appColors[color];
+    const appColor = this.appColors[color] || color;
+    const textColor = this.textColors[color] || color;
 
+    console.warn( 'setting app color', { appColor, textColor });
     if ( appColor )
-      this.setState({ appColor });
+      this.setState({
+        appColor,
+        textColor,
+      });
     else {
       const colors = Object.keys( this.appColors ).join( '|' );
 
@@ -26,7 +31,7 @@ class LayoutProvider extends Component {
   }
 
   setBackgroundColor = color => {
-    const backgroundColor = this.backgroundColors[color];
+    const backgroundColor = this.backgroundColors[color] || color;
 
     if ( !backgroundColor )
       this.setState({ backgroundColor });
@@ -58,8 +63,13 @@ class LayoutProvider extends Component {
   }
 
   appColors = {
-    light: '#fafafa',
+    light: '#FFF',
     dark: '#232323',
+  }
+
+  textColors = {
+    light: '#000',
+    dark: '#FFF',
   }
 
   backgroundColors = {
@@ -71,6 +81,7 @@ class LayoutProvider extends Component {
 
   state = {
     appColor: this.appColors.dark,
+    textColor: this.textColors.dark,
     backgroundColor: this.backgroundColors.grey,
     title: config.app.name,
     setBackgroundColor: this.setBackgroundColor,

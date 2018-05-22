@@ -7,6 +7,7 @@ import { Box, Icon, Text, PopupMenu } from '../../components';
 class Dropdown extends Component {
   static defaultProps = {
     padding: 20,
+    textColor: '#000',
   }
 
   static propTypes = {
@@ -17,6 +18,7 @@ class Dropdown extends Component {
     paddingY: number,
     onSelect: func,
     navigation: object,
+    textColor: string,
   }
 
   handleSelect = item => {
@@ -33,7 +35,7 @@ class Dropdown extends Component {
   }
 
   render() {
-    const { items, text, padding, paddingX, paddingY } = this.props;
+    const { items, text, padding, paddingX, paddingY, textColor } = this.props;
 
     return (
       <PopupMenu
@@ -55,7 +57,7 @@ class Dropdown extends Component {
               paddingY={paddingY}
             >
               <Text
-                color="white"
+                color={textColor}
                 size="md"
               >
                 {text}
@@ -65,7 +67,7 @@ class Dropdown extends Component {
 
               <Icon
                 name="expand-more"
-                color="white"
+                color={textColor}
                 size="sm"
               />
             </Box>

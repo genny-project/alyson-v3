@@ -7,6 +7,8 @@ import DropdownItem from './item';
 class Dropdown extends Component {
   static defaultProps = {
     padding: 20,
+    backgroundColor: '#FFF',
+    textColor: '#000',
   }
 
   static propTypes = {
@@ -16,6 +18,8 @@ class Dropdown extends Component {
     padding: number,
     paddingX: number,
     paddingY: number,
+    backgroundColor: string,
+    textColor: string,
   }
 
   state = {
@@ -26,6 +30,7 @@ class Dropdown extends Component {
 
   handleOpen = () => {
     this.setState({ isOpen: true });
+
     Animated.parallel( [
       Animated.timing(
         this.state.fadeAnim,
@@ -41,7 +46,6 @@ class Dropdown extends Component {
           duration: 120,
         }
       ),
-
     ] ).start();
   }
 
@@ -61,12 +65,23 @@ class Dropdown extends Component {
           duration: 300,
         }
       ),
-
-    ] ).start(() => this.setState({ isOpen: false }));
+    ] ).start(() => {
+      this.setState({ isOpen: false });
+    });
   }
 
   render() {
-    const { items, text, facingRight, padding, paddingX, paddingY } = this.props;
+    const {
+      items,
+      text,
+      facingRight,
+      padding,
+      paddingX,
+      paddingY,
+      textColor,
+      backgroundColor,
+    } = this.props;
+
     const { isOpen, fadeAnim, dropdownScaleY } = this.state;
 
     return (
@@ -109,7 +124,7 @@ class Dropdown extends Component {
               paddingY={paddingY}
             >
               <Text
-                color="white"
+                color={textColor}
               >
                 {text}
               </Text>
@@ -118,7 +133,7 @@ class Dropdown extends Component {
 
               <Icon
                 name="expand-more"
-                color="white"
+                color={textColor}
               />
             </Box>
           </TouchableOpacity>
@@ -126,11 +141,10 @@ class Dropdown extends Component {
           {isOpen && (
             <Animated.View
               style={{
-                transform: [{
-                  scaleY: dropdownScaleY,
-                }, {
-                  scaleX: dropdownScaleY,
-                }],
+                transform: [
+                  { scaleY: dropdownScaleY },
+                  { scaleX: dropdownScaleY },
+                ],
                 opacity: fadeAnim,
                 position: 'absolute',
                 height: '100%',
@@ -140,7 +154,7 @@ class Dropdown extends Component {
               <Box
                 position="absolute"
                 top="100%"
-                backgroundColor="#232323"
+                backgroundColor={backgroundColor}
                 flexDirection="column"
                 minWidth={170}
                 {...facingRight
@@ -150,8 +164,8 @@ class Dropdown extends Component {
               >
                 {(
                   items &&
-                items instanceof Array &&
-                items.length > 0
+                  items instanceof Array &&
+                  items.length > 0
                 ) ? (
                     items.map( item => (
                       <DropdownItem
@@ -160,12 +174,14 @@ class Dropdown extends Component {
                         key={item.text}
                         href={item.href}
                         onPress={this.handleClose}
+                        textColor={textColor}
                       />
                     ))
                   ) : (
                     <DropdownItem
                       text="No items to show."
                       onPress={this.handleClose}
+                      textColor={textColor}
                     />
                   )}
               </Box>
