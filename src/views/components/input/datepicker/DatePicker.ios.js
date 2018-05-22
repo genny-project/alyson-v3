@@ -9,6 +9,9 @@ class DatePicker extends Component {
     // value: '',
     minuteInterval: 10,
     date: true,
+    defaultDateTimeFormat: 'hh:mm a Do MMM YYYY',
+    defaultTimeFormat: 'hh:mm a',
+    defaultDateFormat: 'DD MMM YYYY',
   }
 
   static propTypes = {
@@ -19,6 +22,10 @@ class DatePicker extends Component {
     date: bool,
     time: bool,
     onChangeValue: func,
+    defaultDateTimeFormat: string,
+    defaultTimeFormat: string,
+    defaultDateFormat: string,
+    format: string,
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
@@ -64,9 +71,13 @@ class DatePicker extends Component {
       minuteInterval,
       date,
       time,
+      format,
+      defaultTimeFormat,
+      defaultDateFormat,
+      defaultDateTimeFormat,
     } = this.props;
 
-    const { 
+    const {
       value,
       isOpen,
     } = this.state;
@@ -77,7 +88,15 @@ class DatePicker extends Component {
     };
 
     const type = `${date ? 'date' : ''}${time ? 'time' : ''}`;
-    const displayValue = moment( value ).format( 'DD MMM YYYY' );
+
+    const displayFormat = format || (
+      ( date && time ) ? defaultDateTimeFormat
+        : ( date ) ? defaultDateFormat
+          : ( time ) ? defaultTimeFormat
+            : ''
+    );
+
+    const displayValue = moment( value ).format( displayFormat );
 
     return (
       <Box
@@ -127,7 +146,7 @@ class DatePicker extends Component {
                     size="md"
                   >
                     Done
-                  </Text>              
+                  </Text>
                 </Box>
               </TouchableOpacity>
               <Box
