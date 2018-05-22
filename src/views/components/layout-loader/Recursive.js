@@ -22,10 +22,22 @@ class Recursive extends PureComponent {
       return {};
     }
 
-    return Object.keys( props ).reduce(( result, current ) => ({
+    /**
+     * Loops through all of the props for this element and inject the context if required.
+     * Additionally parse a handlebars style string and inject variables from the context if needed.
+     * If the prop is not a string, simply return its current value so that functions work
+     * correctly.
+     */
+    const afterProps = Object.keys( props ).reduce(( result, current ) => ({
       ...result,
-      [current]: typeof( props[current] ) === 'string' && props[current].startsWith( '_' ) ? dlv( context, props[current].substring( 1 )) : curlyBracketParse( props[current], path => dlv( context, path )),
+      [current]: typeof( props[current] ) === 'string'
+        ? ( props[current].startsWith( '_' )
+          ? dlv( context, props[current].substring( 1 ))
+          : curlyBracketParse( props[current], path => dlv( context, path )))
+        : props[current],
     }), {});
+
+    return afterProps;
   }
 
   render() {

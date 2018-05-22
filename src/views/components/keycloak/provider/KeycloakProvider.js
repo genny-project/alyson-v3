@@ -206,6 +206,7 @@ class KeycloakProvider extends Component {
       } = session;
 
       const accessTokenHasExpired = this.hasTokenExpired( accessTokenExpiresOn );
+
       const refreshTokenHasExpired = this.hasTokenExpired( refreshTokenExpiresOn );
 
       if ( !refreshTokenHasExpired ) {
@@ -404,6 +405,12 @@ class KeycloakProvider extends Component {
 
       /* FIXME: fix check */
       // if ( session_state === sessionState )
+
+      /* If the token refresh has failed log the user out */
+      if ( !response.ok ) {
+        this.attemptLogout();
+      }
+    
       this.handleTokenRefreshSuccess( responseJson );
     }
     catch ( error ) {
@@ -439,18 +446,20 @@ class KeycloakProvider extends Component {
 
     const setUserData = new Promise(( resolve, reject ) => {
       try {
-        const decodedIdToken = keycloakUtils.decodeToken( id_token || access_token );
+        if ( id_token || access_token ) {
+          const decodedIdToken = keycloakUtils.decodeToken( id_token || access_token );
 
-        this.setState({
-          user: {
-            email: decodedIdToken.email,
-            firstName: decodedIdToken.given_name,
-            lastName: decodedIdToken.family_name,
-            fullName: decodedIdToken.name,
-            username: decodedIdToken.preferred_username,
-            id: decodedIdToken.sub,
-          },
-        }, resolve );
+          this.setState({
+            user: {
+              email: decodedIdToken.email,
+              firstName: decodedIdToken.given_name,
+              lastName: decodedIdToken.family_name,
+              fullName: decodedIdToken.name,
+              username: decodedIdToken.preferred_username,
+              id: decodedIdToken.sub,
+            },
+          }, resolve );
+        }
       }
       catch ( error ) {
         reject( error );
