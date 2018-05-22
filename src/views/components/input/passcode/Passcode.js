@@ -96,6 +96,7 @@ class Passcode extends Component {
               <Box
                 key={i}
                 width={inputWidth[size]}
+                marginRight={i < numberOfInputs - 1 && 10}
               >
                 <Input
                   width="100%"

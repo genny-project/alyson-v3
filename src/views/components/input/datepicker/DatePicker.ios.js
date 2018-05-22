@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { string, number, oneOf, func } from 'prop-types';
+import { string, number, bool, func } from 'prop-types';
 import { DatePickerIOS, TouchableOpacity, Modal, SafeAreaView  } from 'react-native';
 import moment from 'moment';
 import { Text, Box, Input } from '../../../components';
@@ -8,7 +8,7 @@ class DatePicker extends Component {
   static defaultProps = {
     // value: '',
     minuteInterval: 10,
-    type: 'date',
+    date: true,
   }
 
   static propTypes = {
@@ -16,9 +16,8 @@ class DatePicker extends Component {
     maximumDate: string,
     minimumDate: string,
     minuteInterval: number,
-    type: oneOf(
-      ['date', 'time', 'datetime']
-    ),
+    date: bool,
+    time: bool,
     onChangeValue: func,
   }
 
@@ -43,7 +42,7 @@ class DatePicker extends Component {
   };
 
   handleChange = ( value ) => {
-    if ( this.props.onChangeValue ) this.props.onChangeValue( value );
+    if ( this.props.onChangeValue ) this.props.onChangeValue( moment( value ).format());
   }
 
   handleFocus = () => {
@@ -63,7 +62,8 @@ class DatePicker extends Component {
       maximumDate,
       minimumDate,
       minuteInterval,
-      type,
+      date,
+      time,
     } = this.props;
 
     const { 
@@ -76,16 +76,18 @@ class DatePicker extends Component {
       width: '100%',
     };
 
+    const type = `${date ? 'date' : ''}${time ? 'time' : ''}`;
+    const displayValue = moment( value ).format( 'DD MMM YYYY' );
+
     return (
       <Box
         justifyContent="center"
         alignItems="center"
         width="100%"
-        flex={1}
       >
         <Input
           type="text"
-          value={value}
+          value={displayValue}
           enabled={false}
           onFocus={this.handleFocus}
         />
@@ -121,7 +123,7 @@ class DatePicker extends Component {
                   borderBottomWidth={2}
                 >
                   <Text
-                    color="grey"
+                    color="black"
                     size="md"
                   >
                     Done
