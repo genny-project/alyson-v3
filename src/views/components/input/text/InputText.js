@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { TextInput, Platform } from 'react-native';
-import { string, oneOf, number, shape, bool, func, any, oneOfType } from 'prop-types';
+import { string, oneOf, number, shape, bool, func, any, oneOfType, node } from 'prop-types';
 import { objectClean } from '../../../../utils';
-import { Box, Icon } from '../../../components';
+import { Box, Icon, Text } from '../../../components';
 import styles from './InputText.style';
 
 class Input extends Component {
@@ -83,6 +83,18 @@ class Input extends Component {
     width: oneOfType(
       [number, string]
     ),
+    prefix: oneOfType(
+      [string, node]
+    ),
+    suffix: oneOfType(
+      [string, node]
+    ),
+    prefixIcon: string,
+    suffixIcon: string,
+    prefixColor: string,
+    suffixColor: string,
+    prefixBackground: string,
+    suffixBackground: string,
     textSize: oneOf(
       ['xs','sm','md','lg','xl']
     ),
@@ -138,6 +150,14 @@ class Input extends Component {
       icon,
       forwardedRef,
       width,
+      prefix,
+      suffix,
+      prefixIcon,
+      suffixIcon,
+      prefixColor,
+      suffixColor,
+      prefixBackground,
+      suffixBackground,
       textSize,
       textAlign,
     } = this.props;
@@ -198,66 +218,132 @@ class Input extends Component {
 
     };
 
+    const childPrefix = ( prefixIcon != null ) ? (
+      <Icon
+        color={prefixColor || 'darkGrey'}
+        name={prefixIcon}
+      />
+    ) : ( typeof prefix === 'string' ) ? (
+      <Text
+        color={prefixColor || 'darkGrey'}
+        decoration="none"
+        align="center"
+        width="100%"
+      >
+        {prefix}
+      </Text>
+    ) : (
+      prefix || null
+    );
+
+    const childSuffix = ( suffixIcon != null ) ? (
+      <Icon
+        color={suffixColor || 'darkGrey'}
+        name={suffixIcon}
+      />
+    ) : ( typeof suffix === 'string' ) ? (
+      <Text
+        color={suffixColor || 'darkGrey'}
+        decoration="none"
+        align="center"
+        width="100%"
+      >
+        {suffix}
+      </Text>
+    ) : (
+      suffix || null
+    );
+
     return (
       <Box
-        position="relative"
+        display="flex"
         width={width}
       >
-        <TextInput
-          autoCapitalize={autoCapitalize}
-          autoComplete={autoComplete}
-          autoCorrect={autoCorrect}
-          autoFocus={autoFocus}
-          blurOnSubmit={blurOnSubmit}
-          clearTextOnFocus={clearTextOnFocus}
-          defaultValue={defaultValue}
-          editable={!disabled}
-          keyboardType={keyboardType}
-          maxLength={maxLength}
-          multiline={multiline}
-          onBlur={onBlur}
-          onChange={onChange}
-          onChangeText={onChangeValue}
-          onFocus={onFocus}
-          onKeyPress={onKeyPress}
-          onSelectionChange={onSelectionChange}
-          onSubmitEditing={onSubmitEditing}
-          placeholder={placeholder}
-          placeholderTextColor={statusColor}
-          secureTextEntry={secureTextEntry}
-          selection={selection}
-          selectTextOnFocus={selectTextOnFocus}
-          spellCheck={spellCheck}
-          style={[
-            styles.input,
-            inputStyle,
-            status,
-            hasIconStyle,
-          ]}
-          value={value}
-          underlineColorAndroid="transparent"
-          {...Platform.select({
-            ios: nativeProps,
-            android: nativeProps,
-            web: webProps,
-          })}
-          ref={forwardedRef}
-        />
-
-        {icon && (
-          <Box
-            position="absolute"
-            right={10}
-            height="100%"
-            alignItems="center"
-          >
-            <Icon
-              name={icon}
-              color={statusColor}
-              size="md"
-            />
-          </Box>
-        )}
+        {
+          childPrefix &&
+          (
+            <Box
+              backgroundColor={prefixBackground || 'lightGrey'}
+              alignItems="center"
+              flexGrow={0}
+              paddingX={10}
+            >
+              {childPrefix}
+            </Box>
+          )
+        }
+        <Box
+          position="relative"
+          flex={1}
+        >
+          <TextInput
+            autoCapitalize={autoCapitalize}
+            autoComplete={autoComplete}
+            autoCorrect={autoCorrect}
+            autoFocus={autoFocus}
+            blurOnSubmit={blurOnSubmit}
+            clearTextOnFocus={clearTextOnFocus}
+            defaultValue={defaultValue}
+            editable={!disabled}
+            keyboardType={keyboardType}
+            maxLength={maxLength}
+            multiline={multiline}
+            onBlur={onBlur}
+            onChange={onChange}
+            onChangeText={onChangeText}
+            onFocus={onFocus}
+            onKeyPress={onKeyPress}
+            onSelectionChange={onSelectionChange}
+            onSubmitEditing={onSubmitEditing}
+            placeholder={placeholder}
+            placeholderTextColor={statusColor}
+            secureTextEntry={secureTextEntry}
+            selection={selection}
+            selectTextOnFocus={selectTextOnFocus}
+            spellCheck={spellCheck}
+            style={[
+              styles.input,
+              inputStyle,
+              status,
+              hasIconStyle,
+            ]}
+            value={value}
+            underlineColorAndroid="transparent"
+            {...Platform.select({
+              ios: nativeProps,
+              android: nativeProps,
+              web: webProps,
+            })}
+            ref={forwardedRef}
+          />
+          {icon && (
+            <Box
+              position="absolute"
+              right={10}
+              height="100%"
+              alignItems="center"
+            >
+              <Icon
+                name={icon}
+                color={statusColor}
+                size="md"
+              />
+            </Box>
+          )}
+        </Box>
+        {
+          childSuffix &&
+          (
+            <Box
+              backgroundColor={suffixBackground || 'lightGrey'}
+              alignItems="center"
+              flexGrow={0}
+              paddingX={10}
+            >
+              {childSuffix}
+            </Box>
+          )
+        }
       </Box>
     );
   }

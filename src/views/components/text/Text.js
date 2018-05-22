@@ -53,13 +53,6 @@ Text.propTypes = {
   decoration: oneOf(
     ['none']
   ),
-  margin: number,
-  marginX: number,
-  marginY: number,
-  marginTop: number,
-  marginRight: number,
-  marginBottom: number,
-  marginLeft: number,
   fontWeight: string,
   size: string,
   height: oneOfType(
