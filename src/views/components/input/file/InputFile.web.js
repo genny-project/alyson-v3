@@ -1,6 +1,6 @@
 import 'uppy/dist/uppy.min.css';
 import React, { Component } from 'react';
-import { bool, number, func, object, array, any } from 'prop-types';
+import { bool, number, func, object, array } from 'prop-types';
 import Uppy from 'uppy/lib/core';
 import AwsS3 from 'uppy/lib/plugins/AwsS3';
 import Webcam from 'uppy/lib/plugins/Webcam';
@@ -14,7 +14,6 @@ class InputFile extends Component {
     maxNumberOfFiles: 0,
     autoProceed: true,
     defaultValue: [],
-    identifier: null,
     imageOnly: false,
   }
 
@@ -24,9 +23,6 @@ class InputFile extends Component {
     onChange: func,
     defaultValue: object,
     value: array,
-    validation: func,
-    validationList: array,
-    identifier: any,
     imageOnly: bool,
   }
 
@@ -106,28 +102,9 @@ class InputFile extends Component {
       this.close();
     }, 2000 );
 
-    const restructuredFiles = files;
-    const { validationList, validation, identifier } = this.props;
-
-    if ( validation ) validation( JSON.stringify( restructuredFiles ), identifier, validationList );
-  }
-
-  handleSuccess = success => {
-    const uploadedFiles = success.response.map(({ id }) => id );
-    // console.log('success');
-    /* Update all the  */
-
-    this.setState( state => ({
-
-      files: [
-        ...state.files.filter(({ id }) => !uploadedFiles.includes( id )),
-        success.response,
-      ],
-    }), () => {
-      if ( this.props.onChange ) {
-        this.props.onChange({ target: { value: this.state.files } });
-      }
-    });
+    if ( this.props.onChange ) {
+      this.props.onChange({ target: { value: files } });
+    }
   }
 
   handleError = error => {
