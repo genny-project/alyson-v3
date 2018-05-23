@@ -21,7 +21,7 @@ class Generic extends Component {
 
     return (
       <LayoutFetcher currentUrl={currentUrl}>
-        { layout => (
+        {layout => (
           <LayoutLoader
             layout={layout}
           />
