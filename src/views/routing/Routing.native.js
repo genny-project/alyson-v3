@@ -2,7 +2,7 @@
 import React from 'react';
 import { DrawerNavigator, StackNavigator, SwitchNavigator } from 'react-navigation';
 import CardStackStyleInterpolator from 'react-navigation/src/views/CardStack/CardStackStyleInterpolator';
-import { store } from '../../redux';
+// import { store } from '../../redux';
 import * as Pages from '../../views/pages';
 import { routes } from '../../config';
 import Sidebar from './sidebar';
@@ -18,13 +18,14 @@ const AuthenticatedStack = StackNavigator({
     test: true,
   },
   navigationOptions: props => {
-    const { hideHeader } = store.getState().layout;
+    // const { hideHeader } = store.getState().layout;
 
-    return {
-      header: hideHeader
-        ? null
-        : <Header {...props} />,
-    };
+    return { header: <Header {...props} /> };
+    // return {
+      // header: hideHeader
+        // ? null
+        // : <Header {...props} />,
+    // };
   },
   transitionConfig: () => ({
     screenInterpolator: sceneProps => {

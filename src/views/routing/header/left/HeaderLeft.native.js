@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { withNavigation } from 'react-navigation';
 import { object } from 'prop-types';
 import { connect } from 'react-redux';
-import config from '../../../../config';
 import { Button, Box, Heading } from '../../../components';
 import { LayoutConsumer } from '../../../layout';
 
@@ -46,15 +45,16 @@ class HeaderLeft extends Component {
             {(
               index > 0 &&
               routeName !== 'home'
-            ) ? (
-              <Button
-                onPress={this.handleBack}
-                size="lg"
-                color="transparent"
-                textColor={layout.textColor}
-                icon="arrow-back"
-                paddingX={10}
-              />
+            )
+              ? (
+                <Button
+                  onPress={this.handleBack}
+                  size="lg"
+                  color="transparent"
+                  textColor={layout.textColor}
+                  icon="arrow-back"
+                  paddingX={10}
+                />
               ) : (
                 <Button
                   onPress={this.handleToggleMenu}
@@ -64,12 +64,13 @@ class HeaderLeft extends Component {
                   icon="menu"
                   paddingX={10}
                 />
-              )}
+              )
+            }
 
             <Heading
               size="lg"
               marginY={0}
-              color={layout.appColors[layout.appColor]}
+              color={layout.textColor}
             >
               {(
                 index > 0 &&
@@ -81,8 +82,9 @@ class HeaderLeft extends Component {
                   projectAttributes.PRI_NAME &&
                   projectAttributes.PRI_NAME.valueString
                 ) || (
-                  config.app.name
-                )}
+                  'Loading...'
+                )
+              }
             </Heading>
           </Box>
         )}
@@ -98,6 +100,6 @@ const mapStateToProps = state => ({
   aliases: state.vertx.aliases,
 });
 
-export default withNavigation(
-  connect( mapStateToProps )( HeaderLeft )
+export default (
+  connect( mapStateToProps )( withNavigation( HeaderLeft ))
 );

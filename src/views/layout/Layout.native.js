@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { oneOf, node, object, string, bool } from 'prop-types';
+import { withNavigation } from 'react-navigation';
 import { LayoutConsumer } from '../layout';
 
 class Layout extends Component {
@@ -18,10 +19,26 @@ class Layout extends Component {
   }
 
   componentDidMount() {
-    this.checkForLayoutChanges();
+    this.setLayoutProperties();
   }
 
-  checkForLayoutChanges() {
+  componentDidUpdate( prevProps ) {
+    if (
+      this.props.appColor !== prevProps.appColor &&
+      this.props.appColor != null
+    ) {
+      this.props.layout.setAppColor( this.props.appColor );
+    }
+
+    if (
+      this.props.title !== prevProps.title &&
+      this.props.title != null
+    ) {
+      this.props.layout.setTitle( this.props.title );
+    }
+  }
+
+  setLayoutProperties() {
     const { layout, title, appColor, hideHeader, hideSidebar } = this.props;
 
     if (
@@ -42,14 +59,22 @@ class Layout extends Component {
       layout.setSidebarVisibility( hideSidebar );
     }
     else if ( hideSidebar == null ) {
-      layout.setSidebarVisibility( false );
+      layout.setSidebarVisibility( true );
     }
 
     if ( hideHeader !== layout.hideHeader ) {
       layout.setHeaderVisibility( hideHeader );
+
+      // this.props.navigation.setParams({
+        // hideHeader,
+      // });
     }
     else if ( hideHeader == null ) {
-      layout.setHeaderVisibility( false );
+      layout.setHeaderVisibility( true );
+
+      // this.props.navigation.setParams({
+        // hideHeader: true,
+      // });
     }
   }
 
@@ -64,10 +89,12 @@ class Layout extends Component {
   }
 }
 
-export default props => (
-  <LayoutConsumer>
-    {layout => (
-      <Layout {...props} layout={layout} />
-    )}
-  </LayoutConsumer>
+export default withNavigation(
+  props => (
+    <LayoutConsumer>
+      {layout => (
+        <Layout {...props} layout={layout} />
+      )}
+    </LayoutConsumer>
+  )
 );

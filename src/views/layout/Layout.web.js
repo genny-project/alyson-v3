@@ -39,8 +39,6 @@ class Layout extends PureComponent {
   setLayoutProperties() {
     const { layout, title, appColor, hideSidebar, hideHeader } = this.props;
 
-    console.warn( 'checking for layout changes', { appColor });
-
     if (
       typeof title === 'string' &&
       title.length > 0
