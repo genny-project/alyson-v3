@@ -20,6 +20,7 @@ class Dropdown extends Component {
     paddingY: number,
     backgroundColor: string,
     textColor: string,
+    disabled: bool,
   }
 
   state = {
@@ -29,6 +30,9 @@ class Dropdown extends Component {
   }
 
   handleOpen = () => {
+    if ( this.props.disabled )
+      return;
+
     this.setState({ isOpen: true });
 
     Animated.parallel( [

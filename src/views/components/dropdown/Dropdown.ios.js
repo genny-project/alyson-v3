@@ -21,6 +21,7 @@ class Dropdown extends PureComponent {
     paddingY: number,
     backgroundColor: string,
     textColor: string,
+    disabled: bool,
   }
 
   state = {
@@ -29,6 +30,9 @@ class Dropdown extends PureComponent {
   }
 
   handleOpen = () => {
+    if ( this.props.disabled )
+      return;
+
     this.setState({ isOpen: true });
   }
 
@@ -37,6 +41,9 @@ class Dropdown extends PureComponent {
   }
 
   handleToggle = () => {
+    if ( this.props.disabled )
+      return;
+
     this.setState( state => ({ isOpen: !state.isOpen }));
   }
 

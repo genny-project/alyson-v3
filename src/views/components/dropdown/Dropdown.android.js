@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { withNavigation } from 'react-navigation';
-import { array, string, number, func, object, node } from 'prop-types';
+import { array, string, number, func, object, node, bool } from 'prop-types';
 import { Box, Icon, Text, PopupMenu } from '../../components';
 
 class Dropdown extends Component {
@@ -19,6 +19,7 @@ class Dropdown extends Component {
     onSelect: func,
     navigation: object,
     textColor: string,
+    disabled: bool,
   }
 
   handleSelect = item => {
@@ -35,7 +36,7 @@ class Dropdown extends Component {
   }
 
   render() {
-    const { items, text, padding, paddingX, paddingY, textColor } = this.props;
+    const { items, text, padding, paddingX, paddingY, textColor, disabled } = this.props;
 
     return (
       <PopupMenu
@@ -45,7 +46,7 @@ class Dropdown extends Component {
       >
         {({ showPopupMenu, setAnchorRef }) => (
           <TouchableOpacity
-            onPress={showPopupMenu}
+            onPress={!disabled && showPopupMenu}
             ref={setAnchorRef}
             style={{ alignItems: 'center' }}
           >

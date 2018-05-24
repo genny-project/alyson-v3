@@ -44,7 +44,7 @@ const HeaderRight = ({ aliases, baseEntities }) => {
                 <ActivityIndicator size="small" />
               )
             )}
-            isLoading={!firstName}
+            disabled={!firstName}
             facingRight
             items={[
               {
