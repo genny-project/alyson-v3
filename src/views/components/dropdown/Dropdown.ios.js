@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { TouchableOpacity, TouchableWithoutFeedback, Modal } from 'react-native';
-import { array, string, bool, number } from 'prop-types';
+import { array, string, bool, number, node } from 'prop-types';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import { Box, Text, Icon } from '../../components';
 import DropdownItem from './item';
@@ -14,7 +14,7 @@ class Dropdown extends PureComponent {
 
   static propTypes = {
     items: array.isRequired,
-    text: string.isRequired,
+    text: node.isRequired,
     facingRight: bool,
     padding: number,
     paddingX: number,
@@ -76,11 +76,13 @@ class Dropdown extends PureComponent {
               paddingY={paddingY}
               onLayout={this.handleLayout}
             >
-              <Text
-                color={textColor}
-              >
-                {text}
-              </Text>
+              {typeof text === 'string' ? (
+                <Text
+                  color={textColor}
+                >
+                  {text}
+                </Text>
+              ) : text}
 
               <Box width={5} />
 

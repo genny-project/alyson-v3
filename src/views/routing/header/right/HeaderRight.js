@@ -1,60 +1,78 @@
 import React from 'react';
-import { Platform } from 'react-native';
-import { Box, Dropdown, KeycloakConsumer } from '../../../components';
+import { Platform, ActivityIndicator } from 'react-native';
+import { object } from 'prop-types';
+import { connect } from 'react-redux';
+import dlv from 'dlv';
+import { Box, Dropdown } from '../../../components';
 import { LayoutConsumer } from '../../../layout';
 import HeaderItem from '../item';
 
-const HeaderRight = () => (
-  <KeycloakConsumer>
-    {({ user, isAuthenticated }) => (
-      <LayoutConsumer>
-        {({ appColor, textColor }) => (
-          <Box
+const HeaderRight = ({ aliases, baseEntities }) => {
+  const firstName = dlv( baseEntities, `attributes.${aliases.USER}.PRI_FIRSTNAME.valueString` );
+
+  return (
+    <LayoutConsumer>
+      {({ appColor, textColor }) => (
+        <Box
+          paddingX={5}
+          alignItems="center"
+        >
+          <HeaderItem
+            href="chat"
+            icon="chat"
+            textColor={textColor}
+          />
+
+          <HeaderItem
+            href="alerts"
+            icon="notifications"
+            textColor={textColor}
+          />
+
+          <Dropdown
             paddingX={5}
-            alignItems="center"
-          >
-            <HeaderItem
-              href="chat"
-              icon="chat"
-              textColor={textColor}
-            />
-
-            <HeaderItem
-              href="alerts"
-              icon="notifications"
-              textColor={textColor}
-            />
-
-            <Dropdown
-              paddingX={5}
-              backgroundColor={appColor}
-              textColor={textColor}
-              text={(
+            backgroundColor={appColor}
+            textColor={textColor}
+            text={(
+              firstName ? (
                 Platform.select({
-                  ios: user.firstName,
-                  android: user.firstName,
-                  web: isAuthenticated ? `Hi, ${user.firstName}!` : 'Options',
+                  ios: firstName,
+                  android: firstName,
+                  web: `Hi, ${firstName}!`,
                 })
-              )}
-              facingRight
-              items={[
-                {
-                  text: 'Settings',
-                  icon: 'settings',
-                  href: 'settings',
-                },
-                {
-                  text: 'Logout',
-                  icon: 'power-settings-new',
-                  href: 'logout',
-                },
-              ]}
-            />
-          </Box>
-        )}
-      </LayoutConsumer>
-    )}
-  </KeycloakConsumer>
-);
+              ) : (
+                <ActivityIndicator size="small" />
+              )
+            )}
+            isLoading={!firstName}
+            facingRight
+            items={[
+              {
+                text: 'Settings',
+                icon: 'settings',
+                href: 'settings',
+              },
+              {
+                text: 'Logout',
+                icon: 'power-settings-new',
+                href: 'logout',
+              },
+            ]}
+          />
+        </Box>
+      )}
+    </LayoutConsumer>
+  );
+};
 
-export default HeaderRight;
+HeaderRight.propTypes = {
+  baseEntities: object,
+  aliases: object,
+};
+
+const mapStateToProps = state => ({
+  aliases: state.vertx.aliases,
+  baseEntities: state.vertx.baseEntities,
+});
+
+export default connect( mapStateToProps )( HeaderRight );

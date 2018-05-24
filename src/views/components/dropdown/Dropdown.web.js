@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { TouchableOpacity, TouchableWithoutFeedback, Animated } from 'react-native';
-import { array, string, bool, number } from 'prop-types';
+import { array, string, bool, number, node } from 'prop-types';
 import { Box, Text, Icon } from '../../components';
 import DropdownItem from './item';
 
@@ -13,7 +13,7 @@ class Dropdown extends Component {
 
   static propTypes = {
     items: array.isRequired,
-    text: string.isRequired,
+    text: node.isRequired,
     facingRight: bool,
     padding: number,
     paddingX: number,
@@ -123,11 +123,13 @@ class Dropdown extends Component {
               paddingX={paddingX}
               paddingY={paddingY}
             >
-              <Text
-                color={textColor}
-              >
-                {text}
-              </Text>
+              {typeof text === 'string' ? (
+                <Text
+                  color={textColor}
+                >
+                  {text}
+                </Text>
+              ) : text}
 
               <Box width={5} />
 

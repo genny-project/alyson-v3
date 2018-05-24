@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { withNavigation } from 'react-navigation';
-import { array, string, number, func, object } from 'prop-types';
+import { array, string, number, func, object, node } from 'prop-types';
 import { Box, Icon, Text, PopupMenu } from '../../components';
 
 class Dropdown extends Component {
@@ -12,7 +12,7 @@ class Dropdown extends Component {
 
   static propTypes = {
     items: array.isRequired,
-    text: string.isRequired,
+    text: node.isRequired,
     padding: number,
     paddingX: number,
     paddingY: number,
@@ -56,12 +56,14 @@ class Dropdown extends Component {
               paddingX={paddingX}
               paddingY={paddingY}
             >
-              <Text
-                color={textColor}
-                size="md"
-              >
-                {text}
-              </Text>
+              {typeof text === 'string' ? (
+                <Text
+                  color={textColor}
+                  size="md"
+                >
+                  {text}
+                </Text>
+              ) : text}
 
               <Box width={5} />
 
