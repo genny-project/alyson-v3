@@ -15,7 +15,7 @@ const reducer = ( state = initialState, { type, payload }) => {
     case 'LAYOUT_HEADER_VISIBILITY_SET':
       return {
         ...state,
-        hideHeader: payload, // FIXME:
+        hideHeader: payload,
       };
 
     case 'APP_NAME_SET':

@@ -2,9 +2,9 @@
 import React from 'react';
 import { DrawerNavigator, StackNavigator, SwitchNavigator } from 'react-navigation';
 import CardStackStyleInterpolator from 'react-navigation/src/views/CardStack/CardStackStyleInterpolator';
-// import { store } from '../../redux';
 import * as Pages from '../../views/pages';
 import { routes } from '../../config';
+import { navigator } from '../../utils';
 import Sidebar from './sidebar';
 import Header from './header';
 
@@ -15,17 +15,19 @@ const AuthenticatedStack = StackNavigator({
   initialRouteName: 'generic',
   initialRouteParams: {
     layout: 'home',
-    test: true,
+    hideHeader: true,
   },
   navigationOptions: props => {
-    // const { hideHeader } = store.getState().layout;
+    const hideHeader = (
+      props.navigation.state.params &&
+      props.navigation.state.params.hideHeader
+    );
 
-    return { header: <Header {...props} /> };
-    // return {
-      // header: hideHeader
-        // ? null
-        // : <Header {...props} />,
-    // };
+    return {
+      header: hideHeader
+        ? null
+        : <Header {...props} />,
+    };
   },
   transitionConfig: () => ({
     screenInterpolator: sceneProps => {
@@ -35,7 +37,13 @@ const AuthenticatedStack = StackNavigator({
 });
 
 const AuthenticatedDrawer = DrawerNavigator({
-  authenticated: AuthenticatedStack,
+  authenticated: () => (
+    <AuthenticatedStack
+      ref={ref => (
+        navigator.setTopLevelNavigator( ref )
+      )}
+    />
+  ),
 }, {
   initialRouteName: 'authenticated',
   contentComponent: props => (

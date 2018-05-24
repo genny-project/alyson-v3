@@ -31,10 +31,9 @@ class HeaderLeft extends Component {
   }
 
   render() {
-    const { baseEntities, aliases } = this.props;
-    const { index, routes } = this.props.navigation.state;
-    const { routeName } = routes[index];
+    const { baseEntities, aliases, navigation } = this.props;
     const projectAttributes = baseEntities.attributes[aliases.PROJECT];
+    const { routeName } = navigation.state;
 
     return (
       <LayoutConsumer>
@@ -42,10 +41,7 @@ class HeaderLeft extends Component {
           <Box
             alignItems="center"
           >
-            {(
-              index > 0 &&
-              routeName !== 'home'
-            )
+            {routeName !== 'home'
               ? (
                 <Button
                   onPress={this.handleBack}
@@ -72,10 +68,7 @@ class HeaderLeft extends Component {
               marginY={0}
               color={layout.textColor}
             >
-              {(
-                index > 0 &&
-                routeName !== 'home'
-              )
+              {routeName !== 'home'
                 ? layout.title
                 : (
                   projectAttributes &&
