@@ -18,6 +18,8 @@ const Sidebar = ({ headerImage, items }) => (
           <Image
             style={{
               resizeMode: 'contain',
+              width: '100%',
+              height: 200,
             }}
             flex={1}
             source={{ uri: headerImage }}
