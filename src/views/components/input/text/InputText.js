@@ -172,9 +172,9 @@ class Input extends Component {
 
     const status =
       error ? styles.error
-        : success ? styles.success
-          : warning ? styles.warning
-            : styles.default;
+      : success ? styles.success
+      : warning ? styles.warning
+      : styles.default;
 
     const hasIconStyle = icon
       ? styles.inputWithIcon
@@ -205,10 +205,10 @@ class Input extends Component {
 
     const statusColor =
       disabled ? 'lightGrey'
-        : success ? 'green'
-          : error ? 'red'
-            : warning ? 'yellow'
-              : 'grey';
+      : success ? 'green'
+      : error ? 'red'
+      : warning ? 'yellow'
+      : 'grey';
 
     const nativeProps = {
       onLayout,

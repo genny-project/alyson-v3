@@ -81,8 +81,8 @@ class InputAutocomplete extends Component {
         )}
         itemToString={item => (
           item == null ? ''
-            : typeof item === 'string' ? item
-              : item[itemStringKey]
+          : typeof item === 'string' ? item
+          : item[itemStringKey]
         )}
         onChange={this.handleChange}
         onOuterClick={this.handleOuterClick}

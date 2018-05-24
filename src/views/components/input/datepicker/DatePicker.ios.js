@@ -91,9 +91,9 @@ class DatePicker extends Component {
 
     const displayFormat = format || (
       ( date && time ) ? defaultDateTimeFormat
-        : ( date ) ? defaultDateFormat
-          : ( time ) ? defaultTimeFormat
-            : ''
+      : ( date ) ? defaultDateFormat
+      : ( time ) ? defaultTimeFormat
+      : ''
     );
 
     const displayValue = moment( value ).format( displayFormat );
