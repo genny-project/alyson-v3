@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Platform } from 'react-native';
 import { object } from 'prop-types';
 import { location } from '../../../utils';
 import { LayoutLoader, Redirect, KeycloakConsumer } from '../../components';
@@ -12,9 +11,8 @@ class Generic extends Component {
   }
 
   render() {
-    const currentUrl = Platform.OS === 'web'
-      ? `/${location.getBasePath()}`
-      : `/${this.props.navigation.state.params.layout}`;
+    const { navigation } = this.props;
+    const currentUrl = location.getBasePath( navigation );
 
     if ( !this.props.keycloak.isAuthenticated )
       return <Redirect to={`auth?redirectURL=${currentUrl}`} />;
