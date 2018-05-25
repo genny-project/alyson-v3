@@ -69,7 +69,7 @@ class Dropdown extends Component {
               <Box width={5} />
 
               <Icon
-                name="expand-more"
+                name="more-vert"
                 color={textColor}
                 size="sm"
               />
