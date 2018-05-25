@@ -11,12 +11,20 @@ import InputText from './text';
 import Switch from './switch';
 import InputDropdown from './dropdown';
 import Passcode from './passcode';
+import InputMask from './mask';
 import { Text } from '../index';
 
 const Input = props => {
   const { type } = props;
   
+  // if ( mask ) {
+  //   return <InputMask {...props} />;
+  // }
+
   switch ( type ) {
+    case 'mask':
+      return <InputMask {...props} />;
+
     case 'text':
       return <InputText {...props} />;
 

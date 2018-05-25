@@ -290,7 +290,7 @@ class Input extends Component {
             multiline={multiline}
             onBlur={onBlur}
             onChange={onChange}
-            onChangeText={onChangeText}
+            onChangeText={onChangeValue}
             onFocus={onFocus}
             onKeyPress={onKeyPress}
             onSelectionChange={onSelectionChange}
