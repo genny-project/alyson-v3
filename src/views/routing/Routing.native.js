@@ -15,7 +15,6 @@ const AuthenticatedStack = StackNavigator({
   initialRouteName: 'generic',
   initialRouteParams: {
     layout: 'home',
-    hideHeader: true,
   },
   navigationOptions: props => {
     const hideHeader = (

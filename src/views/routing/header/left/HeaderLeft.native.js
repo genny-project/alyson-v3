@@ -41,7 +41,7 @@ class HeaderLeft extends Component {
           <Box
             alignItems="center"
           >
-            {routeName !== 'home'
+            {/* routeName !== 'home' */ routeName === 'TODO' // TODO:
               ? (
                 <Button
                   onPress={this.handleBack}
