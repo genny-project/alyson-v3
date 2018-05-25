@@ -17,7 +17,6 @@ class LayoutProvider extends Component {
     const appColor = this.appColors[color] || color;
     const textColor = this.textColors[color] || color;
 
-    console.warn( 'setting app color', { appColor, textColor });
     if ( appColor )
       this.setState({
         appColor,

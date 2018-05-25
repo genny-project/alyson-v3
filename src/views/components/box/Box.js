@@ -3,7 +3,7 @@ import { View, Platform } from 'react-native';
 import { any, oneOf, oneOfType, string, number, array, func, bool } from 'prop-types';
 import { objectClean } from '../../../utils';
 
-const shapeStyle = {
+const shapeStyles = {
   square: 0,
   rounded: 5,
   circle: '50%',
@@ -111,8 +111,7 @@ const Box = ({
     borderWidth,
     borderColor,
     borderStyle,
-    borderRadius,
-    shapeStyle: shapeStyle[shape],
+    borderRadius: borderRadius || shapeStyles[shape],
     ...boxShadow && (
       boxShadows[boxShadow]
     ),

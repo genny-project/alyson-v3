@@ -64,8 +64,9 @@ class Recursive extends PureComponent {
           this.injectContextIntoProps( context, props ),
           repeatedChildren && (
             repeatedChildren instanceof Array
-              ? repeatedChildren.map( child =>
-                <Recursive context={context} {...child} /> // eslint-disable-line react/jsx-key
+              ? repeatedChildren.map(( child, index ) =>
+                // eslint-disable-next-line react/no-array-index-key
+                <Recursive context={context} key={index} {...child} />
               )
               : typeof repeatedChildren === 'object'
                 ? <Recursive context={context} {...repeatedChildren}  />
@@ -76,9 +77,9 @@ class Recursive extends PureComponent {
 
       return (
         <Text>
-Component '
+          Component '
           {component}
-' does not exist
+          ' does not exist
         </Text>
       );
     }
