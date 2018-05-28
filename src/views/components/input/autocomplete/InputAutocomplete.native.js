@@ -32,6 +32,7 @@ class InputAutocomplete extends Component {
     width: oneOfType(
       [number, string]
     ),
+    onBlur: func,
   }
 
   handleFilter = inputValue => dropdownItem => {
@@ -59,6 +60,11 @@ class InputAutocomplete extends Component {
         )
       )
     );
+  }
+
+  handleDismiss = () => {
+    if ( this.props.onBlur )
+      this.props.onBlur();
   }
 
   handleChange = item => {
@@ -119,6 +125,7 @@ class InputAutocomplete extends Component {
                 style={{
                   backgroundColor: 'white',
                 }}
+                onDismiss={this.handleDismiss}
               >
                 <SafeAreaView
                   style={{

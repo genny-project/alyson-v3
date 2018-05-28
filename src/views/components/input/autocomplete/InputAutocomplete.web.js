@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { func, string, number, oneOfType, array, bool, object } from 'prop-types';
+import { func, string, number, oneOfType, array, bool } from 'prop-types';
 import Downshift from 'downshift';
 import { Text, Box, Input } from '../../index';
 
@@ -8,7 +8,6 @@ class InputAutocomplete extends Component {
   static defaultProps = {
     inputType: 'text',
     itemStringKey: 'name',
-    inputProps: {},
   }
 
   static propTypes = {
@@ -30,7 +29,6 @@ class InputAutocomplete extends Component {
     onChangeValue: func,
     onBlur: func,
     onType: func,
-    inputProps: object,
   }
 
   handleFilter = inputValue => dropdownItem => {
@@ -74,9 +72,10 @@ class InputAutocomplete extends Component {
       items,
       itemStringKey,
       borderBetweenItems,
-      inputProps,
       onType,
       onBlur,
+      value, // eslint-disable-line no-unused-vars
+      ...restProps
     } = this.props;
 
     return (
@@ -108,7 +107,7 @@ class InputAutocomplete extends Component {
               position="relative"
             >
               <Input
-                {...getInputProps( inputProps )}
+                {...getInputProps( restProps )}
                 type={inputType}
                 clearButtonMode="while-editing"
                 onChangeValue={onType}

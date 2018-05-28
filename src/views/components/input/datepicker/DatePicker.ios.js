@@ -26,6 +26,7 @@ class DatePicker extends Component {
     defaultTimeFormat: string,
     defaultDateFormat: string,
     format: string,
+    onBlur: func,
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
@@ -49,7 +50,17 @@ class DatePicker extends Component {
   };
 
   handleChange = ( value ) => {
-    if ( this.props.onChangeValue ) this.props.onChangeValue( moment( value ).format());
+    console.warn( moment( value ).format( 'YYYY-MM-DD' ));
+    if ( this.props.onChangeValue ) {
+      this.props.onChangeValue(
+        moment( value ).format( 'YYYY-MM-DD' )
+      );
+    }
+  }
+
+  handleDismiss = () => {
+    if ( this.props.onBlur )
+      this.props.onBlur();
   }
 
   handleFocus = () => {
@@ -75,6 +86,8 @@ class DatePicker extends Component {
       defaultTimeFormat,
       defaultDateFormat,
       defaultDateTimeFormat,
+      onBlur, // eslint-disable-line no-unused-vars
+      ...restProps
     } = this.props;
 
     const {
@@ -105,6 +118,7 @@ class DatePicker extends Component {
         width="100%"
       >
         <Input
+          {...restProps}
           type="text"
           value={displayValue}
           enabled={false}
@@ -117,6 +131,7 @@ class DatePicker extends Component {
           style={{
             backgroundColor: 'white',
           }}
+          onDismiss={this.handleDismiss}
         >
           <SafeAreaView
             style={{

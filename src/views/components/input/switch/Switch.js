@@ -1,30 +1,52 @@
+import React, { PureComponent } from 'react';
 import { View, Switch as NativeSwitch } from 'react-native';
-import React from 'react';
+import { bool, func } from 'prop-types';
 
-class Switch extends React.Component {
+class Switch extends PureComponent {
+  static defaultProps = {
+    value: false,
+  }
+
+  static propTypes = {
+    value: bool,
+    onChange: func,
+    onChangeValue: func,
+  }
+
+  static getDerivedStateFromProps( nextProps, nextState ) {
+    if (
+      nextProps.value != null &&
+      nextProps.value !== nextState.value
+    ) {
+      return { value: nextProps.value };
+    }
+
+    return null;
+  }
+
   state = {
-    isOn: false,
+    value: this.props.value,
   }
 
-  handleOn = () => {
-    this.setState({ isOn: true });
-  }
+  handleChangeValue = value => {
+    this.setState({ value });
 
-  handleOff = () => {
-    this.setState({ isOn: false });
-  }
+    if ( this.props.onChange )
+      this.props.onChange({ target: { value } });
 
-  handleSwitch = () => {
-    this.setState( state => ({ isOn: !state.isOn }));
+    if ( this.props.onChangeValue )
+      this.props.onChangeValue( value );
   }
 
   render() {
+    const { value } = this.state;
+
     return (
       <View>
         <NativeSwitch
-          onValueChange={this.handleSwitch}
-          style={{ marginBottom: 10 }}
-          value={this.state.isOn}
+          {...this.props}
+          onValueChange={this.handleChangeValue}
+          value={value}
         />
       </View>
     );

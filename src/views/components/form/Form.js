@@ -36,7 +36,11 @@ class Form extends Component {
       const attributeData = dataTypes[ask.attributeCode];
       const validationList = types[attributeData.dataType].validationList;
 
-      if (
+      if ( values[value_key] == null ) {
+        newState[value_key] = 'Please enter this field';
+      }
+
+      else if (
         validationList &&
         validationList.length > 0
       ) {
@@ -95,6 +99,10 @@ class Form extends Component {
   }
 
   handleChange = ( field, setFieldValue, setFieldTouched ) => text => {
+    console.warn( 'change', { text });
+    if ( text == null )
+      return;
+
     setFieldValue( field, text );
     setFieldTouched( field, true );
   }
@@ -143,7 +151,7 @@ class Form extends Component {
 
   renderInput = ( values, errors, touched, setFieldValue, setTouched ) => ask => {
     const { definitions } = this.props.baseEntities;
-    const { questionCode, attributeCode, name } = ask;
+    const { questionCode, attributeCode, name, mandatory } = ask;
     const { dataType } = definitions.data[attributeCode];
 
     return (
@@ -169,12 +177,14 @@ class Form extends Component {
             </Text>
           )}
         </Box>
+
         <Input
           onChangeValue={this.handleChange( questionCode, setFieldValue, setTouched, ask )}
           value={values && values[questionCode]}
           type={dataType.toLowerCase()}
           error={touched[questionCode] && errors[questionCode]}
           onBlur={this.handleBlur( ask, values, errors )}
+          required={mandatory}
         />
       </Box>
     );
@@ -212,6 +222,8 @@ class Form extends Component {
           this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueString
       );
     });
+
+    console.warn({ initialValues });
 
     return (
       <Formik

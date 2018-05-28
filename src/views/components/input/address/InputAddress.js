@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { func, number, object, array } from 'prop-types';
+import { func, number, object, array, string } from 'prop-types';
 import debounce from 'lodash.debounce';
 import dlv from 'dlv';
 import { Input, GoogleConsumer } from '../../index';
@@ -24,10 +24,13 @@ class InputAddress extends Component {
     injectCustomAddressComponents: {
       street_address: '{{street_number}} {{street_name}}',
     },
+    icon: 'place',
+    placeholder: 'Type an address...',
   }
 
   static propTypes = {
-    inputProps: object,
+    icon: string,
+    placeholder: string,
     onChange: func,
     onChangeValue: func,
     debounceTimer: number,
@@ -134,17 +137,22 @@ class InputAddress extends Component {
         !( places instanceof Array ) ||
         !places.length
       ) {
+        console.warn( 'thats why!' );
+
         throw new Error( `Unable to find geocoded results for placeId ${place_id}` );
       }
 
       const formattedPlace = this.formatPlace( places[0] );
 
-      if ( this.props.onChange )
+      console.warn({ formattedPlace });
+
+      if ( this.props.onChange ) {
         this.props.onChange({
           target: {
             value: formattedPlace,
           },
         });
+      }
 
       if ( this.props.onChangeValue )
         this.props.onChangeValue( formattedPlace );
@@ -176,8 +184,8 @@ class InputAddress extends Component {
       return {
         ...components,
         full_address: formatted_address,
-        latitude: geometry.location.lat(),
-        longitude: geometry.location.lng(),
+        latitude: geometry.location.lat,
+        longitude: geometry.location.lng,
         ...customComponents,
       };
     }
@@ -205,7 +213,7 @@ class InputAddress extends Component {
   }
 
   render() {
-    const { inputProps, ...restProps } = this.props;
+    const { icon, placeholder, ...restProps } = this.props;
     const { items } = this.state;
 
     return (
@@ -214,11 +222,8 @@ class InputAddress extends Component {
         type="autocomplete"
         items={items}
         borderBetweenItems
-        inputProps={{
-          placeholder: 'Type an address...',
-          icon: 'place',
-          ...inputProps,
-        }}
+        placeholder={placeholder}
+        icon={icon}
         onType={this.handleType}
         itemStringKey="description"
         onChange={this.handleChange}
