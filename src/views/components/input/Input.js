@@ -15,19 +15,13 @@ import InputMask from './mask';
 import { Text } from '../index';
 
 const Input = props => {
-  const { type } = props;
+  const { type, mask } = props;
   
-  // if ( mask ) {
-  //   return <InputMask {...props} />;
-  // }
+  if ( mask ) {
+    return <InputMask {...props} />;
+  }
 
   switch ( type ) {
-    case 'mask':
-      return <InputMask {...props} />;
-
-    case 'text':
-      return <InputText {...props} />;
-
     case 'email':
       return <InputText icon="mail" {...props} />;
 
