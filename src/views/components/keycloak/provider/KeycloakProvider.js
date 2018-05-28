@@ -49,7 +49,7 @@ class KeycloakProvider extends Component {
       await this.asyncSetState({ promise: { resolve, reject } });
 
       LoginUrl
-        .addEventListener( 'url', this.handleUrlChange )
+        .addEventListener( 'url', this.handleAuthUrlChange )
         .open({ replaceUrl })
         .then( resolve )
         .catch( reject );
@@ -64,6 +64,13 @@ class KeycloakProvider extends Component {
     } = options;
 
     const RegisterUrl = this.createRegisterUrl();
+    const isValidUrl = Linking.canOpenURL( RegisterUrl.getUrl());
+
+    if ( !isValidUrl ) {
+      console.warn( `Attempted to open invalid register URL: ${RegisterUrl.getUrl()}` );
+
+      return;
+    }
 
     this.setState({
       isAuthenticating: true,
@@ -75,18 +82,28 @@ class KeycloakProvider extends Component {
       await this.asyncSetState({ promise: { resolve, reject } });
 
       const session = await RegisterUrl
-        .addEventListener( 'url', this.handleUrlChange )
+        .addEventListener( 'url', this.handleAuthUrlChange )
         .open({ replaceUrl });
 
       resolve( session );
     });
   }
 
-  attemptLogout = () => {
+  attemptLogout = async ( options = {}) => {
     if ( !this.state.isAuthenticated ) return;
 
-    const { accessToken, refreshToken } = this.state;
-    const logoutUrl = this.createLogoutUrl();
+    const {
+      replaceUrl = false,
+    } = options;
+
+    const LogoutUrl = this.createLogoutUrl();
+    const isValidUrl = Linking.canOpenURL( LogoutUrl.getUrl());
+
+    if ( !isValidUrl ) {
+      console.warn( `Attempted to open invalid logout URL: ${LogoutUrl.getUrl()}` );
+
+      return;
+    }
 
     if ( this.state.refreshTimer )
       clearInterval( this.state.refreshTimer );
@@ -104,25 +121,18 @@ class KeycloakProvider extends Component {
         sessionNonce: null,
         error: null,
         user: {},
+        consecutiveTokenFails: 0,
       }),
-      fetch( logoutUrl, {
-        method: 'post',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: queryString.parse({
-          client_id: this.props.clientId,
-          refresh_token: refreshToken,
-        }),
-      }),
+      LogoutUrl
+        .addEventListener( 'url', this.handleLogoutUrlChange )
+        .open({ replaceUrl }),
     ];
 
+    /* Wait for the above promises to all finish. */
+    await Promise.all( promises );
+
     return new Promise(( resolve, reject ) => {
-      Promise
-        .all( promises )
-        .then( resolve )
-        .catch( reject );
+      this.setState({ promise: { resolve, reject } });
     });
   }
 
@@ -318,10 +328,18 @@ class KeycloakProvider extends Component {
     return new Url( url );
   }
 
-  createLogoutUrl = () => {
+  createLogoutUrl = options => {
     const realmUrl = this.createRealmUrl();
+    const redirectUri = keycloakUtils.getValidRedirectUri();
 
-    return `${realmUrl}/protocol/openid-connect/logout`;
+    const query = queryString.stringify({
+      redirect_uri: redirectUri,
+      ...options,
+    });
+
+    const url = `${realmUrl}/protocol/openid-connect/logout?${query}`;
+
+    return new Url( url );
   }
 
   handleAuthSuccess = async code => {
@@ -530,7 +548,7 @@ class KeycloakProvider extends Component {
     return currentTime > expiresOn;
   }
 
-  handleUrlChange = event => {
+  handleLogoutUrlChange = event => {
     const { url } = event;
     const { browserSession } = this.state;
     const appUrl = keycloakUtils.getValidRedirectUri();
@@ -538,7 +556,27 @@ class KeycloakProvider extends Component {
     if ( url.startsWith( appUrl )) {
       if ( browserSession ) {
         browserSession
-          .removeEventListener( 'url', this.handleUrlChange )
+          .removeEventListener( 'url', this.handleLogoutUrlChange )
+          .close();
+      }
+
+      if ( this.state.promise ) {
+        this.state.promise.resolve();
+
+        this.setState({ promise: null });
+      }
+    }
+  }
+
+  handleAuthUrlChange = event => {
+    const { url } = event;
+    const { browserSession } = this.state;
+    const appUrl = keycloakUtils.getValidRedirectUri();
+
+    if ( url.startsWith( appUrl )) {
+      if ( browserSession ) {
+        browserSession
+          .removeEventListener( 'url', this.handleAuthUrlChange )
           .close();
       }
 

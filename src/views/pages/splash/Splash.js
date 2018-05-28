@@ -11,7 +11,7 @@ class Splash extends Component {
 
   render() {
     const { location } = this.props;
-    
+
     const redirectURL = (
       Platform.OS === 'web' &&
       location.search.startsWith( '?redirectURL=/' )
@@ -35,7 +35,10 @@ class Splash extends Component {
               flex={1}
               flexDirection="column"
             >
-              <Link to="login">
+              <Link
+                to="login"
+                useAuthNavigator
+              >
                 <Button
                   color="red"
                 >

@@ -30,6 +30,8 @@ class Login extends Component {
     const { isAuthenticated, error } = this.props.keycloak;
     const { browserDismissed } = this.state;
 
+    console.warn({ browserDismissed, isAuthenticated });
+
     if ( isAuthenticated )
       return <Redirect to="app" />;
 

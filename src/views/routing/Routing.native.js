@@ -39,7 +39,7 @@ const AuthenticatedDrawer = DrawerNavigator({
   authenticated: () => (
     <AuthenticatedStack
       ref={ref => (
-        navigator.setTopLevelNavigator( ref )
+        navigator.setTopLevelAppNavigator( ref )
       )}
     />
   ),
@@ -61,7 +61,13 @@ const AuthStack = SwitchNavigator({
 const Main = SwitchNavigator({
   loading: Pages.Loading,
   app: AuthenticatedDrawer,
-  auth: AuthStack,
+  auth: () => (
+    <AuthStack
+      ref={ref => (
+        navigator.setTopLevelAuthNavigator( ref )
+      )}
+    />
+  ),
 }, {
   initialRouteName: 'loading',
 });

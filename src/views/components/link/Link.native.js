@@ -2,29 +2,26 @@ import React, { cloneElement } from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { any, bool, func, string, object } from 'prop-types';
-import { routes } from '../../../config';
+import { navigator } from '../../../utils';
 
 const Link = ({
   children = 'Link',
   to,
   disabled,
   onPress,
-  navigation,
   decoration = 'none',
+  useAuthNavigator = false,
   ...restProps
 }) => {
   const handlePress = event => {
     if ( disabled ) return;
 
-    if ( routes[to] )
-      navigation.navigate( to );
-    else {
-      navigation.navigate({
-        routeName: 'generic',
-        params: { layout: to },
-        key: to,
-      });
-    }
+    console.warn( 'pressed', to );
+
+    navigator.navigate({
+      routeName: to,
+      useAuthNavigator,
+    });
 
     if ( onPress )
       onPress( event );
@@ -59,6 +56,7 @@ Link.propTypes = {
   onPress: func,
   navigation: object,
   decoration: string,
+  useAuthNavigator: bool,
 };
 
 export default withNavigation( Link );
