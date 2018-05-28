@@ -8,6 +8,7 @@ import mime from 'react-native-mime-types';
 import { Box } from '../../../components';
 import InputFileItem from './file-item';
 import InputFileTouchable from './file-touchable';
+import config from '../../../../config';
 
 class InputFile extends Component {
   static defaultProps = {
@@ -49,73 +50,76 @@ class InputFile extends Component {
 
     const type = match ? mime.contentType( match[1] ).split( ';' )[0] : 'file';  
     const formData = new FormData();
-    const url = 'https://uppych40.channel40.com.au/s3/';
+    const url = config.uppy.url;
     
     axios({
       method: 'get',
-      url: `${url}params?filename=${filename}&type=${type.split( '/' )[0]}%2F${type.split( '/' )[1]}`,
+      url: `${url}params?filename=${filename}&type=${encodeURIComponent( type )}`,
     })
     .then( response => {
-      if ( response.status === 200 ) {
-        if ( dlv( response, 'data.fields' )) {
-          const data = response.data;
-          const fields = response.data.fields;
-          
-          Object.keys( fields ).forEach( field_key => {
-            formData.append( field_key, fields[field_key] );
-          });
-
-          formData.append( 'file', { uri: localUri, name: filename, type });
-          
-          fetch( response.data.url, {
-            method: 'POST',
-            body: formData,
-            header: {
-              'content-type': 'multipart/form-data',
-            },
-          })
-          .then( async response => {
-            const text = await response.text();
-
-            const jsonObj = fastXmlParser.parse( text );
-            
-            const formattedFile = {
-              data: {
-                name: formData._parts.filter( field => ( field[0] === 'file' ))[0][1].name,
-                // size: 65240,
-                type: formData._parts.filter( field => ( field[0] === 'file' ))[0][1].type,
-              },
-              extension: type.split( '/' )[1],
-              id: dlv( jsonObj, 'PostResponse.Key' ),
-              meta: {
-                ...fields,
-                name: formData._parts.filter( field => ( field[0] === 'file' ))[0][1].name,
-                type: formData._parts.filter( field => ( field[0] === 'file' ))[0][1].type,
-              },
-              name: formData._parts.filter( field => ( field[0] === 'file' ))[0][1].name,
-              response: {
-                body: jsonObj.PostResponse,
-                status: fields.success_action_status,
-                uploadURL: dlv( jsonObj, 'PostResponse.Location' ),
-              },
-              // size: ,
-              type: formData._parts.filter( field => ( field[0] === 'file' ))[0][1].type,
-              uploadURL: dlv( jsonObj, 'PostResponse.Location' ),
-              uploaded: true,
-              xhrUpload: {
-                endpoint: data.url,
-                formData: true,
-                metaFields: Object.keys( fields ).map( field_key => {
-                  return field_key;
-                }),
-                method: data.method,
-              },
-            };
-            
-            this.handleComplete( formattedFile );
-          });
-        }
+      if (
+        response.status !== 200 ||
+        response.data == null ||
+        response.data.fields == null
+      ) {
+        return;
       }
+      const data = response.data;
+      const fields = response.data.fields;
+      
+      Object.keys( fields ).forEach( field_key => {
+        formData.append( field_key, fields[field_key] );
+      });
+
+      formData.append( 'file', { uri: localUri, name: filename, type });
+      
+      fetch( response.data.url, {
+        method: 'POST',
+        body: formData,
+        header: {
+          'content-type': 'multipart/form-data',
+        },
+      })
+      .then( async response => {
+        const text = await response.text();
+
+        const jsonObj = fastXmlParser.parse( text );
+        const name = formData._parts.filter( field => ( field[0] === 'file' ))[0][1].name;
+        const type = formData._parts.filter( field => ( field[0] === 'file' ))[0][1].type;
+        
+        const formattedFile = {
+          data: {
+            name: name,
+            // size: 65240,
+            type: type,
+          },
+          extension: type.split( '/' )[1],
+          id: dlv( jsonObj, 'PostResponse.Key' ),
+          meta: {
+            ...fields,
+            name: name,
+            type: type,
+          },
+          name: name,
+          response: {
+            body: jsonObj.PostResponse,
+            status: fields.success_action_status,
+            uploadURL: dlv( jsonObj, 'PostResponse.Location' ),
+          },
+          // size: ,
+          type: type,
+          uploadURL: dlv( jsonObj, 'PostResponse.Location' ),
+          uploaded: true,
+          xhrUpload: {
+            endpoint: data.url,
+            formData: true,
+            metaFields: Object.keys( fields ),
+            method: data.method,
+          },
+        };
+        
+        this.handleComplete( formattedFile );
+      });
     });
   }
 
@@ -142,9 +146,7 @@ class InputFile extends Component {
     }
     else {
       try {
-        const result = await DocumentPicker.getDocumentAsync(
-        
-        );
+        const result = await DocumentPicker.getDocumentAsync();
 
         if ( result.type !== 'cancel' ) {
           this.uploadFile( result );
@@ -159,8 +161,7 @@ class InputFile extends Component {
   handleRemoveFile = fileId => () => {
     this.setState( state => ({
       files: state.files.filter(({ id }) => id !== fileId ),
-    }), () => {
-    });
+    }));
   }
 
   render() {
@@ -174,6 +175,7 @@ class InputFile extends Component {
       >
         {
           files &&
+          files instanceof Array &&
           files.length > 0 &&
             ( files.map( file => {
               return (

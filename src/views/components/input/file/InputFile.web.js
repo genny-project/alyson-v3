@@ -8,6 +8,7 @@ import Dashboard from 'uppy/lib/plugins/Dashboard';
 import { Box } from '../../../components';
 import InputFileItem from './file-item';
 import InputFileTouchable from './file-touchable';
+import config from '../../../../config';
 
 class InputFile extends Component {
   static defaultProps = {
@@ -221,10 +222,12 @@ class InputFile extends Component {
     })
       .use( Dashboard, {
         closeModalOnClickOutside: true,
-        note: this.props.imageOnly ? '.jpeg, .jpg, and .png file types allowed only' : 'any file type allowed',
+        note: this.props.imageOnly
+          ? '.jpeg, .jpg, and .png file types allowed only'
+          : 'any file type allowed',
         hideProgressAfterFinish: true,
       })
-      .use( AwsS3, { host: 'https://uppych40.channel40.com.au' })
+      .use( AwsS3, { host: config.uppy.url })
       .use( Webcam, { target: Dashboard })
       .run();
 
