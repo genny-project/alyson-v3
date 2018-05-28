@@ -11,14 +11,18 @@ navigator.setTopLevelAuthNavigator = ref => {
   navigator.__authNavigator = ref;
 };
 
-navigator.navigate = ({ routeName, params = {}, key, useAuthNavigator = false }) => {
-  console.warn( '1' );
-  const navigatorType = useAuthNavigator ? '__authNavigator' : '__appNavigator';
+navigator.navigate = ({
+  routeName,
+  params = {},
+  key,
+  useAuthNavigator,
+}) => {
+  const navigatorType = useAuthNavigator
+    ? '__authNavigator'
+    : '__appNavigator';
 
   if ( !navigator[navigatorType] )
     return;
-
-  console.warn({ routeName, navigatorType });
 
   navigator[navigatorType].dispatch(
     NavigationActions.navigate({

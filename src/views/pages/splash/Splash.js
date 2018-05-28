@@ -37,7 +37,7 @@ class Splash extends Component {
             >
               <Link
                 to="login"
-                useAuthNavigator
+                useAppNavigator={false}
               >
                 <Button
                   color="red"

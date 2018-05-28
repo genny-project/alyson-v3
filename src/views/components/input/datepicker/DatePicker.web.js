@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { string, func, number, bool } from 'prop-types';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
-import 'react-day-picker/lib/style.css';
 import moment from 'moment';
-
 import TimePicker from 'rc-time-picker';
 import 'rc-time-picker/assets/index.css';
-
+import 'react-day-picker/lib/style.css';
 import { Box, Input } from '../../../components';
+import './DatePicker.css';
 
 class DatePicker extends Component {
   static defaultProps = {
@@ -54,11 +53,11 @@ class DatePicker extends Component {
 
   handleDayChange = ( value ) => {
     let newValue = moment( value ).format();
-    
+
     if ( this.props.time ) {
       newValue = moment( value ).hour( this.state.hour ).minute( this.state.minute ).format();
     }
-    
+
     if ( this.props.onChangeValue ) {
       this.props.onChangeValue( newValue );
     }

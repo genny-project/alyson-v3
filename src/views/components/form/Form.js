@@ -14,11 +14,6 @@ class Form extends Component {
     baseEntities: object,
   }
 
-  state = {
-    errors: {},
-    values: {},
-  }
-
   getQuestionGroup() {
     const { questionGroupCode, asks } = this.props;
 
@@ -31,6 +26,9 @@ class Form extends Component {
     const types = dlv( baseEntities, 'definitions.types' );
 
     const newState = {};
+
+    if ( !values )
+      return newState;
 
     Object.keys( values ).forEach( value_key => {
       const dataTypes = dlv( baseEntities, 'definitions.data' );
@@ -51,7 +49,7 @@ class Form extends Component {
         }
       }
     });
-    
+
     return newState;
   }
 
@@ -71,6 +69,18 @@ class Form extends Component {
       finalAttributeCode = 'PRI_RATING_RAW';
     }
 
+    console.warn( 'sending answer...', {
+      askId: ask.id,
+      attributeCode: finalAttributeCode,
+      sourceCode: ask.sourceCode,
+      targetCode: ask.targetCode,
+      code: ask.questionCode,
+      questionGroup: this.getQuestionGroup().name,
+      identifier: ask.questionCode,
+      weight: ask.weight,
+      value: finalValue,
+    });
+
     Bridge.sendAnswer( [{
       askId: ask.id,
       attributeCode: finalAttributeCode,
@@ -87,15 +97,10 @@ class Form extends Component {
   handleChange = ( field, setFieldValue, setFieldTouched ) => text => {
     setFieldValue( field, text );
     setFieldTouched( field, true );
-    this.setState(( oldState ) => ({
-      values: {
-        ...oldState.values,
-        field: text,
-      },
-    }));
   }
 
   handleSubmit = ( values, form ) => {
+    console.warn( 'submitting...', { values, form });
     const { setSubmitting } = form;
 
     setSubmitting( true );
@@ -115,24 +120,24 @@ class Form extends Component {
     Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
   }
 
-  handleBlur = ( ask ) => () => {
+  handleBlur = ( ask, values, errors ) => () => {
+    console.warn( 'blur',{ ask, values, errors });
     if ( ask ) {
       const questionCode = ask.questionCode;
 
-      if ( questionCode && !this.state.errors[questionCode] && this.state.values[questionCode] ) {
-        this.sendAnswer( ask, this.state.values[questionCode] );
+      if (
+        questionCode &&
+        (
+          !errors ||
+          !errors[questionCode]
+        ) &&
+        (
+          values &&
+          values[questionCode]
+        )
+      ) {
+        this.sendAnswer( ask, values[questionCode] );
       }
-    }
-  }
-
-  componentWillReceiveProps( newProps ) {
-    if ( newProps.questionGroupCode === this.props.questionGroupCode ) {
-      this.setState({
-        errors: {},
-        values: {},
-      }, () => {
-        return true;
-      });
     }
   }
 
@@ -166,10 +171,10 @@ class Form extends Component {
         </Box>
         <Input
           onChangeValue={this.handleChange( questionCode, setFieldValue, setTouched, ask )}
-          value={values[questionCode]}
+          value={values && values[questionCode]}
           type={dataType.toLowerCase()}
           error={touched[questionCode] && errors[questionCode]}
-          onBlur={this.handleBlur( ask, values )}
+          onBlur={this.handleBlur( ask, values, errors )}
         />
       </Box>
     );
@@ -177,7 +182,7 @@ class Form extends Component {
 
   render() {
     const questionGroup = this.getQuestionGroup();
-    
+
     if ( !questionGroup ) {
       return (
         <Box
@@ -252,15 +257,6 @@ class Form extends Component {
               >
                 Submit
               </Button>
-
-              {isSubmitting && (
-                <Box>
-                  <ActivityIndicator />
-                  <Text>
-                    Submitting...
-                  </Text>
-                </Box>
-              )}
             </Box>
           );
         }}
