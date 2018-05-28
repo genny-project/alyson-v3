@@ -266,6 +266,8 @@ class Form extends Component {
                 disabled={!isValid || isSubmitting}
                 color="green"
                 onPress={handleSubmit}
+                showSpinnerOnClick
+                key={questionGroup.name}
               >
                 Submit
               </Button>

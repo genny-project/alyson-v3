@@ -56,7 +56,6 @@ class Button extends Component {
     color: 'black',
     size: 'lg',
     accessible: true,
-    showSpinnerOnClick: true,
   }
 
   static propTypes = {
