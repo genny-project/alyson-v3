@@ -27,9 +27,7 @@ const Heading = ({
 
 Heading.propTypes = {
   children: string,
-  color: oneOf(
-    ['white', 'black', 'red', 'blue', 'green']
-  ),
+  color: string,
   decoration: oneOf(
     ['none']
   ),

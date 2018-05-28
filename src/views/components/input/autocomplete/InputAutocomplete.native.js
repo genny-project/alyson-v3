@@ -81,8 +81,8 @@ class InputAutocomplete extends Component {
         )}
         itemToString={item => (
           item == null ? ''
-            : typeof item === 'string' ? item
-              : item[itemStringKey]
+          : typeof item === 'string' ? item
+          : item[itemStringKey]
         )}
         onChange={this.handleChange}
         onOuterClick={this.handleOuterClick}
@@ -110,6 +110,7 @@ class InputAutocomplete extends Component {
                 value={inputValue}
                 enabled={false}
                 onFocus={openMenu}
+                width="100%"
               />
 
               <Modal
@@ -149,11 +150,12 @@ class InputAutocomplete extends Component {
                       {...getInputProps( inputProps )}
                       type={inputType}
                       clearButtonMode="while-editing"
-                      onChangeText={onType}
+                      onChangeValue={onType}
                       autoFocus
                       paddingLeft={50}
                       paddingY={15}
                       icon={null}
+                      width="100%"
                     />
 
                     {inputValue && (

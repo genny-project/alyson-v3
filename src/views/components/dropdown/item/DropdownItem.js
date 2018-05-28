@@ -8,6 +8,7 @@ const DropdownItem = ({
   onPress,
   text,
   icon,
+  textColor = 'black',
 }) => {
   const element = (
     <Box
@@ -16,7 +17,7 @@ const DropdownItem = ({
       padding={20}
     >
       <Text
-        color="white"
+        color={textColor}
       >
         {text}
       </Text>
@@ -24,7 +25,7 @@ const DropdownItem = ({
       {icon && (
         <Icon
           name={icon}
-          color="white"
+          color={textColor}
         />
       )}
     </Box>
@@ -50,6 +51,7 @@ DropdownItem.propTypes = {
   onPress: func,
   text: string,
   icon: string,
+  textColor: string,
 };
 
 export default DropdownItem;

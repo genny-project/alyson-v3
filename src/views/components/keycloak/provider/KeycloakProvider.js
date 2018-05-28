@@ -144,6 +144,7 @@ class KeycloakProvider extends Component {
     attemptLogin: this.attemptLogin,
     attemptRegister: this.attemptRegister,
     attemptLogout: this.attemptLogout,
+    consecutiveTokenFails: 0,
   }
 
   componentDidMount = () => {
@@ -410,10 +411,25 @@ class KeycloakProvider extends Component {
       if ( !response.ok ) {
         this.attemptLogout();
       }
-    
+
       this.handleTokenRefreshSuccess( responseJson );
     }
     catch ( error ) {
+      await this.asyncSetState( state => ({
+        consecutiveTokenFails: state.consecutiveTokenFails + 1,
+      }));
+
+      const { consecutiveTokenFails } = this.state;
+
+      /* If the token refresh fails three times in a row, log the user out. */
+      if ( consecutiveTokenFails > 2 ) {
+        this.attemptLogout();
+      }
+      else {
+        /* Wait one second, then try refresh. */
+        setTimeout( this.handleTokenRefresh, 1000 );
+      }
+
       this.handleError( error );
     }
     finally {
@@ -440,6 +456,7 @@ class KeycloakProvider extends Component {
           accessToken: access_token,
           accessTokenExpiresOn: currentTime + accessExpiresInSeconds,
           idToken: id_token,
+          consecutiveTokenFails: 0,
         }, resolve );
       }
     });
