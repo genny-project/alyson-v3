@@ -5,6 +5,14 @@ import { objectClean } from '../../../../utils';
 import { Box, Icon, Text } from '../../../components';
 import styles from './InputText.style';
 
+const textSizes = {
+  xs: 14,
+  sm: 16,
+  md: 18,
+  lg: 20,
+  xl: 24,
+};
+
 class Input extends Component {
   static defaultProps = {
     autoCapitalize: 'sentences',
@@ -162,14 +170,6 @@ class Input extends Component {
       textAlign,
     } = this.props;
 
-    const textSizes = {
-      xs: 14,
-      sm: 16,
-      md: 18,
-      lg: 20,
-      xl: 24,
-    };
-
     const status =
       error ? styles.error
       : success ? styles.success
@@ -259,19 +259,17 @@ class Input extends Component {
         display="flex"
         width={width}
       >
-        {
-          childPrefix &&
-          (
-            <Box
-              backgroundColor={prefixBackground || 'lightGrey'}
-              alignItems="center"
-              flexGrow={0}
-              paddingX={10}
-            >
-              {childPrefix}
-            </Box>
-          )
-        }
+        {childPrefix ? (
+          <Box
+            backgroundColor={prefixBackground || 'lightGrey'}
+            alignItems="center"
+            flexGrow={0}
+            paddingX={10}
+          >
+            {childPrefix}
+          </Box>
+        ) : null}
+
         <Box
           position="relative"
           flex={1}
@@ -316,7 +314,8 @@ class Input extends Component {
             })}
             ref={forwardedRef}
           />
-          {icon && (
+
+          {/* icon ? (
             <Box
               position="absolute"
               right={10}
@@ -329,21 +328,19 @@ class Input extends Component {
                 size="md"
               />
             </Box>
-          )}
+          ) : null */}
         </Box>
-        {
-          childSuffix &&
-          (
-            <Box
-              backgroundColor={suffixBackground || 'lightGrey'}
-              alignItems="center"
-              flexGrow={0}
-              paddingX={10}
-            >
-              {childSuffix}
-            </Box>
-          )
-        }
+
+        {childSuffix ? (
+          <Box
+            backgroundColor={suffixBackground || 'lightGrey'}
+            alignItems="center"
+            flexGrow={0}
+            paddingX={10}
+          >
+            {childSuffix}
+          </Box>
+        ) : null}
       </Box>
     );
   }
