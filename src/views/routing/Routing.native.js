@@ -26,6 +26,9 @@ const AuthenticatedStack = StackNavigator({
       header: hideHeader
         ? null
         : <Header {...props} />,
+      cardStyle: {
+        backgroundColor: '#FFF',
+      },
     };
   },
   transitionConfig: () => ({

@@ -5,7 +5,7 @@ import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import dlv from 'dlv';
 import { Bridge } from '../../../utils/vertx';
-import { Input, Box, Text, Button, Heading } from '../index';
+import { Input, Box, Text, Button, Heading, Icon } from '../index';
 
 class Form extends Component {
   static propTypes = {
@@ -158,24 +158,39 @@ class Form extends Component {
       <Box
         key={questionCode}
         flexDirection="column"
+        marginBottom={20}
       >
         <Box
           key={questionCode}
           flexDirection="row"
           justifyContent="flex-start"
         >
-          <Text>
-            {name}
-          </Text>
-
-          {(
-            touched[questionCode] &&
-            errors[questionCode]
-          ) && (
-            <Text color="red">
-              {errors[questionCode]}
+          <Box
+            marginBottom={5}
+            justifyContent="space-between"
+            width="100%"
+          >
+            <Text
+              bold
+            >
+              {name}
             </Text>
-          )}
+
+            {touched[questionCode]
+              ? (
+                errors[questionCode]
+                  ? (
+                    <Text color="red">
+                      {errors[questionCode]}
+                    </Text>
+                  ) : (
+                    <Icon
+                      color="green"
+                      name="check"
+                    />
+                  )
+              ) : null}
+          </Box>
         </Box>
 
         <Input
@@ -247,10 +262,21 @@ class Form extends Component {
             <Box
               flexDirection="column"
               width="100%"
+              padding={20}
+              paddingBottom={0}
             >
-              <Heading>
-                {questionGroup.name}
-              </Heading>
+              <Box
+                marginY={20}
+                width="100%"
+              >
+                <Heading
+                  align="center"
+                  width="100%"
+                  size="lg"
+                >
+                  {questionGroup.name}
+                </Heading>
+              </Box>
 
               {questionGroup.childAsks.map(
                 this.renderInput(
