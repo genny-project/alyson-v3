@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text as NativeText } from 'react-native';
-import { string, number, oneOf, oneOfType } from 'prop-types';
+import { string, number, oneOf, oneOfType, bool } from 'prop-types';
 
 const textSizes = {
   xxs: 12,
@@ -30,11 +30,12 @@ const Text = ({
   size = 'sm',
   align,
   width,
+  bold,
   ...restProps
 }) => {
   const style = {
     textDecorationLine: decoration,
-    fontWeight,
+    fontWeight: bold ? 'bold' : fontWeight,
     height,
     fontSize: textSizes[size],
     textAlign: align,
@@ -73,6 +74,7 @@ Text.propTypes = {
   width: oneOfType(
     [number, string]
   ),
+  bold: bool,
 };
 
 export default Text;

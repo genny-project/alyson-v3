@@ -31,16 +31,16 @@ class GoogleProvider extends Component {
     const {} = options; // eslint-disable-line
 
     return new Promise( async ( resolve, reject ) => {
-      const { results, status } = await Api.getGeocodedAddress({
+      const { data } = await Api.getGeocodedAddress({
         ...options,
         address,
       });
 
-      if ( status === 'OK' )
-        return resolve( results );
+      if ( data.status === 'OK' )
+        return resolve( data.results );
 
       reject(
-        new Error( `Geocode was not successful. Reason: ${status}` )
+        new Error( `Geocode was not successful. Reason: ${data,status}` )
       );
     });
   }

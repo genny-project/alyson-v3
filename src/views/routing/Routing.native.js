@@ -16,6 +16,10 @@ const AuthenticatedStack = StackNavigator({
   initialRouteParams: {
     layout: 'home',
   },
+  cardStyle: {
+    backgroundColor: '#FFF',
+    shadowColor: 'transparent',
+  },
   navigationOptions: props => {
     const hideHeader = (
       props.navigation.state.params &&
@@ -39,7 +43,7 @@ const AuthenticatedDrawer = DrawerNavigator({
   authenticated: () => (
     <AuthenticatedStack
       ref={ref => (
-        navigator.setTopLevelNavigator( ref )
+        navigator.setTopLevelAppNavigator( ref )
       )}
     />
   ),

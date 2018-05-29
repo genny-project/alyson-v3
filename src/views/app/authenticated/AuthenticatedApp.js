@@ -21,11 +21,13 @@ class AuthenticatedApp extends Component {
   render() {
     const { children, keycloak } = this.props;
 
-    if ( keycloak.error )
-      return <AuthenticatedAppError error={keycloak.error} />;
-
     if ( !keycloak.fetched )
       return <AuthenticatedAppLoading />;
+
+    if (
+      keycloak.error
+    )
+      return <AuthenticatedAppError error={keycloak.error} />;
 
     return (
       <KeycloakProvider

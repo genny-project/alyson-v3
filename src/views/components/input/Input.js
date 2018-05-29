@@ -15,9 +15,11 @@ import { Text } from '../index';
 
 const Input = props => {
   const { type } = props;
-  
+
   switch ( type ) {
     case 'text':
+    case 'abn number':
+    case 'acn number':
       return <InputText {...props} />;
 
     case 'email':
@@ -26,9 +28,14 @@ const Input = props => {
     case 'mobile':
       return <InputText icon="phone-iphone" keyboardType="numeric" {...props} />;
 
+    case 'landline':
+      return <InputText icon="call" keyboardType="numeric" {...props} />;
+
+    case 'java.lang.boolean':
     case 'switch':
       return <Switch {...props} />;
 
+    case 'termsandconditions':
     case 'scroll':
       return <InputScroll {...props} />;
 
@@ -50,6 +57,7 @@ const Input = props => {
     case 'radio':
       return <CheckBox {...props} radio />;
 
+    case 'upload':
     case 'file':
       return <InputFile {...props} />;
 

@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { string, func, number, bool } from 'prop-types';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
-import 'react-day-picker/lib/style.css';
 import moment from 'moment';
-
 import TimePicker from 'rc-time-picker';
 import 'rc-time-picker/assets/index.css';
-
+import 'react-day-picker/lib/style.css';
 import { Box, Input } from '../../../components';
+import './DatePicker.css';
 
 class DatePicker extends Component {
   static defaultProps = {
     minuteInterval: 10,
+    format: 'YYYY-MM-DD',
   }
 
   static propTypes = {
@@ -21,6 +21,8 @@ class DatePicker extends Component {
     minuteInterval: number,
     date: bool,
     time: bool,
+    displayFormat: string,
+    format: string,
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
@@ -53,19 +55,26 @@ class DatePicker extends Component {
   }
 
   handleDayChange = ( value ) => {
-    let newValue = moment( value ).format();
-    
+    const { format } = this.props;
+
+    let newValue = moment( value ).format( format );
+
     if ( this.props.time ) {
-      newValue = moment( value ).hour( this.state.hour ).minute( this.state.minute ).format();
+      newValue =
+        moment( value )
+          .hour( this.state.hour )
+          .minute( this.state.minute )
+          .format( format );
     }
-    
+
     if ( this.props.onChangeValue ) {
       this.props.onChangeValue( newValue );
     }
   }
 
   handleTimeChange = ( value ) => {
-    const newValue = value.format();
+    const { format } = this.props;
+    const newValue = value.format( format );
 
     if ( this.props.onChangeValue ) {
       this.props.onChangeValue( newValue );
@@ -83,6 +92,7 @@ class DatePicker extends Component {
       maximumDate,
       date,
       time,
+      displayFormat,
     } = this.props;
 
     return (
@@ -92,7 +102,13 @@ class DatePicker extends Component {
         {date ? (
           <DayPickerInput
             onDayChange={this.handleDayChange}
-            component={MyInput}
+            component={props => (
+              <MyInput
+                {...props}
+                format={displayFormat}
+                ref={input => this.input = input}
+              />
+            )}
             style={{ flexGrow: 1 }}
             fromMonth={minimumDate}
             toMonth={maximumDate}
@@ -121,10 +137,12 @@ class DatePicker extends Component {
 class MyInput extends Component {
   static defaultProps = {
     value: '',
+    format: 'YYYY-MM-DD',
   }
 
   static propTypes = {
     value: string,
+    format: string,
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
@@ -143,7 +161,7 @@ class MyInput extends Component {
   }
 
   state = {
-    value: null,
+    value: moment(),
   }
 
   focus() {
@@ -151,14 +169,14 @@ class MyInput extends Component {
   }
 
   render() {
-    const { value } = this.state;
+    const { value, format } = this.state;
 
     return (
       <Input
         {...this.props}
         forwardedRef={input => this.input = input}
         type="text"
-        value={value.format( 'YYYY-MM-DD' )}
+        value={value.format( format )}
       />
     );
   }

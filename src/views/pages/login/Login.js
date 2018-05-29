@@ -7,7 +7,10 @@ import Layout from '../../layout';
 class Login extends Component {
   static propTypes = {
     keycloak: object,
-    navigation: object,
+  }
+
+  state = {
+    browserDismissed: false,
   }
 
   componentDidMount() {
@@ -20,19 +23,25 @@ class Login extends Component {
     const attempt = await attemptLogin({ replaceUrl: true });
 
     if ( attempt && attempt.type === 'cancel' )
-      this.props.navigation.goBack();
+      this.setState({ browserDismissed: true });
   }
 
   render() {
     const { isAuthenticated, error } = this.props.keycloak;
+    const { browserDismissed } = this.state;
+
+    console.warn({ browserDismissed, isAuthenticated });
 
     if ( isAuthenticated )
       return <Redirect to="app" />;
 
+    if ( browserDismissed )
+      return <Redirect to="splash" />;
+
     if ( error )
       return (
         <Text>
-An error has occurred!
+          An error has occurred!
         </Text>
       );
 
@@ -48,9 +57,16 @@ An error has occurred!
           flex={1}
           flexDirection="column"
         >
-          <ActivityIndicator />
+          <ActivityIndicator
+            size="large"
+          />
+
+          <Box
+            height={20}
+          />
+
           <Text>
-Logging you in...
+            Logging you in...
           </Text>
         </Box>
       </Layout>

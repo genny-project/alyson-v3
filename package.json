@@ -77,6 +77,7 @@
     "react-native-gesture-handler": "^1.0.0-alpha.43",
     "react-native-image-picker": "^0.26.10",
     "react-native-iphone-x-helper": "^1.0.2",
+    "react-native-keyboard-aware-scroll-view": "^0.5.0",
     "react-native-material-menu": "^0.3.1",
     "react-native-mime-types": "^2.2.1",
     "react-native-modal-picker": "0.0.16",

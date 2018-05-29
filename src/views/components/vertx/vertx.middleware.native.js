@@ -26,7 +26,9 @@ const middleware = store => next => action => {
   if ( action.type === 'ROUTE_CHANGE' ) {
     const { code } = action.payload;
 
-    navigator.navigate( code );
+    navigator.navigate({
+      routeName: code,
+    });
   }
 };
 

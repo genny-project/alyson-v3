@@ -5,18 +5,13 @@ import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import dlv from 'dlv';
 import { Bridge } from '../../../utils/vertx';
-import { Input, Box, Text, Button, Heading } from '../index';
+import { Input, Box, Text, Button, Heading, Icon, KeyboardAwareScrollView } from '../index';
 
 class Form extends Component {
   static propTypes = {
     questionGroupCode: string,
     asks: object,
     baseEntities: object,
-  }
-
-  state = {
-    errors: {},
-    values: {},
   }
 
   getQuestionGroup() {
@@ -32,13 +27,20 @@ class Form extends Component {
 
     const newState = {};
 
+    if ( !values )
+      return newState;
+
     Object.keys( values ).forEach( value_key => {
       const dataTypes = dlv( baseEntities, 'definitions.data' );
       const ask = questionGroup.childAsks.filter( child => child.questionCode === value_key )[0];
       const attributeData = dataTypes[ask.attributeCode];
       const validationList = types[attributeData.dataType].validationList;
 
-      if (
+      if ( values[value_key] == null ) {
+        newState[value_key] = 'Please enter this field';
+      }
+
+      else if (
         validationList &&
         validationList.length > 0
       ) {
@@ -51,7 +53,7 @@ class Form extends Component {
         }
       }
     });
-    
+
     return newState;
   }
 
@@ -71,6 +73,18 @@ class Form extends Component {
       finalAttributeCode = 'PRI_RATING_RAW';
     }
 
+    console.warn( 'sending answer...', {
+      askId: ask.id,
+      attributeCode: finalAttributeCode,
+      sourceCode: ask.sourceCode,
+      targetCode: ask.targetCode,
+      code: ask.questionCode,
+      questionGroup: this.getQuestionGroup().name,
+      identifier: ask.questionCode,
+      weight: ask.weight,
+      value: finalValue,
+    });
+
     Bridge.sendAnswer( [{
       askId: ask.id,
       attributeCode: finalAttributeCode,
@@ -85,17 +99,15 @@ class Form extends Component {
   }
 
   handleChange = ( field, setFieldValue, setFieldTouched ) => text => {
+    if ( text == null )
+      return;
+
     setFieldValue( field, text );
     setFieldTouched( field, true );
-    this.setState(( oldState ) => ({
-      values: {
-        ...oldState.values,
-        field: text,
-      },
-    }));
   }
 
   handleSubmit = ( values, form ) => {
+    console.warn( 'submitting...', { values, form });
     const { setSubmitting } = form;
 
     setSubmitting( true );
@@ -115,61 +127,103 @@ class Form extends Component {
     Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
   }
 
-  handleBlur = ( ask ) => () => {
+  handleBlur = ( ask, values, errors ) => () => {
     if ( ask ) {
       const questionCode = ask.questionCode;
 
-      if ( questionCode && !this.state.errors[questionCode] && this.state.values[questionCode] ) {
-        this.sendAnswer( ask, this.state.values[questionCode] );
+      if (
+        questionCode &&
+        (
+          !errors ||
+          !errors[questionCode]
+        ) &&
+        (
+          values &&
+          values[questionCode]
+        )
+      ) {
+        this.sendAnswer( ask, values[questionCode] );
       }
-    }
-  }
-
-  componentWillReceiveProps( newProps ) {
-    if ( newProps.questionGroupCode === this.props.questionGroupCode ) {
-      this.setState({
-        errors: {},
-        values: {},
-      }, () => {
-        return true;
-      });
     }
   }
 
   renderInput = ( values, errors, touched, setFieldValue, setTouched ) => ask => {
     const { definitions } = this.props.baseEntities;
-    const { questionCode, attributeCode, name } = ask;
+    const { questionCode, attributeCode, name, mandatory } = ask;
     const { dataType } = definitions.data[attributeCode];
 
     return (
       <Box
         key={questionCode}
         flexDirection="column"
+        marginBottom={20}
       >
         <Box
           key={questionCode}
           flexDirection="row"
           justifyContent="flex-start"
         >
-          <Text>
-            {name}
-          </Text>
+          <Box
+            marginBottom={5}
+            justifyContent="space-between"
+            width="100%"
+          >
+            <Box>
+              <Text
+                bold
+                size="xs"
+                color="grey"
+              >
+                {name}
+              </Text>
+            </Box>
 
-          {(
-            touched[questionCode] &&
-            errors[questionCode]
-          ) && (
-            <Text color="red">
-              {errors[questionCode]}
-            </Text>
-          )}
+            <Box
+              alignItems="center"
+            >
+              {mandatory
+                ? (
+                  <Text
+                    size="xs"
+                    color="grey"
+                  >
+                    required
+                    &nbsp;
+                  </Text>
+                )
+                : null}
+
+              {touched[questionCode]
+                ? (
+                  errors[questionCode]
+                    ? (
+                      <Icon
+                        color="red"
+                        name="clear"
+                      />
+                    ) : (
+                      <Icon
+                        color="green"
+                        name="check"
+                      />
+                    )
+                ) : (
+                  <Icon
+                    color="lightgrey"
+                    name="check"
+                  />
+                )}
+            </Box>
+          </Box>
         </Box>
+
         <Input
           onChangeValue={this.handleChange( questionCode, setFieldValue, setTouched, ask )}
-          value={values[questionCode]}
+          value={values && values[questionCode]}
           type={dataType.toLowerCase()}
           error={touched[questionCode] && errors[questionCode]}
-          onBlur={this.handleBlur( ask, values )}
+          onBlur={this.handleBlur( ask, values, errors )}
+          required={mandatory}
         />
       </Box>
     );
@@ -177,7 +231,7 @@ class Form extends Component {
 
   render() {
     const questionGroup = this.getQuestionGroup();
-    
+
     if ( !questionGroup ) {
       return (
         <Box
@@ -185,6 +239,7 @@ class Form extends Component {
           width="100%"
           justifyContent="center"
           alignItems="center"
+          flexShrink={0}
         >
           <ActivityIndicator size="large" />
 
@@ -208,6 +263,8 @@ class Form extends Component {
       );
     });
 
+    console.warn({ initialValues });
+
     return (
       <Formik
         initialValues={initialValues}
@@ -227,41 +284,48 @@ class Form extends Component {
           setFieldTouched,
         }) => {
           return (
-            <Box
-              flexDirection="column"
-              width="100%"
-            >
-              <Heading>
-                {questionGroup.name}
-              </Heading>
-
-              {questionGroup.childAsks.map(
-                this.renderInput(
-                  values,
-                  errors,
-                  touched,
-                  setFieldValue,
-                  setFieldTouched
-                )
-              )}
-
-              <Button
-                disabled={!isValid || isSubmitting}
-                color="green"
-                onPress={handleSubmit}
+            <KeyboardAwareScrollView>
+              <Box
+                flexDirection="column"
+                flex={1}
+                height="100%"
+                width="100%"
+                padding={20}
               >
-                Submit
-              </Button>
-
-              {isSubmitting && (
-                <Box>
-                  <ActivityIndicator />
-                  <Text>
-                    Submitting...
-                  </Text>
+                <Box
+                  marginY={20}
+                  width="100%"
+                >
+                  <Heading
+                    align="center"
+                    width="100%"
+                    size="lg"
+                  >
+                    {questionGroup.name}
+                  </Heading>
                 </Box>
-              )}
-            </Box>
+
+                {questionGroup.childAsks.map(
+                  this.renderInput(
+                    values,
+                    errors,
+                    touched,
+                    setFieldValue,
+                    setFieldTouched
+                  )
+                )}
+
+                <Button
+                  disabled={!isValid || isSubmitting}
+                  color="green"
+                  onPress={handleSubmit}
+                  showSpinnerOnClick
+                  key={questionGroup.name}
+                >
+                    Submit
+                </Button>
+              </Box>
+            </KeyboardAwareScrollView>
           );
         }}
       </Formik>

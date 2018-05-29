@@ -1,5 +1,15 @@
 {
   "expo": {
-    "sdkVersion": "26.0.0"
+    "sdkVersion": "26.0.0",
+    "name": "Channel40",
+    "icon": "",
+    "version": "0.0.1",
+    "slug": "channel40-v3",
+    "ios": {
+      "bundleIdentifier": "com.channel40.v3"
+    },
+    "android": {
+      "package": "com.channel40.v3"
+    }
   }
 }
