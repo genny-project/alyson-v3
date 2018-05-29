@@ -53,6 +53,9 @@ const Input = props => {
     case 'file':
       return <InputFile {...props} />;
 
+    case 'image':
+      return <InputFile {...props} imageOnly />;
+
     case 'date':
     case 'java.time.localdate':
       return <DatePicker {...props} date />;

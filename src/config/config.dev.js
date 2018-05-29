@@ -22,4 +22,7 @@ export default {
       apiUrl: 'https://maps.googleapis.com/maps/api/js',
     },
   },
+  uppy: {
+    url: 'https://uppych40.channel40.com.au/s3/',
+  },
 };
