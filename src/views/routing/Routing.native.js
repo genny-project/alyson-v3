@@ -16,6 +16,10 @@ const AuthenticatedStack = StackNavigator({
   initialRouteParams: {
     layout: 'home',
   },
+  cardStyle: {
+    backgroundColor: '#FFF',
+    shadowColor: 'transparent',
+  },
   navigationOptions: props => {
     const hideHeader = (
       props.navigation.state.params &&
@@ -26,9 +30,6 @@ const AuthenticatedStack = StackNavigator({
       header: hideHeader
         ? null
         : <Header {...props} />,
-      cardStyle: {
-        backgroundColor: '#FFF',
-      },
     };
   },
   transitionConfig: () => ({

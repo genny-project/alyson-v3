@@ -41,16 +41,18 @@ const HeaderRight = ({ aliases, baseEntities }) => {
                   web: `Hi, ${firstName}!`,
                 })
               ) : (
-                <ActivityIndicator size="small" />
+                <ActivityIndicator
+                  size="small"
+                />
               )
             )}
             disabled={!firstName}
             facingRight
             items={[
               {
-                text: 'Settings',
-                icon: 'settings',
-                href: 'settings',
+                text: 'Profile',
+                icon: 'person',
+                href: 'profile',
               },
               {
                 text: 'Logout',

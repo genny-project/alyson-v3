@@ -25,8 +25,7 @@ class AuthenticatedApp extends Component {
       return <AuthenticatedAppLoading />;
 
     if (
-      keycloak.error ||
-      !keycloak.data
+      keycloak.error
     )
       return <AuthenticatedAppError error={keycloak.error} />;
 

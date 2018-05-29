@@ -5,7 +5,7 @@ import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import dlv from 'dlv';
 import { Bridge } from '../../../utils/vertx';
-import { Input, Box, Text, Button, Heading, Icon } from '../index';
+import { Input, Box, Text, Button, Heading, Icon, KeyboardAwareScrollView } from '../index';
 
 class Form extends Component {
   static propTypes = {
@@ -99,7 +99,6 @@ class Form extends Component {
   }
 
   handleChange = ( field, setFieldValue, setFieldTouched ) => text => {
-    console.warn( 'change', { text });
     if ( text == null )
       return;
 
@@ -129,7 +128,6 @@ class Form extends Component {
   }
 
   handleBlur = ( ask, values, errors ) => () => {
-    console.warn( 'blur',{ ask, values, errors });
     if ( ask ) {
       const questionCode = ask.questionCode;
 
@@ -170,26 +168,52 @@ class Form extends Component {
             justifyContent="space-between"
             width="100%"
           >
-            <Text
-              bold
-            >
-              {name}
-            </Text>
+            <Box>
+              <Text
+                bold
+                size="xs"
+                color="grey"
+              >
+                {name}
+              </Text>
+            </Box>
 
-            {touched[questionCode]
-              ? (
-                errors[questionCode]
-                  ? (
-                    <Text color="red">
-                      {errors[questionCode]}
-                    </Text>
-                  ) : (
-                    <Icon
-                      color="green"
-                      name="check"
-                    />
-                  )
-              ) : null}
+            <Box
+              alignItems="center"
+            >
+              {mandatory
+                ? (
+                  <Text
+                    size="xs"
+                    color="grey"
+                  >
+                    required
+                    &nbsp;
+                  </Text>
+                )
+                : null}
+
+              {touched[questionCode]
+                ? (
+                  errors[questionCode]
+                    ? (
+                      <Icon
+                        color="red"
+                        name="clear"
+                      />
+                    ) : (
+                      <Icon
+                        color="green"
+                        name="check"
+                      />
+                    )
+                ) : (
+                  <Icon
+                    color="lightgrey"
+                    name="check"
+                  />
+                )}
+            </Box>
           </Box>
         </Box>
 
@@ -215,6 +239,7 @@ class Form extends Component {
           width="100%"
           justifyContent="center"
           alignItems="center"
+          flexShrink={0}
         >
           <ActivityIndicator size="large" />
 
@@ -259,45 +284,48 @@ class Form extends Component {
           setFieldTouched,
         }) => {
           return (
-            <Box
-              flexDirection="column"
-              width="100%"
-              padding={20}
-              paddingBottom={0}
-            >
+            <KeyboardAwareScrollView>
               <Box
-                marginY={20}
+                flexDirection="column"
+                flex={1}
+                height="100%"
                 width="100%"
+                padding={20}
               >
-                <Heading
-                  align="center"
+                <Box
+                  marginY={20}
                   width="100%"
-                  size="lg"
                 >
-                  {questionGroup.name}
-                </Heading>
+                  <Heading
+                    align="center"
+                    width="100%"
+                    size="lg"
+                  >
+                    {questionGroup.name}
+                  </Heading>
+                </Box>
+
+                {questionGroup.childAsks.map(
+                  this.renderInput(
+                    values,
+                    errors,
+                    touched,
+                    setFieldValue,
+                    setFieldTouched
+                  )
+                )}
+
+                <Button
+                  disabled={!isValid || isSubmitting}
+                  color="green"
+                  onPress={handleSubmit}
+                  showSpinnerOnClick
+                  key={questionGroup.name}
+                >
+                    Submit
+                </Button>
               </Box>
-
-              {questionGroup.childAsks.map(
-                this.renderInput(
-                  values,
-                  errors,
-                  touched,
-                  setFieldValue,
-                  setFieldTouched
-                )
-              )}
-
-              <Button
-                disabled={!isValid || isSubmitting}
-                color="green"
-                onPress={handleSubmit}
-                showSpinnerOnClick
-                key={questionGroup.name}
-              >
-                Submit
-              </Button>
-            </Box>
+            </KeyboardAwareScrollView>
           );
         }}
       </Formik>

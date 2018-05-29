@@ -31,10 +31,11 @@ const Input = props => {
     case 'landline':
       return <InputText icon="call" keyboardType="numeric" {...props} />;
 
-    case 'termsandconditions':
+    case 'java.lang.boolean':
     case 'switch':
       return <Switch {...props} />;
 
+    case 'termsandconditions':
     case 'scroll':
       return <InputScroll {...props} />;
 
@@ -56,7 +57,6 @@ const Input = props => {
     case 'radio':
       return <CheckBox {...props} radio />;
 
-    case 'java.lang.boolean':
     case 'upload':
     case 'file':
       return <InputFile {...props} />;
