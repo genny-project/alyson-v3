@@ -262,7 +262,8 @@ class Form extends Component {
           (
             /* TODO: move this into its own function */
             this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueString ||
-            this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueDate
+            this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueDate ||
+            this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueBoolean
           )
       );
     });
@@ -273,7 +274,6 @@ class Form extends Component {
         validate={this.doValidate}
         onSubmit={this.handleSubmit}
         validateOnBlur
-        enableReinitialize
       >
         {({
           values,
