@@ -12,6 +12,12 @@ class ScrollView extends Component {
     width: oneOfType(
       [string, number]
     ),
+    maxHeight: oneOfType(
+      [string, number]
+    ),
+    minHeight: oneOfType(
+      [string, number]
+    ),
     horizontal: bool,
     scrollEnabled: bool,
     onScroll: func,
@@ -28,6 +34,7 @@ class ScrollView extends Component {
     padding: number,
     paddingX: number,
     paddingY: number,
+    onLayout: func,
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
@@ -56,6 +63,8 @@ class ScrollView extends Component {
       flex,
       height,
       width,
+      minHeight,
+      maxHeight,
       horizontal,
       scrollEnabled,
       onScroll,
@@ -69,6 +78,8 @@ class ScrollView extends Component {
       padding,
       paddingX,
       paddingY,
+      onLayout,
+      ...restProps
     } = this.props;
 
     const { isRefreshing } = this.state;
@@ -77,6 +88,8 @@ class ScrollView extends Component {
       // flex,
       height,
       width,
+      minHeight,
+      maxHeight,
     };
 
     const contentStyle = {
@@ -88,11 +101,13 @@ class ScrollView extends Component {
 
     return (
       <ReactNativeScrollView
+        {...restProps}
         style={wrapperStyle}
         contentContainerStyle={contentStyle}
         horizontal={horizontal}
         scrollEnabled={scrollEnabled}
         onScroll={onScroll}
+        onLayout={onLayout}
         scrollEventThrottle={scrollEventThrottle}
         onContentSizeChange={onContentSizeChange}
         keyboardDismissMode={keyboardDismissMode}

@@ -11,6 +11,7 @@ import InputText from './text';
 import Switch from './switch';
 import InputDropdown from './dropdown';
 import Passcode from './passcode';
+import InputRead from './read';
 import { Text } from '../index';
 
 const Input = props => {
@@ -35,7 +36,10 @@ const Input = props => {
     case 'switch':
       return <Switch {...props} />;
 
+    case 'read':
     case 'termsandconditions':
+      return <InputRead {...props} />;
+
     case 'scroll':
       return <InputScroll {...props} />;
 
