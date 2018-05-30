@@ -259,11 +259,13 @@ class Form extends Component {
       initialValues[ask.questionCode] = (
         this.props.baseEntities.attributes[ask.targetCode] &&
           this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode] &&
-          this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueString
+          (
+            /* TODO: move this into its own function */
+            this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueString ||
+            this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueDate
+          )
       );
     });
-
-    console.warn({ initialValues });
 
     return (
       <Formik
