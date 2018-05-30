@@ -26,10 +26,10 @@ const Input = props => {
       return <InputText icon="mail" {...props} />;
 
     case 'mobile':
-      return <InputText icon="phone-iphone" keyboardType="numeric" {...props} />;
+      return <InputText icon="phone-iphone" keyboardType="phone-pad" {...props} />;
 
     case 'landline':
-      return <InputText icon="call" keyboardType="numeric" {...props} />;
+      return <InputText icon="call" keyboardType="phone-pad" {...props} />;
 
     case 'java.lang.boolean':
     case 'switch':
