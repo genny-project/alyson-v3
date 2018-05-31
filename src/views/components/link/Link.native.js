@@ -1,9 +1,9 @@
-import React, { cloneElement } from 'react';
-import { TouchableWithoutFeedback } from 'react-native';
+import React, { createElement } from 'react';
 import { withNavigation } from 'react-navigation';
 import { any, bool, func, string, object } from 'prop-types';
 import { routes } from '../../../config';
 import { navigator } from '../../../utils';
+import { Touchable } from '../../components';
 
 const Link = ({
   children = 'Link',
@@ -11,8 +11,7 @@ const Link = ({
   disabled,
   onPress,
   navigation,
-  decoration = 'none',
-  useAppNavigator = true,
+  useAppNavigator = false,
   ...restProps
 }) => {
   const handlePress = event => {
@@ -41,20 +40,18 @@ const Link = ({
     });
   }
 
-  return (
-    <TouchableWithoutFeedback
-      {...restProps}
-      onPress={handlePress}
-      disabled={disabled}
-      style={{
-        textDecorationLine: decoration,
-      }}
-    >
-      {cloneElement( children, {
-        onPress: handlePress,
-      })}
-    </TouchableWithoutFeedback>
-  );
+  const touchableProps = {
+    ...restProps,
+    onPress: handlePress,
+  };
+
+  return React.Children.map( children, child => (
+    createElement(
+      Touchable,
+      touchableProps,
+      child
+    )
+  ));
 };
 
 Link.propTypes = {

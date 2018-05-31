@@ -63,6 +63,7 @@ class Card extends PureComponent {
       showStatus,
       status,
       statusMargin,
+      ...restProps
     } = this.props;
 
     const isChildrenArray = (
@@ -75,6 +76,7 @@ class Card extends PureComponent {
     
     return (
       <Box
+        {...restProps}
         alignItems="center"
         justifyContent="center"
         width="100%"
