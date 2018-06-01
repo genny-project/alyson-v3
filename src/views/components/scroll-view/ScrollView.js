@@ -79,7 +79,6 @@ class ScrollView extends Component {
       paddingX,
       paddingY,
       onLayout,
-      ...restProps
     } = this.props;
 
     const { isRefreshing } = this.state;
@@ -101,7 +100,6 @@ class ScrollView extends Component {
 
     return (
       <ReactNativeScrollView
-        {...restProps}
         style={wrapperStyle}
         contentContainerStyle={contentStyle}
         horizontal={horizontal}

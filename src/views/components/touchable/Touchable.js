@@ -1,5 +1,5 @@
 import { PureComponent, createElement } from 'react';
-import { TouchableWithoutFeedback, TouchableOpacity, TouchableWithNativeFeedback, Platform } from 'react-native';
+import { TouchableWithoutFeedback, TouchableOpacity, TouchableNativeFeedback, Platform } from 'react-native';
 import { node, bool } from 'prop-types';
 
 class Touchable extends PureComponent {
@@ -15,7 +15,7 @@ class Touchable extends PureComponent {
       !withFeedback
         ? TouchableWithoutFeedback
         : Platform.OS === 'android'
-          ? TouchableWithNativeFeedback
+          ? TouchableNativeFeedback
           : TouchableOpacity
     );
 
