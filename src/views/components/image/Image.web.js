@@ -1,5 +1,5 @@
 import React from 'react';
-import { string, oneOf } from 'prop-types';
+import { string, oneOf, oneOfType, number } from 'prop-types';
 import { Box, Icon } from '../../components';
 
 const Image = ({
@@ -11,13 +11,13 @@ const Image = ({
   const borderRadius = {
     square: 0,
     rounded: 5,
-    circle: '50%',
+    circle: width / 2,
   };
 
   if (
     source &&
     typeof source === 'string' &&
-    source.length > 0
+    source.length > 0 
   ) {
     return (
       <img
@@ -46,8 +46,12 @@ const Image = ({
 };
 
 Image.propTypes = {
-  width: string,
-  height: string,
+  width: oneOfType(
+    [string, number]
+  ),
+  height: oneOfType(
+    [string, number]
+  ),
   source: string,
   shape: oneOf(
     ['square', 'rounded', 'circle']

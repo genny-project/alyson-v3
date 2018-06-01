@@ -6,10 +6,11 @@ class HeaderItem extends Component {
   static propTypes = {
     icon: string,
     href: string,
+    textColor: string,
   }
 
   render() {
-    const { icon, href } = this.props;
+    const { icon, href, textColor } = this.props;
 
     return (
       <Link
@@ -18,7 +19,7 @@ class HeaderItem extends Component {
         <Button
           size="md"
           color="transparent"
-          textColor="white"
+          textColor={textColor}
           icon={icon}
           paddingX={5}
           paddingY={5}

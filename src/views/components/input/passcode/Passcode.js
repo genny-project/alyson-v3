@@ -3,7 +3,19 @@ import { number, func, oneOf } from 'prop-types';
 import range from 'lodash.range';
 import { Box, Input } from '../../../components';
 
-class Passcode extends Component {  
+const inputWidth = {
+  sm: 30,
+  md: 50,
+  lg: 70,
+};
+
+const inputPadding = {
+  sm: 5,
+  md: 10,
+  lg: 20,
+};
+
+class Passcode extends Component {
   static defaultProps = {
     numberOfInputs: 4,
     charactersRequired: 1,
@@ -14,6 +26,7 @@ class Passcode extends Component {
     numberOfInputs: number,
     charactersRequired: number,
     onChangeValue: func,
+    onBlur: func,
     size: oneOf(
       ['sm','md','lg']
     ),
@@ -21,14 +34,14 @@ class Passcode extends Component {
 
   // static getDerivedStateFromProps( nextProps, prevState ) {
   //   if ( nextProps.value !== prevState.value ) {
-  //     return { 
+  //     return {
   //       value: nextProps.value,
   //     };
   //   }
 
   //   return null;
   // }
-  
+
   inputs = {};
 
   state = {
@@ -60,7 +73,7 @@ class Passcode extends Component {
     const { numberOfInputs, onChangeValue, charactersRequired } = this.props;
     const { currentValues } = this.state;
     const value = Object.values( currentValues ).join( '' );
-    
+
     if (
       onChangeValue &&
       value.length === ( numberOfInputs * charactersRequired )
@@ -69,50 +82,50 @@ class Passcode extends Component {
     }
   }
 
+  handleBlur = event => {
+    const { numberOfInputs, onBlur, charactersRequired } = this.props;
+    const { currentValues } = this.state;
+    const value = Object.values( currentValues ).join( '' );
+
+    if (
+      onBlur &&
+      value.length === ( numberOfInputs * charactersRequired )
+    ) {
+      onBlur( event );
+    }
+  }
+
   render() {
     const { numberOfInputs, charactersRequired, size } = this.props;
     const { currentValues } = this.state;
-
-    const inputWidth = {
-      sm: 30,
-      md: 50,
-      lg: 70,
-    };
-
-    const inputPadding = {
-      sm: 5,
-      md: 10,
-      lg: 20,
-    };
 
     return (
       <Box
         flexDirection="row"
         justifyContent="center"
       >
-        {
-          range( numberOfInputs )
-            .map( i => (
-              <Box
-                key={i}
-                width={inputWidth[size]}
-                marginRight={i < numberOfInputs - 1 && 10}
-              >
-                <Input
-                  width="100%"
-                  forwardedRef={input => this.inputs[i] = input}
-                  type="text"
-                  maxLength={charactersRequired}
-                  value={currentValues[i] || ''}
-                  textSize={size}
-                  padding={inputPadding[size]}
-                  textAlign="center"
-                  placeholder="-"
-                  onChangeValue={this.handleChangeValue( i )}
-                />
-              </Box>
-            ))
-          }
+        {range( numberOfInputs )
+          .map( i => (
+            <Box
+              key={i}
+              width={inputWidth[size]}
+              marginRight={i < numberOfInputs - 1 && 10}
+            >
+              <Input
+                width="100%"
+                forwardedRef={input => this.inputs[i] = input}
+                type="text"
+                maxLength={charactersRequired}
+                value={currentValues[i] || ''}
+                textSize={size}
+                padding={inputPadding[size]}
+                textAlign="center"
+                placeholder="-"
+                onChangeValue={this.handleChangeValue( i )}
+                onBlur={this.handleBlur}
+              />
+            </Box>
+          ))}
       </Box>
     );
   }

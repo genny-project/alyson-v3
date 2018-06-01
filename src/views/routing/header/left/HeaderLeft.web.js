@@ -55,7 +55,7 @@ class HeaderLeft extends Component {
                 onPress={toggleSidebar}
                 size="lg"
                 color="transparent"
-                textColor="white"
+                textColor={layout.textColor}
                 icon="menu"
                 paddingX={10}
               />
@@ -67,7 +67,7 @@ class HeaderLeft extends Component {
               <Heading
                 size="md"
                 marginY={0}
-                color="white"
+                color={layout.textColor}
               >
                 {projectName || (
                   showLoadingText

@@ -4,8 +4,8 @@ import { Box, Text } from '../../components';
 
 class BucketView extends PureComponent {
   static defaultProps = {
-    padding: 20,
-    gutter: 10,
+    padding: 0,
+    gutter: 1,
   }
 
   static propTypes = {

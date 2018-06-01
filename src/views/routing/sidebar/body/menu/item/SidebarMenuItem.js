@@ -3,6 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import { func, string } from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { LayoutConsumer } from '../../../../../layout';
 import { Link, Box, Icon, Text } from '../../../../../components';
 import { closeSidebar } from '../../../../../../redux/actions';
 
@@ -20,46 +21,50 @@ class SidebarMenuItem extends Component {
     const { name, onPress, path, iconLeft, iconRight, closeSidebar } = this.props;
 
     const element = (
-      <TouchableOpacity
-        onPress={onPress}
-        style={{
-          flex: 1,
-          alignItems: 'center',
-        }}
-      >
-        <Box
-          paddingY={10}
-          flex={1}
-          alignItems="center"
-          justifyContent="space-between"
-          width="100%"
-        >
-          <Box
-            flex={1}
-            alignItems="center"
+      <LayoutConsumer>
+        {layout => (
+          <TouchableOpacity
+            onPress={onPress}
+            style={{
+              flex: 1,
+              alignItems: 'center',
+            }}
           >
-            <Box paddingX={15}>
-              <Icon
-                name={iconLeft}
-                color="white"
-              />
-            </Box>
+            <Box
+              paddingY={10}
+              flex={1}
+              alignItems="center"
+              justifyContent="space-between"
+              width="100%"
+            >
+              <Box
+                flex={1}
+                alignItems="center"
+              >
+                <Box paddingX={15}>
+                  <Icon
+                    name={iconLeft}
+                    color={layout.textColor}
+                  />
+                </Box>
 
-            <Text color="white">
-              {name}
-            </Text>
-          </Box>
+                <Text color={layout.textColor}>
+                  {name}
+                </Text>
+              </Box>
 
-          {iconRight ? (
-            <Box paddingX={15}>
-              <Icon
-                name={iconRight}
-                color="white"
-              />
+              {iconRight ? (
+                <Box paddingX={15}>
+                  <Icon
+                    name={iconRight}
+                    color={layout.textColor}
+                  />
+                </Box>
+              ) : null}
             </Box>
-          ) : null}
-        </Box>
-      </TouchableOpacity>
+          </TouchableOpacity>
+        )}
+      </LayoutConsumer>
     );
 
     if ( path ) {

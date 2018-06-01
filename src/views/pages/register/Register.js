@@ -7,7 +7,10 @@ import Layout from '../../layout';
 class Register extends Component {
   static propTypes = {
     keycloak: object,
-    navigation: object,
+  }
+
+  state = {
+    browserDismissed: false,
   }
 
   componentDidMount() {
@@ -20,14 +23,18 @@ class Register extends Component {
     const attempt = await attemptRegister({ replaceUrl: true });
 
     if ( attempt && attempt.type === 'cancel' )
-      this.props.navigation.goBack();
+      this.setState({ browserDismissed: true });
   }
 
   render() {
     const { isAuthenticated, error } = this.props.keycloak;
+    const { browserDismissed } = this.state;
 
     if ( isAuthenticated )
       return <Redirect to="app" />;
+
+    if ( browserDismissed )
+      return <Redirect to="splash" />;
 
     if ( error )
       return (
@@ -48,9 +55,16 @@ class Register extends Component {
           flex={1}
           flexDirection="column"
         >
-          <ActivityIndicator />
+          <ActivityIndicator
+            size="large"
+          />
+
+          <Box
+            height={20}
+          />
+
           <Text>
-Preparing to register...
+            Preparing to register...
           </Text>
         </Box>
       </Layout>

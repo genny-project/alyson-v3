@@ -3,6 +3,7 @@ import { TouchableWithoutFeedback } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { any, bool, func, string, object } from 'prop-types';
 import { routes } from '../../../config';
+import { navigator } from '../../../utils';
 
 const Link = ({
   children = 'Link',
@@ -11,12 +12,16 @@ const Link = ({
   onPress,
   navigation,
   decoration = 'none',
+  useAppNavigator = true,
   ...restProps
 }) => {
   const handlePress = event => {
     if ( disabled ) return;
 
-    if ( routes[to] )
+    if ( useAppNavigator ) {
+      navigator.navigate({ routeName: to });
+    }
+    else if ( routes[to] )
       navigation.navigate( to );
     else {
       navigation.navigate({
@@ -59,6 +64,7 @@ Link.propTypes = {
   onPress: func,
   navigation: object,
   decoration: string,
+  useAppNavigator: bool,
 };
 
 export default withNavigation( Link );

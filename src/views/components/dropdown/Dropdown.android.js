@@ -1,22 +1,25 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { withNavigation } from 'react-navigation';
-import { array, string, number, func, object } from 'prop-types';
+import { array, string, number, func, object, node, bool } from 'prop-types';
 import { Box, Icon, Text, PopupMenu } from '../../components';
 
 class Dropdown extends Component {
   static defaultProps = {
     padding: 20,
+    textColor: '#000',
   }
 
   static propTypes = {
     items: array.isRequired,
-    text: string.isRequired,
+    text: node.isRequired,
     padding: number,
     paddingX: number,
     paddingY: number,
     onSelect: func,
     navigation: object,
+    textColor: string,
+    disabled: bool,
   }
 
   handleSelect = item => {
@@ -33,7 +36,7 @@ class Dropdown extends Component {
   }
 
   render() {
-    const { items, text, padding, paddingX, paddingY } = this.props;
+    const { items, text, padding, paddingX, paddingY, textColor, disabled } = this.props;
 
     return (
       <PopupMenu
@@ -43,7 +46,7 @@ class Dropdown extends Component {
       >
         {({ showPopupMenu, setAnchorRef }) => (
           <TouchableOpacity
-            onPress={showPopupMenu}
+            onPress={!disabled && showPopupMenu}
             ref={setAnchorRef}
             style={{ alignItems: 'center' }}
           >
@@ -54,18 +57,20 @@ class Dropdown extends Component {
               paddingX={paddingX}
               paddingY={paddingY}
             >
-              <Text
-                color="white"
-                size="md"
-              >
-                {text}
-              </Text>
+              {typeof text === 'string' ? (
+                <Text
+                  color={textColor}
+                  size="md"
+                >
+                  {text}
+                </Text>
+              ) : text}
 
               <Box width={5} />
 
               <Icon
-                name="expand-more"
-                color="white"
+                name="more-vert"
+                color={textColor}
                 size="sm"
               />
             </Box>

@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { oneOf, node, object, string, bool } from 'prop-types';
+import { withNavigation } from 'react-navigation';
 import { LayoutConsumer } from '../layout';
 
 class Layout extends Component {
@@ -15,20 +16,55 @@ class Layout extends Component {
     layout: object,
     hideHeader: bool,
     hideSidebar: bool,
+    navigation: object,
   }
 
   componentDidMount() {
-    this.checkForLayoutChanges();
+    this.setLayoutProperties();
   }
 
-  checkForLayoutChanges() {
-    const { layout, title, appColor, hideHeader, hideSidebar } = this.props;
+  componentDidUpdate( prevProps ) {
+    if (
+      this.props.appColor !== prevProps.appColor &&
+      this.props.appColor != null
+    ) {
+      this.props.layout.setAppColor( this.props.appColor );
+    }
+
+    if (
+      this.props.title !== prevProps.title &&
+      this.props.title != null
+    ) {
+      this.props.layout.setTitle( this.props.title );
+    }
+
+    if (
+      prevProps.hideHeader === true &&
+      this.props.hideHeader == null &&
+      this.props.navigation != null
+    ) {
+      this.props.navigation.setParams({
+        hideHeader: false,
+      });
+
+      this.props.layout.setHeaderVisibility( false );
+    }
+  }
+
+  setLayoutProperties() {
+    const { layout, title, appColor, hideHeader, hideSidebar, navigation } = this.props;
 
     if (
       typeof title === 'string' &&
       title.length > 0
     ) {
       layout.setTitle( title );
+
+      if ( this.props.navigation ) {
+        this.props.navigation.setParams({
+          hideHeader: true,
+        });
+      }
     }
 
     if (
@@ -42,14 +78,26 @@ class Layout extends Component {
       layout.setSidebarVisibility( hideSidebar );
     }
     else if ( hideSidebar == null ) {
-      layout.setSidebarVisibility( false );
+      layout.setSidebarVisibility( true );
     }
 
     if ( hideHeader !== layout.hideHeader ) {
       layout.setHeaderVisibility( hideHeader );
+
+      if ( navigation ) {
+        this.props.navigation.setParams({
+          hideHeader: hideHeader,
+        });
+      }
     }
     else if ( hideHeader == null ) {
-      layout.setHeaderVisibility( false );
+      layout.setHeaderVisibility( true );
+
+      if ( navigation ) {
+        this.props.navigation.setParams({
+          hideHeader: false,
+        });
+      }
     }
   }
 
@@ -64,10 +112,12 @@ class Layout extends Component {
   }
 }
 
-export default props => (
-  <LayoutConsumer>
-    {layout => (
-      <Layout {...props} layout={layout} />
-    )}
-  </LayoutConsumer>
+export default withNavigation(
+  props => (
+    <LayoutConsumer>
+      {layout => (
+        <Layout {...props} layout={layout} />
+      )}
+    </LayoutConsumer>
+  )
 );

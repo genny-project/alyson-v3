@@ -18,6 +18,7 @@ const Header = () => (
           width="100%"
           backgroundColor={layout.appColor}
           paddingX={5}
+          boxShadow="light"
         >
           <HeaderLeft />
 

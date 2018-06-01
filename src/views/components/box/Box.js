@@ -3,6 +3,26 @@ import { View, Platform } from 'react-native';
 import { any, oneOf, oneOfType, string, number, array, func, bool } from 'prop-types';
 import { objectClean } from '../../../utils';
 
+const shapeStyles = {
+  square: 0,
+  rounded: 5,
+  circle: '50%',
+};
+
+const boxShadows = {
+  light: {
+    shadowColor: 'black',
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    shadowOffset: {
+      height: 4,
+      width: 0,
+    },
+  },
+  medium: {},
+  dark: {},
+};
+
 const Box = ({
   children,
   justifyContent,
@@ -51,14 +71,9 @@ const Box = ({
   borderRadius,
   cleanStyleObject,
   shape,
+  boxShadow,
   ...restProps
 }) => {
-  const shapeStyle = {
-    square: 0,
-    rounded: 5,
-    circle: '50%',
-  };
-
   const style = {
     justifyContent,
     alignItems,
@@ -96,8 +111,10 @@ const Box = ({
     borderWidth,
     borderColor,
     borderStyle,
-    borderRadius,
-    shapeStyle: shapeStyle[shape],
+    borderRadius: borderRadius || shapeStyles[shape],
+    ...boxShadow && (
+      boxShadows[boxShadow]
+    ),
   };
 
   const webStyle = Platform.OS !== 'web' ? {} : {
@@ -203,6 +220,9 @@ Box.propTypes = {
   cleanStyleObject: bool,
   shape: oneOf(
     ['square', 'rounded', 'pill', 'circle']
+  ),
+  boxShadow: oneOf(
+    ['light', 'medium', 'dark']
   ),
 };
 

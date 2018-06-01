@@ -4,20 +4,14 @@ import { TabViewAnimated, TabBar } from 'react-native-tab-view';
 import { Dimensions } from 'react-native';
 import { Box, Text, Icon } from '../../components';
 
-const tabBarHeight = {
-  sm: 40,
-  md: 50,
-  lg: 60,
-};
-
 class Tabs extends Component {
   static defaultProps = {
     tabs: [],
     height: '100%',
     width: '100%',
     tabBarSize: 'md',
-    tabBarBackground: 'lightgray',
-    activeTabBackground: 'darkgrey',
+    tabBarBackground: '#3f3f3f',
+    activeTabBackground: '#232323',
     iconColor: 'white',
     textColor: 'white',
     bottomTabs: false,
@@ -35,7 +29,7 @@ class Tabs extends Component {
     tabBarBackground: string,
     tabBackground: string,
     activeTabBackground: string,
-    tabBarSize: string, 
+    tabBarSize: string,
     iconColor: string,
     textColor: string,
     bottomTabs: bool,
@@ -58,45 +52,51 @@ class Tabs extends Component {
     routes: [],
   };
 
-  handleIndexChange = index => this.setState({ index });
+  handleIndexChange = index => {
+    this.setState({ index });
+  }
 
   handlePress = () => {
-    if ( this.props.onPress ) this.props.onPress();
+    if ( this.props.onPress )
+      this.props.onPress();
   }
 
   renderIcon = ({ route }) => {
-    return route.icon ? <Icon name={route.icon} size="sm" color={this.props.iconColor} /> : null;
+    return route.icon
+      ? <Icon name={route.icon} size="sm" color={this.props.iconColor} />
+      : null;
   }
 
-  renderHeader = props => {   
-    const { 
-      tabBarSize,
+  renderHeader = props => {
+    const {
       tabBarBackground,
       activeTabBackground,
       textColor,
     } = this.props;
 
-    return ( 
-      <TabBar 
+    const style = {
+      backgroundColor: tabBarBackground,
+    };
+
+    const labelStyle = {
+      color: textColor,
+      textAlign: 'center',
+    };
+
+    const indicatorStyle = {
+      height: '100%',
+      backgroundColor: activeTabBackground,
+    };
+
+    return (
+      <TabBar
         {...props}
         onTabPress={this.handlePress}
-        style={{
-          backgroundColor: tabBarBackground,
-          flexBasis: tabBarHeight[tabBarSize],
-        }}
         scrollEnabled
         renderIcon={this.renderIcon}
-        tabStyle={{
-          flexGrow: 1,
-          alignItems: 'center',
-        }}
-        labelStyle={{
-          color: textColor,
-        }}
-        indicatorStyle={{
-          height: tabBarHeight[tabBarSize],
-          backgroundColor: activeTabBackground,
-        }}
+        style={style}
+        labelStyle={labelStyle}
+        indicatorStyle={indicatorStyle}
       />
     );
   };
@@ -114,7 +114,7 @@ class Tabs extends Component {
             children[route.key]
           ) : (
             <Text>
-              No Items To Display
+              No items to display
             </Text>
           )}
       </Box>
@@ -130,16 +130,25 @@ class Tabs extends Component {
       width: Dimensions.get( 'window' ).width,
     };
 
+    const style = {
+      height,
+      width,
+    };
+
+    const navigationState = {
+      index,
+      routes,
+    };
+
     return (
       <TabViewAnimated
-        style={{ height: height, width: width }}
-        navigationState={{ index, routes }}
+        style={style}
+        navigationState={navigationState}
         renderScene={this.renderScene}
-        {...bottomTabs ? {
-          renderFooter: this.renderHeader,
-        } : {
-          renderHeader: this.renderHeader,
-        }}
+        {...bottomTabs
+          ? { renderFooter: this.renderHeader }
+          : { renderHeader: this.renderHeader }
+        }
         onIndexChange={this.handleIndexChange}
         initialLayout={initialLayout}
       />

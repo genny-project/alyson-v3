@@ -1,7 +1,6 @@
 import React from 'react';
 import { Text as NativeText } from 'react-native';
-import { string, number, oneOf, oneOfType } from 'prop-types';
-import styles from './Text.style';
+import { string, number, oneOf, oneOfType, bool } from 'prop-types';
 
 const textSizes = {
   xxs: 12,
@@ -13,6 +12,15 @@ const textSizes = {
   xxl: 32,
 };
 
+const colors = {
+  black: 'black',
+  green: 'green',
+  red: 'red',
+  blue: 'blue',
+  white: 'white',
+  transparent: 'transparent',
+};
+
 const Text = ({
   children,
   color = 'black',
@@ -22,22 +30,23 @@ const Text = ({
   size = 'sm',
   align,
   width,
+  bold,
   ...restProps
 }) => {
   const style = {
     textDecorationLine: decoration,
-    fontWeight,
+    fontWeight: bold ? 'bold' : fontWeight,
     height,
     fontSize: textSizes[size],
     textAlign: align,
     width,
+    color: colors[color] || color,
   };
 
   return (
     <NativeText
       {...restProps}
       style={[
-        styles[color],
         style,
       ]}
     >
@@ -47,9 +56,7 @@ const Text = ({
 };
 
 Text.propTypes = {
-  color: oneOf(
-    ['white', 'black', 'red', 'blue', 'green']
-  ),
+  color: string,
   decoration: oneOf(
     ['none']
   ),
@@ -67,6 +74,7 @@ Text.propTypes = {
   width: oneOfType(
     [number, string]
   ),
+  bold: bool,
 };
 
 export default Text;

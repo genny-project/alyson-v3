@@ -1,51 +1,80 @@
 import React from 'react';
-import { Platform } from 'react-native';
-import { Box, Dropdown, KeycloakConsumer } from '../../../components';
+import { Platform, ActivityIndicator } from 'react-native';
+import { object } from 'prop-types';
+import { connect } from 'react-redux';
+import dlv from 'dlv';
+import { Box, Dropdown } from '../../../components';
+import { LayoutConsumer } from '../../../layout';
 import HeaderItem from '../item';
 
-const HeaderRight = () => (
-  <KeycloakConsumer>
-    {({ user, isAuthenticated }) => (
-      <Box
-        paddingX={5}
-        alignItems="center"
-      >
-        <HeaderItem
-          href="chat"
-          icon="chat"
-        />
+const HeaderRight = ({ aliases, baseEntities }) => {
+  const firstName = dlv( baseEntities, `attributes.${aliases.USER}.PRI_FIRSTNAME.valueString` );
 
-        <HeaderItem
-          href="alerts"
-          icon="notifications"
-        />
-
-        <Dropdown
+  return (
+    <LayoutConsumer>
+      {({ appColor, textColor }) => (
+        <Box
           paddingX={5}
-          text={(
-            Platform.select({
-              ios: user.firstName,
-              android: user.firstName,
-              web: isAuthenticated ? `Hi, ${user.firstName}!` : 'Options',
-            })
-          )}
-          facingRight
-          items={[
-            {
-              text: 'Settings',
-              icon: 'settings',
-              href: 'settings',
-            },
-            {
-              text: 'Logout',
-              icon: 'power-settings-new',
-              href: 'logout',
-            },
-          ]}
-        />
-      </Box>
-    )}
-  </KeycloakConsumer>
-);
+          alignItems="center"
+        >
+          <HeaderItem
+            href="chat"
+            icon="chat"
+            textColor={textColor}
+          />
 
-export default HeaderRight;
+          <HeaderItem
+            href="alerts"
+            icon="notifications"
+            textColor={textColor}
+          />
+
+          <Dropdown
+            paddingX={5}
+            backgroundColor={appColor}
+            textColor={textColor}
+            text={(
+              firstName ? (
+                Platform.select({
+                  ios: firstName,
+                  android: firstName,
+                  web: `Hi, ${firstName}!`,
+                })
+              ) : (
+                <ActivityIndicator
+                  size="small"
+                />
+              )
+            )}
+            disabled={!firstName}
+            facingRight
+            items={[
+              {
+                text: 'Profile',
+                icon: 'person',
+                href: 'profile',
+              },
+              {
+                text: 'Logout',
+                icon: 'power-settings-new',
+                href: 'logout',
+              },
+            ]}
+          />
+        </Box>
+      )}
+    </LayoutConsumer>
+  );
+};
+
+HeaderRight.propTypes = {
+  baseEntities: object,
+  aliases: object,
+};
+
+const mapStateToProps = state => ({
+  aliases: state.vertx.aliases,
+  baseEntities: state.vertx.baseEntities,
+});
+
+export default connect( mapStateToProps )( HeaderRight );

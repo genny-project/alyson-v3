@@ -17,9 +17,14 @@ import { Text } from '../index';
 const Input = props => {
   const { type, mask } = props;
   
-  if ( mask ) {
+  if ( mask )
     return <InputMask {...props} />;
-  }
+
+  switch ( type ) {
+    case 'text':
+    case 'abn number':
+    case 'acn number':
+      return <InputText {...props} />;
 
   switch ( type ) {
     case 'email':
@@ -28,9 +33,14 @@ const Input = props => {
     case 'mobile':
       return <InputText icon="phone-iphone" keyboardType="numeric" {...props} />;
 
+    case 'landline':
+      return <InputText icon="call" keyboardType="numeric" {...props} />;
+
+    case 'java.lang.boolean':
     case 'switch':
       return <Switch {...props} />;
 
+    case 'termsandconditions':
     case 'scroll':
       return <InputScroll {...props} />;
 
@@ -52,8 +62,12 @@ const Input = props => {
     case 'radio':
       return <CheckBox {...props} radio />;
 
+    case 'upload':
     case 'file':
       return <InputFile {...props} />;
+
+    case 'image':
+      return <InputFile {...props} imageOnly />;
 
     case 'date':
     case 'java.time.localdate':

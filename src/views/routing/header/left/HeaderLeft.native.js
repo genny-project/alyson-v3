@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { withNavigation } from 'react-navigation';
 import { object } from 'prop-types';
 import { connect } from 'react-redux';
-import config from '../../../../config';
 import { Button, Box, Heading } from '../../../components';
 import { LayoutConsumer } from '../../../layout';
 
@@ -32,10 +31,9 @@ class HeaderLeft extends Component {
   }
 
   render() {
-    const { baseEntities, aliases } = this.props;
-    const { index, routes } = this.props.navigation.state;
-    const { routeName } = routes[index];
+    const { baseEntities, aliases, navigation } = this.props;
     const projectAttributes = baseEntities.attributes[aliases.PROJECT];
+    const { routeName } = navigation.state;
 
     return (
       <LayoutConsumer>
@@ -43,46 +41,43 @@ class HeaderLeft extends Component {
           <Box
             alignItems="center"
           >
-            {(
-              index > 0 &&
-              routeName !== 'home'
-            ) ? (
-              <Button
-                onPress={this.handleBack}
-                size="lg"
-                color="transparent"
-                textColor="white"
-                icon="arrow-back"
-                paddingX={10}
-              />
+            {/* routeName !== 'home' */ routeName === 'TODO' // TODO:
+              ? (
+                <Button
+                  onPress={this.handleBack}
+                  size="lg"
+                  color="transparent"
+                  textColor={layout.textColor}
+                  icon="arrow-back"
+                  paddingX={10}
+                />
               ) : (
                 <Button
                   onPress={this.handleToggleMenu}
                   size="lg"
                   color="transparent"
-                  textColor="white"
+                  textColor={layout.textColor}
                   icon="menu"
                   paddingX={10}
                 />
-              )}
+              )
+            }
 
             <Heading
               size="lg"
               marginY={0}
-              color="white"
+              color={layout.textColor}
             >
-              {(
-                index > 0 &&
-                routeName !== 'home'
-              )
+              {routeName !== 'home'
                 ? layout.title
                 : (
                   projectAttributes &&
                   projectAttributes.PRI_NAME &&
                   projectAttributes.PRI_NAME.valueString
                 ) || (
-                  config.app.name
-                )}
+                  'Loading...'
+                )
+              }
             </Heading>
           </Box>
         )}
@@ -98,6 +93,6 @@ const mapStateToProps = state => ({
   aliases: state.vertx.aliases,
 });
 
-export default withNavigation(
-  connect( mapStateToProps )( HeaderLeft )
+export default (
+  connect( mapStateToProps )( withNavigation( HeaderLeft ))
 );

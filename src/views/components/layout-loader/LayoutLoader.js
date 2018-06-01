@@ -29,7 +29,7 @@ class LayoutLoader extends PureComponent {
         <Layout
           title="Loading..."
           hideHeader
-          appColor="dark"
+          appColor="light"
         >
           <Timeout duration={60000}>
             {({ isTimeUp, secondsElapsed }) => (
@@ -76,9 +76,9 @@ class LayoutLoader extends PureComponent {
                     {secondsElapsed > 5 ? (
                       <Text align="center">
                         {secondsElapsed > 30 ? 'Still loading - please wait a little longer...'
-                          : secondsElapsed > 20 ? 'Still loading - please wait...'
-                            : secondsElapsed > 10 ? 'Still loading...'
-                              : 'This is taking longer than usual...'}
+                        : secondsElapsed > 20 ? 'Still loading - please wait...'
+                        : secondsElapsed > 10 ? 'Still loading...'
+                        : 'This is taking longer than usual...'}
                       </Text>
                     ) : null}
                   </Fragment>

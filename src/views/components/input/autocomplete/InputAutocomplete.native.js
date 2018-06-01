@@ -32,6 +32,7 @@ class InputAutocomplete extends Component {
     width: oneOfType(
       [number, string]
     ),
+    onBlur: func,
   }
 
   handleFilter = inputValue => dropdownItem => {
@@ -61,6 +62,11 @@ class InputAutocomplete extends Component {
     );
   }
 
+  handleDismiss = () => {
+    if ( this.props.onBlur )
+      this.props.onBlur();
+  }
+
   handleChange = item => {
     if ( this.props.onChange )
       this.props.onChange( item );
@@ -81,8 +87,8 @@ class InputAutocomplete extends Component {
         )}
         itemToString={item => (
           item == null ? ''
-            : typeof item === 'string' ? item
-              : item[itemStringKey]
+          : typeof item === 'string' ? item
+          : item[itemStringKey]
         )}
         onChange={this.handleChange}
         onOuterClick={this.handleOuterClick}
@@ -110,6 +116,7 @@ class InputAutocomplete extends Component {
                 value={inputValue}
                 enabled={false}
                 onFocus={openMenu}
+                width="100%"
               />
 
               <Modal
@@ -118,6 +125,7 @@ class InputAutocomplete extends Component {
                 style={{
                   backgroundColor: 'white',
                 }}
+                onDismiss={this.handleDismiss}
               >
                 <SafeAreaView
                   style={{
@@ -149,11 +157,12 @@ class InputAutocomplete extends Component {
                       {...getInputProps( inputProps )}
                       type={inputType}
                       clearButtonMode="while-editing"
-                      onChangeText={onType}
+                      onChangeValue={onType}
                       autoFocus
                       paddingLeft={50}
                       paddingY={15}
                       icon={null}
+                      width="100%"
                     />
 
                     {inputValue && (

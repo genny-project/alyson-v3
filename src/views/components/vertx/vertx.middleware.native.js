@@ -1,5 +1,5 @@
 import * as actions from './vertx.actions';
-import { Bridge } from '../../../utils';
+import { Bridge, navigator } from '../../../utils';
 
 const middleware = store => next => action => {
   /* Since we are not making any side effects to `action`, pass on next. */
@@ -24,7 +24,11 @@ const middleware = store => next => action => {
   }
 
   if ( action.type === 'ROUTE_CHANGE' ) {
-    // const { code } = action.payload;
+    const { code } = action.payload;
+
+    navigator.navigate({
+      routeName: code,
+    });
   }
 };
 

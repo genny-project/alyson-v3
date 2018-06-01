@@ -3,6 +3,24 @@ import { Text } from 'react-native';
 import { oneOf, string } from 'prop-types';
 import styles from './Icon.style';
 
+const sizes = {
+  sm: 18,
+  md: 24,
+  lg: 36,
+  xl: 48,
+};
+
+const colors = {
+  white: 'white',
+  black: 'black',
+  red: 'red',
+  blue: 'blue',
+  green: 'green',
+  grey: 'grey',
+  lightGrey: 'lightgrey',
+  yellow: 'yellow',
+};
+
 const Icon = ({
   name,
   color = 'white',
@@ -15,14 +33,14 @@ const Icon = ({
     fontStyle: 'normal',
     lineHeight: '1rem',
     direction: 'ltr',
+    fontSize: sizes[size],
+    color: colors[color] || color,
   };
 
   return (
     <Text
       style={[
         styles.wrapper,
-        styles[color],
-        styles[size],
         style,
       ]}
     >
@@ -36,9 +54,7 @@ const Icon = ({
 
 Icon.propTypes = {
   name: string.isRequired,
-  color: oneOf(
-    ['white', 'black', 'red', 'green', 'yellow', 'grey', 'lightGrey']
-  ).isRequired,
+  color: string,
   size: oneOf(
     ['xs', 'sm', 'md', 'lg', 'xl']
   ),

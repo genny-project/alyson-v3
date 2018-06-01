@@ -31,6 +31,7 @@ export { default as Tabs } from './tabs';
 export { default as ErrorBoundary } from './error-boundary';
 export { default as Text } from './text';
 export { default as Timeout } from './timeout';
+export { default as KeyboardAwareScrollView } from './keyboard-aware-scroll-view';
 
 export * from './keycloak';
 export * from './vertx';

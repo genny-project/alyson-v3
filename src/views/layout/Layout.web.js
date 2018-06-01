@@ -1,11 +1,11 @@
-import React, { Component, Fragment } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { any, string, bool, object } from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import LayoutConsumer from './consumer';
 import { Header, Sidebar } from '../routing';
 
-class Layout extends Component {
+class Layout extends PureComponent {
   static propTypes = {
     children: any,
     title: string,
@@ -17,10 +17,26 @@ class Layout extends Component {
   }
 
   componentDidMount() {
-    this.checkForLayoutChanges();
+    this.setLayoutProperties();
   }
 
-  checkForLayoutChanges() {
+  componentDidUpdate( prevProps ) {
+    if (
+      this.props.appColor !== prevProps.appColor &&
+      this.props.appColor != null
+    ) {
+      this.props.layout.setAppColor( this.props.appColor );
+    }
+
+    if (
+      this.props.title !== prevProps.title &&
+      this.props.title != null
+    ) {
+      this.props.layout.setTitle( this.props.title );
+    }
+  }
+
+  setLayoutProperties() {
     const { layout, title, appColor, hideSidebar, hideHeader } = this.props;
 
     if (
@@ -69,11 +85,11 @@ class Layout extends Component {
         </Helmet>
 
         {!hideHeader && (
-        <Header />
+          <Header />
         )}
 
         {!hideSidebar && (
-        <Sidebar />
+          <Sidebar />
         )}
 
         {children}
