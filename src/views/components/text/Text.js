@@ -31,6 +31,7 @@ const Text = ({
   align,
   width,
   bold,
+  text,
   ...restProps
 }) => {
   const style = {
@@ -50,12 +51,13 @@ const Text = ({
         style,
       ]}
     >
-      {children}
+      {text || children}
     </NativeText>
   );
 };
 
 Text.propTypes = {
+  text: string,
   color: string,
   decoration: oneOf(
     ['none']

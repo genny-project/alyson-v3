@@ -1,7 +1,7 @@
 import React, { Component, createElement } from 'react';
-import { TouchableOpacity, TouchableWithoutFeedback, TouchableNativeFeedback, Platform, ActivityIndicator } from 'react-native';
+import { Platform, ActivityIndicator, TouchableNativeFeedback } from 'react-native';
 import { string, bool, func, oneOf, number, oneOfType } from 'prop-types';
-import { Text, Icon, Box } from '../index';
+import { Text, Icon, Box, Touchable } from '../index';
 
 const buttonColors = {
   red: 'red',
@@ -56,6 +56,7 @@ class Button extends Component {
     color: 'black',
     size: 'lg',
     accessible: true,
+    withFeedback: true,
   }
 
   static propTypes = {
@@ -64,7 +65,6 @@ class Button extends Component {
     onPress: func,
     color: string,
     textColor: string,
-    silent: bool,
     icon: string,
     size: oneOf(
       ['sm', 'md', 'lg']
@@ -82,6 +82,7 @@ class Button extends Component {
       [number, string]
     ),
     showSpinnerOnClick: bool,
+    withFeedback: bool,
   }
 
   state = {
@@ -214,7 +215,7 @@ class Button extends Component {
     const {
       disabled,
       color,
-      silent,
+      withFeedback,
       accessible,
       accessibilityLabel,
       accessibilityRole,
@@ -228,13 +229,7 @@ class Button extends Component {
     };
 
     return createElement(
-      silent
-        ? TouchableWithoutFeedback
-        : (
-          Platform.OS === 'android'
-            ? TouchableNativeFeedback
-            : TouchableOpacity
-        ),
+      Touchable,
       {
         style,
         disabled,
@@ -247,6 +242,7 @@ class Button extends Component {
             ? TouchableNativeFeedback.Ripple( textColors[color], false )
             : undefined
         ),
+        withFeedback,
       },
       this.renderChildWrapper()
     );

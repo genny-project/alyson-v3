@@ -63,6 +63,7 @@ class Card extends PureComponent {
       showStatus,
       status,
       statusMargin,
+      ...restProps
     } = this.props;
 
     const isChildrenArray = (
@@ -72,9 +73,10 @@ class Card extends PureComponent {
 
     const firstChild = isChildrenArray && children[0];
     const otherChildren = isChildrenArray && children.slice( 1 );
-
+    
     return (
       <Box
+        {...restProps}
         alignItems="center"
         justifyContent="center"
         width="100%"
@@ -95,7 +97,7 @@ class Card extends PureComponent {
               marginRight={imageMargin}
             >
               <Image
-                source="image"
+                source={image}
                 width={50}
                 height={50}
               />
