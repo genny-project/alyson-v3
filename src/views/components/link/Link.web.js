@@ -45,6 +45,7 @@ const Link = ({
       to={href}
       onClick={handleClick}
       style={{
+        ...restProps.style,
         textDecoration: decoration,
       }}
     >

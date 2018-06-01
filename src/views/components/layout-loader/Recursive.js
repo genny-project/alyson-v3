@@ -17,6 +17,10 @@ class Recursive extends PureComponent {
     repeat: any,
   }
 
+  injectContextIntoChildren( context, children ) {
+    return typeof children === 'string' ? curlyBracketParse( children, path => dlv( context, path )) : children;
+  }
+
   injectContextIntoProps( context, props ) {
     if ( !props ) {
       return {};
@@ -57,7 +61,7 @@ class Recursive extends PureComponent {
           parentRepeater: context.repeater,
         },
       }))
-      : children;
+      : this.injectContextIntoChildren( context, children );
 
     if ( component ) {
       if ( Components[component] ) {
