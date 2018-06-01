@@ -28,7 +28,6 @@ class Input extends Component {
     secureTextEntry: false,
     selectTextOnFocus: false,
     spellCheck: true,
-    padding: 10,
     error: false,
     success: false,
     warning: false,
