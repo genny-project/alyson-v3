@@ -11,10 +11,14 @@ import InputText from './text';
 import Switch from './switch';
 import InputDropdown from './dropdown';
 import Passcode from './passcode';
+import InputMask from './mask';
 import { Text } from '../index';
 
 const Input = props => {
-  const { type } = props;
+  const { type, mask } = props;
+  
+  if ( mask )
+    return <InputMask {...props} />;
 
   switch ( type ) {
     case 'text':
@@ -22,6 +26,7 @@ const Input = props => {
     case 'acn number':
       return <InputText {...props} />;
 
+  switch ( type ) {
     case 'email':
       return <InputText icon="mail" {...props} />;
 
