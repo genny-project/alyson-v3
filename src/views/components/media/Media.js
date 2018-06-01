@@ -82,7 +82,8 @@ class Media extends PureComponent {
               <Fragment>
                 {(
                   header &&
-                  header instanceof Array
+                  header instanceof Array &&
+                  header.length > 0
                 ) ? (
                     header.map( headerItem => (
                       <Header
@@ -102,7 +103,8 @@ class Media extends PureComponent {
                 }
                 {(
                   description &&
-                  description instanceof Array
+                  description instanceof Array &&
+                  description.length > 0
                 ) ? (
                     description.map( descriptionItem => (
                       <Text

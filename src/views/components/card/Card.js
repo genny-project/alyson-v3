@@ -13,9 +13,6 @@ class Card extends PureComponent {
     children: any,
     background: string,
     padding: number,
-    size: oneOf(
-      'sm', 'md', 'lg'
-    ),
     shadow: oneOf(
       ['light', 'medium', 'dark']
     ),
@@ -27,26 +24,19 @@ class Card extends PureComponent {
       children,
       background,
       padding,
-      size,
       shadow,
       roundCorners,
     } = this.props;
-
-    const width = {
-      sm: 200,
-      md: 400,
-      lg: 600,
-    };
 
     return (
       <Box
         alignItems="center"
         justifyContent="center"
-        width={width[size] || '100%'}
+        width="100%"
         backgroundColor={background}
         padding={padding}
         borderRadius={roundCorners ? 5 : 0}
-        boxShadow={shadow || null}
+        boxShadow={shadow}
       >
         {children}
       </Box>

@@ -11,7 +11,7 @@ import { Box, Text, Icon } from '../../components';
 // };
 
 const Status = ({
-  color = 'success',
+  color = '#5cb85c',
   text,
   width = 10,
   height = 10,
@@ -20,7 +20,7 @@ const Status = ({
   roundCorners = true,
 }) => (
   <Box
-    backgroundColor={color || '#5cb85c'}
+    backgroundColor={color}
     height={height}
     width={width}
     justifyContent="center"
