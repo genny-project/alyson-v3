@@ -7,15 +7,10 @@ const reduceChildAsks = childAsks => {
     return [];
   }
 
-  return childAsks.map( childAsk => {
-    /* Shortcut to remove properties inside the `childAsk` object. */
-    const { question, ...wantedData } = childAsk; // eslint-disable-line no-unused-vars
-
-    return {
-      ...wantedData,
-      childAsks: reduceChildAsks( childAsk.childAsks ),
-    };
-  });
+  return childAsks.map( childAsk => ({
+    ...childAsk,
+    childAsks: reduceChildAsks( childAsk.childAsks ),
+  }));
 };
 
 const reducer = ( state = {}, { type, payload }) => {
@@ -24,12 +19,9 @@ const reducer = ( state = {}, { type, payload }) => {
       return {
         ...state,
         ...payload.items.reduce(( resultant, current ) => {
-          /* Shortcut to remove properties inside the `current` object. */
-          const { question, ...wantedData } = current; // eslint-disable-line no-unused-vars
-
           resultant[current.questionCode] = {
-            ...wantedData,
-            childAsks: reduceChildAsks( wantedData.childAsks ),
+            ...current,
+            childAsks: reduceChildAsks( current.childAsks ),
           };
 
           return resultant;

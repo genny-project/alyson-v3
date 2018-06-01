@@ -5,7 +5,8 @@ import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import dlv from 'dlv';
 import { Bridge } from '../../../utils/vertx';
-import { Input, Box, Text, Button, Heading, Icon, KeyboardAwareScrollView } from '../index';
+import { Box, Text, Button, Heading, Icon, KeyboardAwareScrollView } from '../index';
+import FormInput from './input';
 
 class Form extends Component {
   static propTypes = {
@@ -36,7 +37,10 @@ class Form extends Component {
       const attributeData = dataTypes[ask.attributeCode];
       const validationList = types[attributeData.dataType].validationList;
 
-      if ( values[value_key] == null ) {
+      if (
+        values[value_key] == null &&
+        ask.mandatory
+      ) {
         newState[value_key] = 'Please enter this field';
       }
 
@@ -45,7 +49,7 @@ class Form extends Component {
         validationList.length > 0
       ) {
         const isValid = validationList.every( validation => {
-          return new RegExp( validation.regex ).test( values[value_key] );
+          return new RegExp( validation.regex ).test( String( values[value_key] ));
         });
 
         if ( !isValid ) {
@@ -98,16 +102,18 @@ class Form extends Component {
     }] );
   }
 
-  handleChange = ( field, setFieldValue, setFieldTouched ) => text => {
-    if ( text == null )
+  handleChange = ( field, setFieldValue, setFieldTouched, ask ) => ( value, sendOnChange ) => {
+    if ( value == null )
       return;
 
-    setFieldValue( field, text );
+    setFieldValue( field, value );
     setFieldTouched( field, true );
+
+    if ( sendOnChange )
+      this.sendAnswer( ask, value );
   }
 
   handleSubmit = ( values, form ) => {
-    console.warn( 'submitting...', { values, form });
     const { setSubmitting } = form;
 
     setSubmitting( true );
@@ -149,7 +155,7 @@ class Form extends Component {
 
   renderInput = ( values, errors, touched, setFieldValue, setTouched ) => ask => {
     const { definitions } = this.props.baseEntities;
-    const { questionCode, attributeCode, name, mandatory } = ask;
+    const { questionCode, attributeCode, name, mandatory, question } = ask;
     const { dataType } = definitions.data[attributeCode];
 
     return (
@@ -181,17 +187,15 @@ class Form extends Component {
             <Box
               alignItems="center"
             >
-              {mandatory
-                ? (
-                  <Text
-                    size="xs"
-                    color="grey"
-                  >
-                    required
-                    &nbsp;
-                  </Text>
-                )
-                : null}
+              {mandatory ? (
+                <Text
+                  size="xs"
+                  color="grey"
+                >
+                  required
+                  &nbsp;
+                </Text>
+              ) : null}
 
               {touched[questionCode]
                 ? (
@@ -217,13 +221,14 @@ class Form extends Component {
           </Box>
         </Box>
 
-        <Input
+        <FormInput
           onChangeValue={this.handleChange( questionCode, setFieldValue, setTouched, ask )}
           value={values && values[questionCode]}
           type={dataType.toLowerCase()}
           error={touched[questionCode] && errors[questionCode]}
           onBlur={this.handleBlur( ask, values, errors )}
           required={mandatory}
+          question={question}
         />
       </Box>
     );
@@ -259,11 +264,14 @@ class Form extends Component {
       initialValues[ask.questionCode] = (
         this.props.baseEntities.attributes[ask.targetCode] &&
           this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode] &&
-          this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueString
+          (
+            /* TODO: move this into its own function */
+            this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueString ||
+            this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueDate ||
+            this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueBoolean
+          )
       );
     });
-
-    console.warn({ initialValues });
 
     return (
       <Formik
@@ -271,7 +279,6 @@ class Form extends Component {
         validate={this.doValidate}
         onSubmit={this.handleSubmit}
         validateOnBlur
-        enableReinitialize
       >
         {({
           values,
@@ -322,7 +329,7 @@ class Form extends Component {
                   showSpinnerOnClick
                   key={questionGroup.name}
                 >
-                    Submit
+                  Submit
                 </Button>
               </Box>
             </KeyboardAwareScrollView>

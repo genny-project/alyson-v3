@@ -6,7 +6,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fafafa',
     borderWidth: 2,
     borderColor: '#DDD',
-    borderRadius: 5,
+    borderRadius: 10,
+    padding: 15,
   },
   inputWithIcon: {},
   warning: {

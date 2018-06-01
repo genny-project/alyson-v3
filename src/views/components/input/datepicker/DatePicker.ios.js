@@ -30,22 +30,31 @@ class DatePicker extends Component {
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
+    console.warn({ nextProps, prevState });
+
     if (
-      nextProps.value !== prevState.value &&
-      nextProps.value != null
+      nextProps.value != null &&
+      nextProps.value !== prevState.value
     ) {
-      if ( moment( nextProps.value ).isValid()) {
-        return { value: new Date( moment( nextProps.value ).format()) };
+      if (
+        nextProps.value instanceof Date &&
+        isFinite( nextProps.value )
+      ) {
+        return { value: nextProps.value };
       }
 
-      return { value: new Date( moment().format()) };
+      const parsedDate = new Date( nextProps.value );
+
+      if ( parsedDate !== 'Invalid Date' ) {
+        return { value: parsedDate };
+      }
     }
 
     return null;
   }
 
   state = {
-    value: new Date(),
+    value: null,
     isOpen: false,
   };
 
@@ -109,7 +118,9 @@ class DatePicker extends Component {
       : ''
     );
 
-    const displayValue = moment( value ).format( displayFormat );
+    const displayValue = value != null
+      ? moment( value ).format( displayFormat )
+      : 'Select a date';
 
     return (
       <Box
@@ -170,7 +181,7 @@ class DatePicker extends Component {
                 justifyContent="center"
               >
                 <DatePickerIOS
-                  date={value}
+                  date={value || new Date()}
                   onDateChange={this.handleChange}
                   style={style}
                   maximumDate={maximumDate}
