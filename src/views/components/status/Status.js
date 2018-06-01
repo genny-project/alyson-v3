@@ -1,14 +1,14 @@
 import React from 'react';
-import { oneOf, string, number, oneOfType } from 'prop-types';
+import { oneOf, string, number, oneOfType, bool } from 'prop-types';
 import { Box, Text, Icon } from '../../components';
 
-const statusColor = {
-  warning: '#FFCC00',
-  info: '#03A9F4',
-  success: '#5cb85c',
-  error: '#cc0000',
-  disabled: '#808080',
-};
+// const statusColor = {
+//   warning: '#FFCC00',
+//   info: '#03A9F4',
+//   success: '#5cb85c',
+//   error: '#cc0000',
+//   disabled: '#808080',
+// };
 
 const Status = ({
   color = 'success',
@@ -17,13 +17,15 @@ const Status = ({
   height = 10,
   icon,
   iconColor = 'black',
+  roundCorners = true,
 }) => (
   <Box
-    backgroundColor={statusColor[color]}
+    backgroundColor={color || '#5cb85c'}
     height={height}
     width={width}
     justifyContent="center"
     alignItems="center"
+    borderRadius={roundCorners ? 5 : 0}
   >
     {(
       text &&
@@ -59,6 +61,7 @@ Status.propTypes = {
   text: string,
   icon: string,
   iconColor: string,
+  roundCorners: bool,
 };
 
 export default Status;

@@ -33,6 +33,8 @@ export { default as Text } from './text';
 export { default as Timeout } from './timeout';
 export { default as KeyboardAwareScrollView } from './keyboard-aware-scroll-view';
 export { default as Touchable } from './touchable';
+export { default as Media } from './media';
+export { default as Status } from './status';
 
 export * from './keycloak';
 export * from './vertx';

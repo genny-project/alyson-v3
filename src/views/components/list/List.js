@@ -80,7 +80,8 @@ class List extends PureComponent {
       <Box
         flexDirection="column"
         justifyContent="flex-start"
-        width="100%"
+        flex={1}
+        flexShrink={0}
         backgroundColor={contentBackground}
       >
         {showHeader && (
