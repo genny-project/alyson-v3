@@ -54,6 +54,9 @@ class Layout extends Component {
   setLayoutProperties() {
     const { layout, title, appColor, hideHeader, hideSidebar, navigation } = this.props;
 
+    if ( !layout )
+      return;
+
     if (
       typeof title === 'string' &&
       title.length > 0
