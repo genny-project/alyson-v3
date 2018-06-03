@@ -10,32 +10,56 @@ class LayoutFetcher extends Component {
     currentUrl: string.isRequired,
   }
 
-  render() {
+  handleMapUrlFragments = currentUrlFragments => ( fragment, index ) => {
+    if ( fragment.startsWith( ':' )) {
+      return currentUrlFragments[index];
+    }
+
+    return fragment;
+  }
+
+  findAttribute = attribute => {
     const { currentUrl, baseEntities } = this.props;
     const { attributes } = baseEntities;
     const strippedCurrentUrl = removeStartingAndEndingSlashes( currentUrl );
 
-    const layoutAttribute = Object.keys( attributes ).find( attribute => {
-      if ( attribute.startsWith( 'LAY' )) {
-        const layoutUrl = (
-          attributes[attribute] &&
-          attributes[attribute].PRI_LAYOUT_URI &&
-          attributes[attribute].PRI_LAYOUT_URI.valueString
-        );
+    if ( attribute.startsWith( 'LAY_' )) {
+      const layoutUrl = (
+        attributes[attribute] &&
+        attributes[attribute].PRI_LAYOUT_URI &&
+        attributes[attribute].PRI_LAYOUT_URI.valueString
+      );
 
-        if ( !layoutUrl ) {
-          return false;
-        }
-
-        const strippedLayoutUrl = removeStartingAndEndingSlashes( layoutUrl );
-
-        if ( strippedLayoutUrl === strippedCurrentUrl ) {
-          return true;
-        }
+      if ( !layoutUrl ) {
+        return false;
       }
 
-      return false;
-    });
+      let strippedLayoutUrl = removeStartingAndEndingSlashes( layoutUrl );
+
+      if ( strippedLayoutUrl.includes( ':' )) {
+        const layoutUrlFragments = strippedLayoutUrl.split( '/' );
+        const currentUrlFragments = strippedCurrentUrl.split( '/' );
+
+        if ( layoutUrlFragments.length !== currentUrlFragments.length )
+          return;
+
+        strippedLayoutUrl =
+          layoutUrlFragments
+            .map( this.handleMapUrlFragments( currentUrlFragments ))
+            .join( '/' );
+      }
+
+      if ( strippedLayoutUrl === strippedCurrentUrl ) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  render() {
+    const { attributes } = this.props.baseEntities;
+    const layoutAttribute = Object.keys( attributes ).find( this.findAttribute );
 
     const layout = (
       layoutAttribute &&
