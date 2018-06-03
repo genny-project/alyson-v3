@@ -18,7 +18,8 @@ const Image = ({
   if (
     source &&
     typeof source === 'string' &&
-    source.length > 0 
+    source.length > 0 &&
+    source !== 'undefined'
   ) {
     return (
       <NativeImage
