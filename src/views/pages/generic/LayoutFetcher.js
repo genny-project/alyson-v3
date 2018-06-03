@@ -10,6 +10,45 @@ class LayoutFetcher extends Component {
     currentUrl: string.isRequired,
   }
 
+  state = {
+    layout: null,
+  }
+
+  componentDidMount() {
+    this.getLayout();
+  }
+
+  componentDidUpdate( prevProps ) {
+    if ( prevProps.currentUrl !== this.props.currentUrl ) {
+      this.getLayout();
+    }
+  }
+
+  getLayout() {
+    const { attributes } = this.props.baseEntities;
+    const layoutAttribute = Object.keys( attributes ).find( this.findAttribute );
+
+    const layout = (
+      layoutAttribute &&
+      attributes[layoutAttribute] &&
+      attributes[layoutAttribute].PRI_LAYOUT_DATA &&
+      attributes[layoutAttribute].PRI_LAYOUT_DATA.valueString
+    );
+
+    let parsed = null;
+
+    try {
+      if ( layout ) {
+        parsed = JSON.parse( layout );
+
+        this.setState({ layout: parsed });
+      }
+    }
+    catch ( error ) {
+      console.warn( 'Unable to parse layout', layout );
+    }
+  }
+
   handleMapUrlFragments = currentUrlFragments => ( fragment, index ) => {
     if ( fragment.startsWith( ':' )) {
       return currentUrlFragments[index];
@@ -58,28 +97,9 @@ class LayoutFetcher extends Component {
   };
 
   render() {
-    const { attributes } = this.props.baseEntities;
-    const layoutAttribute = Object.keys( attributes ).find( this.findAttribute );
+    const { layout } = this.state;
 
-    const layout = (
-      layoutAttribute &&
-      attributes[layoutAttribute] &&
-      attributes[layoutAttribute].PRI_LAYOUT_DATA &&
-      attributes[layoutAttribute].PRI_LAYOUT_DATA.valueString
-    );
-
-    let parsed = null;
-
-    try {
-      if ( layout ) {
-        parsed = JSON.parse( layout );
-      }
-    }
-    catch ( error ) {
-      console.warn( 'Unable to parse layout', layout );
-    }
-
-    return this.props.children( parsed );
+    return this.props.children( layout );
   }
 }
 
