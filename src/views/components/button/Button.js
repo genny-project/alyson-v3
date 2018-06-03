@@ -35,6 +35,12 @@ const sizeMapping = {
   lg: 'large',
 };
 
+const iconOnlyButtonSizes = {
+  sm: 40,
+  md: 50,
+  lg: 60,
+};
+
 const paddingSizes = {
   sm: {
     paddingX: 15,
@@ -84,6 +90,7 @@ class Button extends Component {
     showSpinnerOnClick: bool,
     withFeedback: bool,
     shape: string,
+    boxShadow: string,
   }
 
   state = {
@@ -118,7 +125,7 @@ class Button extends Component {
       <Icon
         color={textColor || textColors[color]}
         name={icon}
-        size={textSizes[size]}
+        size={size}
       />
     );
   }
@@ -181,32 +188,59 @@ class Button extends Component {
       width,
       height,
       text,
+      boxShadow,
     } = this.props;
 
     const { hasBeenClickedOn } = this.state;
 
+    const isIconOnly = (
+      typeof icon === 'string' &&
+      children == null &&
+      text == null
+    );
+
+    /* TODO: mixed icon and text children */
     const child =
-      icon != null ? this.renderIconChild()
+      isIconOnly ? this.renderIconChild()
       : ( text || typeof children === 'string' ) ? this.renderTextChild()
       : children || null;
 
     return (
       <Box
+        width={(
+          isIconOnly
+            ? iconOnlyButtonSizes[size]
+            : width
+        )}
+        height={(
+          isIconOnly
+            ? iconOnlyButtonSizes[size]
+            : height
+        )}
+        cleanStyleObject
+        position="relative"
+        shape={shape}
+        justifyContent="center"
+        alignItems="center"
+        boxShadow={boxShadow}
         backgroundColor={(
           disabled
             ? buttonColors.disabled
             : buttonColors[color]
         )}
         padding={padding}
-        paddingX={paddingX == null ? paddingSizes[size].paddingX : paddingX}
-        paddingY={paddingY == null ? paddingSizes[size].paddingY : paddingY}
-        width={width}
-        height={height}
-        cleanStyleObject
-        position="relative"
-        shape={shape}
-        justifyContent="center"
-        alignItems="center"
+        paddingX={(
+          paddingX == null &&
+          !isIconOnly
+        )
+          ? paddingSizes[size].paddingX
+          : paddingX}
+        paddingY={(
+          paddingY == null &&
+          !isIconOnly
+        )
+          ? paddingSizes[size].paddingY
+          : paddingY}
       >
         {child}
 
