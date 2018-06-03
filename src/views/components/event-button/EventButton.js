@@ -1,13 +1,15 @@
 import React from 'react';
 import { string, bool, any, func } from 'prop-types';
 import { Bridge } from '../../../utils';
+import { Button } from '../../components';
 
-const EventLink = ({
-  children = 'Event',
+const EventButton = ({
   buttonCode = '',
   value = '',
   disabled = false,
   onPress,
+  children,
+  ...restProps
 }) => {
   const handlePress = event => {
     if ( disabled ) {
@@ -41,15 +43,19 @@ const EventLink = ({
     });
   }
 
-  return React.Children.map( children, child => (
-    React.cloneElement( child, {
-      ...child.props,
-      onPress: handlePress,
-    })
-  ));
+  const addedProps = {
+    ...restProps,
+    onPress: handlePress,
+  };
+
+  return React.createElement(
+    Button,
+    addedProps,
+    children
+  );
 };
 
-EventLink.propTypes = {
+EventButton.propTypes = {
   children: any,
   buttonCode: string.isRequired,
   value: string.isRequired,
@@ -57,4 +63,4 @@ EventLink.propTypes = {
   disabled: bool,
 };
 
-export default EventLink;
+export default EventButton;

@@ -48,7 +48,7 @@ class Recursive extends PureComponent {
     const { component, props, children, context, repeat } = this.props;
     const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;
     // console.log(repeat, injectedRepeat);
-    
+
     const repeatedChildren = injectedRepeat && Array.isArray( injectedRepeat )
       ? injectedRepeat.map( child => ({
         ...children,

@@ -52,7 +52,6 @@ const paddingSizes = {
 
 class Button extends Component {
   static defaultProps = {
-    children: 'Button Text',
     color: 'black',
     size: 'lg',
     accessible: true,
@@ -61,6 +60,7 @@ class Button extends Component {
 
   static propTypes = {
     children: string,
+    text: string,
     disabled: bool,
     onPress: func,
     color: string,
@@ -83,6 +83,7 @@ class Button extends Component {
     ),
     showSpinnerOnClick: bool,
     withFeedback: bool,
+    shape: string,
   }
 
   state = {
@@ -117,13 +118,13 @@ class Button extends Component {
       <Icon
         color={textColor || textColors[color]}
         name={icon}
-        size={size}
+        size={textSizes[size]}
       />
     );
   }
 
   renderTextChild() {
-    const { textColor, color, children, size } = this.props;
+    const { textColor, color, children, size, text } = this.props;
 
     return (
       <Text
@@ -133,7 +134,7 @@ class Button extends Component {
         align="center"
         width="100%"
       >
-        {children}
+        {text || children}
       </Text>
     );
   }
@@ -176,13 +177,17 @@ class Button extends Component {
       icon,
       children,
       showSpinnerOnClick,
+      shape,
+      width,
+      height,
+      text,
     } = this.props;
 
     const { hasBeenClickedOn } = this.state;
 
     const child =
       icon != null ? this.renderIconChild()
-      : typeof children === 'string' ? this.renderTextChild()
+      : ( text || typeof children === 'string' ) ? this.renderTextChild()
       : children || null;
 
     return (
@@ -195,9 +200,13 @@ class Button extends Component {
         padding={padding}
         paddingX={paddingX == null ? paddingSizes[size].paddingX : paddingX}
         paddingY={paddingY == null ? paddingSizes[size].paddingY : paddingY}
-        width="100%"
+        width={width}
+        height={height}
         cleanStyleObject
         position="relative"
+        shape={shape}
+        justifyContent="center"
+        alignItems="center"
       >
         {child}
 
