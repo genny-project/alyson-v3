@@ -207,16 +207,6 @@ class Button extends Component {
 
     return (
       <Box
-        width={(
-          isIconOnly
-            ? iconOnlyButtonSizes[size]
-            : width
-        )}
-        height={(
-          isIconOnly
-            ? iconOnlyButtonSizes[size]
-            : height
-        )}
         cleanStyleObject
         position="relative"
         shape={shape}
@@ -241,6 +231,18 @@ class Button extends Component {
         )
           ? paddingSizes[size].paddingY
           : paddingY}
+        width={(
+          isIconOnly &&
+          shape === 'circle'
+        )
+          ? iconOnlyButtonSizes[size]
+          : width}
+        height={(
+          isIconOnly &&
+          shape === 'circle'
+        )
+          ? iconOnlyButtonSizes[size]
+          : height}
       >
         {child}
 
