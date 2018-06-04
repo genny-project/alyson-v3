@@ -4,11 +4,11 @@
  * Currently a stump on web
  */
 
-const navigator = {};
-
-navigator.setParams = () => {};
-navigator.setTopLevelAppNavigator = () => {};
-navigator.setTopLevelAuthNavigator = () => {};
-navigator.navigate = () => {};
+const navigator = {
+  setParams: () => {},
+  setTopLevelAppNavigator: () => {},
+  setTopLevelAuthNavigator: () => {},
+  navigate: () => {},
+};
 
 export default navigator;
