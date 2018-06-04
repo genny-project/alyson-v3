@@ -319,12 +319,11 @@ class Input extends Component {
             ref={forwardedRef}
           />
 
-          {/* icon ? (
+          {icon ? (
             <Box
               position="absolute"
-              right={10}
+              right={15}
               height="100%"
-              width,
               alignItems="center"
             >
               <Icon
@@ -333,7 +332,7 @@ class Input extends Component {
                 size="md"
               />
             </Box>
-          ) : null */}
+          ) : null}
         </Box>
 
         {childSuffix ? (

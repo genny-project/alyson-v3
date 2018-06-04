@@ -81,7 +81,7 @@ class InputDropdown extends Component {
           type="text"
           value={value}
           placeholder={validItems ? 'Select an option...' : 'No items to select'}
-          icon="expand_more"
+          icon="expand-more"
           disabled={!validItems && !disabled}
           enabled={false}
           onFocus={this.handleToggle}
