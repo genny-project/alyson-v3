@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { ActivityIndicator } from 'react-native';
-import { string, object } from 'prop-types';
+import { string, object, oneOfType, array } from 'prop-types';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import { Bridge } from '../../../utils/vertx';
@@ -9,7 +9,9 @@ import FormInput from './input';
 
 class Form extends Component {
   static propTypes = {
-    questionGroupCode: string,
+    questionGroupCode: oneOfType(
+      [string, array]
+    ),
     asks: object,
     baseEntities: object,
   }
@@ -29,63 +31,70 @@ class Form extends Component {
   }
 
   setInitialValues() {
-    const questionGroup = this.getQuestionGroup();
+    const questionGroups = this.getQuestionGroups();
     const { attributes } = this.props.baseEntities;
 
     if (
-      !questionGroup ||
-      !questionGroup.childAsks
+      !questionGroups ||
+      !questionGroups.length
     ) {
       this.setState({ initialValues: {} });
 
       return;
     }
 
-    const initialValues = questionGroup.childAsks.reduce(( initialValues, ask ) => {
+    const initialValues = {};
+
+    questionGroups.forEach( questionGroup => {
       if (
-        ask.childAsks &&
-        ask.childAsks instanceof Array &&
-        ask.childAsks.length > 0
-      ) {
-        ask.childAsks.forEach( childAsk => {
+        !questionGroup.childAsks ||
+        !( questionGroup.childAsks instanceof Array ) ||
+        questionGroup.childAsks.length === 0
+      )
+        return;
+
+      questionGroup.childAsks.forEach( ask => {
+        if (
+          ask.childAsks &&
+          ask.childAsks instanceof Array &&
+          ask.childAsks.length > 0
+        ) {
+          ask.childAsks.forEach( childAsk => {
+            const value = (
+              attributes[childAsk.targetCode] &&
+              attributes[childAsk.targetCode][childAsk.attributeCode] &&
+              (
+                attributes[childAsk.targetCode][childAsk.attributeCode].valueString ||
+                attributes[childAsk.targetCode][childAsk.attributeCode].valueDate ||
+                attributes[childAsk.targetCode][childAsk.attributeCode].valueBoolean
+              )
+            );
+
+            /* TODO: better handle `false` value */
+            if ( value || childAsk.mandatory )
+              initialValues[childAsk.questionCode] = value;
+          });
+        }
+
+        else {
           const value = (
-            attributes[childAsk.targetCode] &&
-            attributes[childAsk.targetCode][childAsk.attributeCode] &&
+            attributes[ask.targetCode] &&
+            attributes[ask.targetCode][ask.attributeCode] &&
             (
-              attributes[childAsk.targetCode][childAsk.attributeCode].valueString ||
-              attributes[childAsk.targetCode][childAsk.attributeCode].valueDate ||
-              attributes[childAsk.targetCode][childAsk.attributeCode].valueBoolean
+              attributes[ask.targetCode][ask.attributeCode].valueString ||
+              attributes[ask.targetCode][ask.attributeCode].valueDate ||
+              attributes[ask.targetCode][ask.attributeCode].valueBoolean
             )
           );
 
-          console.warn( 'childAsk', { childAsk, value }, ask.mandatory );
+          console.warn( 'regular', { ask, value }, ask.mandatory );
 
           /* TODO: better handle `false` value */
-          if ( value || childAsk.mandatory )
-            initialValues[childAsk.questionCode] = value;
-        });
-      }
-
-      else {
-        const value = (
-          attributes[ask.targetCode] &&
-          attributes[ask.targetCode][ask.attributeCode] &&
-          (
-            attributes[ask.targetCode][ask.attributeCode].valueString ||
-            attributes[ask.targetCode][ask.attributeCode].valueDate ||
-            attributes[ask.targetCode][ask.attributeCode].valueBoolean
-          )
-        );
-
-        console.warn( 'regular', { ask, value }, ask.mandatory );
-
-        /* TODO: better handle `false` value */
-        if ( value || ask.mandatory )
-          initialValues[ask.questionCode] = value;
-      }
-
-      return initialValues;
-    }, {});
+          if ( value || ask.mandatory )
+            initialValues[ask.questionCode] = value;
+        }
+      });
+    });
 
     console.warn({ initialValues });
 
@@ -93,39 +102,54 @@ class Form extends Component {
   }
 
   setValidationList() {
-    const questionGroup = this.getQuestionGroup();
+    const questionGroups = this.getQuestionGroups();
     const { data } = this.props.baseEntities.definitions;
 
     if (
-      !questionGroup ||
-      !questionGroup.childAsks
+      !questionGroups ||
+      !questionGroups.length
     ) {
       this.setState({ validationList: {} });
 
       return;
     }
 
-    const validationList = questionGroup.childAsks.reduce(( validationList, ask ) => {
-      const dataType = (
-        data[ask.attributeCode] &&
-        data[ask.attributeCode].dataType
-      );
+    const validationList = {};
 
-      validationList[ask.questionCode] = {
-        dataType,
-        required: ask.mandatory,
-      };
+    questionGroups.forEach( questionGroup => {
+      if (
+        !questionGroup.childAsks ||
+        !( questionGroup.childAsks instanceof Array ) ||
+        questionGroup.childAsks.length === 0
+      )
+        return;
 
-      return validationList;
-    }, {});
+      questionGroup.childAsks.forEach( ask => {
+        const dataType = (
+          data[ask.attributeCode] &&
+          data[ask.attributeCode].dataType
+        );
+
+        validationList[ask.questionCode] = {
+          dataType,
+          required: ask.mandatory,
+        };
+      });
+    });
 
     this.setState({ validationList });
   }
 
-  getQuestionGroup() {
+  getQuestionGroups() {
     const { questionGroupCode, asks } = this.props;
 
-    return asks[questionGroupCode];
+    if ( questionGroupCode instanceof Array ) {
+      return questionGroupCode.map( code => asks[code] );
+    }
+
+    return [
+      asks[questionGroupCode],
+    ];
   }
 
   findAsk = field => {
@@ -213,7 +237,7 @@ class Form extends Component {
       sourceCode: ask.sourceCode,
       targetCode: ask.targetCode,
       code: ask.questionCode,
-      questionGroup: this.getQuestionGroup().name,
+      questionGroup: this.getQuestionGroups().name,
       identifier: ask.questionCode,
       weight: ask.weight,
       value: finalValue,
@@ -225,7 +249,7 @@ class Form extends Component {
       sourceCode: ask.sourceCode,
       targetCode: ask.targetCode,
       code: ask.questionCode,
-      questionGroup: this.getQuestionGroup().name,
+      questionGroup: this.getQuestionGroups().name,
       identifier: ask.questionCode,
       weight: ask.weight,
       value: finalValue,
@@ -249,18 +273,20 @@ class Form extends Component {
     setSubmitting( true );
 
     const { questionGroupCode } = this.props;
-    const questionGroup = this.getQuestionGroup();
+    const questionGroups = this.getQuestionGroups();
 
-    /* send event to back end */
-    const eventData = {
-      code: questionGroupCode,
-      value: JSON.stringify({
-        targetCode: questionGroup.targetCode,
-        action: 'submit',
-      }),
-    };
+    questionGroups.forEach( questionGroup => {
+      /* send event to back end */
+      const eventData = {
+        code: questionGroupCode,
+        value: JSON.stringify({
+          targetCode: questionGroup.targetCode,
+          action: 'submit',
+        }),
+      };
 
-    Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
+      Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
+    });
   }
 
   handleBlur = ( ask, values, errors ) => () => {
@@ -391,9 +417,12 @@ class Form extends Component {
   }
 
   render() {
-    const questionGroup = this.getQuestionGroup();
+    const questionGroups = this.getQuestionGroups();
 
-    if ( !questionGroup ) {
+    if (
+      !questionGroups ||
+      !questionGroups.length
+    ) {
       return (
         <Box
           flexDirection="column"
@@ -444,35 +473,39 @@ class Form extends Component {
                 width="100%"
                 padding={20}
               >
-                <Box
-                  marginY={20}
-                  width="100%"
-                >
-                  <Heading
-                    align="center"
-                    width="100%"
-                    size="lg"
-                  >
-                    {questionGroup.name}
-                  </Heading>
-                </Box>
+                {questionGroups.map( questionGroup => (
+                  <Fragment key={questionGroup.name}>
+                    <Box
+                      marginY={20}
+                      width="100%"
+                    >
+                      <Heading
+                        align="center"
+                        width="100%"
+                        size="lg"
+                      >
+                        {questionGroup.name}
+                      </Heading>
+                    </Box>
 
-                {questionGroup.childAsks.map(
-                  this.renderInput(
-                    values,
-                    errors,
-                    touched,
-                    setFieldValue,
-                    setFieldTouched
-                  )
-                )}
+                    {questionGroup.childAsks.map(
+                      this.renderInput(
+                        values,
+                        errors,
+                        touched,
+                        setFieldValue,
+                        setFieldTouched
+                      )
+                    )}
+                  </Fragment>
+                ))}
 
                 <Button
                   disabled={!isValid || isSubmitting}
                   color="green"
                   onPress={handleSubmit}
                   showSpinnerOnClick
-                  key={questionGroup.name}
+                  key={questionGroups[0].name}
                 >
                   Submit
                 </Button>
