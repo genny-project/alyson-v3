@@ -17,14 +17,43 @@ class Recursive extends PureComponent {
     repeat: any,
   }
 
+  handleReducePropInjection = ( result, current ) => {
+    const { context } = this.props;
+
+    if ( result[current] == null )
+      return result;
+
+    if ( typeof result[current] === 'string' ) {
+      if ( result[current].startsWith( '_' )) {
+        result[current] = dlv( context, result[current].substring( 1 ));
+      }
+      else {
+        result[current] = curlyBracketParse( result[current], path => dlv( context, path ));
+      }
+    }
+
+    else if ( result[current] instanceof Array ) {
+      result[current] = result[current].reduce( this.handleReducePropInjection, result[current] );
+    }
+
+    else if ( typeof result[current] === 'object' ) {
+      const keys = Object.keys( result[current] );
+
+      result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
+    }
+
+    return result;
+  }
+
   injectContextIntoChildren( context, children ) {
-    return typeof children === 'string' ? curlyBracketParse( children, path => dlv( context, path )) : children;
+    return ( typeof children === 'string' )
+      ? curlyBracketParse( children, path => dlv( context, path ))
+      : children;
   }
 
   injectContextIntoProps( context, props ) {
-    if ( !props ) {
+    if ( !props )
       return {};
-    }
 
     /**
      * Loops through all of the props for this element and inject the context if required.
@@ -32,14 +61,10 @@ class Recursive extends PureComponent {
      * If the prop is not a string, simply return its current value so that functions work
      * correctly.
      */
-    const afterProps = Object.keys( props ).reduce(( result, current ) => ({
-      ...result,
-      [current]: typeof( props[current] ) === 'string'
-        ? ( props[current].startsWith( '_' )
-          ? dlv( context, props[current].substring( 1 ))
-          : curlyBracketParse( props[current], path => dlv( context, path )))
-        : props[current],
-    }), {});
+    const afterProps =
+      Object
+        .keys( props )
+        .reduce( this.handleReducePropInjection, props );
 
     return afterProps;
   }
