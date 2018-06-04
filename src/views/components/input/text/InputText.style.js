@@ -7,7 +7,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#DDD',
     borderRadius: 10,
-    padding: 15,
+    paddingTop: 15,
+    paddingRight: 15,
+    paddingLeft: 15,
+    paddingBottom: 15,
   },
   inputWithIcon: {},
   warning: {

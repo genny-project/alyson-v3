@@ -87,9 +87,6 @@ class Input extends Component {
     paddingBottom: number,
     paddingLeft: number,
     forwardedRef: any,
-    width: oneOfType(
-      [number, string]
-    ),
     prefix: oneOfType(
       [string, node]
     ),
@@ -107,6 +104,12 @@ class Input extends Component {
     ),
     textAlign: oneOf(
       ['left', 'center','right']
+    ),
+    height: oneOfType(
+      [string, number]
+    ),
+    width: oneOfType(
+      [string, number]
     ),
   }
 
@@ -167,6 +170,7 @@ class Input extends Component {
       suffixBackground,
       textSize,
       textAlign,
+      height,
     } = this.props;
 
     const status =
@@ -200,6 +204,7 @@ class Input extends Component {
       paddingLeft,
       fontSize: textSizes[textSize],
       textAlign: textAlign,
+      height,
     });
 
     const statusColor =
@@ -319,6 +324,7 @@ class Input extends Component {
               position="absolute"
               right={10}
               height="100%"
+              width,
               alignItems="center"
             >
               <Icon

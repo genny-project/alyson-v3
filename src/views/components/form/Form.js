@@ -159,8 +159,32 @@ class Form extends Component {
 
   renderInput = ( values, errors, touched, setFieldValue, setTouched ) => ask => {
     const { definitions } = this.props.baseEntities;
-    const { questionCode, attributeCode, name, mandatory, question } = ask;
+    const { questionCode, attributeCode, name, mandatory, question, childAsks } = ask;
     const { dataType } = definitions.data[attributeCode];
+
+    if (
+      childAsks &&
+      childAsks instanceof Array &&
+      childAsks.length > 0
+    ) {
+      return (
+        <Box
+          flexDirection="column"
+        >
+          <Heading>
+            {name}
+          </Heading>
+
+          <Box
+            marginTop={20}
+            marginBottom={20}
+            flexDirection="column"
+          >
+            {childAsks.map( this.renderInput( values, errors, touched, setFieldValue, setTouched ))}
+          </Box>
+        </Box>
+      );
+    }
 
     return (
       <Box

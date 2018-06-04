@@ -57,7 +57,10 @@ class MessageHandler {
         ...output.payload,
         items: [
           ...output.payload.items,
-          ...current.payload.items,
+          ...current.payload.items.map( item => ({
+            ...item,
+            parentCode: current.payload.parentCode,
+          })),
         ],
       },
     };

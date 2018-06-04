@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { node, string, array, object, oneOfType, oneOf } from 'prop-types';
-import { Box, Image, Text, Header } from '../../components';
+import { Box, Image, Text, Heading } from '../../components';
 
 class Media extends PureComponent {
   static defaultProps = {
@@ -86,19 +86,19 @@ class Media extends PureComponent {
                   header.length > 0
                 ) ? (
                     header.map( headerItem => (
-                      <Header
+                      <Heading
                         key={headerItem}
                         {...headerProps}
                       >
                         {headerItem}
-                      </Header>
+                      </Heading>
                     ))
                   ) : (
-                    <Header
+                    <Heading
                       {...headerProps}
                     >
                       {header}
-                    </Header>
+                    </Heading>
                   )
                 }
                 {(

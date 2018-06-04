@@ -21,10 +21,14 @@ const Input = props => {
     case 'text':
     case 'abn number':
     case 'acn number':
+    case 'double':
       return <InputText {...props} />;
 
     case 'email':
       return <InputText icon="mail" {...props} />;
+
+    case 'textarea':
+      return <InputText multiline numberOfLines={3} height={100} {...props} />;
 
     case 'mobile':
       return <InputText icon="phone-iphone" keyboardType="phone-pad" {...props} />;

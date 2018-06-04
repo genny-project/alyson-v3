@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { TouchableOpacity, Modal, Picker, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
 import { oneOfType, arrayOf, string, any, shape, number, func, bool } from 'prop-types';
-import { Box, Text } from '../../index';
+import { Box, Text, Input } from '../../index';
 
 class InputDropdown extends Component {
   static defaultProps = {
@@ -77,19 +77,15 @@ class InputDropdown extends Component {
 
     return (
       <Fragment>
-        <TouchableOpacity
+        <Input
+          type="text"
+          value={value}
+          placeholder={validItems ? 'Select an option...' : 'No items to select'}
+          icon="expand_more"
           disabled={!validItems && !disabled}
-          onPress={this.handleToggle}
-        >
-          <Box
-            height={50}
-            width={200}
-          >
-            <Text>
-              {value || 'Select an option'}
-            </Text>
-          </Box>
-        </TouchableOpacity>
+          enabled={false}
+          onFocus={this.handleToggle}
+        />
 
         <Modal
           visible={isOpen}
