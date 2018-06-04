@@ -6,7 +6,9 @@
 
 const navigator = {};
 
-navigator.setTopLevelNavigator = () => {};
+navigator.setParams = () => {};
+navigator.setTopLevelAppNavigator = () => {};
+navigator.setTopLevelAuthNavigator = () => {};
 navigator.navigate = () => {};
 
 export default navigator;
