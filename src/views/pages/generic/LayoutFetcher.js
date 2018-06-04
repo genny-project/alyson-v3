@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { object, func, string } from 'prop-types';
-import { removeStartingAndEndingSlashes } from '../../../utils';
+import { removeStartingAndEndingSlashes, navigator } from '../../../utils';
 
 class LayoutFetcher extends Component {
   static propTypes = {
@@ -24,13 +24,20 @@ class LayoutFetcher extends Component {
     }
   }
 
+  getAttributes() {
+    const { attributes } = this.props.baseEntities;
+    const layoutAttributes =
+      Object
+        .keys( attributes )
+        .filter( this.handleFilterAttributes )
+        .sort( this.handleSortAttributes );
+
+    return layoutAttributes;
+  }
+
   getLayout() {
     const { attributes } = this.props.baseEntities;
-    const layoutAttribute = Object
-      .keys( attributes )
-      .filter( this.handleFilterAttributes )
-      .sort( this.handleSortAttributes )
-      .find( this.findAttribute );
+    const { layoutAttribute, params } = this.findLayoutAttribute();
 
     const layout = (
       layoutAttribute &&
@@ -46,6 +53,11 @@ class LayoutFetcher extends Component {
         parsed = JSON.parse( layout );
 
         this.setState({ layout: parsed });
+
+        navigator.setParams({
+          params,
+          key: layoutAttribute,
+        });
       }
     }
     catch ( error ) {
@@ -125,42 +137,64 @@ class LayoutFetcher extends Component {
     return fragment;
   }
 
-  findAttribute = attribute => {
+  findLayoutAttribute() {
     const { currentUrl, baseEntities } = this.props;
-    const { attributes } = baseEntities;
+    const attributes = this.getAttributes();
     const strippedCurrentUrl = removeStartingAndEndingSlashes( currentUrl );
+    const params = {};
 
-    const layoutUrl = (
-      attributes[attribute] &&
-      attributes[attribute].PRI_LAYOUT_URI &&
-      attributes[attribute].PRI_LAYOUT_URI.valueString
-    );
+    const layoutAttribute = attributes.find( attribute => {
+      const layoutUrl = (
+        baseEntities.attributes[attribute] &&
+        baseEntities.attributes[attribute].PRI_LAYOUT_URI &&
+        baseEntities.attributes[attribute].PRI_LAYOUT_URI.valueString
+      );
 
-    if ( !layoutUrl ) {
-      return false;
-    }
-
-    let strippedLayoutUrl = removeStartingAndEndingSlashes( layoutUrl );
-
-    console.warn({ strippedLayoutUrl, strippedCurrentUrl });
-
-    if ( strippedLayoutUrl.includes( ':' )) {
-      const layoutUrlFragments = strippedLayoutUrl.split( '/' );
-      const currentUrlFragments = strippedCurrentUrl.split( '/' );
-
-      if ( layoutUrlFragments.length !== currentUrlFragments.length )
+      if ( !layoutUrl ) {
         return false;
+      }
 
-      strippedLayoutUrl =
-        layoutUrlFragments
-          .map( this.handleMapUrlFragments( currentUrlFragments ))
-          .join( '/' );
-    }
+      let strippedLayoutUrl = removeStartingAndEndingSlashes( layoutUrl );
 
-    if ( strippedLayoutUrl === strippedCurrentUrl ) {
-      return true;
-    }
-  };
+      if ( strippedLayoutUrl.includes( ':' )) {
+        const layoutUrlFragments = strippedLayoutUrl.split( '/' );
+        const currentUrlFragments = strippedCurrentUrl.split( '/' );
+
+        if ( layoutUrlFragments.length !== currentUrlFragments.length )
+          return false;
+
+        /* Keep locally so we add the params. */
+        const handleMapUrlFragments = ( fragment, index ) => {
+          if ( fragment.startsWith( ':' )) {
+            /* Remove the colon at the start. */
+            const param = fragment.substr( 1 );
+
+            params[param] = currentUrlFragments[index];
+
+            return currentUrlFragments[index];
+          }
+
+          return fragment;
+        };
+
+        strippedLayoutUrl =
+          layoutUrlFragments
+            .map( handleMapUrlFragments )
+            .join( '/' );
+      }
+
+      if ( strippedLayoutUrl === strippedCurrentUrl ) {
+        return true;
+      }
+
+      return false;
+    });
+
+    return {
+      layoutAttribute,
+      params,
+    };
+  }
 
   render() {
     const { layout } = this.state;

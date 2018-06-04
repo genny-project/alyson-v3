@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { node } from 'prop-types';
 import Layout from '../../layout';
-import { Box, Text, Heading } from '../index';
+import { Box, Text, Heading, ScrollView } from '../index';
 
 class ErrorBoundary extends Component {
   static propTypes = {
@@ -28,20 +28,24 @@ class ErrorBoundary extends Component {
           hideHeader
           hideSidebar
         >
-          <Box
-            justifyContent="center"
-            alignItems="center"
-            flex={1}
-            height="100%"
-          >
-            <Heading>
-              An error has occurred!
-            </Heading>
+          <ScrollView flex={1}>
+            <Box
+              justifyContent="center"
+              alignItems="center"
+              flex={1}
+              flexDirection="column"
+            >
+              <Heading>
+                An error has occurred!
+              </Heading>
 
-            <Text>
-              {error.toString()}
-            </Text>
-          </Box>
+              <Box height={20} />
+
+              <Text>
+                {error.toString()}
+              </Text>
+            </Box>
+          </ScrollView>
         </Layout>
       );
     }

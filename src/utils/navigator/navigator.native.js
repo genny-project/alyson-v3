@@ -11,6 +11,23 @@ navigator.setTopLevelAuthNavigator = ref => {
   navigator.__authNavigator = ref;
 };
 
+navigator.setParams = ({
+  params,
+  key,
+  useAuthNavigator,
+}) => {
+  const navigatorType = useAuthNavigator
+    ? '__authNavigator'
+    : '__appNavigator';
+
+  navigator[navigatorType].dispatch(
+    NavigationActions.setParams({
+      params,
+      key,
+    })
+  );
+};
+
 navigator.navigate = ({
   routeName,
   params = {},
