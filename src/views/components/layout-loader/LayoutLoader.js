@@ -16,6 +16,7 @@ class LayoutLoader extends PureComponent {
       context: any,
     }),
     data: object,
+    navigation: object,
   }
 
   handleRetry = () => {
@@ -23,7 +24,7 @@ class LayoutLoader extends PureComponent {
   }
 
   render() {
-    const { layout, data } = this.props;
+    const { layout, data, navigation } = this.props;
 
     if ( !layout ) {
       return (
@@ -92,7 +93,10 @@ class LayoutLoader extends PureComponent {
     }
 
     /* Calculate the data for the layout */
-    const context = { query: new DataQuery( data ).query( layout.query || [] ) };
+    const context = {
+      query: new DataQuery( data ).query( layout.query || [] ),
+      navigation: navigation.state.params,
+    };
 
     return (
       <Layout {...layout.layout} context={context}>
