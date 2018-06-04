@@ -20,23 +20,27 @@ class Link extends Component {
     useAppNavigator: bool,
     pure: bool,
     withoutFeedback: bool,
+    params: object,
   }
 
   handlePress = event => {
-    const { disabled, useAppNavigator, to, navigation, onPress } = this.props;
+    const { disabled, useAppNavigator, to, navigation, onPress, params } = this.props;
 
     if ( disabled )
       return;
 
     if ( useAppNavigator ) {
-      navigator.navigate({ routeName: to });
+      navigator.navigate({ routeName: to, params });
     }
     else if ( routes[to] )
-      navigation.navigate( to );
+      navigation.navigate( to, params );
     else {
       navigation.navigate({
         routeName: 'generic',
-        params: { layout: to },
+        params: {
+          ...params,
+          layout: to,
+        },
         key: to,
       });
     }
