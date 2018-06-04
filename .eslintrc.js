@@ -194,6 +194,7 @@ module.exports = {
           'componentDidMount',
           'shouldComponentUpdate',
           'componentDidUpdate',
+          'componentDidCatch',
           'componentWillUnmount',
         ],
         rendering: [

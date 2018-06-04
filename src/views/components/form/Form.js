@@ -15,6 +15,10 @@ class Form extends Component {
     baseEntities: object,
   }
 
+  componentDidCatch( error ) {
+    console.warn( error );
+  }
+
   getQuestionGroup() {
     const { questionGroupCode, asks } = this.props;
 

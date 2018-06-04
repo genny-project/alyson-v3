@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { SafeAreaView } from 'react-native';
 import { node } from 'prop-types';
 import Layout from '../../layout';
 import { Box, Text, Heading, ScrollView } from '../index';
@@ -22,31 +23,34 @@ class ErrorBoundary extends Component {
 
     if ( error ) {
       return (
-        <Layout
-          title="Uh oh!"
-          appColor="light"
-          hideHeader
-          hideSidebar
-        >
-          <ScrollView flex={1}>
-            <Box
-              justifyContent="center"
-              alignItems="center"
+        <SafeAreaView style={{ flex: 1 }}>
+          <Layout
+            title="Uh oh!"
+            appColor="light"
+            hideHeader
+            hideSidebar
+          >
+            <ScrollView
               flex={1}
-              flexDirection="column"
+              padding={20}
             >
-              <Heading>
-                An error has occurred!
-              </Heading>
+              <Box
+                flex={1}
+                flexDirection="column"
+              >
+                <Heading>
+                  An error has occurred!
+                </Heading>
 
-              <Box height={20} />
+                <Box height={20} />
 
-              <Text>
-                {error.toString()}
-              </Text>
-            </Box>
-          </ScrollView>
-        </Layout>
+                <Text>
+                  {error.toString()}
+                </Text>
+              </Box>
+            </ScrollView>
+          </Layout>
+        </SafeAreaView>
       );
     }
 
