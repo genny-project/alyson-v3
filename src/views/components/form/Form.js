@@ -42,18 +42,52 @@ class Form extends Component {
     }
 
     const initialValues = questionGroup.childAsks.reduce(( initialValues, ask ) => {
-      initialValues[ask.questionCode] = (
-        attributes[ask.targetCode] &&
-        attributes[ask.targetCode][ask.attributeCode] &&
-        (
-          attributes[ask.targetCode][ask.attributeCode].valueString ||
-          attributes[ask.targetCode][ask.attributeCode].valueDate ||
-          attributes[ask.targetCode][ask.attributeCode].valueBoolean
-        )
-      ) || undefined;
+      if (
+        ask.childAsks &&
+        ask.childAsks instanceof Array &&
+        ask.childAsks.length > 0
+      ) {
+        ask.childAsks.forEach( childAsk => {
+          const value = (
+            attributes[childAsk.targetCode] &&
+            attributes[childAsk.targetCode][childAsk.attributeCode] &&
+            (
+              attributes[childAsk.targetCode][childAsk.attributeCode].valueString ||
+              attributes[childAsk.targetCode][childAsk.attributeCode].valueDate ||
+              attributes[childAsk.targetCode][childAsk.attributeCode].valueBoolean
+            )
+          );
+
+          console.warn( 'childAsk', { childAsk, value }, ask.mandatory );
+
+          /* TODO: better handle `false` value */
+          if ( value || childAsk.mandatory )
+            initialValues[childAsk.questionCode] = value;
+        });
+      }
+
+      else {
+        const value = (
+          attributes[ask.targetCode] &&
+          attributes[ask.targetCode][ask.attributeCode] &&
+          (
+            attributes[ask.targetCode][ask.attributeCode].valueString ||
+            attributes[ask.targetCode][ask.attributeCode].valueDate ||
+            attributes[ask.targetCode][ask.attributeCode].valueBoolean
+          )
+        );
+
+        console.warn( 'regular', { ask, value }, ask.mandatory );
+
+        /* TODO: better handle `false` value */
+        if ( value || ask.mandatory )
+          initialValues[ask.questionCode] = value;
+      }
 
       return initialValues;
     }, {});
+
+    console.warn({ initialValues });
 
     this.setState({ initialValues });
   }

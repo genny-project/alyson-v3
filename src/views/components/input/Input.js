@@ -64,6 +64,8 @@ const Input = props => {
       return <CheckBox {...props} radio />;
 
     case 'upload':
+      return <InputFile imageOnly {...props} />;
+
     case 'file':
       return <InputFile {...props} />;
 

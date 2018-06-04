@@ -13,6 +13,8 @@ class InputDropdown extends Component {
   static propTypes = {
     value: any,
     onChange: func,
+    onChangeValue: func,
+    onBlur: func,
     itemStringKey: string,
     itemValueKey: string,
     itemIdKey: string,
@@ -55,10 +57,16 @@ class InputDropdown extends Component {
 
     if ( this.props.onChange )
       this.props.onChange( value );
+
+    if ( this.props.onChangeValue )
+      this.props.onChangeValue( value );
   }
 
   handleClose = () => {
     this.setState({ isOpen: false });
+
+    if ( this.props.onBlur )
+      this.props.onBlur();
   }
 
   handleToggle = () => {

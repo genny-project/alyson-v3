@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { string, object, func } from 'prop-types';
 import { Input } from '../../index';
+import FormInputDropdown from './dropdown';
 
 class FormInput extends Component {
   static propTypes = {
@@ -22,6 +23,17 @@ class FormInput extends Component {
           <Input
             {...this.props}
             html={question.html}
+            onChangeValue={this.handleChangeValueWithSend}
+          />
+        );
+
+      case 'dropdown':
+        return <FormInputDropdown {...this.props} />;
+
+      case 'upload':
+        return (
+          <Input
+            {...this.props}
             onChangeValue={this.handleChangeValueWithSend}
           />
         );

@@ -47,14 +47,16 @@ const handleReduceLinks = ( resultant, current ) => {
       ? resultant[current.parentCode].links
       : [];
 
-    /* Group all the parent codes inside a links array. */
-    resultant[current.parentCode] = ({
-      ...resultant[current.parentCode],
-      links: [
-        ...existingLinks,
-        current.code,
-      ],
-    });
+    if ( existingLinks.indexOf( current.code ) < 0 ) {
+      /* Group all the parent codes inside a links array. */
+      resultant[current.parentCode] = ({
+        ...resultant[current.parentCode],
+        links: [
+          ...existingLinks,
+          current.code,
+        ],
+      });
+    }
   }
 
   return resultant;

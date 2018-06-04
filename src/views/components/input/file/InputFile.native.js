@@ -18,8 +18,9 @@ class InputFile extends Component {
   static propTypes = {
     imageOnly: bool,
     onChange: func,
+    onChangeValue: func,
   }
-  
+
   state = {
     files: [],
   };
@@ -31,16 +32,18 @@ class InputFile extends Component {
         result,
       ],
     }), () => {
-      this.handleSaveToServer;
+      this.handleSaveToServer();
     });
   }
 
   handleSaveToServer = () => {
     const { files } = this.state;
-    
-    if ( this.props.onChange ) {
+
+    if ( this.props.onChange )
       this.props.onChange({ target: { value: files } });
-    }
+
+    if ( this.props.onChangeValue )
+      this.props.onChangeValue( files );
   }
 
   uploadFile = async ( result ) => {
@@ -48,15 +51,15 @@ class InputFile extends Component {
     const fileName = localUri.split( '/' ).pop();
     const match = /\.(\w+)$/.exec( fileName );
 
-    const fileType = match ? mime.contentType( match[1] ).split( ';' )[0] : 'file';  
+    const fileType = match ? mime.contentType( match[1] ).split( ';' )[0] : 'file';
     const formData = new FormData();
     const url = config.uppy.url;
-    
+
     const responseGet = await axios({
       method: 'get',
       url: `${url}params?filename=${fileName}&type=${encodeURIComponent( fileType )}`,
     });
-    
+
     if (
       responseGet.status !== 200 ||
       responseGet.data == null ||
@@ -66,7 +69,7 @@ class InputFile extends Component {
     }
     const data = responseGet.data;
     const fields = responseGet.data.fields;
-    
+
     Object.keys( fields ).forEach( field_key => {
       formData.append( field_key, fields[field_key] );
     });
@@ -86,7 +89,7 @@ class InputFile extends Component {
     const jsonObj = fastXmlParser.parse( text );
     const name = formData._parts.filter( field => ( field[0] === 'file' ))[0][1].name;
     const type = formData._parts.filter( field => ( field[0] === 'file' ))[0][1].fileType;
-    
+
     const formattedFile = {
       data: {
         name: name,
@@ -117,13 +120,13 @@ class InputFile extends Component {
         method: data.method,
       },
     };
-    
+
     this.handleComplete( formattedFile );
   }
 
   handlePress = async () => {
     const { imageOnly } = this.props;
-    
+
     if ( imageOnly ) {
       await Expo.Permissions.askAsync( Expo.Permissions.CAMERA_ROLL );
       await Expo.Permissions.askAsync( Expo.Permissions.CAMERA );
@@ -196,7 +199,7 @@ class InputFile extends Component {
           onPress={this.handlePress}
           text={
             `Pick a${
-              imageOnly 
+              imageOnly
                 ? 'n image from camera roll'
                 : ' file from your device'
             }`
