@@ -224,7 +224,7 @@ class Form extends Component {
         <FormInput
           onChangeValue={this.handleChange( questionCode, setFieldValue, setTouched, ask )}
           value={values && values[questionCode]}
-          type={dataType.toLowerCase()}
+          type={typeof dataType === 'string' ? dataType.toLowerCase() : dataType}
           error={touched[questionCode] && errors[questionCode]}
           onBlur={this.handleBlur( ask, values, errors )}
           required={mandatory}
