@@ -31,14 +31,31 @@ const handleReduceAttributes = ( resultant, current ) => {
 };
 
 const handleReduceLinks = ( resultant, current ) => {
-  const handleForEach = link => {
-    resultant[link.link.linkValue] = ({
-      ...resultant[link.link.linkValue],
-      [link.link.targetCode]: link,
-    });
+  const handleCombineLinkValues = link => {
+    if ( link.link.linkValue ) {
+      resultant[link.link.linkValue] = ({
+        ...resultant[link.link.linkValue],
+        [link.link.targetCode]: link,
+      });
+    }
   };
 
-  current.links.forEach( handleForEach );
+  current.links.forEach( handleCombineLinkValues );
+
+  if ( current.parentCode ) {
+    const existingLinks = resultant[current.parentCode]
+      ? resultant[current.parentCode].links
+      : [];
+
+    /* Group all the parent codes inside a links array. */
+    resultant[current.parentCode] = ({
+      ...resultant[current.parentCode],
+      links: [
+        ...existingLinks,
+        current.code,
+      ],
+    });
+  }
 
   return resultant;
 };
