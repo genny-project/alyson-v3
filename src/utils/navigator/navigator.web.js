@@ -6,6 +6,8 @@
 
 const navigator = {
   setParams: () => {},
+  getAppNavigator: () => {},
+  getAuthNavigator: () => {},
   setTopLevelAppNavigator: () => {},
   setTopLevelAuthNavigator: () => {},
   navigate: () => {},

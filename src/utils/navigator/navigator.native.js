@@ -12,6 +12,14 @@ const navigator = {
     navigator.__authNavigator = ref;
   },
 
+  getAppNavigator: () => {
+    return navigator.__appNavigator;
+  },
+
+  getAuthNavigator: () => {
+    return navigator.__authNavigator;
+  },
+
   getParam: ({
     param,
     defaultValue,
