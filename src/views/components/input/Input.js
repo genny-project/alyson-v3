@@ -77,6 +77,7 @@ const Input = props => {
       return <DatePicker {...props} date />;
 
     case 'datetime':
+    case 'java.time.localdatetime':
       return <DatePicker {...props} date time />;
 
     case 'mobileverification':
