@@ -118,9 +118,10 @@ class DatePicker extends Component {
       : ''
     );
 
-    const displayValue = value != null
-      ? moment( value ).format( displayFormat )
-      : 'Select a date';
+    const momentValue = moment( value );
+    const displayValue = momentValue.isValid()
+      ? momentValue.format( displayFormat )
+      : null;
 
     return (
       <Box
@@ -132,8 +133,10 @@ class DatePicker extends Component {
           {...restProps}
           type="text"
           value={displayValue}
+          placeholder="Select a date..."
           enabled={false}
           onFocus={this.handleFocus}
+          icon="expand-more"
         />
 
         <Modal

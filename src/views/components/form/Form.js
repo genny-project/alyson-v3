@@ -3,7 +3,6 @@ import { ActivityIndicator } from 'react-native';
 import { string, object } from 'prop-types';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
-import dlv from 'dlv';
 import { Bridge } from '../../../utils/vertx';
 import { Box, Text, Button, Heading, Icon, KeyboardAwareScrollView } from '../index';
 import FormInput from './input';
@@ -15,8 +14,78 @@ class Form extends Component {
     baseEntities: object,
   }
 
+  state = {
+    validationList: {},
+    initialValues: {},
+  }
+
+  componentDidMount() {
+    this.setInitialValues();
+    this.setValidationList();
+  }
+
   componentDidCatch( error ) {
     console.warn( error );
+  }
+
+  setInitialValues() {
+    const questionGroup = this.getQuestionGroup();
+    const { attributes } = this.props.baseEntities;
+
+    if (
+      !questionGroup ||
+      !questionGroup.childAsks
+    ) {
+      this.setState({ initialValues: {} });
+
+      return;
+    }
+
+    const initialValues = questionGroup.childAsks.reduce(( initialValues, ask ) => {
+      initialValues[ask.questionCode] = (
+        attributes[ask.targetCode] &&
+        attributes[ask.targetCode][ask.attributeCode] &&
+        (
+          attributes[ask.targetCode][ask.attributeCode].valueString ||
+          attributes[ask.targetCode][ask.attributeCode].valueDate ||
+          attributes[ask.targetCode][ask.attributeCode].valueBoolean
+        )
+      ) || undefined;
+
+      return initialValues;
+    }, {});
+
+    this.setState({ initialValues });
+  }
+
+  setValidationList() {
+    const questionGroup = this.getQuestionGroup();
+    const { data } = this.props.baseEntities.definitions;
+
+    if (
+      !questionGroup ||
+      !questionGroup.childAsks
+    ) {
+      this.setState({ validationList: {} });
+
+      return;
+    }
+
+    const validationList = questionGroup.childAsks.reduce(( validationList, ask ) => {
+      const dataType = (
+        data[ask.attributeCode] &&
+        data[ask.attributeCode].dataType
+      );
+
+      validationList[ask.questionCode] = {
+        dataType,
+        required: ask.mandatory,
+      };
+
+      return validationList;
+    }, {});
+
+    this.setState({ validationList });
   }
 
   getQuestionGroup() {
@@ -25,41 +94,64 @@ class Form extends Component {
     return asks[questionGroupCode];
   }
 
-  doValidate = values => {
-    const { baseEntities, questionGroupCode, asks } = this.props;
+  findAsk = field => {
+    const { questionGroupCode, asks } = this.props;
     const questionGroup = asks[questionGroupCode];
-    const types = dlv( baseEntities, 'definitions.types' );
 
+    let ask = null;
+
+    const deepSearch = array => array.forEach( element => {
+      console.warn({ element });
+
+      if ( element.questionCode === field )
+        ask = element;
+
+      else if ( element.childAsks )
+        deepSearch( element.childAsks );
+    });
+
+    deepSearch( questionGroup.childAsks );
+
+    return ask;
+  }
+
+  doValidate = values => {
+    if ( !values )
+      return {};
+
+    const { validationList } = this.state;
+    const { types } = this.props.baseEntities.definitions;
     const newState = {};
 
-    if ( !values )
-      return newState;
+    Object.keys( values ).forEach( field => {
+      const validationData = validationList[field];
 
-    Object.keys( values ).forEach( value_key => {
-      const dataTypes = dlv( baseEntities, 'definitions.data' );
-      const ask = questionGroup.childAsks.filter( child => child.questionCode === value_key )[0];
-      const attributeData = dataTypes[ask.attributeCode];
-      const validationList = types[attributeData.dataType].validationList;
+      if ( !validationData )
+        return;
+
+      const { dataType, required } = validationData;
+      const validationArray = types[dataType] && types[dataType].validationList;
 
       if (
-        values[value_key] == null &&
-        ask.mandatory
+        !validationArray ||
+        !( validationArray instanceof Array ) ||
+        validationArray.length === 0
+      )
+        return;
+
+      if (
+        values[field] == null &&
+        required
       ) {
-        newState[value_key] = 'Please enter this field';
+        newState[field] = 'Please enter this field';
       }
 
-      else if (
-        validationList &&
-        validationList.length > 0
-      ) {
-        const isValid = validationList.every( validation => {
-          return new RegExp( validation.regex ).test( String( values[value_key] ));
-        });
+      const isValid = validationArray.every( validation => {
+        return new RegExp( validation.regex ).test( String( values[field] ));
+      });
 
-        if ( !isValid ) {
-          newState[value_key] = 'Error';
-        }
-      }
+      if ( !isValid )
+        newState[field] = 'Error';
     });
 
     return newState;
@@ -180,7 +272,9 @@ class Form extends Component {
             marginBottom={20}
             flexDirection="column"
           >
-            {childAsks.map( this.renderInput( values, errors, touched, setFieldValue, setTouched ))}
+            {childAsks.map(
+              this.renderInput( values, errors, touched, setFieldValue, setTouched )
+            )}
           </Box>
         </Box>
       );
@@ -286,20 +380,8 @@ class Form extends Component {
         </Box>
       );
     }
-    const initialValues = {};
 
-    questionGroup.childAsks.forEach(( ask ) => {
-      initialValues[ask.questionCode] = (
-        this.props.baseEntities.attributes[ask.targetCode] &&
-          this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode] &&
-          (
-            /* TODO: move this into its own function */
-            this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueString ||
-            this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueDate ||
-            this.props.baseEntities.attributes[ask.targetCode][ask.attributeCode].valueBoolean
-          )
-      );
-    });
+    const { initialValues } = this.state;
 
     return (
       <Formik
@@ -307,6 +389,7 @@ class Form extends Component {
         validate={this.doValidate}
         onSubmit={this.handleSubmit}
         validateOnBlur
+        enableReinitialize
       >
         {({
           values,

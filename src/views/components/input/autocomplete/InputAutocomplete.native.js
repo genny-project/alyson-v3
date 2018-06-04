@@ -77,14 +77,27 @@ class InputAutocomplete extends Component {
   }
 
   render() {
-    const { inputType, items, itemStringKey, inputProps, onType, width } = this.props;
+    const {
+      inputType,
+      items,
+      itemStringKey,
+      inputProps,
+      onType,
+      width,
+      defaultValue,
+      value,
+    } = this.props;
+
+    console.warn({ value });
 
     return (
       <Downshift
-        defaultInputValue={(
-          this.props.value ||
-          this.props.defaultValue
-        )}
+        inputValue={typeof value === 'string'
+          ? value
+          : value != null
+            ? value[itemStringKey]
+            : ''}
+        defaultInputValue={value || defaultValue}
         itemToString={item => (
           item == null ? ''
           : typeof item === 'string' ? item
