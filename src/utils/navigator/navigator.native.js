@@ -12,6 +12,21 @@ const navigator = {
     navigator.__authNavigator = ref;
   },
 
+  getParam: ({
+    param,
+    defaultValue,
+    useAuthNavigator,
+  }) => {
+    const navigatorType = useAuthNavigator
+      ? '__authNavigator'
+      : '__appNavigator';
+
+    if ( !navigator[navigatorType] )
+      return defaultValue;
+
+    return navigator[navigatorType]._navigation.getParam( param, defaultValue );
+  },
+
   setParams: ({
     params,
     key,
