@@ -36,6 +36,7 @@ export { default as Touchable } from './touchable';
 export { default as Media } from './media';
 export { default as Status } from './status';
 export { default as EventButton } from './event-button';
+export { default as EventButtonLink } from './event-button-link';
 
 export * from './keycloak';
 export * from './vertx';

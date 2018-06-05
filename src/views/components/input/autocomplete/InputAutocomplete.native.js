@@ -88,8 +88,6 @@ class InputAutocomplete extends Component {
       value,
     } = this.props;
 
-    console.warn({ value });
-
     return (
       <Downshift
         inputValue={typeof value === 'string'
