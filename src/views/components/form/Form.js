@@ -87,16 +87,12 @@ class Form extends Component {
             )
           );
 
-          console.warn( 'regular', { ask, value }, ask.mandatory );
-
           /* TODO: better handle `false` value */
           if ( value || ask.mandatory )
             initialValues[ask.questionCode] = value;
         }
       });
     });
-
-    console.warn({ initialValues });
 
     this.setState({ initialValues });
   }
@@ -144,8 +140,16 @@ class Form extends Component {
     const { questionGroupCode, asks } = this.props;
 
     if ( questionGroupCode instanceof Array ) {
-      return questionGroupCode.map( code => asks[code] );
+      return questionGroupCode.reduce(( questionGroups, code ) => {
+        if ( asks[code] )
+          questionGroups.push( asks[code] );
+
+        return questionGroups;
+      }, [] );
     }
+
+    if ( !asks[questionGroupCode] )
+      return [];
 
     return [
       asks[questionGroupCode],

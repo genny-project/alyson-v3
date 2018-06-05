@@ -137,14 +137,10 @@ class InputAddress extends Component {
         !( places instanceof Array ) ||
         !places.length
       ) {
-        console.warn( 'thats why!' );
-
         throw new Error( `Unable to find geocoded results for placeId ${place_id}` );
       }
 
       const formattedPlace = this.formatPlace( places[0] );
-
-      console.warn({ formattedPlace });
 
       if ( this.props.onChange ) {
         this.props.onChange({
