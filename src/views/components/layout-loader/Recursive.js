@@ -27,7 +27,7 @@ class Recursive extends PureComponent {
       if ( result[current].startsWith( '_' )) {
         result[current] = dlv( context, result[current].substring( 1 ));
       }
-      else {
+      else if ( result[current].indexOf( '{{' ) >= 0 ) {
         result[current] = curlyBracketParse( result[current], path => dlv( context, path ));
       }
     }
@@ -46,35 +46,55 @@ class Recursive extends PureComponent {
   }
 
   injectContextIntoChildren( context, children ) {
-    return ( typeof children === 'string' )
+    return (
+      typeof children === 'string' &&
+      children.indexOf( '{{' ) >= 0
+    )
       ? curlyBracketParse( children, path => dlv( context, path ))
       : children;
   }
 
-  injectContextIntoProps( context, props ) {
+  /**
+   * Loops through all of the props for this element and inject the context if required.
+   * Additionally parse a handlebars style string and inject variables from the context if needed.
+   * If the prop is not a string, simply return its current value so that functions work
+   * correctly.
+   */
+  injectContextIntoProps() {
+    const { props } = this.props;
+
     if ( !props )
       return {};
 
-    /**
-     * Loops through all of the props for this element and inject the context if required.
-     * Additionally parse a handlebars style string and inject variables from the context if needed.
-     * If the prop is not a string, simply return its current value so that functions work
-     * correctly.
-     */
-    const afterProps =
+    return (
       Object
         .keys( props )
-        .reduce( this.handleReducePropInjection, props );
-
-    return afterProps;
+        .reduce( this.handleReducePropInjection, props )
+    );
   }
 
   render() {
     const { component, props, children, context, repeat } = this.props;
-    const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;
-    // console.log(repeat, injectedRepeat);
 
-    const repeatedChildren = injectedRepeat && Array.isArray( injectedRepeat )
+    if ( !component )
+      return children;
+
+    if ( !Components[component] ) {
+      return (
+        <Text>
+          Component '
+          {component}
+          ' does not exist
+        </Text>
+      );
+    }
+
+    const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;
+
+    const repeatedChildren = (
+      injectedRepeat &&
+      injectedRepeat instanceof Array
+    )
       ? injectedRepeat.map( child => ({
         ...children,
         props: {
@@ -88,34 +108,18 @@ class Recursive extends PureComponent {
       }))
       : this.injectContextIntoChildren( context, children );
 
-    if ( component ) {
-      if ( Components[component] ) {
-        return createElement(
-          Components[component],
-          this.injectContextIntoProps( context, props ),
-          repeatedChildren && (
-            repeatedChildren instanceof Array
-              ? repeatedChildren.map(( child, index ) =>
-                // eslint-disable-next-line react/no-array-index-key
-                <Recursive context={context} key={index} {...child} />
-              )
-              : typeof repeatedChildren === 'object'
-                ? <Recursive context={context} {...repeatedChildren}  />
-                : repeatedChildren
-          ),
-        );
-      }
-
-      return (
-        <Text>
-          Component '
-          {component}
-          ' does not exist
-        </Text>
-      );
-    }
-
-    return children;
+    return createElement(
+      Components[component],
+      this.injectContextIntoProps( context, props ),
+      repeatedChildren instanceof Array
+        ? repeatedChildren.map(( child, index ) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <Recursive context={context} key={index} {...child} />
+        ))
+        : typeof repeatedChildren === 'object'
+          ? <Recursive context={context} {...repeatedChildren}  />
+          : repeatedChildren
+    );
   }
 }
 
