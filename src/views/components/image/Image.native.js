@@ -15,6 +15,7 @@ const Image = ({
     circle: width / 2,
   };
 
+  // console.log( source );
   if (
     source &&
     typeof source === 'string' &&

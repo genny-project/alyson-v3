@@ -41,8 +41,6 @@ class DataQuery {
       } else {
         output = result;
       }
-
-      // console.log( result );
     });
 
     return output;
