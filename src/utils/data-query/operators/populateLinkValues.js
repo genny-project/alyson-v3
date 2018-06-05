@@ -6,8 +6,6 @@ export default ( data, options, allData ) => {
     return data;
   }
 
-  // console.log( options );
-
   const input = data.length ? data : [data];
 
   input.map( item => {
@@ -24,6 +22,12 @@ export default ( data, options, allData ) => {
 
     links.forEach( link => {
       const beg = allData.baseEntities.data[link.link.targetCode];
+
+      if ( !beg ) {
+        return;
+      }
+
+      beg.linkValue = link.link.linkValue;
 
       if ( options.as ) {
         if ( options.multiple ) {
