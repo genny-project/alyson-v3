@@ -13,6 +13,28 @@ const textSizes = {
   xl: 24,
 };
 
+const InputPrefixWrapper = ({ children }) => (
+  <Box
+    position="absolute"
+    left={15}
+    height="100%"
+    alignItems="center"
+  >
+    {children}
+  </Box>
+);
+
+const InputSuffixWrapper = ({ children }) => (
+  <Box
+    position="absolute"
+    right={15}
+    height="100%"
+    alignItems="center"
+  >
+    {children}
+  </Box>
+);
+
 class Input extends Component {
   static defaultProps = {
     autoCapitalize: 'sentences',
@@ -33,6 +55,7 @@ class Input extends Component {
     warning: false,
     textSize: 'xs',
     textAlign: 'left',
+    prefixColor: 'grey',
   }
 
   static propTypes = {
@@ -93,12 +116,9 @@ class Input extends Component {
     suffix: oneOfType(
       [string, node]
     ),
-    prefixIcon: string,
-    suffixIcon: string,
     prefixColor: string,
     suffixColor: string,
-    prefixBackground: string,
-    suffixBackground: string,
+    iconColor: string,
     textSize: oneOf(
       ['xs','sm','md','lg','xl']
     ),
@@ -111,6 +131,73 @@ class Input extends Component {
     width: oneOfType(
       [string, number]
     ),
+    prefixIcon: string,
+  }
+
+  getStatusColor() {
+    const { disabled, success, error, warning } = this.props;
+
+    return disabled ? 'lightGrey'
+      : success ? 'green'
+      : error ? 'red'
+      : warning ? 'yellow'
+      : 'grey';
+  }
+
+  renderPrefix() {
+    const { prefix, prefixIcon, prefixColor } = this.props;
+
+    if ( prefixIcon ) {
+      return (
+        <InputPrefixWrapper>
+          <Icon
+            name={prefixIcon}
+            color={prefixColor}
+          />
+        </InputPrefixWrapper>
+      );
+    }
+
+    if ( typeof prefix !== 'string' )
+      return prefix;
+
+    return (
+      <InputPrefixWrapper>
+        <Text
+          color="black"
+        >
+          {prefix}
+        </Text>
+      </InputPrefixWrapper>
+    );
+  }
+
+  renderSuffix() {
+    const { suffix, icon, suffixColor, iconColor } = this.props;
+
+    if ( icon ) {
+      return (
+        <InputSuffixWrapper>
+          <Icon
+            name={icon}
+            color={iconColor || suffixColor || this.getStatusColor()}
+          />
+        </InputSuffixWrapper>
+      );
+    }
+
+    if ( typeof suffix !== 'string' )
+      return suffix;
+
+    return (
+      <InputSuffixWrapper>
+        <Text
+          color={suffixColor}
+        >
+          {suffix}
+        </Text>
+      </InputSuffixWrapper>
+    );
   }
 
   render() {
@@ -163,11 +250,6 @@ class Input extends Component {
       prefix,
       suffix,
       prefixIcon,
-      suffixIcon,
-      prefixColor,
-      suffixColor,
-      prefixBackground,
-      suffixBackground,
       textSize,
       textAlign,
       height,
@@ -178,10 +260,6 @@ class Input extends Component {
       : success ? styles.success
       : warning ? styles.warning
       : styles.default;
-
-    const hasIconStyle = icon
-      ? styles.inputWithIcon
-      : null;
 
     const inputStyle = objectClean({
       margin,
@@ -197,22 +275,27 @@ class Input extends Component {
       paddingTop,
       paddingRight: (
         paddingRight ||
-        ( hasIconStyle && 40 ) ||
-        null
+        (
+          icon ||
+          suffix
+        )
+          ? 45
+          : null
       ),
       paddingBottom,
-      paddingLeft,
+      paddingLeft: (
+        paddingLeft ||
+        (
+          prefixIcon ||
+          prefix
+        )
+          ? 45
+          : null
+      ),
       fontSize: textSizes[textSize],
       textAlign: textAlign,
       height,
     });
-
-    const statusColor =
-      disabled ? 'lightGrey'
-      : success ? 'green'
-      : error ? 'red'
-      : warning ? 'yellow'
-      : 'grey';
 
     const nativeProps = {
       onLayout,
@@ -222,58 +305,11 @@ class Input extends Component {
 
     };
 
-    const childPrefix = ( prefixIcon != null ) ? (
-      <Icon
-        color={prefixColor || 'darkGrey'}
-        name={prefixIcon}
-      />
-    ) : ( typeof prefix === 'string' ) ? (
-      <Text
-        color={prefixColor || 'darkGrey'}
-        decoration="none"
-        align="center"
-        width="100%"
-      >
-        {prefix}
-      </Text>
-    ) : (
-      prefix || null
-    );
-
-    const childSuffix = ( suffixIcon != null ) ? (
-      <Icon
-        color={suffixColor || 'darkGrey'}
-        name={suffixIcon}
-      />
-    ) : ( typeof suffix === 'string' ) ? (
-      <Text
-        color={suffixColor || 'darkGrey'}
-        decoration="none"
-        align="center"
-        width="100%"
-      >
-        {suffix}
-      </Text>
-    ) : (
-      suffix || null
-    );
-
     return (
       <Box
         display="flex"
         width={width}
       >
-        {childPrefix ? (
-          <Box
-            backgroundColor={prefixBackground || 'lightGrey'}
-            alignItems="center"
-            flexGrow={0}
-            paddingX={10}
-          >
-            {childPrefix}
-          </Box>
-        ) : null}
-
         <Box
           position="relative"
           flex={1}
@@ -298,7 +334,7 @@ class Input extends Component {
             onSelectionChange={onSelectionChange}
             onSubmitEditing={onSubmitEditing}
             placeholder={placeholder}
-            placeholderTextColor={statusColor}
+            placeholderTextColor={this.getStatusColor()}
             secureTextEntry={secureTextEntry}
             selection={selection}
             selectTextOnFocus={selectTextOnFocus}
@@ -307,7 +343,6 @@ class Input extends Component {
               styles.input,
               inputStyle,
               status,
-              hasIconStyle,
             ]}
             value={value}
             underlineColorAndroid="transparent"
@@ -319,35 +354,31 @@ class Input extends Component {
             ref={forwardedRef}
           />
 
-          {icon ? (
-            <Box
-              position="absolute"
-              right={15}
-              height="100%"
-              alignItems="center"
-            >
-              <Icon
-                name={icon}
-                color={statusColor}
-                size="md"
-              />
-            </Box>
-          ) : null}
-        </Box>
+          {(
+            prefix ||
+            prefixIcon
+          )
+            ? this.renderPrefix()
+            : null}
 
-        {childSuffix ? (
-          <Box
-            backgroundColor={suffixBackground || 'lightGrey'}
-            alignItems="center"
-            flexGrow={0}
-            paddingX={10}
-          >
-            {childSuffix}
-          </Box>
-        ) : null}
+          {(
+            icon ||
+            suffix
+          )
+            ? this.renderSuffix()
+            : null}
+        </Box>
       </Box>
     );
   }
 }
+
+InputPrefixWrapper.propTypes = {
+  children: node,
+};
+
+InputSuffixWrapper.propTypes = {
+  children: node,
+};
 
 export default Input;

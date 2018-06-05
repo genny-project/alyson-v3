@@ -223,15 +223,13 @@ class Form extends Component {
     let finalValue = newValue;
     let finalAttributeCode = ask.attributeCode;
 
-    if ( ask.attributeCode.indexOf( 'PRICE' ) !== -1 || ask.attributeCode.indexOf( 'FEE' ) !== -1 ) {
-      finalValue = JSON.stringify({
-        amount: newValue,
-        currency: 'AUD',
-      });
-    } else if ( ask.attributeCode.indexOf( 'ADDRESS_FULL' ) !== -1 ) {
+    if ( ask.attributeCode.indexOf( 'ADDRESS_FULL' ) !== -1 ) {
       finalAttributeCode = ask.attributeCode.replace( 'ADDRESS_FULL', 'ADDRESS_JSON' );
+      console.warn( 'before:', finalValue );
       finalValue = JSON.stringify( finalValue );
-    } else if ( ask.attributeCode.indexOf( 'PRI_RATING' ) !== -1 ) {
+      console.warn( 'after:', finalValue );
+    }
+    else if ( ask.attributeCode.indexOf( 'PRI_RATING' ) !== -1 ) {
       finalAttributeCode = 'PRI_RATING_RAW';
     }
 
@@ -276,21 +274,31 @@ class Form extends Component {
 
     setSubmitting( true );
 
-    const { questionGroupCode } = this.props;
     const questionGroups = this.getQuestionGroups();
 
-    questionGroups.forEach( questionGroup => {
-      /* send event to back end */
-      const eventData = {
-        code: questionGroupCode,
-        value: JSON.stringify({
-          targetCode: questionGroup.targetCode,
-          action: 'submit',
-        }),
-      };
+    const questionGroup = questionGroups.find( group => {
+      return group.attributeCode.includes( 'BUTTON' );
+    }) || (
+      questionGroups.length > 0 &&
+      questionGroups[0]
+    );
 
-      Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
-    });
+    if ( !questionGroup ) {
+      console.warn( 'Could not submit form - no question group associated with form.' );
+
+      return;
+    }
+
+    /* send event to back end */
+    const eventData = {
+      code: questionGroup.questionCode,
+      value: JSON.stringify({
+        targetCode: questionGroup.targetCode,
+        action: 'submit',
+      }),
+    };
+
+    Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
   }
 
   handleBlur = ( ask, values, errors ) => () => {
@@ -299,13 +307,11 @@ class Form extends Component {
 
       if (
         questionCode &&
+        values &&
+        values[questionCode] &&
         (
           !errors ||
           !errors[questionCode]
-        ) &&
-        (
-          values &&
-          values[questionCode]
         )
       ) {
         this.sendAnswer( ask, values[questionCode] );

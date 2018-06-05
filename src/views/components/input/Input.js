@@ -1,5 +1,6 @@
 import React from 'react';
 import { string } from 'prop-types';
+import { Text } from '../index';
 import InputAddress from './address';
 import InputAutocomplete from './autocomplete';
 import CheckBox from './checkbox';
@@ -12,7 +13,7 @@ import Switch from './switch';
 import InputDropdown from './dropdown';
 import Passcode from './passcode';
 import InputRead from './read';
-import { Text } from '../index';
+import InputCurrency from './currency';
 
 const Input = props => {
   const { type } = props;
@@ -33,6 +34,10 @@ const Input = props => {
     case 'mobile':
     case 'landline':
       return <InputText keyboardType="phone-pad" {...props} />;
+
+    case 'currency':
+    case 'org.javamoney.moneta.money':
+      return <InputCurrency {...props} />;
 
     case 'java.lang.boolean':
     case 'switch':
