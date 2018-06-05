@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { ActivityIndicator, Dimensions } from 'react-native';
 import { any, array, bool, string, number, oneOfType, func } from 'prop-types';
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
-import { Dimensions } from 'react-native';
-import { Box, Text, Icon } from '../../components';
+import { Box, Text, Icon, Timeout } from '../../components';
 
 class Tabs extends Component {
   static defaultProps = {
@@ -105,7 +105,11 @@ class Tabs extends Component {
     const { children } = this.props;
 
     return (
-      <Box flex={1}>
+      <Box
+        flex={1}
+        alignItems="center"
+        justifyContent="center"
+      >
         {(
           children &&
           children.length > 0 &&
@@ -113,9 +117,35 @@ class Tabs extends Component {
         ) ? (
             children[route.key]
           ) : (
-            <Text>
-              No items to display
-            </Text>
+            <Timeout duration={20000}>
+              {({ isTimeUp }) => (
+                <Box
+                  justifyContent="center"
+                  alignItems="center"
+                  height="100%"
+                  flex={1}
+                  flexDirection="column"
+                >
+                  {isTimeUp ? (
+                    <Text
+                      align="center"
+                    >
+                      No items to display
+                    </Text>
+                  ) : (
+                    <Fragment>
+                      <ActivityIndicator size="large" />
+
+                      <Box height={10} />
+
+                      <Text align="center">
+                        Loading...
+                      </Text>
+                    </Fragment>
+                  )}
+                </Box>
+              )}
+            </Timeout>
           )}
       </Box>
     );
