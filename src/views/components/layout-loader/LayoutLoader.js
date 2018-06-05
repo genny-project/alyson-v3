@@ -94,7 +94,9 @@ class LayoutLoader extends PureComponent {
 
     /* Calculate the data for the layout */
     const context = {
-      query: new DataQuery( data ).query( layout.query || [] ),
+      query: new DataQuery( data ).query(
+        layout.query || [], { navigation: navigation.state.params }
+      ),
       navigation: navigation.state.params,
     };
 

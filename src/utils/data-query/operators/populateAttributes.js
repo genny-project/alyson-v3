@@ -6,7 +6,13 @@ export default ( data, options, allData ) => {
     return data;
   }
 
-  const { fields, path, single } = options;
+  const { code, fields, path, single, as } = options;
+
+  if ( code ) {
+    dset( data, as, allData.baseEntities.attributes[code] );
+
+    return data;
+  }
 
   if ( path ) {
     return [
