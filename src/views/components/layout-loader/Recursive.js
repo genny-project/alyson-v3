@@ -1,6 +1,7 @@
 import React, { createElement, PureComponent } from 'react';
 import { Text } from 'react-native';
 import dlv from 'dlv';
+import copy from 'fast-copy';
 import { object, any, string } from 'prop-types';
 import * as Components from '../index';
 
@@ -17,29 +18,36 @@ class Recursive extends PureComponent {
     repeat: any,
   }
 
-  handleReducePropInjection = ( result, current ) => {
-    const { context } = this.props;
-
+  handleReducePropInjection = context => ( result, current ) => {
     if ( result[current] == null )
       return result;
 
     if ( typeof result[current] === 'string' ) {
       if ( result[current].startsWith( '_' )) {
         result[current] = dlv( context, result[current].substring( 1 ));
+
+        return result;
       }
-      else if ( result[current].indexOf( '{{' ) >= 0 ) {
-        result[current] = curlyBracketParse( result[current], path => dlv( context, path ));
-      }
+      
+      result[current] = curlyBracketParse( result[current], path => dlv( context, path ));
+
+      return result;
     }
 
-    else if ( result[current] instanceof Array ) {
-      result[current] = result[current].reduce( this.handleReducePropInjection, result[current] );
+    if ( result[current] instanceof Array ) {
+      result[current] = result[current].reduce(
+        this.handleReducePropInjection( context ), result[current]
+      );
+
+      return result;
     }
 
-    else if ( typeof result[current] === 'object' ) {
+    if ( typeof result[current] === 'object' ) {
       const keys = Object.keys( result[current] );
+      
+      result[current] = keys.reduce( this.handleReducePropInjection( context ), result[current] );
 
-      result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
+      return result;
     }
 
     return result;
@@ -61,16 +69,25 @@ class Recursive extends PureComponent {
    * correctly.
    */
   injectContextIntoProps() {
-    const { props } = this.props;
+    const { props, context } = this.props;
 
     if ( !props )
       return {};
 
-    return (
+    const propsCopy = copy( props );
+
+    /**
+     * Loops through all of the props for this element and inject the context if required.
+     * Additionally parse a handlebars style string and inject variables from the context if needed.
+     * If the prop is not a string, simply return its current value so that functions work
+     * correctly.
+     */
+    const afterProps =
       Object
         .keys( props )
-        .reduce( this.handleReducePropInjection, props )
-    );
+        .reduce( this.handleReducePropInjection( context ), propsCopy );
+
+    return afterProps;
   }
 
   render() {
