@@ -136,6 +136,7 @@ class DatePicker extends Component {
           placeholder="Select a date..."
           enabled={false}
           onFocus={this.handleFocus}
+          prefixIcon="event"
           icon="expand-more"
         />
 

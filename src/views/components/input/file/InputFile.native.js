@@ -31,12 +31,10 @@ class InputFile extends Component {
         ...prevState.files,
         result,
       ],
-    }), () => {
-      this.handleSaveToServer();
-    });
+    }), this.propagateParentOnChange );
   }
 
-  handleSaveToServer = () => {
+  propagateParentOnChange = () => {
     const { files } = this.state;
 
     if ( this.props.onChange )
@@ -50,14 +48,13 @@ class InputFile extends Component {
     const localUri = result.uri;
     const fileName = localUri.split( '/' ).pop();
     const match = /\.(\w+)$/.exec( fileName );
-
-    const fileType = match ? mime.contentType( match[1] ).split( ';' )[0] : 'file';
+    const mimeType = match ? mime.contentType( match[1] ).split( ';' )[0] : 'file';
     const formData = new FormData();
     const url = config.uppy.url;
 
     const responseGet = await axios({
       method: 'get',
-      url: `${url}params?filename=${fileName}&type=${encodeURIComponent( fileType )}`,
+      url: `${url}params?filename=${fileName}&type=${encodeURIComponent( mimeType )}`,
     });
 
     if (
@@ -67,6 +64,7 @@ class InputFile extends Component {
     ) {
       return;
     }
+
     const data = responseGet.data;
     const fields = responseGet.data.fields;
 
@@ -74,7 +72,11 @@ class InputFile extends Component {
       formData.append( field_key, fields[field_key] );
     });
 
-    formData.append( 'file', { uri: localUri, name: fileName, fileType });
+    formData.append( 'file', {
+      uri: localUri,
+      name: fileName,
+      fileType: mimeType,
+    });
 
     const responsePost = await fetch( responseGet.data.url, {
       method: 'POST',
@@ -87,21 +89,19 @@ class InputFile extends Component {
     const text = await responsePost.text();
 
     const jsonObj = fastXmlParser.parse( text );
-    const name = formData._parts.filter( field => ( field[0] === 'file' ))[0][1].name;
-    const type = formData._parts.filter( field => ( field[0] === 'file' ))[0][1].fileType;
+    const { name, fileType } = formData._parts.filter( field => field[0] === 'file' )[0][1];
 
     const formattedFile = {
       data: {
         name: name,
-        // size: 65240,
-        type: type,
+        type: fileType,
       },
-      extension: type.split( '/' )[1],
+      extension: fileType.split( '/' )[1],
       id: dlv( jsonObj, 'PostResponse.Key' ),
       meta: {
         ...fields,
         name: name,
-        type: type,
+        type: fileType,
       },
       name: name,
       response: {
@@ -109,8 +109,7 @@ class InputFile extends Component {
         status: fields.success_action_status,
         uploadURL: dlv( jsonObj, 'PostResponse.Location' ),
       },
-      // size: ,
-      type: type,
+      type: fileType,
       uploadURL: dlv( jsonObj, 'PostResponse.Location' ),
       uploaded: true,
       xhrUpload: {
@@ -130,7 +129,7 @@ class InputFile extends Component {
     if ( imageOnly ) {
       await Expo.Permissions.askAsync( Expo.Permissions.CAMERA_ROLL );
       await Expo.Permissions.askAsync( Expo.Permissions.CAMERA );
-      // Expo.ImagePicker.launchCameraAsync(options)
+
       try {
         const result = await ImagePicker.launchImageLibraryAsync({
           allowsEditing: true,
@@ -159,10 +158,10 @@ class InputFile extends Component {
     }
   }
 
-  handleRemoveFile = fileId => () => {
-    this.setState( state => ({
-      files: state.files.filter(({ id }) => id !== fileId ),
-    }));
+  handleRemoveFile = removeId => () => {
+    this.setState( prevState => ({
+      files: prevState.files.filter(({ id }) => id !== removeId ),
+    }), this.propagateParentOnChange );
   }
 
   render() {
@@ -174,34 +173,33 @@ class InputFile extends Component {
         width="100%"
         flexDirection="column"
       >
-        {
+        {(
           files &&
           files instanceof Array &&
-          files.length > 0 &&
-            ( files.map( file => {
-              return (
-                <InputFileItem
-                  key={file.id}
-                  id={file.id}
-                  size={file.size}
-                  name={file.name}
-                  uploaded={file.uploaded}
-                  type={file.type}
-                  preview={file.uploadURL}
-                  uploadURL={file.uploadURL}
-                  onRemove={this.handleRemoveFile}
-                />
-              );
-            })
-            )
-        }
+          files.length > 0
+        )
+          ? files.map( file => (
+            <InputFileItem
+              key={file.id}
+              id={file.id}
+              size={file.size}
+              name={file.name}
+              uploaded={file.uploaded}
+              type={file.type}
+              preview={file.uploadURL}
+              uploadURL={file.uploadURL}
+              onRemove={this.handleRemoveFile}
+            />
+          ))
+          : null}
+
         <InputFileTouchable
           onPress={this.handlePress}
           text={
             `Pick a${
               imageOnly
-                ? 'n image from camera roll'
-                : ' file from your device'
+                ? `n${files.length > 0 ? 'other' : ''} image from camera roll`
+                : `${files.length > 0 ? 'nother' : ''} file from your device`
             }`
           }
         />

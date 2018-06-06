@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { string, func } from 'prop-types';
-import { TouchableOpacity } from 'react-native';
-import { Box, Text, Icon } from '../../../../components';
+import { Input } from '../../../../components';
 
 class InputFileTouchable extends Component {
   static defaultProps = {
@@ -13,9 +12,6 @@ class InputFileTouchable extends Component {
     onPress: func,
   }
 
-  state = {
-  }
-
   render() {
     const {
       text,
@@ -23,33 +19,14 @@ class InputFileTouchable extends Component {
     } = this.props;
 
     return (
-      <TouchableOpacity
-        onPress={onPress}
-        style={{ width: '100%' }}
-      >
-        <Box
-          flexDirection="row"
-          justifyContent="flex-start"
-          alignItems="center"
-          padding={10}
-          width="100%"
-          borderStyle="solid"
-          borderColor="lightgrey"
-          borderWidth={2}
-        > 
-          <Box
-            marginRight={10}
-          >
-            <Icon
-              name="add-circle"
-              color="grey"
-            />
-          </Box>
-          <Text> 
-            {text}
-          </Text>
-        </Box>
-      </TouchableOpacity>
+      <Input
+        type="text"
+        icon="add"
+        prefixIcon="camera-alt"
+        enabled={false}
+        onFocus={onPress}
+        value={text}
+      />
     );
   }
 }

@@ -24,12 +24,12 @@ class InputAddress extends Component {
     injectCustomAddressComponents: {
       street_address: '{{street_number}} {{street_name}}',
     },
-    icon: 'place',
+    prefixIcon: 'place',
     placeholder: 'Type an address...',
   }
 
   static propTypes = {
-    icon: string,
+    prefixIcon: string,
     placeholder: string,
     onChange: func,
     onChangeValue: func,
@@ -209,7 +209,7 @@ class InputAddress extends Component {
   }
 
   render() {
-    const { icon, placeholder, ...restProps } = this.props;
+    const { prefixIcon, placeholder, ...restProps } = this.props;
     const { items } = this.state;
 
     return (
@@ -218,8 +218,10 @@ class InputAddress extends Component {
         type="autocomplete"
         items={items}
         borderBetweenItems
-        placeholder={placeholder}
-        icon={icon}
+        inputProps={{
+          placeholder,
+          prefixIcon,
+        }}
         onType={this.handleType}
         itemStringKey="description"
         onChange={this.handleChange}

@@ -26,14 +26,16 @@ const Input = props => {
       return <InputText {...props} />;
 
     case 'email':
-      return <InputText keyboardType="email-address" {...props} />;
+      return <InputText prefixIcon="mail" keyboardType="email-address" {...props} />;
 
     case 'textarea':
       return <InputText multiline numberOfLines={3} height={100} {...props} />;
 
     case 'mobile':
+      return <InputText prefixIcon="phone-iphone" keyboardType="phone-pad" {...props} />;
+
     case 'landline':
-      return <InputText keyboardType="phone-pad" {...props} />;
+      return <InputText prefixIcon="call" keyboardType="phone-pad" {...props} />;
 
     case 'currency':
     case 'org.javamoney.moneta.money':
