@@ -57,4 +57,12 @@ export default ( data, options, allData ) => {
       })),
     ];
   }
+                            
+   return [
+    ...data.map( item => {
+      const result = { ...item };
+      result['attributes'] = result.code ? allData.baseEntities.attributes[result.code] : {};
+      return item;
+    }),
+  ];                      
 };
