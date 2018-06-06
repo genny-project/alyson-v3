@@ -5,10 +5,6 @@ import copy from 'fast-copy';
 import { object, any, string } from 'prop-types';
 import * as Components from '../index';
 
-const curlyBracketParse = ( input, method ) => {
-  return `${input}`.split( '{{' ).map( i => i.includes( '}}' ) ? `${method( i.split( '}}' )[0] )}${i.split( '}}' ).slice( 1 )}` : i ).join( '' );
-};
-
 class Recursive extends PureComponent {
   static propTypes = {
     component: string,
@@ -18,7 +14,37 @@ class Recursive extends PureComponent {
     repeat: any,
   }
 
-  handleReducePropInjection = context => ( result, current ) => {
+  handleMapCurlyTemplate = template => {
+    if (
+      !template ||
+      !template.includes( '}}' )
+    ) {
+      return template;
+    }
+
+    const { context } = this.props;    
+
+    const splitTemplate = template.split( '}}' );
+    const path = splitTemplate[0];
+
+    const textAfterTemplate = splitTemplate.slice( 1 );
+    const resolved = dlv( context, path );
+
+    return `${resolved}${textAfterTemplate}`;
+  }
+
+  curlyBracketParse = string => {
+    return (
+      String( string )
+        .split( '{{' )
+        .map( this.handleMapCurlyTemplate )
+        .join( '' )
+    );
+  }
+
+  handleReducePropInjection = ( result, current ) => {
+    const { context } = this.props;
+
     if ( result[current] == null )
       return result;
 
@@ -29,14 +55,34 @@ class Recursive extends PureComponent {
         return result;
       }
       
-      result[current] = curlyBracketParse( result[current], path => dlv( context, path ));
+      if ( result[current].includes( '{{' )) {
+        result[current] = this.curlyBracketParse( result[current] );
+
+        return result;
+      }
 
       return result;
     }
 
+    /* TODO: Make this call the current function recursively.
+     * Issue is that `context` suddenly becomes undefined. Look into. */
     if ( result[current] instanceof Array ) {
+      for ( let i = 0; i < result[current].length; i++ ) {
+        const element = result[current][i];
+
+        if ( typeof element === 'string' ) {
+          if ( element.startsWith( '_' )) {
+            result[current][i] = dlv( context, element.substring( 1 ));
+          }
+          
+          if ( element.includes( '{{' )) {
+            result[current][i] = this.curlyBracketParse( element );
+          }
+        }
+      }
+
       result[current] = result[current].reduce(
-        this.handleReducePropInjection( context ), result[current]
+        this.handleReducePropInjection, result[current]
       );
 
       return result;
@@ -45,7 +91,7 @@ class Recursive extends PureComponent {
     if ( typeof result[current] === 'object' ) {
       const keys = Object.keys( result[current] );
       
-      result[current] = keys.reduce( this.handleReducePropInjection( context ), result[current] );
+      result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
 
       return result;
     }
@@ -58,7 +104,7 @@ class Recursive extends PureComponent {
       typeof children === 'string' &&
       children.indexOf( '{{' ) >= 0
     )
-      ? curlyBracketParse( children, path => dlv( context, path ))
+      ? this.curlyBracketParse( children )
       : children;
   }
 
@@ -69,23 +115,17 @@ class Recursive extends PureComponent {
    * correctly.
    */
   injectContextIntoProps() {
-    const { props, context } = this.props;
+    const { props } = this.props;
 
     if ( !props )
       return {};
 
     const propsCopy = copy( props );
-
-    /**
-     * Loops through all of the props for this element and inject the context if required.
-     * Additionally parse a handlebars style string and inject variables from the context if needed.
-     * If the prop is not a string, simply return its current value so that functions work
-     * correctly.
-     */
+    
     const afterProps =
       Object
         .keys( props )
-        .reduce( this.handleReducePropInjection( context ), propsCopy );
+        .reduce( this.handleReducePropInjection, propsCopy );
 
     return afterProps;
   }
