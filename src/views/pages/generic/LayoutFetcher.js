@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { object, func, string } from 'prop-types';
-import { removeStartingAndEndingSlashes, navigator } from '../../../utils';
+import { removeStartingAndEndingSlashes } from '../../../utils';
 
 class LayoutFetcher extends Component {
   static propTypes = {
@@ -19,13 +19,18 @@ class LayoutFetcher extends Component {
   }
 
   componentDidUpdate( prevProps ) {
-    if ( prevProps.currentUrl !== this.props.currentUrl ) {
+    if (
+      prevProps.currentUrl !== this.props.currentUrl ||
+      !this.state.layout
+    ) {
+      console.warn( 'update', this.getAttributes( prevProps ));
       this.getLayout();
     }
   }
 
-  getAttributes() {
-    const { attributes } = this.props.baseEntities;
+  getAttributes(
+    attributes = this.props.baseEntities.attributes
+  ) {
     const layoutAttributes =
       Object
         .keys( attributes )
@@ -37,7 +42,7 @@ class LayoutFetcher extends Component {
 
   getLayout() {
     const { attributes } = this.props.baseEntities;
-    const { layoutAttribute, params } = this.findLayoutAttribute();
+    const { layoutAttribute } = this.findLayoutAttribute();
 
     const layout = (
       layoutAttribute &&
@@ -51,18 +56,19 @@ class LayoutFetcher extends Component {
     try {
       if ( layout ) {
         parsed = JSON.parse( layout );
-
-        this.setState({ layout: parsed });
-
-        navigator.setParams({
-          params,
-          key: layoutAttribute,
-        });
       }
     }
     catch ( error ) {
       console.warn( 'Unable to parse layout', layout );
     }
+
+    if ( parsed )
+      this.setState({ layout: parsed });
+
+    // navigator.setParams({
+      // params,
+      // key: layoutAttribute,
+    // });
   }
 
   handleFilterAttributes = attribute => {

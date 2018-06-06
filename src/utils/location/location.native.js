@@ -1,8 +1,13 @@
-const getBasePath = navigation => {
-  if ( !navigation )
+import { store } from '../../redux';
+
+const getBasePath = () => {
+  const { index, routes } = store.getState().navigation;
+  const { params } = routes[index];
+
+  if ( !params )
     return null;
 
-  const { layout } = navigation.state.params;
+  const { layout } = params;
 
   if (
     !layout ||
