@@ -30,8 +30,6 @@ class DatePicker extends Component {
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
-    console.warn({ nextProps, prevState });
-
     if (
       nextProps.value != null &&
       nextProps.value !== prevState.value

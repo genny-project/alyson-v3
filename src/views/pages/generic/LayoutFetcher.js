@@ -23,7 +23,6 @@ class LayoutFetcher extends Component {
       prevProps.currentUrl !== this.props.currentUrl ||
       !this.state.layout
     ) {
-      console.warn( 'update', this.getAttributes( prevProps ));
       this.getLayout();
     }
   }

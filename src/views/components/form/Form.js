@@ -19,6 +19,7 @@ class Form extends Component {
   state = {
     validationList: {},
     initialValues: {},
+    questionGroups: [],
   }
 
   componentDidMount() {
@@ -26,20 +27,33 @@ class Form extends Component {
     this.setValidationList();
   }
 
-  componentDidCatch( error ) {
-    console.warn( error );
+  componentDidUpdate() {
+    const { questionGroups, initialValues } = this.state;
+
+    if ( questionGroups.length === 0 ) {
+      const groups = this.getQuestionGroups();
+
+      if (
+        groups.length > 0 &&
+        Object.keys( initialValues ).length === 0
+      ) {
+        // eslint-disable-next-line react/no-did-update-set-state
+        this.setState({ questionGroups: groups }, () => {
+          this.setInitialValues();
+          this.setValidationList();
+        });
+      }
+    }
   }
 
-  setInitialValues() {
-    const questionGroups = this.getQuestionGroups();
+  setInitialValues = () => {
+    const { questionGroups } = this.state;
     const { attributes } = this.props.baseEntities;
 
     if (
       !questionGroups ||
       !questionGroups.length
     ) {
-      this.setState({ initialValues: {} });
-
       return;
     }
 
@@ -72,7 +86,7 @@ class Form extends Component {
 
             /* TODO: better handle `false` value */
             if ( value || childAsk.mandatory )
-              initialValues[childAsk.questionCode] = value;
+              initialValues[childAsk.questionCode] = value || null;
           });
         }
 
@@ -89,16 +103,17 @@ class Form extends Component {
 
           /* TODO: better handle `false` value */
           if ( value || ask.mandatory )
-            initialValues[ask.questionCode] = value;
+            initialValues[ask.questionCode] = value || null;
         }
       });
     });
 
-    this.setState({ initialValues });
+    if ( Object.keys( initialValues ).length > 0 )
+      this.setState({ initialValues });
   }
 
   setValidationList() {
-    const questionGroups = this.getQuestionGroups();
+    const { questionGroups } = this.state;
     const { data } = this.props.baseEntities.definitions;
 
     if (
@@ -156,6 +171,7 @@ class Form extends Component {
     ];
   }
 
+  /* UNUSED function - kept for reference in future for form recursive functions  */
   findAsk = field => {
     const { questionGroupCode, asks } = this.props;
     const questionGroup = asks[questionGroupCode];
@@ -225,10 +241,9 @@ class Form extends Component {
 
     if ( ask.attributeCode.indexOf( 'ADDRESS_FULL' ) !== -1 ) {
       finalAttributeCode = ask.attributeCode.replace( 'ADDRESS_FULL', 'ADDRESS_JSON' );
-      console.warn( 'before:', finalValue );
       finalValue = JSON.stringify( finalValue );
-      console.warn( 'after:', finalValue );
     }
+
     else if ( ask.attributeCode.indexOf( 'PRI_RATING' ) !== -1 ) {
       finalAttributeCode = 'PRI_RATING_RAW';
     }
@@ -271,10 +286,9 @@ class Form extends Component {
 
   handleSubmit = ( values, form ) => {
     const { setSubmitting } = form;
+    const { questionGroups } = this.state;
 
     setSubmitting( true );
-
-    const questionGroups = this.getQuestionGroups();
 
     const questionGroup = questionGroups.find( group => {
       return group.attributeCode.includes( 'BUTTON' );
@@ -319,7 +333,7 @@ class Form extends Component {
     }
   }
 
-  renderInput = ( values, errors, touched, setFieldValue, setTouched ) => ask => {
+  renderInput = ( values, errors, touched, setFieldValue, setTouched, isSubmitting ) => ask => {
     const { definitions } = this.props.baseEntities;
     const { questionCode, attributeCode, name, mandatory, question, childAsks } = ask;
     const { dataType } = definitions.data[attributeCode];
@@ -421,13 +435,14 @@ class Form extends Component {
           onBlur={this.handleBlur( ask, values, errors )}
           required={mandatory}
           question={question}
+          disabled={isSubmitting}
         />
       </Box>
     );
   }
 
   render() {
-    const questionGroups = this.getQuestionGroups();
+    const { questionGroups } = this.state;
 
     if (
       !questionGroups ||
@@ -504,7 +519,8 @@ class Form extends Component {
                         errors,
                         touched,
                         setFieldValue,
-                        setFieldTouched
+                        setFieldTouched,
+                        isSubmitting
                       )
                     )}
                   </Fragment>
