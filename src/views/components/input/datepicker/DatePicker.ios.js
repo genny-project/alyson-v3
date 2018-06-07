@@ -59,11 +59,17 @@ class DatePicker extends Component {
   };
 
   handleChange = ( value ) => {
-    console.warn( moment( value ).format( 'YYYY-MM-DD' ));
     if ( this.props.onChangeValue ) {
-      this.props.onChangeValue(
-        moment( value ).format( 'YYYY-MM-DD' )
-      );
+      const { time, date } = this.props;
+      const momentValue = moment( value );
+
+      const formatted =
+        ( time && date ) ? momentValue.format()
+        : date ? momentValue.format( 'YYYY-MM-DD' )
+        : time ? momentValue.format( 'HH:mm' )
+        : '';
+
+      this.props.onChangeValue( formatted );
     }
   }
 
@@ -107,6 +113,7 @@ class DatePicker extends Component {
     const style = {
       height: '100%',
       width: '100%',
+      flex: 1,
     };
 
     const type = `${date ? 'date' : ''}${time ? 'time' : ''}`;
@@ -195,6 +202,7 @@ class DatePicker extends Component {
                   </Text>
                 </Box>
               </TouchableOpacity>
+
               <Box
                 flex={1}
                 alignItems="center"
