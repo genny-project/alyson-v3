@@ -39,13 +39,12 @@ class Link extends Component {
             ...params,
             layout: to,
           },
-          key: to,
         }),
       );
     }
     else {
       navigation.navigate({
-        routeName: 'generic',
+        routeName: routes[to] ? to : 'generic',
         params: {
           ...params,
           layout: to,
