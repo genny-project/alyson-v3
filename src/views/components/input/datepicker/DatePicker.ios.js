@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { string, number, bool, func } from 'prop-types';
-import { DatePickerIOS, TouchableOpacity, Modal, SafeAreaView  } from 'react-native';
+import { DatePickerIOS, Modal, SafeAreaView  } from 'react-native';
 import moment from 'moment';
 import { Text, Box, Input, Touchable } from '../../../components';
 
@@ -166,9 +166,7 @@ class DatePicker extends Component {
         <Modal
           visible={isOpen}
           animationType="slide"
-          style={{
-            backgroundColor: 'white',
-          }}
+          transparent
           onDismiss={this.handleDismiss}
         >
           <SafeAreaView
@@ -176,32 +174,47 @@ class DatePicker extends Component {
               flex: 1,
             }}
           >
+            <Touchable
+              onPress={this.handleClose}
+            >
+              <Box
+                position="absolute"
+                top={0}
+                left={0}
+                height="100%"
+                width="100%"
+              />
+            </Touchable>
+
             <Box
+              height="40%"
               width="100%"
-              height="100%"
+              position="absolute"
+              bottom={0}
+              left={0}
+              backgroundColor="white"
               flexDirection="column"
             >
-              <TouchableOpacity
-                onPress={this.handleClose}
+              <Box
+                justifyContent="flex-end"
+                alignItems="center"
+                borderTopWidth={1}
+                borderBottomWidth={1}
+                borderStyle="solid"
+                borderColor="grey"
+                paddingX={5}
               >
-                <Box
-                  alignItems="flex-start"
-                  justifyContent="flex-end"
-                  flex={0}
-                  paddingX={30}
-                  paddingY={20}
-                  borderColor="grey"
-                  borderStyle="solid"
-                  borderBottomWidth={2}
+                <Touchable
+                  withFeedback
+                  onPress={this.handleClose}
                 >
-                  <Text
-                    color="black"
-                    size="md"
-                  >
-                    Done
-                  </Text>
-                </Box>
-              </TouchableOpacity>
+                  <Box padding={10}>
+                    <Text fontWeight="bold">
+                      Done
+                    </Text>
+                  </Box>
+                </Touchable>
+              </Box>
 
               <Box
                 flex={1}
