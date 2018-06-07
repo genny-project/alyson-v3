@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Modal, SafeAreaView } from 'react-native';
+import { Modal, SafeAreaView } from 'react-native';
 import { func, string, number, oneOfType, array, bool, object } from 'prop-types';
 import Downshift from 'downshift';
 import { Text, Box, Input, Icon, Touchable } from '../../index';
@@ -169,7 +169,8 @@ class InputAutocomplete extends Component {
                       left={10}
                       zIndex={5}
                     >
-                      <TouchableOpacity
+                      <Touchable
+                        withFeedback
                         onPress={closeMenu}
                       >
                         <Icon
@@ -177,7 +178,7 @@ class InputAutocomplete extends Component {
                           color="black"
                           size="md"
                         />
-                      </TouchableOpacity>
+                      </Touchable>
                     </Box>
 
                     <Input
@@ -192,6 +193,9 @@ class InputAutocomplete extends Component {
                       placeholder={inputProps.placeholder}
                       backgroundColor="transparent"
                       borderRadius={0}
+                      borderLeftWidth={0}
+                      borderRightWidth={0}
+                      borderTopWidth={0}
                     />
 
                     {inputValue && (
@@ -202,7 +206,8 @@ class InputAutocomplete extends Component {
                         right={10}
                         zIndex={5}
                       >
-                        <TouchableOpacity
+                        <Touchable
+                          withFeedback
                           onPress={this.handleClearInputValue( setState )}
                         >
                           <Icon
@@ -210,7 +215,7 @@ class InputAutocomplete extends Component {
                             color="black"
                             size="md"
                           />
-                        </TouchableOpacity>
+                        </Touchable>
                       </Box>
                     )}
                   </Box>
@@ -231,16 +236,18 @@ class InputAutocomplete extends Component {
                             : item[itemStringKey];
 
                           return (
-                            <TouchableOpacity
+                            <Touchable
                               {...getItemProps({ item: idom })}
                               key={idom}
                               onPress={() => selectItem( item )}
+                              withFeedback
                             >
                               <Box
                                 padding={15}
                                 borderBottomWidth={1}
                                 borderColor="#DDD"
                                 borderStyle="solid"
+                                alignItems="center"
                               >
                                 <Text
                                   fontWeight={selectedItem === idom ? 'bold' : 'normal'}
@@ -248,16 +255,25 @@ class InputAutocomplete extends Component {
                                   {idom}
                                 </Text>
                               </Box>
-                            </TouchableOpacity>
+                            </Touchable>
                           );
                         })
                     ) : (
                       <Box
                         paddingX={15}
                         paddingY={10}
+                        width="100%"
+                        justifyContent="center"
                       >
-                        <Text>
-                          No results
+                        <Text
+                          align="center"
+                          color="grey"
+                          size="xs"
+                        >
+                          {inputValue.length > 0
+                            ? 'No results'
+                            : 'Please enter an address above'
+                          }
                         </Text>
                       </Box>
                     )}
