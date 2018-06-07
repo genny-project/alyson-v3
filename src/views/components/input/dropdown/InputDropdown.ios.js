@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { TouchableOpacity, Modal, Picker, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
 import { oneOfType, arrayOf, string, any, shape, number, func, bool } from 'prop-types';
-import { Box, Text, Input } from '../../index';
+import { Box, Text, Input, Touchable } from '../../index';
 
 class InputDropdown extends Component {
   static defaultProps = {
@@ -70,6 +70,17 @@ class InputDropdown extends Component {
   }
 
   handleToggle = () => {
+    const { disabled, items } = this.props;
+
+    if (
+      disabled ||
+      items != null &&
+      items instanceof Array &&
+      items.length > 0
+    ) {
+      return false;
+    }
+
     this.setState( state => ({ isOpen: !state.isOpen }));
   }
 
@@ -85,15 +96,31 @@ class InputDropdown extends Component {
 
     return (
       <Fragment>
-        <Input
-          type="text"
-          value={value}
-          placeholder={validItems ? 'Select an option...' : 'No items to select'}
-          icon="expand-more"
-          disabled={!validItems && !disabled}
-          enabled={false}
-          onFocus={this.handleToggle}
-        />
+        <Touchable
+          withFeedback
+          onPress={this.handleToggle}
+          style={{
+            width: '100%',
+            position: 'relative',
+          }}
+        >
+          <Input
+            type="text"
+            value={value}
+            placeholder={validItems ? 'Select an option...' : 'No items to select'}
+            icon="expand-more"
+            disabled={!validItems && !disabled}
+            editable={false}
+          />
+
+          <Box
+            width="100%"
+            height="100%"
+            position="absolute"
+            top={0}
+            left={0}
+          />
+        </Touchable>
 
         <Modal
           visible={isOpen}

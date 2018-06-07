@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { string, func } from 'prop-types';
-import { Input } from '../../../../components';
+import { Input, Box, Touchable } from '../../../../components';
 
 class InputFileTouchable extends Component {
   static defaultProps = {
@@ -19,14 +19,30 @@ class InputFileTouchable extends Component {
     } = this.props;
 
     return (
-      <Input
-        type="text"
-        icon="add"
-        prefixIcon="camera-alt"
-        enabled={false}
-        onFocus={onPress}
-        value={text}
-      />
+      <Touchable
+        withFeedback
+        onPress={onPress}
+        style={{
+          width: '100%',
+          position: 'relative',
+        }}
+      >
+        <Input
+          type="text"
+          icon="add"
+          prefixIcon="camera-alt"
+          editable={false}
+          placeholder={text}
+        />
+
+        <Box
+          width="100%"
+          height="100%"
+          position="absolute"
+          top={0}
+          left={0}
+        />
+      </Touchable>
     );
   }
 }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { string, number, bool, func } from 'prop-types';
 import { DatePickerIOS, TouchableOpacity, Modal, SafeAreaView  } from 'react-native';
 import moment from 'moment';
-import { Text, Box, Input } from '../../../components';
+import { Text, Box, Input, Touchable } from '../../../components';
 
 class DatePicker extends Component {
   static defaultProps = {
@@ -72,7 +72,7 @@ class DatePicker extends Component {
       this.props.onBlur();
   }
 
-  handleFocus = () => {
+  handleOpen = () => {
     this.setState({
       isOpen: true,
     });
@@ -129,16 +129,32 @@ class DatePicker extends Component {
         alignItems="center"
         width="100%"
       >
-        <Input
-          {...restProps}
-          type="text"
-          value={displayValue}
-          placeholder="Select a date..."
-          enabled={false}
-          onFocus={this.handleFocus}
-          prefixIcon="event"
-          icon="expand-more"
-        />
+        <Touchable
+          withFeedback
+          onPress={this.handleOpen}
+          style={{
+            width: '100%',
+            position: 'relative',
+          }}
+        >
+          <Input
+            {...restProps}
+            type="text"
+            value={displayValue}
+            placeholder="Select a date..."
+            editable={false}
+            prefixIcon="event"
+            icon="expand-more"
+          />
+
+          <Box
+            width="100%"
+            height="100%"
+            position="absolute"
+            top={0}
+            left={0}
+          />
+        </Touchable>
 
         <Modal
           visible={isOpen}

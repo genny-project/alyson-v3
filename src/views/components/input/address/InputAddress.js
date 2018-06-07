@@ -25,10 +25,12 @@ class InputAddress extends Component {
       street_address: '{{street_number}} {{street_name}}',
     },
     prefixIcon: 'place',
-    placeholder: 'Type an address...',
+    icon: 'expand-more',
+    placeholder: 'Select an address...',
   }
 
   static propTypes = {
+    icon: string,
     prefixIcon: string,
     placeholder: string,
     onChange: func,
@@ -209,7 +211,7 @@ class InputAddress extends Component {
   }
 
   render() {
-    const { prefixIcon, placeholder, ...restProps } = this.props;
+    const { prefixIcon, placeholder, icon, ...restProps } = this.props;
     const { items } = this.state;
 
     return (
@@ -221,6 +223,7 @@ class InputAddress extends Component {
         inputProps={{
           placeholder,
           prefixIcon,
+          icon,
         }}
         onType={this.handleType}
         itemStringKey="description"

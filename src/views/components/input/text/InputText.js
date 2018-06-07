@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { TextInput, Platform } from 'react-native';
-import { string, oneOf, number, shape, bool, func, any, oneOfType, node } from 'prop-types';
+import { string, oneOf, number, shape, bool, func, any, oneOfType, node, object } from 'prop-types';
 import { objectClean } from '../../../../utils';
 import { Box, Icon, Text } from '../../../components';
-import styles from './InputText.style';
 
 const textSizes = {
   xs: 14,
@@ -35,6 +34,18 @@ const InputSuffixWrapper = ({ children }) => (
   </Box>
 );
 
+const errorStyle = {
+
+};
+
+const warningStyle = {
+
+};
+
+const successStyle = {
+
+};
+
 class Input extends Component {
   static defaultProps = {
     autoCapitalize: 'sentences',
@@ -43,7 +54,6 @@ class Input extends Component {
     autoFocus: false,
     blurOnSubmit: true,
     clearTextOnFocus: false,
-    disabled: false,
     keyboardType: 'default',
     multiline: false,
     placeholder: 'Type here...',
@@ -56,6 +66,11 @@ class Input extends Component {
     textSize: 'xs',
     textAlign: 'left',
     prefixColor: 'grey',
+    editable: true,
+    backgroundColor: '#fafafa',
+    borderColor: '#DDD',
+    borderWidth: 2,
+    borderRadius: 10,
   }
 
   static propTypes = {
@@ -132,6 +147,13 @@ class Input extends Component {
       [string, number]
     ),
     prefixIcon: string,
+    editable: bool,
+    backgroundColor: string,
+    borderWidth: number,
+    borderColor: string,
+    borderRadius: number,
+    borderSize: number,
+    wrapperProps: object,
   }
 
   getStatusColor() {
@@ -253,14 +275,22 @@ class Input extends Component {
       textSize,
       textAlign,
       height,
+      editable,
+      backgroundColor,
+      borderWidth,
+      borderColor,
+      borderRadius,
+      borderSize,
+      wrapperProps,
     } = this.props;
 
-    const status =
-      error ? styles.error
-      : success ? styles.success
-      : warning ? styles.warning
-      : styles.default;
+    const statusStyle =
+      error ? errorStyle
+      : success ? successStyle
+      : warning ? warningStyle
+      : {};
 
+    /* TODO: performance optimisation? */
     const inputStyle = objectClean({
       margin,
       marginHorizontal: marginX,
@@ -272,7 +302,7 @@ class Input extends Component {
       padding,
       paddingHorizontal: paddingX,
       paddingVertical: paddingY,
-      paddingTop,
+      paddingTop: paddingTop || 15,
       paddingRight: (
         paddingRight ||
         (
@@ -280,9 +310,9 @@ class Input extends Component {
           suffix
         )
           ? 45
-          : null
+          : 15
       ),
-      paddingBottom,
+      paddingBottom: paddingBottom || 15,
       paddingLeft: (
         paddingLeft ||
         (
@@ -290,11 +320,17 @@ class Input extends Component {
           prefix
         )
           ? 45
-          : null
+          : 15
       ),
       fontSize: textSizes[textSize],
       textAlign: textAlign,
       height,
+      width: '100%', // Always be 100% of the parent width
+      backgroundColor,
+      borderWidth,
+      borderColor,
+      borderRadius,
+      borderSize,
     });
 
     const nativeProps = {
@@ -307,67 +343,63 @@ class Input extends Component {
 
     return (
       <Box
-        display="flex"
+        {...wrapperProps}
+        position="relative"
+        flex={1}
         width={width}
       >
-        <Box
-          position="relative"
-          flex={1}
-        >
-          <TextInput
-            autoCapitalize={autoCapitalize}
-            autoComplete={autoComplete}
-            autoCorrect={autoCorrect}
-            autoFocus={autoFocus}
-            blurOnSubmit={blurOnSubmit}
-            clearTextOnFocus={clearTextOnFocus}
-            defaultValue={defaultValue}
-            editable={!disabled}
-            keyboardType={keyboardType}
-            maxLength={maxLength}
-            multiline={multiline}
-            onBlur={onBlur}
-            onChange={onChange}
-            onChangeText={onChangeValue}
-            onFocus={onFocus}
-            onKeyPress={onKeyPress}
-            onSelectionChange={onSelectionChange}
-            onSubmitEditing={onSubmitEditing}
-            placeholder={placeholder}
-            placeholderTextColor={this.getStatusColor()}
-            secureTextEntry={secureTextEntry}
-            selection={selection}
-            selectTextOnFocus={selectTextOnFocus}
-            spellCheck={spellCheck}
-            style={[
-              styles.input,
-              inputStyle,
-              status,
-            ]}
-            value={value}
-            underlineColorAndroid="transparent"
-            {...Platform.select({
-              ios: nativeProps,
-              android: nativeProps,
-              web: webProps,
-            })}
-            ref={forwardedRef}
-          />
+        <TextInput
+          autoCapitalize={autoCapitalize}
+          autoComplete={autoComplete}
+          autoCorrect={autoCorrect}
+          autoFocus={autoFocus}
+          blurOnSubmit={blurOnSubmit}
+          clearTextOnFocus={clearTextOnFocus}
+          defaultValue={defaultValue}
+          editable={disabled == null ? editable : disabled}
+          keyboardType={keyboardType}
+          maxLength={maxLength}
+          multiline={multiline}
+          onBlur={onBlur}
+          onChange={onChange}
+          onChangeText={onChangeValue}
+          onFocus={onFocus}
+          onKeyPress={onKeyPress}
+          onSelectionChange={onSelectionChange}
+          onSubmitEditing={onSubmitEditing}
+          placeholder={placeholder}
+          placeholderTextColor={this.getStatusColor()}
+          secureTextEntry={secureTextEntry}
+          selection={selection}
+          selectTextOnFocus={selectTextOnFocus}
+          spellCheck={spellCheck}
+          style={[
+            inputStyle,
+            statusStyle,
+          ]}
+          value={value}
+          underlineColorAndroid="transparent"
+          {...Platform.select({
+            ios: nativeProps,
+            android: nativeProps,
+            web: webProps,
+          })}
+          ref={forwardedRef}
+        />
 
-          {(
-            prefix ||
-            prefixIcon
-          )
-            ? this.renderPrefix()
-            : null}
+        {(
+          prefix ||
+          prefixIcon
+        )
+          ? this.renderPrefix()
+          : null}
 
-          {(
-            icon ||
-            suffix
-          )
-            ? this.renderSuffix()
-            : null}
-        </Box>
+        {(
+          icon ||
+          suffix
+        )
+          ? this.renderSuffix()
+          : null}
       </Box>
     );
   }

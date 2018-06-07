@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { TouchableOpacity, Modal, SafeAreaView } from 'react-native';
 import { func, string, number, oneOfType, array, bool, object } from 'prop-types';
 import Downshift from 'downshift';
-import { Text, Box, Input, Icon } from '../../index';
+import { Text, Box, Input, Icon, Touchable } from '../../index';
 
 class InputAutocomplete extends Component {
   static defaultProps = {
@@ -121,14 +121,30 @@ class InputAutocomplete extends Component {
               {...getRootProps( undefined, { suppressRefError: true })}
               width={width}
             >
-              <Input
-                {...inputProps}
-                type={inputType}
-                value={inputValue}
-                enabled={false}
-                onFocus={openMenu}
-                width="100%"
-              />
+              <Touchable
+                withFeedback
+                onPress={openMenu}
+                style={{
+                  width: '100%',
+                  position: 'relative',
+                }}
+              >
+                <Input
+                  {...inputProps}
+                  type={inputType}
+                  value={inputValue}
+                  editable={false}
+                  width="100%"
+                />
+
+                <Box
+                  width="100%"
+                  height="100%"
+                  position="absolute"
+                  top={0}
+                  left={0}
+                />
+              </Touchable>
 
               <Modal
                 visible={isOpen}
@@ -165,15 +181,17 @@ class InputAutocomplete extends Component {
                     </Box>
 
                     <Input
-                      {...getInputProps( inputProps )}
+                      {...getInputProps()}
                       type={inputType}
                       clearButtonMode="while-editing"
                       onChangeValue={onType}
                       autoFocus
                       paddingLeft={50}
                       paddingY={15}
-                      icon={null}
                       width="100%"
+                      placeholder={inputProps.placeholder}
+                      backgroundColor="transparent"
+                      borderRadius={0}
                     />
 
                     {inputValue && (
