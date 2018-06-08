@@ -10,7 +10,64 @@ const initialState = {
   links: {},
 };
 
+const getDisplayValueField = ( item ) => {
+  if ( item.value != null )
+    return item.value;
+
+  if ( item.valueDouble != null ) {
+    let local = navigator.language;
+  
+    if ( local == null )
+      local = 'en-AU';
+
+    const value = new Intl.NumberFormat( local ).format( item.valueDouble );
+
+    return value
+      ? new Intl.NumberFormat( local ).format( item.valueDouble )
+      : item.valueDouble.toString();
+  }
+
+  if ( item.valueInteger != null )
+    return item.valueInteger.toString();
+
+  if ( item.valueLong != null )
+    return item.valueLong.toString();
+
+  if ( item.valueDateTime != null )
+    return item.valueDateTime.toString();
+
+  if ( item.valueDate != null )
+    return item.valueDate.toString();
+
+  if ( item.valueBoolean != null )
+    return item.valueBoolean.toString();
+
+  if ( item.valueMoney != null ) {
+    const formatter = new Intl.NumberFormat( 'en-AU', {
+      style: 'currency',
+      currency: item.valueMoney.currency,
+      minimumFractionDigits: 2,
+    });
+
+    return formatter.format( Number( item.valueMoney.amount ));
+  }
+
+  if ( item.valueString != null )
+    return item.valueString;
+
+  return null;
+};
+
 const handleReduceAttributeCodes = ( resultantAttributes, currentAttribute ) => {
+  const displayValue = getDisplayValueField( currentAttribute );
+
+  if (
+    displayValue !== null &&
+    displayValue !== undefined
+  ) {
+    currentAttribute['value'] = displayValue;
+  }
+  
   resultantAttributes[currentAttribute.attributeCode] = currentAttribute;
 
   return resultantAttributes;
