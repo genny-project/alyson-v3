@@ -53,6 +53,9 @@ class InputDropdown extends Component {
   }
 
   handleChange = value => {
+    if ( value === 'SELECT_AN_OPTION' )
+      return false;
+
     this.setState({ value });
 
     if ( this.props.onChange )
@@ -74,9 +77,9 @@ class InputDropdown extends Component {
 
     if (
       disabled ||
-      items != null &&
-      items instanceof Array &&
-      items.length > 0
+      items == null &&
+      !( items instanceof Array ) &&
+      items.length === 0
     ) {
       return false;
     }
@@ -187,6 +190,11 @@ class InputDropdown extends Component {
                     width: '100%',
                   }}
                 >
+                  <Picker.Item
+                    label="Select an option"
+                    value="SELECT_AN_OPTION"
+                  />
+
                   {validItems ? (
                     items.map( item => {
                       const isItemObject = (
