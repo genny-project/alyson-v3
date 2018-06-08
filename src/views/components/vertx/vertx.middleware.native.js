@@ -28,7 +28,9 @@ const middleware = store => next => action => {
     const { code } = action.payload;
 
     store.dispatch(
-      NavigationActions.navigate( code )
+      NavigationActions.navigate({
+        routeName: code,
+      })
     );
   }
 };

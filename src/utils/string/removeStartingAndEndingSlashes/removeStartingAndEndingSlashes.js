@@ -1,28 +1,24 @@
-const removeStartingAndEndingSlashes = string => {
-  if (
-    typeof string !== 'string' ||
-    string.length === 0
-  ) {
-    return string;
+const recursivelyRemove = string => {
+  if ( string.startsWith( '/' )) {
+    return recursivelyRemove(
+      string.substr( 1 )
+    );
   }
 
-  if ( string === '/' )
-    return '';
-
-  if (
-    string.startsWith( '/' ) &&
-    string.endsWith( '/' )
-  ) {
-    return string.substr( 1, string.length - 2 );
+  if ( string.endsWith( '/' )) {
+    return recursivelyRemove(
+      string.substr( 0, string.length - 1 )
+    );
   }
-
-  if ( string.startsWith( '/' ))
-    return string.substr( 1, string.length - 1 );
-
-  if ( string.endsWith( '/' ))
-    return string.substr( 0, string.length - 2 );
 
   return string;
+};
+
+const removeStartingAndEndingSlashes = string => {
+  if ( typeof string !== 'string' )
+    return string;
+
+  return recursivelyRemove( string );
 };
 
 export default removeStartingAndEndingSlashes;
