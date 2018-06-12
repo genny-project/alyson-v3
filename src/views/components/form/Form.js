@@ -27,22 +27,32 @@ class Form extends Component {
     this.setValidationList();
   }
 
-  componentDidUpdate() {
-    const { questionGroups, initialValues } = this.state;
+  componentDidUpdate( prevProps, prevState ) {
+    const { questionGroupCode } = this.props;
+    const { questionGroups } = this.state;
 
-    if ( questionGroups.length === 0 ) {
-      const groups = this.getQuestionGroups();
+    if (
+      (
+        typeof questionGroupCode === 'string' &&
+        questionGroups.length === 0
+      ) ||
+      (
+        questionGroupCode instanceof Array &&
+        questionGroupCode.length !== questionGroups.length
+      )
+    ) {
+      const newGroups = this.getQuestionGroups();
+      const prevGroups = this.getQuestionGroups( prevProps );
 
-      if (
-        groups.length > 0 &&
-        Object.keys( initialValues ).length === 0
-      ) {
+      if ( newGroups.length !== prevGroups.length ) {
         // eslint-disable-next-line react/no-did-update-set-state
-        this.setState({ questionGroups: groups }, () => {
-          this.setInitialValues();
-          this.setValidationList();
-        });
+        this.setState({ questionGroups: newGroups });
       }
+    }
+
+    if ( this.state.questionGroups.length !== prevState.questionGroups.length ) {
+      this.setInitialValues();
+      this.setValidationList();
     }
   }
 
@@ -151,9 +161,13 @@ class Form extends Component {
     this.setState({ validationList });
   }
 
-  getQuestionGroups() {
-    const { questionGroupCode, asks } = this.props;
+  /* Default to using `this.props`, allowing for `prevProps` to be
+   * passed to this fn inside of `componentDidUpdate`. */
+  getQuestionGroups( props = this.props ) {
+    const { questionGroupCode, asks } = props;
 
+    /* questionGroupCode here is an array, so loop through the keys and
+     * push the ask to the array if it exists. */
     if ( questionGroupCode instanceof Array ) {
       return questionGroupCode.reduce(( questionGroups, code ) => {
         if ( asks[code] )
@@ -163,12 +177,16 @@ class Form extends Component {
       }, [] );
     }
 
-    if ( !asks[questionGroupCode] )
-      return [];
+    /* questionGroupCode from here is a string, so check if the ask exists
+     * for this questionGroupCode key. If exists, return it inside of an array. */
+    if ( asks[questionGroupCode] ) {
+      return [
+        asks[questionGroupCode],
+      ];
+    }
 
-    return [
-      asks[questionGroupCode],
-    ];
+    /* If nothing works, return an empty array. */
+    return [];
   }
 
   /* UNUSED function - kept for reference in future for form recursive functions  */
@@ -442,11 +460,16 @@ class Form extends Component {
   }
 
   render() {
+    const { questionGroupCode } = this.props;
     const { questionGroups } = this.state;
 
     if (
       !questionGroups ||
-      !questionGroups.length
+      !questionGroups.length ||
+      (
+        questionGroupCode instanceof Array &&
+        questionGroupCode.length !== questionGroups.length
+      )
     ) {
       return (
         <Box
