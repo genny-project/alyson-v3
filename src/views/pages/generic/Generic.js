@@ -37,7 +37,12 @@ const mapStateToProps = state => ({
 export default connect( mapStateToProps )(
   props => (
     <KeycloakConsumer>
-      {keycloak => <Generic {...props} keycloak={keycloak} />}
+      {keycloak => (
+        <Generic
+          {...props}
+          keycloak={keycloak}
+        />
+      )}
     </KeycloakConsumer>
   )
 );

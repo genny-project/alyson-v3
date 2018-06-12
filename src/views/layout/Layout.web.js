@@ -108,7 +108,10 @@ export default connect( mapStateToProps )(
   props => (
     <LayoutConsumer>
       {layout => (
-        <Layout {...props} layout={layout} />
+        <Layout
+          {...props}
+          layout={layout}
+        />
       )}
     </LayoutConsumer>
   )

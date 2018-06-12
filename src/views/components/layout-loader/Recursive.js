@@ -22,7 +22,7 @@ class Recursive extends PureComponent {
       return template;
     }
 
-    const { context } = this.props;    
+    const { context } = this.props;
 
     const splitTemplate = template.split( '}}' );
     const path = splitTemplate[0];
@@ -54,7 +54,7 @@ class Recursive extends PureComponent {
 
         return result;
       }
-      
+
       if ( result[current].includes( '{{' )) {
         result[current] = this.curlyBracketParse( result[current] );
 
@@ -74,7 +74,7 @@ class Recursive extends PureComponent {
           if ( element.startsWith( '_' )) {
             result[current][i] = dlv( context, element.substring( 1 ));
           }
-          
+
           if ( element.includes( '{{' )) {
             result[current][i] = this.curlyBracketParse( element );
           }
@@ -90,7 +90,7 @@ class Recursive extends PureComponent {
 
     if ( typeof result[current] === 'object' ) {
       const keys = Object.keys( result[current] );
-      
+
       result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
 
       return result;
@@ -121,7 +121,7 @@ class Recursive extends PureComponent {
       return {};
 
     const propsCopy = copy( props );
-    
+
     const afterProps =
       Object
         .keys( props )
@@ -170,11 +170,20 @@ class Recursive extends PureComponent {
       this.injectContextIntoProps( context, props ),
       repeatedChildren instanceof Array
         ? repeatedChildren.map(( child, index ) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <Recursive context={context} key={index} {...child} />
+          <Recursive
+            context={context}
+            // eslint-disable-next-line react/no-array-index-key
+            key={index}
+            {...child}
+          />
         ))
         : typeof repeatedChildren === 'object'
-          ? <Recursive context={context} {...repeatedChildren}  />
+          ? (
+            <Recursive
+              context={context}
+              {...repeatedChildren}
+            />
+          )
           : repeatedChildren
     );
   }

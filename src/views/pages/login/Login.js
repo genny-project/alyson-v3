@@ -75,7 +75,10 @@ class Login extends Component {
 export default props => (
   <KeycloakConsumer>
     {keycloak => (
-      <Login {...props} keycloak={keycloak} />
+      <Login
+        {...props}
+        keycloak={keycloak}
+      />
     )}
   </KeycloakConsumer>
 );

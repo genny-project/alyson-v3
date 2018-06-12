@@ -101,7 +101,10 @@ class LayoutLoader extends PureComponent {
     };
 
     return (
-      <Layout {...layout.layout} context={context}>
+      <Layout
+        {...layout.layout}
+        context={context}
+      >
         {(
           layout.children != null &&
           layout.children instanceof Array

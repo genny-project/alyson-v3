@@ -69,7 +69,10 @@ class SidebarMenuItem extends Component {
 
     if ( path ) {
       return (
-        <Link to={path} onPress={closeSidebar}>
+        <Link
+          to={path}
+          onPress={closeSidebar}
+        >
           {element}
         </Link>
       );

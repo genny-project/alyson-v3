@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { TouchableOpacity, Modal, Picker, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
+import { Modal, Picker, SafeAreaView } from 'react-native';
 import { oneOfType, arrayOf, string, any, shape, number, func, bool } from 'prop-types';
 import { Box, Text, Input, Touchable } from '../../index';
 
@@ -56,13 +56,27 @@ class InputDropdown extends Component {
     if ( value === 'SELECT_AN_OPTION' )
       return false;
 
-    this.setState({ value });
+    const { items, itemValueKey } = this.props;
+
+    const itemsContainsObjects = (
+      items[0] != null &&
+      !( items[0] instanceof Array ) &&
+      typeof items[0] === 'object'
+    );
+
+    const adjustedValue = (
+      itemsContainsObjects
+        ? items.find( item => item[itemValueKey] === value )
+        : value
+    );
+
+    this.setState({ value: adjustedValue });
 
     if ( this.props.onChange )
-      this.props.onChange( value );
+      this.props.onChange({ target: { value: adjustedValue[itemValueKey] } });
 
     if ( this.props.onChangeValue )
-      this.props.onChangeValue( value );
+      this.props.onChangeValue( adjustedValue[itemValueKey] );
   }
 
   handleClose = () => {
@@ -97,6 +111,12 @@ class InputDropdown extends Component {
       items.length > 0
     );
 
+    const isValueObject = (
+      value != null &&
+      !( value instanceof Array ) &&
+      typeof value === 'object'
+    );
+
     return (
       <Fragment>
         <Touchable
@@ -109,7 +129,11 @@ class InputDropdown extends Component {
         >
           <Input
             type="text"
-            value={value}
+            value={(
+              isValueObject
+                ? value[itemStringKey]
+                : value
+            )}
             placeholder={validItems ? 'Select an option...' : 'No items to select'}
             icon="expand-more"
             disabled={!validItems && !disabled}
@@ -135,7 +159,7 @@ class InputDropdown extends Component {
               flex: 1,
             }}
           >
-            <TouchableWithoutFeedback
+            <Touchable
               onPress={this.handleClose}
             >
               <Box
@@ -145,7 +169,7 @@ class InputDropdown extends Component {
                 height="100%"
                 width="100%"
               />
-            </TouchableWithoutFeedback>
+            </Touchable>
 
             <Box
               height="40%"
@@ -165,7 +189,8 @@ class InputDropdown extends Component {
                 borderColor="grey"
                 paddingX={5}
               >
-                <TouchableOpacity
+                <Touchable
+                  withFeedback
                   onPress={this.handleClose}
                 >
                   <Box padding={10}>
@@ -173,7 +198,7 @@ class InputDropdown extends Component {
                       Done
                     </Text>
                   </Box>
-                </TouchableOpacity>
+                </Touchable>
               </Box>
 
               <Box
@@ -185,7 +210,11 @@ class InputDropdown extends Component {
                 <Picker
                   enabled={validItems && !disabled}
                   onValueChange={this.handleChange}
-                  selectedValue={value}
+                  selectedValue={(
+                    isValueObject
+                      ? value[itemValueKey]
+                      : value
+                  )}
                   style={{
                     width: '100%',
                   }}

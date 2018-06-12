@@ -54,7 +54,10 @@ class FormInputDropdown extends Component {
                   linkData &&
                   linkData.name
                 ) {
-                  items.push( linkData.name );
+                  items.push({
+                    label: linkData.name,
+                    value: linkData.code,
+                  });
                 }
               });
             }
@@ -75,6 +78,7 @@ class FormInputDropdown extends Component {
       <Input
         {...restProps}
         items={items}
+
       />
     );
   }

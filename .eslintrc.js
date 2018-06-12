@@ -153,7 +153,7 @@ module.exports = {
     'react/jsx-boolean-value': ['error', 'never', { always: [] }],
     'react/jsx-closing-bracket-location': ['error', 'line-aligned'],
     'react/jsx-curly-spacing': ['error', 'never', { allowMultiline: true }],
-    'react/jsx-max-props-per-line': ['error', { maximum: 1, when: 'multiline' }],
+    'react/jsx-max-props-per-line': ['error', { maximum: 1, when: 'always' }],
     'react/jsx-no-bind': ['error', {
       ignoreRefs: true,
       allowArrowFunctions: true,

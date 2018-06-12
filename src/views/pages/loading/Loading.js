@@ -54,7 +54,10 @@ class Loading extends Component {
 export default props => (
   <KeycloakConsumer>
     {keycloak => (
-      <Loading {...props} keycloak={keycloak} />
+      <Loading
+        {...props}
+        keycloak={keycloak}
+      />
     )}
   </KeycloakConsumer>
 );

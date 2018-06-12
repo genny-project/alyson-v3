@@ -26,16 +26,41 @@ const Input = props => {
       return <InputText {...props} />;
 
     case 'email':
-      return <InputText prefixIcon="mail" keyboardType="email-address" {...props} />;
+      return (
+        <InputText
+          prefixIcon="mail"
+          keyboardType="email-address"
+          {...props}
+        />
+      );
 
     case 'textarea':
-      return <InputText multiline numberOfLines={3} height={100} {...props} />;
+      return (
+        <InputText
+          multiline
+          numberOfLines={3}
+          height={100}
+          {...props}
+        />
+      );
 
     case 'mobile':
-      return <InputText prefixIcon="phone-iphone" keyboardType="phone-pad" {...props} />;
+      return (
+        <InputText
+          prefixIcon="phone-iphone"
+          keyboardType="phone-pad"
+          {...props}
+        />
+      );
 
     case 'landline':
-      return <InputText prefixIcon="call" keyboardType="phone-pad" {...props} />;
+      return (
+        <InputText
+          prefixIcon="call"
+          keyboardType="phone-pad"
+          {...props}
+        />
+      );
 
     case 'currency':
     case 'org.javamoney.moneta.money':
@@ -68,24 +93,50 @@ const Input = props => {
       return <CheckBox {...props} />;
 
     case 'radio':
-      return <CheckBox {...props} radio />;
+      return (
+        <CheckBox
+          {...props}
+          radio
+        />
+      );
 
     case 'upload':
-      return <InputFile imageOnly {...props} />;
+      return (
+        <InputFile
+          imageOnly
+          {...props}
+        />
+      );
 
     case 'file':
       return <InputFile {...props} />;
 
     case 'image':
-      return <InputFile {...props} imageOnly />;
+      return (
+        <InputFile
+          {...props}
+          imageOnly
+        />
+      );
 
     case 'date':
     case 'java.time.localdate':
-      return <DatePicker {...props} date />;
+      return (
+        <DatePicker
+          {...props}
+          date
+        />
+      );
 
     case 'datetime':
     case 'java.time.localdatetime':
-      return <DatePicker {...props} date time />;
+      return (
+        <DatePicker
+          {...props}
+          date
+          time
+        />
+      );
 
     case 'mobileverification':
       return <Passcode {...props} />;

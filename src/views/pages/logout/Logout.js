@@ -75,7 +75,10 @@ class Logout extends Component {
 export default props => (
   <KeycloakConsumer>
     {keycloak => (
-      <Logout {...props} keycloak={keycloak} />
+      <Logout
+        {...props}
+        keycloak={keycloak}
+      />
     )}
   </KeycloakConsumer>
 );

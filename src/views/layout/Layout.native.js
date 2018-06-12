@@ -119,7 +119,10 @@ export default withNavigation(
   props => (
     <LayoutConsumer>
       {layout => (
-        <Layout {...props} layout={layout} />
+        <Layout
+          {...props}
+          layout={layout}
+        />
       )}
     </LayoutConsumer>
   )

@@ -236,7 +236,10 @@ class InputAddress extends Component {
 export default props => (
   <GoogleConsumer>
     {google => (
-      <InputAddress {...props} google={google} />
+      <InputAddress
+        {...props}
+        google={google}
+      />
     )}
   </GoogleConsumer>
 );

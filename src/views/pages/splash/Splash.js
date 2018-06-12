@@ -22,7 +22,10 @@ class Splash extends Component {
     return (
       <KeycloakConsumer>
         {({ isAuthenticated }) => isAuthenticated ? (
-          <Redirect to={redirectURL} removeRedirectURL />
+          <Redirect
+            to={redirectURL}
+            removeRedirectURL
+          />
         ) : (
           <Layout
             title="Splash"

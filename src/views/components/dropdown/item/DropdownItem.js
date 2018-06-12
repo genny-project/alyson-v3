@@ -33,7 +33,10 @@ const DropdownItem = ({
 
   if ( href ) {
     return (
-      <Link to={href} onPress={onPress}>
+      <Link
+        to={href}
+        onPress={onPress}
+      >
         {element}
       </Link>
     );

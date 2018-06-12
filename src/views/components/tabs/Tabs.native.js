@@ -63,7 +63,13 @@ class Tabs extends Component {
 
   renderIcon = ({ route }) => {
     return route.icon
-      ? <Icon name={route.icon} size="sm" color={this.props.iconColor} />
+      ? (
+        <Icon
+          name={route.icon}
+          size="sm"
+          color={this.props.iconColor}
+        />
+      )
       : null;
   }
 
