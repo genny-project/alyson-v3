@@ -1,4 +1,5 @@
 import { NavigationActions } from 'react-navigation';
+import { routes } from '../../../config';
 import * as actions from './vertx.actions';
 import { Bridge } from '../../../utils';
 
@@ -29,7 +30,10 @@ const middleware = store => next => action => {
 
     store.dispatch(
       NavigationActions.navigate({
-        routeName: code,
+        routeName: routes[code] ? code : 'generic',
+        params: {
+          layout: code,
+        },
       })
     );
   }
