@@ -26,9 +26,6 @@ class DataQuery {
       }
 
       const queryData = this.injectQueryContext( q, queryContext );
-
-      // console.log( 'QD', queryData );
-
       const result = Operators[q.operator](
         this.path ? dlv( output, this.path ) : output,
         queryData,
@@ -42,7 +39,7 @@ class DataQuery {
         output = result;
       }
     });
-
+    
     return output;
   }
 

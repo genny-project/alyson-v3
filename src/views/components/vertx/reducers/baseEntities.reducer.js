@@ -52,9 +52,19 @@ const getDisplayValueField = ( item ) => {
     return formatter.format( Number( item.valueMoney.amount ));
   }
 
-  if ( item.valueString != null )
+  if ( item.valueString != null ) {
+    if ( 
+      item.valueString.startsWith( '[{' ) &&
+      item.valueString.endsWith( '}]' )
+    ) {
+      const object = JSON.parse( item.valueString );
+      
+      return object;
+    }
+  
     return item.valueString;
-
+  }
+    
   return null;
 };
 

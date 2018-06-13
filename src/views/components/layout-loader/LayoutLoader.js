@@ -99,6 +99,8 @@ class LayoutLoader extends PureComponent {
       ),
       navigation: navigation.state.params,
     };
+    // console.warn( context );
+    // console.warn( layout );
 
     return (
       <Layout
