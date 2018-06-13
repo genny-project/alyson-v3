@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { object, func } from 'prop-types';
 import { connect } from 'react-redux';
 import { NavigationActions, withNavigation } from 'react-navigation';
+import { removeStartingAndEndingSlashes } from '../../../../utils';
 import { Button, Box, Heading } from '../../../components';
 import { LayoutConsumer } from '../../../layout';
 
@@ -32,7 +33,14 @@ class HeaderLeft extends Component {
     const { baseEntities, aliases, navigationReducer } = this.props;
     const projectAttributes = baseEntities.attributes[aliases.PROJECT];
     const { index, routes } = navigationReducer;
-    const { routeName } = routes[index];
+    const { params, routeName } = routes[index];
+
+    const showBack = (
+      index > 0 &&
+      params != null &&
+      params.layout != null &&
+      removeStartingAndEndingSlashes( params.layout ) !== 'home'
+    );
 
     return (
       <LayoutConsumer>
@@ -40,10 +48,7 @@ class HeaderLeft extends Component {
           <Box
             alignItems="center"
           >
-            {(
-              index > 0 &&
-              routeName !== 'home'
-            )
+            {showBack
               ? (
                 <Button
                   onPress={this.handleBack}
