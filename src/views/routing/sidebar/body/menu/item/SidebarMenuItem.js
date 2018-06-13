@@ -42,10 +42,14 @@ class SidebarMenuItem extends Component {
                 alignItems="center"
               >
                 <Box paddingX={15}>
-                  <Icon
-                    name={iconLeft}
-                    color={layout.textColor}
-                  />
+                  {iconLeft ? (
+                    <Icon
+                      name={iconLeft}
+                      color={layout.textColor}
+                    />
+                  ) : (
+                    <Box width={24} />
+                  )}
                 </Box>
 
                 <Text color={layout.textColor}>

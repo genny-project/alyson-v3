@@ -26,6 +26,7 @@ class ScrollView extends Component {
     keyboardDismissMode: oneOf(
       ['none', 'on-drag', 'interactive']
     ),
+    backgroundColor: string,
     children: any,
     onRefresh: func,
     refreshControlElement: any,
@@ -79,6 +80,7 @@ class ScrollView extends Component {
       paddingX,
       paddingY,
       onLayout,
+      backgroundColor,
     } = this.props;
 
     const { isRefreshing } = this.state;
@@ -89,6 +91,7 @@ class ScrollView extends Component {
       width,
       minHeight,
       maxHeight,
+      backgroundColor,
     };
 
     const contentStyle = {

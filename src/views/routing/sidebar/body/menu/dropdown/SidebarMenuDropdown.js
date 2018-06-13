@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
-import { View } from 'react-native';
+import React, { Component, Fragment } from 'react';
 import { func, string, array } from 'prop-types';
 import SidebarMenuItem from '../item';
-import styles from './SidebarMenuDropdown.style';
+import { Box } from '../../../../../components';
 
 class SidebarMenuDropdown extends Component {
   static propTypes = {
@@ -18,7 +17,7 @@ class SidebarMenuDropdown extends Component {
     const { onToggle, onNavigate, isOpen, items, name, icon } = this.props;
 
     return (
-      <View>
+      <Fragment>
         <SidebarMenuItem
           onPress={onToggle( name )}
           iconLeft={icon}
@@ -27,7 +26,10 @@ class SidebarMenuDropdown extends Component {
         />
 
         {isOpen( name ) ? (
-          <View style={styles.nested}>
+          <Box
+            marginLeft={15}
+            flexDirection="column"
+          >
             {items.map( item => (
               item.isDropdown ? (
                 <SidebarMenuDropdown
@@ -46,9 +48,9 @@ class SidebarMenuDropdown extends Component {
                 />
               )
             ))}
-          </View>
+          </Box>
         ) : null}
-      </View>
+      </Fragment>
     );
   }
 }
