@@ -3,7 +3,7 @@ import { ActivityIndicator } from 'react-native';
 import Layout from '../../../layout';
 import { Box, Text } from '../../../components';
 
-const AuthenticatedAppError = () => ( // eslint-disable-line no-unused-vars
+const AuthenticatedAppLoading = () => ( // eslint-disable-line no-unused-vars
   <Layout
     title="Loading..."
     appColor="light"
@@ -27,4 +27,4 @@ const AuthenticatedAppError = () => ( // eslint-disable-line no-unused-vars
   </Layout>
 );
 
-export default AuthenticatedAppError;
+export default AuthenticatedAppLoading;

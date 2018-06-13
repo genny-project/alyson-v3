@@ -22,8 +22,15 @@ class Sidebar extends Component {
         const weight = link.weight;
         const code = dlv( link, 'link.targetCode' );
         const linkedBe = dlv( bes, `data.${code}` );
-
-        if ( weight !== 0 && ( linkedBe !== null && linkedBe !== undefined )) arr.push( linkedBe );
+        const attributes = dlv( bes, `attributes.${code}` );
+        
+        if ( weight !== 0 && ( linkedBe !== null && linkedBe !== undefined )) {
+          const icon = dlv( attributes, 'PRI_IMAGE_URL.valueString' );
+          
+          if ( icon !== null && icon !== undefined ) linkedBe['icon'] = icon;
+         
+          arr.push( linkedBe );
+        }
       });
     }
 
@@ -34,7 +41,7 @@ class Sidebar extends Component {
         return {
           name: item.name,
           isDropdown: true,
-          icon: 'home',
+          icon: item.icon,
           items: linkedBes,
         };
       }
@@ -42,7 +49,7 @@ class Sidebar extends Component {
       return {
         name: item.name,
         path: 'home',
-        icon: 'home',
+        icon: item.icon,
       };
     });
   }

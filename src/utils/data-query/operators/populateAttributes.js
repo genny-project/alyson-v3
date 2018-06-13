@@ -20,6 +20,10 @@ export default ( data, options, allData ) => {
         const pathData = dlv( item, path );
         const result = { ...pathData };
 
+        if ( !pathData ) {
+          return item;
+        }
+
         if ( single ) {
           result['attributes'] = result.code ? allData.baseEntities.attributes[result.code] : {};
         } else {
