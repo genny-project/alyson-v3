@@ -16,6 +16,8 @@ class Form extends Component {
     baseEntities: object,
   }
 
+  inputRefs = {}
+
   state = {
     validationList: {},
     initialValues: {},
@@ -308,6 +310,18 @@ class Form extends Component {
       this.sendAnswer( ask, value );
   }
 
+  handleFocusNextInput = ( questionGroupCode, currentFocusedIndex ) => () => {
+    console.warn( 'trying to focus...', this.inputRefs, { questionGroupCode, currentFocusedIndex }, this.inputRefs[questionGroupCode][currentFocusedIndex], this.inputRefs[questionGroupCode][currentFocusedIndex].focus );
+    if (
+      this.inputRefs[questionGroupCode] &&
+      this.inputRefs[questionGroupCode][currentFocusedIndex + 1] &&
+      this.inputRefs[questionGroupCode][currentFocusedIndex + 1].focus
+    ) {
+      console.warn( 'focussing...' );
+      this.inputRefs[questionGroupCode][currentFocusedIndex + 1].focus();
+    }
+  }
+
   handleSubmit = ( values, form ) => {
     const { setSubmitting } = form;
     const { questionGroups } = this.state;
@@ -357,7 +371,15 @@ class Form extends Component {
     }
   }
 
-  renderInput = ( values, errors, touched, setFieldValue, setTouched, isSubmitting ) => ask => {
+  renderInput = (
+    values,
+    errors,
+    touched,
+    setFieldValue,
+    setTouched,
+    isSubmitting,
+    questionGroupCode
+  ) => ( ask, index ) => {
     const { definitions } = this.props.baseEntities;
     const { questionCode, attributeCode, name, mandatory, question, childAsks } = ask;
     const { dataType } = definitions.data[attributeCode];
@@ -381,7 +403,15 @@ class Form extends Component {
             flexDirection="column"
           >
             {childAsks.map(
-              this.renderInput( values, errors, touched, setFieldValue, setTouched )
+              this.renderInput(
+                values,
+                errors,
+                touched,
+                setFieldValue,
+                setTouched,
+                false,
+                ask.questionCode
+              )
             )}
           </Box>
         </Box>
@@ -460,6 +490,21 @@ class Form extends Component {
           required={mandatory}
           question={question}
           disabled={isSubmitting}
+          onSubmitEditing={this.handleFocusNextInput( questionGroupCode, index )}
+          blurOnSubmit={(
+            !this.inputRefs[questionGroupCode] ||
+            !this.inputRefs[questionGroupCode][index + 1]
+          )}
+          ref={input => this.inputRefs[questionGroupCode] = {
+            ...this.inputRefs[questionGroupCode],
+            [index]: input,
+          }}
+          returnKeyType={(
+            this.inputRefs[questionGroupCode] &&
+            this.inputRefs[questionGroupCode][index + 1]
+          )
+            ? 'next'
+            : 'default'}
         />
       </Box>
     );
@@ -549,7 +594,9 @@ class Form extends Component {
                         touched,
                         setFieldValue,
                         setFieldTouched,
-                        isSubmitting
+                        isSubmitting,
+                        questionGroup.questionCode,
+                        questionGroup.childAsks.length - 1
                       )
                     )}
                   </Fragment>

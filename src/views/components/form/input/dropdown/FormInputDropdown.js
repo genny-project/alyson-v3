@@ -70,6 +70,15 @@ class FormInputDropdown extends Component {
       this.setState({ items });
   }
 
+  focus() {
+    if (
+      this.input &&
+      this.input.focus
+    ) {
+      this.input.focus();
+    }
+  }
+
   render() {
     const { ...restProps } = this.props;
     const { items } = this.state;
@@ -78,7 +87,7 @@ class FormInputDropdown extends Component {
       <Input
         {...restProps}
         items={items}
-
+        ref={input => this.input = input}
       />
     );
   }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { TextInput, Platform } from 'react-native';
-import { string, oneOf, number, shape, bool, func, any, oneOfType, node, object } from 'prop-types';
+import { string, oneOf, number, shape, bool, func, oneOfType, node, object } from 'prop-types';
 import { objectClean } from '../../../../utils';
 import { Box, Icon, Text } from '../../../components';
 
@@ -124,7 +124,6 @@ class Input extends Component {
     paddingRight: number,
     paddingBottom: number,
     paddingLeft: number,
-    forwardedRef: any,
     prefix: oneOfType(
       [string, node]
     ),
@@ -158,6 +157,10 @@ class Input extends Component {
     borderRadius: number,
     borderSize: number,
     wrapperProps: object,
+    returnKeyLabel: string,
+    returnKeyType: oneOf(
+      ['done', 'next', 'go', 'search', 'send', 'default']
+    ),
   }
 
   getStatusColor() {
@@ -168,6 +171,15 @@ class Input extends Component {
       : error ? 'red'
       : warning ? 'yellow'
       : 'grey';
+  }
+
+  handleRef = input => {
+    this.input = input;
+  }
+
+  focus() {
+    if ( this.input )
+      this.input.focus();
   }
 
   renderPrefix() {
@@ -271,7 +283,6 @@ class Input extends Component {
       success,
       warning,
       icon,
-      forwardedRef,
       width,
       prefix,
       suffix,
@@ -290,6 +301,8 @@ class Input extends Component {
       borderRadius,
       borderSize,
       wrapperProps,
+      returnKeyLabel,
+      returnKeyType,
     } = this.props;
 
     const statusStyle =
@@ -383,6 +396,8 @@ class Input extends Component {
           onSubmitEditing={onSubmitEditing}
           placeholder={placeholder}
           placeholderTextColor={this.getStatusColor()}
+          returnKeyLabel={!multiline && returnKeyLabel}
+          returnKeyType={!multiline && returnKeyType}
           secureTextEntry={secureTextEntry}
           selection={selection}
           selectTextOnFocus={selectTextOnFocus}
@@ -398,7 +413,7 @@ class Input extends Component {
             android: nativeProps,
             web: webProps,
           })}
-          ref={forwardedRef}
+          ref={this.handleRef}
         />
 
         {(

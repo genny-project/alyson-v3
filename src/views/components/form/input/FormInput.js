@@ -14,6 +14,15 @@ class FormInput extends Component {
     this.props.onChangeValue( value, true );
   }
 
+  focus() {
+    if (
+      this.input &&
+      this.input.focus
+    ) {
+      this.input.focus();
+    }
+  }
+
   render() {
     const { type, question } = this.props;
 
@@ -24,22 +33,34 @@ class FormInput extends Component {
             {...this.props}
             html={question.html}
             onChangeValue={this.handleChangeValueWithSend}
+            ref={input => this.input = input}
           />
         );
 
       case 'dropdown':
-        return <FormInputDropdown {...this.props} />;
+        return (
+          <FormInputDropdown
+            {...this.props}
+            ref={input => this.input = input}
+          />
+        );
 
       case 'upload':
         return (
           <Input
             {...this.props}
             onChangeValue={this.handleChangeValueWithSend}
+            ref={input => this.input = input}
           />
         );
 
       default:
-        return <Input {...this.props} />;
+        return (
+          <Input
+            {...this.props}
+            ref={input => this.input = input}
+          />
+        );
     }
   }
 }
