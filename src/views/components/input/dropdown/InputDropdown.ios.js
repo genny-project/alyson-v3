@@ -36,12 +36,41 @@ class InputDropdown extends Component {
     ).isRequired,
   }
 
-  static getDerivedStateFromProps( nextProps, nextState ) {
+  static getDerivedStateFromProps( props, state ) {
+    /* If the props for value changes... */
     if (
-      nextProps.value != null &&
-      nextProps.value !== nextState.value
+      props.value != null &&
+      props.value !== state.value
     ) {
-      return { value: nextProps.value };
+      /* And if the state for value is an object... */
+      if (
+        state.value != null &&
+        !( state.value instanceof Array ) &&
+        typeof state.value === 'object'
+      ) {
+        /* As well as if the props value is a string... */
+        if ( typeof props.value === 'string' ) {
+          const valueObject = props.items.find( item => item.value === props.value );
+
+          return { value: valueObject };
+        }
+
+        /* If props value is an object, we can safely update it. */
+        if (
+          !( props.value instanceof Array ) &&
+          typeof props.value === 'object'
+        ) {
+          return { value: props.value };
+        }
+      }
+
+      /* If they're both string, simply update the state. */
+      if (
+        typeof props.value === 'string' &&
+        typeof state.value === 'string'
+      ) {
+        return { value: props.value };
+      }
     }
 
     return null;
@@ -69,6 +98,8 @@ class InputDropdown extends Component {
         ? items.find( item => item[itemValueKey] === value )
         : value
     );
+
+    console.warn({ adjustedValue });
 
     this.setState({ value: adjustedValue });
 

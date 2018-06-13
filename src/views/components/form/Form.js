@@ -32,14 +32,20 @@ class Form extends Component {
     const { questionGroups } = this.state;
 
     if (
-      (
-        typeof questionGroupCode === 'string' &&
-        questionGroups.length === 0
-      ) ||
-      (
-        questionGroupCode instanceof Array &&
-        questionGroupCode.length !== questionGroups.length
-      )
+      typeof questionGroupCode === 'string' &&
+      questionGroups.length === 0
+    ) {
+      const newGroups = this.getQuestionGroups();
+
+      if ( newGroups.length > 0 ) {
+        // eslint-disable-next-line react/no-did-update-set-state
+        this.setState({ questionGroups: newGroups });
+      }
+    }
+
+    else if (
+      questionGroupCode instanceof Array &&
+      questionGroupCode.length !== questionGroups.length
     ) {
       const newGroups = this.getQuestionGroups();
       const prevGroups = this.getQuestionGroups( prevProps );
