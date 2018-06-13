@@ -70,10 +70,9 @@ class Api {
     });
   }
 
-  getGeocodedAddress = ( options = {}) => {
-    const query = queryString.stringify({
-      address: options.address,
-    });
+  getGeocodedAddress = ( components, options = {}) => {
+    const {} = options; // eslint-disable-line no-empty-pattern
+    const query = queryString.stringify( components );
 
     return this.googleMapsCall({
       method: 'get',
