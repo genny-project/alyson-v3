@@ -88,13 +88,16 @@ class InputAutocomplete extends Component {
       value,
     } = this.props;
 
+    const isValueObject = (
+      value != null &&
+      !( value instanceof Array ) &&
+      typeof value === 'object'
+    );
+
+    console.warn({ value, isValueObject });
+
     return (
       <Downshift
-        inputValue={typeof value === 'string'
-          ? value
-          : value != null
-            ? value[itemStringKey]
-            : ''}
         defaultInputValue={value || defaultValue}
         itemToString={item => (
           item == null ? ''
@@ -224,7 +227,7 @@ class InputAutocomplete extends Component {
                     items &&
                     items instanceof Array &&
                     items
-                      // TODO: optimize filtering so it isn't performed twice
+                      // TODO: optimize filtering so it isn't performed twice (state?)
                       .filter( this.handleFilter( inputValue ))
                       .length > 0
                   ) ? (
