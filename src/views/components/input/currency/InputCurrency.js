@@ -44,6 +44,7 @@ class InputCurrency extends Component {
       <Input
         {...restProps}
         type="text"
+        keyboardType="numeric"
         placeholder={placeholder}
         value={value}
         onChangeValue={this.handleChangeValue}
