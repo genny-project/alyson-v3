@@ -88,14 +88,6 @@ class InputAutocomplete extends Component {
       value,
     } = this.props;
 
-    const isValueObject = (
-      value != null &&
-      !( value instanceof Array ) &&
-      typeof value === 'object'
-    );
-
-    console.warn({ value, isValueObject });
-
     return (
       <Downshift
         defaultInputValue={value || defaultValue}

@@ -99,8 +99,6 @@ class InputDropdown extends Component {
         : value
     );
 
-    console.warn({ adjustedValue });
-
     this.setState({ value: adjustedValue });
 
     if ( this.props.onChange )
