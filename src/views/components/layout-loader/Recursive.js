@@ -1,12 +1,12 @@
-import React, { createElement, PureComponent } from 'react';
+import React, { createElement, Component } from 'react';
 import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
 import { object, any, string } from 'prop-types';
-import { doesValueMatch } from 'utils/data-query/find';
+import { doesValueMatch } from '../../../utils/data-query/operators/find';
 import * as Components from '../index';
 
-class Recursive extends PureComponent {
+class Recursive extends Component {
   static propTypes = {
     component: string,
     props: object,

@@ -3,7 +3,7 @@
     "sdkVersion": "26.0.0",
     "name": "Channel40",
     "icon": "",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "slug": "channel40-v3",
     "ios": {
       "bundleIdentifier": "com.channel40.v3"

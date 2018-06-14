@@ -182,6 +182,11 @@ class Input extends Component {
       this.input.focus();
   }
 
+  blur() {
+    if ( this.input )
+      this.input.blur();
+  }
+
   renderPrefix() {
     const { prefix, prefixIcon, prefixColor } = this.props;
 

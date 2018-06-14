@@ -113,7 +113,6 @@ class Passcode extends Component {
             >
               <Input
                 width="100%"
-                forwardedRef={input => this.inputs[i] = input}
                 type="text"
                 maxLength={charactersRequired}
                 value={currentValues[i] || ''}
@@ -123,6 +122,7 @@ class Passcode extends Component {
                 placeholder="-"
                 onChangeValue={this.handleChangeValue( i )}
                 onBlur={this.handleBlur}
+                ref={input => this.inputs[i] = input}
               />
             </Box>
           ))}
