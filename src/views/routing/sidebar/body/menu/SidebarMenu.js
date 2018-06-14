@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
 import { array, object } from 'prop-types';
 import SidebarMenuItem from './item';
 import SidebarMenuDropdown from './dropdown';
@@ -34,26 +33,22 @@ class SidebarMenu extends Component {
   render() {
     const { items } = this.props;
 
-    return (
-      <View>
-        {items.map( item => (
-          item.isDropdown ? (
-            <SidebarMenuDropdown
-              {...item}
-              key={item.name}
-              onToggle={this.handleToggle}
-              isOpen={this.isOpen}
-            />
-          ) : (
-            <SidebarMenuItem
-              {...item}
-              key={item.name}
-              iconLeft={item.icon}
-            />
-          )
-        ))}
-      </View>
-    );
+    return items.map( item => (
+      item.isDropdown ? (
+        <SidebarMenuDropdown
+          {...item}
+          key={item.name}
+          onToggle={this.handleToggle}
+          isOpen={this.isOpen}
+        />
+      ) : (
+        <SidebarMenuItem
+          {...item}
+          key={item.name}
+          iconLeft={item.icon}
+        />
+      )
+    ));
   }
 }
 

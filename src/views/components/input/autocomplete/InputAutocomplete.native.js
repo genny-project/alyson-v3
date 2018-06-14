@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Modal, SafeAreaView } from 'react-native';
+import { Modal, SafeAreaView } from 'react-native';
 import { func, string, number, oneOfType, array, bool, object } from 'prop-types';
 import Downshift from 'downshift';
-import { Text, Box, Input, Icon } from '../../index';
+import { Text, Box, Input, Icon, Touchable } from '../../index';
 
 class InputAutocomplete extends Component {
   static defaultProps = {
@@ -77,14 +77,20 @@ class InputAutocomplete extends Component {
   }
 
   render() {
-    const { inputType, items, itemStringKey, inputProps, onType, width } = this.props;
+    const {
+      inputType,
+      items,
+      itemStringKey,
+      inputProps,
+      onType,
+      width,
+      defaultValue,
+      value,
+    } = this.props;
 
     return (
       <Downshift
-        defaultInputValue={(
-          this.props.value ||
-          this.props.defaultValue
-        )}
+        defaultInputValue={value || defaultValue}
         itemToString={item => (
           item == null ? ''
           : typeof item === 'string' ? item
@@ -110,14 +116,30 @@ class InputAutocomplete extends Component {
               {...getRootProps( undefined, { suppressRefError: true })}
               width={width}
             >
-              <Input
-                {...inputProps}
-                type={inputType}
-                value={inputValue}
-                enabled={false}
-                onFocus={openMenu}
-                width="100%"
-              />
+              <Touchable
+                withFeedback
+                onPress={openMenu}
+                style={{
+                  width: '100%',
+                  position: 'relative',
+                }}
+              >
+                <Input
+                  {...inputProps}
+                  type={inputType}
+                  value={inputValue}
+                  editable={false}
+                  width="100%"
+                />
+
+                <Box
+                  width="100%"
+                  height="100%"
+                  position="absolute"
+                  top={0}
+                  left={0}
+                />
+              </Touchable>
 
               <Modal
                 visible={isOpen}
@@ -142,7 +164,8 @@ class InputAutocomplete extends Component {
                       left={10}
                       zIndex={5}
                     >
-                      <TouchableOpacity
+                      <Touchable
+                        withFeedback
                         onPress={closeMenu}
                       >
                         <Icon
@@ -150,19 +173,24 @@ class InputAutocomplete extends Component {
                           color="black"
                           size="md"
                         />
-                      </TouchableOpacity>
+                      </Touchable>
                     </Box>
 
                     <Input
-                      {...getInputProps( inputProps )}
+                      {...getInputProps()}
                       type={inputType}
                       clearButtonMode="while-editing"
                       onChangeValue={onType}
                       autoFocus
                       paddingLeft={50}
                       paddingY={15}
-                      icon={null}
                       width="100%"
+                      placeholder={inputProps.placeholder}
+                      backgroundColor="transparent"
+                      borderRadius={0}
+                      borderLeftWidth={0}
+                      borderRightWidth={0}
+                      borderTopWidth={0}
                     />
 
                     {inputValue && (
@@ -173,7 +201,8 @@ class InputAutocomplete extends Component {
                         right={10}
                         zIndex={5}
                       >
-                        <TouchableOpacity
+                        <Touchable
+                          withFeedback
                           onPress={this.handleClearInputValue( setState )}
                         >
                           <Icon
@@ -181,7 +210,7 @@ class InputAutocomplete extends Component {
                             color="black"
                             size="md"
                           />
-                        </TouchableOpacity>
+                        </Touchable>
                       </Box>
                     )}
                   </Box>
@@ -190,7 +219,7 @@ class InputAutocomplete extends Component {
                     items &&
                     items instanceof Array &&
                     items
-                      // TODO: optimize filtering so it isn't performed twice
+                      // TODO: optimize filtering so it isn't performed twice (state?)
                       .filter( this.handleFilter( inputValue ))
                       .length > 0
                   ) ? (
@@ -202,16 +231,18 @@ class InputAutocomplete extends Component {
                             : item[itemStringKey];
 
                           return (
-                            <TouchableOpacity
+                            <Touchable
                               {...getItemProps({ item: idom })}
                               key={idom}
                               onPress={() => selectItem( item )}
+                              withFeedback
                             >
                               <Box
                                 padding={15}
                                 borderBottomWidth={1}
                                 borderColor="#DDD"
                                 borderStyle="solid"
+                                alignItems="center"
                               >
                                 <Text
                                   fontWeight={selectedItem === idom ? 'bold' : 'normal'}
@@ -219,16 +250,25 @@ class InputAutocomplete extends Component {
                                   {idom}
                                 </Text>
                               </Box>
-                            </TouchableOpacity>
+                            </Touchable>
                           );
                         })
                     ) : (
                       <Box
                         paddingX={15}
                         paddingY={10}
+                        width="100%"
+                        justifyContent="center"
                       >
-                        <Text>
-                          No results
+                        <Text
+                          align="center"
+                          color="grey"
+                          size="xs"
+                        >
+                          {inputValue.length > 0
+                            ? 'No results'
+                            : 'Please enter an address above'
+                          }
                         </Text>
                       </Box>
                     )}

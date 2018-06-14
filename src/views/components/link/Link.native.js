@@ -1,8 +1,8 @@
 import React, { Component, cloneElement, createElement } from 'react';
-import { withNavigation } from 'react-navigation';
+import { withNavigation, NavigationActions } from 'react-navigation';
 import { any, bool, func, string, object } from 'prop-types';
 import { routes } from '../../../config';
-import { navigator } from '../../../utils';
+import { store } from '../../../redux';
 import { Touchable } from '../index';
 
 class Link extends Component {
@@ -20,23 +20,35 @@ class Link extends Component {
     useAppNavigator: bool,
     pure: bool,
     withoutFeedback: bool,
+    params: object,
   }
 
   handlePress = event => {
-    const { disabled, useAppNavigator, to, navigation, onPress } = this.props;
+    const { disabled, useAppNavigator, to, navigation, onPress, params } = this.props;
 
     if ( disabled )
       return;
 
-    if ( useAppNavigator ) {
-      navigator.navigate({ routeName: to });
+    if (
+      useAppNavigator
+    ) {
+      store.dispatch(
+        NavigationActions.navigate({
+          routeName: routes[to] ? to : 'generic',
+          params: {
+            ...params,
+            layout: to,
+          },
+        }),
+      );
     }
-    else if ( routes[to] )
-      navigation.navigate( to );
     else {
       navigation.navigate({
-        routeName: 'generic',
-        params: { layout: to },
+        routeName: routes[to] ? to : 'generic',
+        params: {
+          ...params,
+          layout: to,
+        },
         key: to,
       });
     }

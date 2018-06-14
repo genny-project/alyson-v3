@@ -35,6 +35,12 @@ const sizeMapping = {
   lg: 'large',
 };
 
+const iconOnlyButtonSizes = {
+  sm: 40,
+  md: 50,
+  lg: 60,
+};
+
 const paddingSizes = {
   sm: {
     paddingX: 15,
@@ -52,7 +58,6 @@ const paddingSizes = {
 
 class Button extends Component {
   static defaultProps = {
-    children: 'Button Text',
     color: 'black',
     size: 'lg',
     accessible: true,
@@ -61,6 +66,7 @@ class Button extends Component {
 
   static propTypes = {
     children: string,
+    text: string,
     disabled: bool,
     onPress: func,
     color: string,
@@ -83,6 +89,8 @@ class Button extends Component {
     ),
     showSpinnerOnClick: bool,
     withFeedback: bool,
+    shape: string,
+    boxShadow: string,
   }
 
   state = {
@@ -123,7 +131,7 @@ class Button extends Component {
   }
 
   renderTextChild() {
-    const { textColor, color, children, size } = this.props;
+    const { textColor, color, children, size, text } = this.props;
 
     return (
       <Text
@@ -133,7 +141,7 @@ class Button extends Component {
         align="center"
         width="100%"
       >
-        {children}
+        {text || children}
       </Text>
     );
   }
@@ -176,28 +184,65 @@ class Button extends Component {
       icon,
       children,
       showSpinnerOnClick,
+      shape,
+      width,
+      height,
+      text,
+      boxShadow,
     } = this.props;
 
     const { hasBeenClickedOn } = this.state;
 
+    const isIconOnly = (
+      typeof icon === 'string' &&
+      children == null &&
+      text == null
+    );
+
+    /* TODO: mixed icon and text children */
     const child =
-      icon != null ? this.renderIconChild()
-      : typeof children === 'string' ? this.renderTextChild()
+      isIconOnly ? this.renderIconChild()
+      : ( text || typeof children === 'string' ) ? this.renderTextChild()
       : children || null;
 
     return (
       <Box
+        cleanStyleObject
+        position="relative"
+        shape={shape}
+        justifyContent="center"
+        alignItems="center"
+        boxShadow={boxShadow}
         backgroundColor={(
           disabled
             ? buttonColors.disabled
             : buttonColors[color]
         )}
         padding={padding}
-        paddingX={paddingX == null ? paddingSizes[size].paddingX : paddingX}
-        paddingY={paddingY == null ? paddingSizes[size].paddingY : paddingY}
-        width="100%"
-        cleanStyleObject
-        position="relative"
+        paddingX={(
+          paddingX == null &&
+          !isIconOnly
+        )
+          ? paddingSizes[size].paddingX
+          : paddingX}
+        paddingY={(
+          paddingY == null &&
+          !isIconOnly
+        )
+          ? paddingSizes[size].paddingY
+          : paddingY}
+        width={(
+          isIconOnly &&
+          shape === 'circle'
+        )
+          ? iconOnlyButtonSizes[size]
+          : width}
+        height={(
+          isIconOnly &&
+          shape === 'circle'
+        )
+          ? iconOnlyButtonSizes[size]
+          : height}
       >
         {child}
 

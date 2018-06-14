@@ -1,5 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { ActivityIndicator } from 'react-native';
+import { withNavigation } from 'react-navigation';
 import { shape, object, any } from 'prop-types';
 import Layout from '../../layout';
 import { refresh } from '../../../utils';
@@ -15,6 +16,7 @@ class LayoutLoader extends PureComponent {
       context: any,
     }),
     data: object,
+    navigation: object,
   }
 
   handleRetry = () => {
@@ -22,7 +24,7 @@ class LayoutLoader extends PureComponent {
   }
 
   render() {
-    const { layout, data } = this.props;
+    const { layout, data, navigation } = this.props;
 
     if ( !layout ) {
       return (
@@ -91,19 +93,29 @@ class LayoutLoader extends PureComponent {
     }
 
     /* Calculate the data for the layout */
-    const context = { query: new DataQuery( data ).query( layout.query || [] ) };
+    const context = {
+      query: new DataQuery( data ).query(
+        layout.query || [], { navigation: navigation.state.params }
+      ),
+      navigation: navigation.state.params,
+    };
+    // console.warn( context );
+    // console.warn( layout );
 
     return (
-      <Layout {...layout.layout} context={context}>
+      <Layout
+        {...layout.layout}
+        context={context}
+      >
         {(
           layout.children != null &&
           layout.children instanceof Array
         )
           ? layout.children.map(( child, index ) => (
             <Recursive
+              key={`${child.component}_${index}`} // eslint-disable-line react/no-array-index-key
               {...child}
               context={context}
-              key={`${child.component}_${index}`} // eslint-disable-line react/no-array-index-key
             />
           ))
           : (
@@ -115,4 +127,4 @@ class LayoutLoader extends PureComponent {
   }
 }
 
-export default LayoutLoader;
+export default withNavigation( LayoutLoader );

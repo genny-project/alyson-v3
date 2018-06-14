@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { TextInput, Platform } from 'react-native';
-import { string, oneOf, number, shape, bool, func, any, oneOfType, node } from 'prop-types';
+import { string, oneOf, number, shape, bool, func, oneOfType, node, object } from 'prop-types';
 import { objectClean } from '../../../../utils';
 import { Box, Icon, Text } from '../../../components';
-import styles from './InputText.style';
 
 const textSizes = {
   xs: 14,
@@ -11,6 +10,40 @@ const textSizes = {
   md: 18,
   lg: 20,
   xl: 24,
+};
+
+const InputPrefixWrapper = ({ children }) => (
+  <Box
+    position="absolute"
+    left={15}
+    height="100%"
+    alignItems="center"
+  >
+    {children}
+  </Box>
+);
+
+const InputSuffixWrapper = ({ children }) => (
+  <Box
+    position="absolute"
+    right={15}
+    height="100%"
+    alignItems="center"
+  >
+    {children}
+  </Box>
+);
+
+const errorStyle = {
+
+};
+
+const warningStyle = {
+
+};
+
+const successStyle = {
+
 };
 
 class Input extends Component {
@@ -21,7 +54,6 @@ class Input extends Component {
     autoFocus: false,
     blurOnSubmit: true,
     clearTextOnFocus: false,
-    disabled: false,
     keyboardType: 'default',
     multiline: false,
     placeholder: 'Type here...',
@@ -33,6 +65,12 @@ class Input extends Component {
     warning: false,
     textSize: 'xs',
     textAlign: 'left',
+    prefixColor: 'grey',
+    editable: true,
+    backgroundColor: '#fafafa',
+    borderColor: '#DDD',
+    borderWidth: 2,
+    borderRadius: 10,
   }
 
   static propTypes = {
@@ -86,28 +124,118 @@ class Input extends Component {
     paddingRight: number,
     paddingBottom: number,
     paddingLeft: number,
-    forwardedRef: any,
-    width: oneOfType(
-      [number, string]
-    ),
     prefix: oneOfType(
       [string, node]
     ),
     suffix: oneOfType(
       [string, node]
     ),
-    prefixIcon: string,
-    suffixIcon: string,
     prefixColor: string,
     suffixColor: string,
-    prefixBackground: string,
-    suffixBackground: string,
+    iconColor: string,
     textSize: oneOf(
       ['xs','sm','md','lg','xl']
     ),
     textAlign: oneOf(
       ['left', 'center','right']
     ),
+    height: oneOfType(
+      [string, number]
+    ),
+    width: oneOfType(
+      [string, number]
+    ),
+    prefixIcon: string,
+    editable: bool,
+    backgroundColor: string,
+    borderWidth: number,
+    borderTopWidth: number,
+    borderRightWidth: number,
+    borderBottomWidth: number,
+    borderLeftWidth: number,
+    borderColor: string,
+    borderRadius: number,
+    borderSize: number,
+    wrapperProps: object,
+    returnKeyLabel: string,
+    returnKeyType: oneOf(
+      ['done', 'next', 'go', 'search', 'send', 'default']
+    ),
+  }
+
+  getStatusColor() {
+    const { disabled, success, error, warning } = this.props;
+
+    return disabled ? 'lightGrey'
+      : success ? 'green'
+      : error ? 'red'
+      : warning ? 'yellow'
+      : 'grey';
+  }
+
+  handleRef = input => {
+    this.input = input;
+  }
+
+  focus() {
+    if ( this.input )
+      this.input.focus();
+  }
+
+  renderPrefix() {
+    const { prefix, prefixIcon, prefixColor } = this.props;
+
+    if ( prefixIcon ) {
+      return (
+        <InputPrefixWrapper>
+          <Icon
+            name={prefixIcon}
+            color={prefixColor}
+          />
+        </InputPrefixWrapper>
+      );
+    }
+
+    if ( typeof prefix !== 'string' )
+      return prefix;
+
+    return (
+      <InputPrefixWrapper>
+        <Text
+          color="black"
+        >
+          {prefix}
+        </Text>
+      </InputPrefixWrapper>
+    );
+  }
+
+  renderSuffix() {
+    const { suffix, icon, suffixColor, iconColor } = this.props;
+
+    if ( icon ) {
+      return (
+        <InputSuffixWrapper>
+          <Icon
+            name={icon}
+            color={iconColor || suffixColor || this.getStatusColor()}
+          />
+        </InputSuffixWrapper>
+      );
+    }
+
+    if ( typeof suffix !== 'string' )
+      return suffix;
+
+    return (
+      <InputSuffixWrapper>
+        <Text
+          color={suffixColor}
+        >
+          {suffix}
+        </Text>
+      </InputSuffixWrapper>
+    );
   }
 
   render() {
@@ -155,30 +283,35 @@ class Input extends Component {
       success,
       warning,
       icon,
-      forwardedRef,
       width,
       prefix,
       suffix,
       prefixIcon,
-      suffixIcon,
-      prefixColor,
-      suffixColor,
-      prefixBackground,
-      suffixBackground,
       textSize,
       textAlign,
+      height,
+      editable,
+      backgroundColor,
+      borderWidth,
+      borderTopWidth,
+      borderRightWidth,
+      borderBottomWidth,
+      borderLeftWidth,
+      borderColor,
+      borderRadius,
+      borderSize,
+      wrapperProps,
+      returnKeyLabel,
+      returnKeyType,
     } = this.props;
 
-    const status =
-      error ? styles.error
-      : success ? styles.success
-      : warning ? styles.warning
-      : styles.default;
+    const statusStyle =
+      error ? errorStyle
+      : success ? successStyle
+      : warning ? warningStyle
+      : {};
 
-    const hasIconStyle = icon
-      ? styles.inputWithIcon
-      : null;
-
+    /* TODO: performance optimisation? */
     const inputStyle = objectClean({
       margin,
       marginHorizontal: marginX,
@@ -190,24 +323,40 @@ class Input extends Component {
       padding,
       paddingHorizontal: paddingX,
       paddingVertical: paddingY,
-      paddingTop,
+      paddingTop: paddingTop || 15,
       paddingRight: (
         paddingRight ||
-        ( hasIconStyle && 40 ) ||
-        null
+        (
+          icon ||
+          suffix
+        )
+          ? 45
+          : 15
       ),
-      paddingBottom,
-      paddingLeft,
+      paddingBottom: paddingBottom || 15,
+      paddingLeft: (
+        paddingLeft ||
+        (
+          prefixIcon ||
+          prefix
+        )
+          ? 45
+          : 15
+      ),
       fontSize: textSizes[textSize],
       textAlign: textAlign,
+      height,
+      width: '100%', // Always be 100% of the parent width
+      backgroundColor,
+      borderWidth,
+      borderTopWidth,
+      borderRightWidth,
+      borderBottomWidth,
+      borderLeftWidth,
+      borderColor,
+      borderRadius,
+      borderSize,
     });
-
-    const statusColor =
-      disabled ? 'lightGrey'
-      : success ? 'green'
-      : error ? 'red'
-      : warning ? 'yellow'
-      : 'grey';
 
     const nativeProps = {
       onLayout,
@@ -217,132 +366,80 @@ class Input extends Component {
 
     };
 
-    const childPrefix = ( prefixIcon != null ) ? (
-      <Icon
-        color={prefixColor || 'darkGrey'}
-        name={prefixIcon}
-      />
-    ) : ( typeof prefix === 'string' ) ? (
-      <Text
-        color={prefixColor || 'darkGrey'}
-        decoration="none"
-        align="center"
-        width="100%"
-      >
-        {prefix}
-      </Text>
-    ) : (
-      prefix || null
-    );
-
-    const childSuffix = ( suffixIcon != null ) ? (
-      <Icon
-        color={suffixColor || 'darkGrey'}
-        name={suffixIcon}
-      />
-    ) : ( typeof suffix === 'string' ) ? (
-      <Text
-        color={suffixColor || 'darkGrey'}
-        decoration="none"
-        align="center"
-        width="100%"
-      >
-        {suffix}
-      </Text>
-    ) : (
-      suffix || null
-    );
-
     return (
       <Box
-        display="flex"
+        {...wrapperProps}
+        position="relative"
+        flex={1}
         width={width}
       >
-        {childPrefix ? (
-          <Box
-            backgroundColor={prefixBackground || 'lightGrey'}
-            alignItems="center"
-            flexGrow={0}
-            paddingX={10}
-          >
-            {childPrefix}
-          </Box>
-        ) : null}
+        <TextInput
+          autoCapitalize={autoCapitalize}
+          autoComplete={autoComplete}
+          autoCorrect={autoCorrect}
+          autoFocus={autoFocus}
+          blurOnSubmit={blurOnSubmit}
+          clearTextOnFocus={clearTextOnFocus}
+          defaultValue={defaultValue}
+          editable={(
+            editable == null ? disabled : editable
+          )}
+          keyboardType={keyboardType}
+          maxLength={maxLength}
+          multiline={multiline}
+          onBlur={onBlur}
+          onChange={onChange}
+          onChangeText={onChangeValue}
+          onFocus={onFocus}
+          onKeyPress={onKeyPress}
+          onSelectionChange={onSelectionChange}
+          onSubmitEditing={onSubmitEditing}
+          placeholder={placeholder}
+          placeholderTextColor={this.getStatusColor()}
+          returnKeyLabel={!multiline && returnKeyLabel}
+          returnKeyType={!multiline && returnKeyType}
+          secureTextEntry={secureTextEntry}
+          selection={selection}
+          selectTextOnFocus={selectTextOnFocus}
+          spellCheck={spellCheck}
+          style={[
+            inputStyle,
+            statusStyle,
+          ]}
+          value={value}
+          underlineColorAndroid="transparent"
+          {...Platform.select({
+            ios: nativeProps,
+            android: nativeProps,
+            web: webProps,
+          })}
+          ref={this.handleRef}
+        />
 
-        <Box
-          position="relative"
-          flex={1}
-        >
-          <TextInput
-            autoCapitalize={autoCapitalize}
-            autoComplete={autoComplete}
-            autoCorrect={autoCorrect}
-            autoFocus={autoFocus}
-            blurOnSubmit={blurOnSubmit}
-            clearTextOnFocus={clearTextOnFocus}
-            defaultValue={defaultValue}
-            editable={!disabled}
-            keyboardType={keyboardType}
-            maxLength={maxLength}
-            multiline={multiline}
-            onBlur={onBlur}
-            onChange={onChange}
-            onChangeText={onChangeValue}
-            onFocus={onFocus}
-            onKeyPress={onKeyPress}
-            onSelectionChange={onSelectionChange}
-            onSubmitEditing={onSubmitEditing}
-            placeholder={placeholder}
-            placeholderTextColor={statusColor}
-            secureTextEntry={secureTextEntry}
-            selection={selection}
-            selectTextOnFocus={selectTextOnFocus}
-            spellCheck={spellCheck}
-            style={[
-              styles.input,
-              inputStyle,
-              status,
-              hasIconStyle,
-            ]}
-            value={value}
-            underlineColorAndroid="transparent"
-            {...Platform.select({
-              ios: nativeProps,
-              android: nativeProps,
-              web: webProps,
-            })}
-            ref={forwardedRef}
-          />
+        {(
+          prefix ||
+          prefixIcon
+        )
+          ? this.renderPrefix()
+          : null}
 
-          {/* icon ? (
-            <Box
-              position="absolute"
-              right={10}
-              height="100%"
-              alignItems="center"
-            >
-              <Icon
-                name={icon}
-                color={statusColor}
-                size="md"
-              />
-            </Box>
-          ) : null */}
-        </Box>
-
-        {childSuffix ? (
-          <Box
-            backgroundColor={suffixBackground || 'lightGrey'}
-            alignItems="center"
-            flexGrow={0}
-            paddingX={10}
-          >
-            {childSuffix}
-          </Box>
-        ) : null}
+        {(
+          icon ||
+          suffix
+        )
+          ? this.renderSuffix()
+          : null}
       </Box>
     );
   }
 }
+
+InputPrefixWrapper.propTypes = {
+  children: node,
+};
+
+InputSuffixWrapper.propTypes = {
+  children: node,
+};
 
 export default Input;

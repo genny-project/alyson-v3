@@ -1,6 +1,7 @@
 import dlv from 'dlv';
 import dset from 'dset';
 import * as Operators from './operators';
+import { injectContext } from './operators/helpers';
 
 class DataQuery {
   constructor( data ) {
@@ -9,10 +10,11 @@ class DataQuery {
   }
 
   /* Queries the data and returns the result */
-  query( query ) {
+  query( query, queryContext ) {
     /* Create a copy of the data */
     let output = this.data.length ? [...this.data] : { ...this.data };
 
+    /* Inject the queryContext into the data passed into the operator */
     output = JSON.parse( JSON.stringify( output ));
 
     /* Apply each of the operators to the data */
@@ -23,10 +25,12 @@ class DataQuery {
         return;
       }
 
+      const queryData = this.injectQueryContext( q, queryContext );
       const result = Operators[q.operator](
         this.path ? dlv( output, this.path ) : output,
-        q,
-        this.data.length ? [...this.data] : { ...this.data }
+        queryData,
+        this.data.length ? [...this.data] : { ...this.data },
+        queryContext
       );
 
       if ( this.path ) {
@@ -34,6 +38,20 @@ class DataQuery {
       } else {
         output = result;
       }
+    });
+    
+    return output;
+  }
+
+  injectQueryContext( data, context ) {
+    if ( data.length ) {
+      return data;
+    }
+
+    const output = {};
+  
+    Object.keys( data ).forEach( key => {
+      output[key] = injectContext( data[key], context );
     });
 
     return output;

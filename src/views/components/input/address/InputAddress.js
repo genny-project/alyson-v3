@@ -24,12 +24,14 @@ class InputAddress extends Component {
     injectCustomAddressComponents: {
       street_address: '{{street_number}} {{street_name}}',
     },
-    icon: 'place',
-    placeholder: 'Type an address...',
+    prefixIcon: 'place',
+    icon: 'expand-more',
+    placeholder: 'Select an address...',
   }
 
   static propTypes = {
     icon: string,
+    prefixIcon: string,
     placeholder: string,
     onChange: func,
     onChangeValue: func,
@@ -130,21 +132,17 @@ class InputAddress extends Component {
     const { place_id } = item;
 
     try {
-      const places = await google.geocodeAddress({ placeId: place_id });
+      const places = await google.geocodeAddress({ place_id });
 
       if (
         !places ||
         !( places instanceof Array ) ||
         !places.length
       ) {
-        console.warn( 'thats why!' );
-
         throw new Error( `Unable to find geocoded results for placeId ${place_id}` );
       }
 
       const formattedPlace = this.formatPlace( places[0] );
-
-      console.warn({ formattedPlace });
 
       if ( this.props.onChange ) {
         this.props.onChange({
@@ -213,7 +211,7 @@ class InputAddress extends Component {
   }
 
   render() {
-    const { icon, placeholder, ...restProps } = this.props;
+    const { prefixIcon, placeholder, icon, ...restProps } = this.props;
     const { items } = this.state;
 
     return (
@@ -222,8 +220,11 @@ class InputAddress extends Component {
         type="autocomplete"
         items={items}
         borderBetweenItems
-        placeholder={placeholder}
-        icon={icon}
+        inputProps={{
+          placeholder,
+          prefixIcon,
+          icon,
+        }}
         onType={this.handleType}
         itemStringKey="description"
         onChange={this.handleChange}
@@ -235,7 +236,10 @@ class InputAddress extends Component {
 export default props => (
   <GoogleConsumer>
     {google => (
-      <InputAddress {...props} google={google} />
+      <InputAddress
+        {...props}
+        google={google}
+      />
     )}
   </GoogleConsumer>
 );

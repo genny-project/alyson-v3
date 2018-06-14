@@ -5,6 +5,8 @@ import { LayoutProvider } from './views/layout';
 import { VertxProvider, GoogleProvider, ErrorBoundary } from './views/components';
 import { store } from './redux';
 
+console.disableYellowBox = true; // eslint-disable-line no-console
+
 const Root = () => (
   <ErrorBoundary>
     <ReduxProvider store={store}>

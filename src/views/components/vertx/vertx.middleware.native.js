@@ -1,5 +1,8 @@
+import { NavigationActions } from 'react-navigation';
+import { routes } from '../../../config';
 import * as actions from './vertx.actions';
-import { Bridge, navigator } from '../../../utils';
+import { Bridge } from '../../../utils';
+import { alert } from '../../components';
 
 const middleware = store => next => action => {
   /* Since we are not making any side effects to `action`, pass on next. */
@@ -26,9 +29,24 @@ const middleware = store => next => action => {
   if ( action.type === 'ROUTE_CHANGE' ) {
     const { code } = action.payload;
 
-    navigator.navigate({
-      routeName: code,
-    });
+    store.dispatch(
+      NavigationActions.navigate({
+        routeName: routes[code] ? code : 'generic',
+        params: {
+          layout: code,
+        },
+      })
+    );
+  }
+
+  if ( action.type === 'NOTIFICATION_MESSAGE' ) {
+    const { style, message } = action.payload;
+
+    const title = style === 'warning'
+      ? 'Warning!'
+      : 'Notification';
+
+    alert({ title, message });
   }
 };
 

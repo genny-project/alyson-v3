@@ -6,13 +6,23 @@ export default ( data, options, allData ) => {
     return data;
   }
 
-  const { fields, path, single } = options;
+  const { code, fields, path, single, as } = options;
+
+  if ( code ) {
+    dset( data, as, allData.baseEntities.attributes[code] );
+
+    return data;
+  }
 
   if ( path ) {
     return [
       ...data.map( item => {
         const pathData = dlv( item, path );
         const result = { ...pathData };
+
+        if ( !pathData ) {
+          return item;
+        }
 
         if ( single ) {
           result['attributes'] = result.code ? allData.baseEntities.attributes[result.code] : {};
@@ -51,4 +61,14 @@ export default ( data, options, allData ) => {
       })),
     ];
   }
+                            
+  return [
+    ...data.map( item => {
+      const result = { ...item };
+
+      result['attributes'] = result.code ? allData.baseEntities.attributes[result.code] : {};
+
+      return result;
+    }),
+  ];                      
 };

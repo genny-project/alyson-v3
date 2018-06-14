@@ -70,10 +70,9 @@ class Api {
     });
   }
 
-  getGeocodedAddress = ( options = {}) => {
-    const query = queryString.stringify({
-      address: options.address,
-    });
+  getGeocodedAddress = ( components, options = {}) => {
+    const {} = options; // eslint-disable-line no-empty-pattern
+    const query = queryString.stringify( components );
 
     return this.googleMapsCall({
       method: 'get',
@@ -82,18 +81,8 @@ class Api {
   }
 
   getKeycloakConfig = () => {
-    // const origin = process.env.NODE_ENV !== 'production'
-    // ? 'http://localhost:3000'
-    // : (
-    //   process.env.FORCE_REACT_ORIGIN ||
-    //   'http://localhost:3000' // FIXME: Hardcoded for native, originally was `window.location.origin`
-    // );
-
     return this.eventCall({
-      // url: 'init?url=https://v2.channel40.com.au',
-      url: 'init?url=http://app-staging.outcome-hub.com',
-      // url: 'init?url=http://alyson.genny.life',
-      // url: 'init?url=http://localhost:3000',
+      url: `init?url=${config.genny.initUrl}`,
     });
   }
 }

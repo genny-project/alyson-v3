@@ -70,7 +70,10 @@ class Home extends Component {
 export default props => (
   <KeycloakConsumer>
     {keycloak => (
-      <Home {...props} keycloak={keycloak} />
+      <Home
+        {...props}
+        keycloak={keycloak}
+      />
     )}
   </KeycloakConsumer>
 );

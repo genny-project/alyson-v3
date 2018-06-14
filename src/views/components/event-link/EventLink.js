@@ -43,10 +43,8 @@ const EventLink = ({
 
   return React.Children.map( children, child => (
     React.cloneElement( child, {
-      props: {
-        ...child.props,
-        onPress: handlePress,
-      },
+      ...child.props,
+      onPress: handlePress,
     })
   ));
 };

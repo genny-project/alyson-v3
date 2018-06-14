@@ -10,7 +10,74 @@ const initialState = {
   links: {},
 };
 
+const getDisplayValueField = ( item ) => {
+  if ( item.value != null )
+    return item.value;
+
+  if ( item.valueDouble != null ) {
+    let local = navigator.language;
+  
+    if ( local == null )
+      local = 'en-AU';
+
+    const value = new Intl.NumberFormat( local ).format( item.valueDouble );
+
+    return value
+      ? new Intl.NumberFormat( local ).format( item.valueDouble )
+      : item.valueDouble.toString();
+  }
+
+  if ( item.valueInteger != null )
+    return item.valueInteger.toString();
+
+  if ( item.valueLong != null )
+    return item.valueLong.toString();
+
+  if ( item.valueDateTime != null )
+    return item.valueDateTime.toString();
+
+  if ( item.valueDate != null )
+    return item.valueDate.toString();
+
+  if ( item.valueBoolean != null )
+    return item.valueBoolean.toString();
+
+  if ( item.valueMoney != null ) {
+    const formatter = new Intl.NumberFormat( 'en-AU', {
+      style: 'currency',
+      currency: item.valueMoney.currency,
+      minimumFractionDigits: 2,
+    });
+
+    return formatter.format( Number( item.valueMoney.amount ));
+  }
+
+  if ( item.valueString != null ) {
+    if ( 
+      item.valueString.startsWith( '[{' ) &&
+      item.valueString.endsWith( '}]' )
+    ) {
+      const object = JSON.parse( item.valueString );
+      
+      return object;
+    }
+  
+    return item.valueString;
+  }
+    
+  return null;
+};
+
 const handleReduceAttributeCodes = ( resultantAttributes, currentAttribute ) => {
+  const displayValue = getDisplayValueField( currentAttribute );
+
+  if (
+    displayValue !== null &&
+    displayValue !== undefined
+  ) {
+    currentAttribute['value'] = displayValue;
+  }
+  
   resultantAttributes[currentAttribute.attributeCode] = currentAttribute;
 
   return resultantAttributes;
@@ -31,14 +98,33 @@ const handleReduceAttributes = ( resultant, current ) => {
 };
 
 const handleReduceLinks = ( resultant, current ) => {
-  const handleForEach = link => {
-    resultant[link.link.linkValue] = ({
-      ...resultant[link.link.linkValue],
-      [link.link.targetCode]: link,
-    });
+  const handleCombineLinkValues = link => {
+    if ( link.link.linkValue ) {
+      resultant[link.link.linkValue] = ({
+        ...resultant[link.link.linkValue],
+        [link.link.targetCode]: link,
+      });
+    }
   };
 
-  current.links.forEach( handleForEach );
+  current.links.forEach( handleCombineLinkValues );
+
+  if ( current.parentCode ) {
+    const existingLinks = resultant[current.parentCode]
+      ? resultant[current.parentCode].links
+      : [];
+
+    if ( existingLinks.indexOf( current.code ) < 0 ) {
+      /* Group all the parent codes inside a links array. */
+      resultant[current.parentCode] = ({
+        ...resultant[current.parentCode],
+        links: [
+          ...existingLinks,
+          current.code,
+        ],
+      });
+    }
+  }
 
   return resultant;
 };

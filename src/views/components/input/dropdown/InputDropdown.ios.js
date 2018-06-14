@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
-import { TouchableOpacity, Modal, Picker, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
+import { Modal, Picker, SafeAreaView } from 'react-native';
 import { oneOfType, arrayOf, string, any, shape, number, func, bool } from 'prop-types';
-import { Box, Text } from '../../index';
+import { Box, Text, Input, Touchable } from '../../index';
 
 class InputDropdown extends Component {
   static defaultProps = {
@@ -13,6 +13,8 @@ class InputDropdown extends Component {
   static propTypes = {
     value: any,
     onChange: func,
+    onChangeValue: func,
+    onBlur: func,
     itemStringKey: string,
     itemValueKey: string,
     itemIdKey: string,
@@ -34,12 +36,41 @@ class InputDropdown extends Component {
     ).isRequired,
   }
 
-  static getDerivedStateFromProps( nextProps, nextState ) {
+  static getDerivedStateFromProps( props, state ) {
+    /* If the props for value changes... */
     if (
-      nextProps.value != null &&
-      nextProps.value !== nextState.value
+      props.value != null &&
+      props.value !== state.value
     ) {
-      return { value: nextProps.value };
+      /* And if the state for value is an object... */
+      if (
+        state.value != null &&
+        !( state.value instanceof Array ) &&
+        typeof state.value === 'object'
+      ) {
+        /* As well as if the props value is a string... */
+        if ( typeof props.value === 'string' ) {
+          const valueObject = props.items.find( item => item.value === props.value );
+
+          return { value: valueObject };
+        }
+
+        /* If props value is an object, we can safely update it. */
+        if (
+          !( props.value instanceof Array ) &&
+          typeof props.value === 'object'
+        ) {
+          return { value: props.value };
+        }
+      }
+
+      /* If they're both string, simply update the state. */
+      if (
+        typeof props.value === 'string' &&
+        typeof state.value === 'string'
+      ) {
+        return { value: props.value };
+      }
     }
 
     return null;
@@ -51,17 +82,51 @@ class InputDropdown extends Component {
   }
 
   handleChange = value => {
-    this.setState({ value });
+    if ( value === 'SELECT_AN_OPTION' )
+      return false;
+
+    const { items, itemValueKey } = this.props;
+
+    const itemsContainsObjects = (
+      items[0] != null &&
+      !( items[0] instanceof Array ) &&
+      typeof items[0] === 'object'
+    );
+
+    const adjustedValue = (
+      itemsContainsObjects
+        ? items.find( item => item[itemValueKey] === value )
+        : value
+    );
+
+    this.setState({ value: adjustedValue });
 
     if ( this.props.onChange )
-      this.props.onChange( value );
+      this.props.onChange({ target: { value: adjustedValue[itemValueKey] } });
+
+    if ( this.props.onChangeValue )
+      this.props.onChangeValue( adjustedValue[itemValueKey] );
   }
 
   handleClose = () => {
     this.setState({ isOpen: false });
+
+    if ( this.props.onBlur )
+      this.props.onBlur();
   }
 
   handleToggle = () => {
+    const { disabled, items } = this.props;
+
+    if (
+      disabled ||
+      items == null &&
+      !( items instanceof Array ) &&
+      items.length === 0
+    ) {
+      return false;
+    }
+
     this.setState( state => ({ isOpen: !state.isOpen }));
   }
 
@@ -75,21 +140,43 @@ class InputDropdown extends Component {
       items.length > 0
     );
 
+    const isValueObject = (
+      value != null &&
+      !( value instanceof Array ) &&
+      typeof value === 'object'
+    );
+
     return (
       <Fragment>
-        <TouchableOpacity
-          disabled={!validItems && !disabled}
+        <Touchable
+          withFeedback
           onPress={this.handleToggle}
+          style={{
+            width: '100%',
+            position: 'relative',
+          }}
         >
+          <Input
+            type="text"
+            value={(
+              isValueObject
+                ? value[itemStringKey]
+                : value
+            )}
+            placeholder={validItems ? 'Select an option...' : 'No items to select'}
+            icon="expand-more"
+            disabled={!validItems && !disabled}
+            editable={false}
+          />
+
           <Box
-            height={50}
-            width={200}
-          >
-            <Text>
-              {value || 'Select an option'}
-            </Text>
-          </Box>
-        </TouchableOpacity>
+            width="100%"
+            height="100%"
+            position="absolute"
+            top={0}
+            left={0}
+          />
+        </Touchable>
 
         <Modal
           visible={isOpen}
@@ -101,7 +188,7 @@ class InputDropdown extends Component {
               flex: 1,
             }}
           >
-            <TouchableWithoutFeedback
+            <Touchable
               onPress={this.handleClose}
             >
               <Box
@@ -111,7 +198,7 @@ class InputDropdown extends Component {
                 height="100%"
                 width="100%"
               />
-            </TouchableWithoutFeedback>
+            </Touchable>
 
             <Box
               height="40%"
@@ -131,7 +218,8 @@ class InputDropdown extends Component {
                 borderColor="grey"
                 paddingX={5}
               >
-                <TouchableOpacity
+                <Touchable
+                  withFeedback
                   onPress={this.handleClose}
                 >
                   <Box padding={10}>
@@ -139,7 +227,7 @@ class InputDropdown extends Component {
                       Done
                     </Text>
                   </Box>
-                </TouchableOpacity>
+                </Touchable>
               </Box>
 
               <Box
@@ -151,11 +239,20 @@ class InputDropdown extends Component {
                 <Picker
                   enabled={validItems && !disabled}
                   onValueChange={this.handleChange}
-                  selectedValue={value}
+                  selectedValue={(
+                    isValueObject
+                      ? value[itemValueKey]
+                      : value
+                  )}
                   style={{
                     width: '100%',
                   }}
                 >
+                  <Picker.Item
+                    label="Select an option"
+                    value="SELECT_AN_OPTION"
+                  />
+
                   {validItems ? (
                     items.map( item => {
                       const isItemObject = (

@@ -27,14 +27,11 @@ class GoogleProvider extends Component {
     });
   }
 
-  geocodeAddress = ( address, options = {}) => {
+  geocodeAddress = ( components, options = {}) => {
     const {} = options; // eslint-disable-line
 
     return new Promise( async ( resolve, reject ) => {
-      const { data } = await Api.getGeocodedAddress({
-        ...options,
-        address,
-      });
+      const { data } = await Api.getGeocodedAddress( components, options );
 
       if ( data.status === 'OK' )
         return resolve( data.results );

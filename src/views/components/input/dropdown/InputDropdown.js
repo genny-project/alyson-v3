@@ -92,7 +92,10 @@ class InputDropdown extends Component {
             );
           })
         ) : (
-          <Picker.Item label="No items to show" hidden />
+          <Picker.Item
+            label="No items to show"
+            hidden
+          />
         )}
       </Picker>
     );

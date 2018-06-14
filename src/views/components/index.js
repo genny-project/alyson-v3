@@ -35,6 +35,10 @@ export { default as KeyboardAwareScrollView } from './keyboard-aware-scroll-view
 export { default as Touchable } from './touchable';
 export { default as Media } from './media';
 export { default as Status } from './status';
+export { default as EventButton } from './event-button';
+export { default as EventButtonLink } from './event-button-link';
+
+export { default as alert } from './alert';
 
 export * from './keycloak';
 export * from './vertx';

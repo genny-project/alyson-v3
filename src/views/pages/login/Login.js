@@ -30,8 +30,6 @@ class Login extends Component {
     const { isAuthenticated, error } = this.props.keycloak;
     const { browserDismissed } = this.state;
 
-    console.warn({ browserDismissed, isAuthenticated });
-
     if ( isAuthenticated )
       return <Redirect to="app" />;
 
@@ -77,7 +75,10 @@ class Login extends Component {
 export default props => (
   <KeycloakConsumer>
     {keycloak => (
-      <Login {...props} keycloak={keycloak} />
+      <Login
+        {...props}
+        keycloak={keycloak}
+      />
     )}
   </KeycloakConsumer>
 );

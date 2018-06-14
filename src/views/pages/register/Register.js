@@ -75,7 +75,10 @@ class Register extends Component {
 export default props => (
   <KeycloakConsumer>
     {keycloak => (
-      <Register {...props} keycloak={keycloak} />
+      <Register
+        {...props}
+        keycloak={keycloak}
+      />
     )}
   </KeycloakConsumer>
 );

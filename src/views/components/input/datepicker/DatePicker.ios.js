@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { string, number, bool, func } from 'prop-types';
-import { DatePickerIOS, TouchableOpacity, Modal, SafeAreaView  } from 'react-native';
+import { DatePickerIOS, Modal, SafeAreaView  } from 'react-native';
 import moment from 'moment';
-import { Text, Box, Input } from '../../../components';
+import { Text, Box, Input, Touchable } from '../../../components';
 
 class DatePicker extends Component {
   static defaultProps = {
@@ -30,8 +30,6 @@ class DatePicker extends Component {
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
-    console.warn({ nextProps, prevState });
-
     if (
       nextProps.value != null &&
       nextProps.value !== prevState.value
@@ -59,11 +57,17 @@ class DatePicker extends Component {
   };
 
   handleChange = ( value ) => {
-    console.warn( moment( value ).format( 'YYYY-MM-DD' ));
     if ( this.props.onChangeValue ) {
-      this.props.onChangeValue(
-        moment( value ).format( 'YYYY-MM-DD' )
-      );
+      const { time, date } = this.props;
+      const momentValue = moment( value );
+
+      const formatted =
+        ( time && date ) ? momentValue.format()
+        : date ? momentValue.format( 'YYYY-MM-DD' )
+        : time ? momentValue.format( 'HH:mm' )
+        : '';
+
+      this.props.onChangeValue( formatted );
     }
   }
 
@@ -72,7 +76,7 @@ class DatePicker extends Component {
       this.props.onBlur();
   }
 
-  handleFocus = () => {
+  handleOpen = () => {
     this.setState({
       isOpen: true,
     });
@@ -107,6 +111,7 @@ class DatePicker extends Component {
     const style = {
       height: '100%',
       width: '100%',
+      flex: 1,
     };
 
     const type = `${date ? 'date' : ''}${time ? 'time' : ''}`;
@@ -118,9 +123,10 @@ class DatePicker extends Component {
       : ''
     );
 
-    const displayValue = value != null
-      ? moment( value ).format( displayFormat )
-      : 'Select a date';
+    const momentValue = moment( value );
+    const displayValue = momentValue.isValid()
+      ? momentValue.format( displayFormat )
+      : null;
 
     return (
       <Box
@@ -128,20 +134,37 @@ class DatePicker extends Component {
         alignItems="center"
         width="100%"
       >
-        <Input
-          {...restProps}
-          type="text"
-          value={displayValue}
-          enabled={false}
-          onFocus={this.handleFocus}
-        />
+        <Touchable
+          withFeedback
+          onPress={this.handleOpen}
+          style={{
+            width: '100%',
+            position: 'relative',
+          }}
+        >
+          <Input
+            {...restProps}
+            type="text"
+            value={displayValue}
+            placeholder="Select a date..."
+            editable={false}
+            prefixIcon="event"
+            icon="expand-more"
+          />
+
+          <Box
+            width="100%"
+            height="100%"
+            position="absolute"
+            top={0}
+            left={0}
+          />
+        </Touchable>
 
         <Modal
           visible={isOpen}
           animationType="slide"
-          style={{
-            backgroundColor: 'white',
-          }}
+          transparent
           onDismiss={this.handleDismiss}
         >
           <SafeAreaView
@@ -149,32 +172,48 @@ class DatePicker extends Component {
               flex: 1,
             }}
           >
+            <Touchable
+              onPress={this.handleClose}
+            >
+              <Box
+                position="absolute"
+                top={0}
+                left={0}
+                height="100%"
+                width="100%"
+              />
+            </Touchable>
+
             <Box
+              height="40%"
               width="100%"
-              height="100%"
+              position="absolute"
+              bottom={0}
+              left={0}
+              backgroundColor="white"
               flexDirection="column"
             >
-              <TouchableOpacity
-                onPress={this.handleClose}
+              <Box
+                justifyContent="flex-end"
+                alignItems="center"
+                borderTopWidth={1}
+                borderBottomWidth={1}
+                borderStyle="solid"
+                borderColor="grey"
+                paddingX={5}
               >
-                <Box
-                  alignItems="flex-start"
-                  justifyContent="flex-end"
-                  flex={0}
-                  paddingX={30}
-                  paddingY={20}
-                  borderColor="grey"
-                  borderStyle="solid"
-                  borderBottomWidth={2}
+                <Touchable
+                  withFeedback
+                  onPress={this.handleClose}
                 >
-                  <Text
-                    color="black"
-                    size="md"
-                  >
-                    Done
-                  </Text>
-                </Box>
-              </TouchableOpacity>
+                  <Box padding={10}>
+                    <Text fontWeight="bold">
+                      Done
+                    </Text>
+                  </Box>
+                </Touchable>
+              </Box>
+
               <Box
                 flex={1}
                 alignItems="center"
