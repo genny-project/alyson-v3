@@ -4,6 +4,7 @@ import dlv from 'dlv';
 import copy from 'fast-copy';
 import { object, any, string } from 'prop-types';
 import { doesValueMatch } from '../../../utils/data-query/operators/find';
+import { store } from '../../../redux';
 import * as Components from '../index';
 
 class Recursive extends Component {
@@ -164,6 +165,15 @@ class Recursive extends Component {
 
   /* Determines whether or not we should render a component, used for onlyShowIf functionality */
   shouldRenderComponent( onlyShowIf, context ) {
+    const vertxStore = store.getState().vertx;
+    const userAlias = vertxStore.aliases.USER;
+    const userData = dlv( vertxStore, `baseEntities.attributes.${userAlias}` );
+
+    const dataPool = {
+      user: userData,
+      ...context,
+    };
+
     /**
      * Loop through all of the keys in the onlyShowIf query and see whether
      * any of them don't match
@@ -176,7 +186,7 @@ class Recursive extends Component {
       /**
        * Each key is actually a path to a field in the context, so use dlv to
        * get the actual value */
-      const actualValue = dlv( context, field );
+      const actualValue = dlv( dataPool, field );
 
       /**
        * Use the doesValueMatch function from the find data query operator to ensure
@@ -185,7 +195,7 @@ class Recursive extends Component {
        * - An explict value, like another string, or alternatively against a condition
        * - Or an object based on the MongoDB query syntax.
        */
-      if ( !doesValueMatch( actualValue, onlyShowIf[field], context )) {
+      if ( !doesValueMatch( actualValue, onlyShowIf[field], dataPool )) {
         return false;
       }
     }
