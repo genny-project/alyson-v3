@@ -14,6 +14,7 @@ class Recursive extends Component {
     context: any,
     repeat: any,
     onlyShowIf: object,
+    conditional: object,
   }
 
   handleMapCurlyTemplate = template => {
@@ -43,6 +44,35 @@ class Recursive extends Component {
         .join( '' )
     );
   }
+
+  calculateConditionalProps = ( conditionalProps, context ) => {
+    /* If no conditional props or no context is provided return an empty object */
+    if ( !conditionalProps || !context ) {
+      return {};
+    }
+
+    /* Check to make sure an if condition was provided */
+    const condition = conditionalProps.if;
+
+    if ( !condition ) {
+      return {};
+    }
+
+    /* Get the "then" and "else" props */
+    const thenProps = condition.then;
+    const elseProps = condition.else;
+
+    /**
+     * Check whether the condition passes. We'll reuse the should
+     * render component function for this. If the condition passes return the
+     * "then" props, otherwise return the "else" props.
+    */
+    if ( this.shouldRenderComponent( condition, context )) {
+      return thenProps;
+    }
+
+    return elseProps;
+  };
 
   handleReducePropInjection = ( result, current ) => {
     const { context } = this.props;
@@ -164,7 +194,7 @@ class Recursive extends Component {
   }
 
   render() {
-    const { component, props, children, context, repeat, onlyShowIf } = this.props;
+    const { component, props, children, context, repeat, onlyShowIf, conditional } = this.props;
 
     if ( !component )
       return children;
@@ -208,7 +238,10 @@ class Recursive extends Component {
 
     return createElement(
       Components[component],
-      this.injectContextIntoProps( context, props ),
+      this.injectContextIntoProps( context, {
+        ...props,
+        ...this.calculateConditionalProps( conditional, context ),
+      }),
       repeatedChildren instanceof Array
         ? repeatedChildren.map(( child, index ) => (
           <Recursive
