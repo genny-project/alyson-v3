@@ -35,7 +35,7 @@ export default ( data, options ) => {
   return single ? output[0] : output;
 };
 
-const doesValueMatch = ( key, actualValue, expectedValue, context ) => {
+const doesValueMatch = ( actualValue, expectedValue, context ) => {
   /* Check whether the query is actually a set of operators */
   if ( isOperatorObject( expectedValue )) {
     return matchesOperators( actualValue, expectedValue );
@@ -65,7 +65,7 @@ const objectMatch = ( item, query, context ) => {
   return !queryKeys.filter( queryKey => {
     const expectedValue = context ? injectContext( query[queryKey], context ) : query[queryKey];
 
-    return !doesValueMatch( queryKey, item[queryKey], expectedValue, context );
+    return !doesValueMatch( item[queryKey], expectedValue, context );
   }).length;
 };
 
@@ -83,3 +83,5 @@ const matchesOperators = ( value, operators ) => {
     return !findOperators[key]( value, operators[key], matchesOperators );
   });
 };
+
+export { doesValueMatch };

@@ -3,6 +3,7 @@ import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
 import { object, any, string } from 'prop-types';
+import { doesValueMatch } from 'utils/data-query/find';
 import * as Components from '../index';
 
 class Recursive extends PureComponent {
@@ -12,6 +13,7 @@ class Recursive extends PureComponent {
     children: any,
     context: any,
     repeat: any,
+    onlyShowIf: object,
   }
 
   handleMapCurlyTemplate = template => {
@@ -130,8 +132,39 @@ class Recursive extends PureComponent {
     return afterProps;
   }
 
+  /* Determines whether or not we should render a component, used for onlyShowIf functionality */
+  shouldRenderComponent( onlyShowIf, context ) {
+    /**
+     * Loop through all of the keys in the onlyShowIf query and see whether
+     * any of them don't match
+     */
+    const fields = Object.keys( onlyShowIf );
+
+    for ( let i = 0; i < fields.length; i++ ) {
+      const field = fields[i];
+
+      /**
+       * Each key is actually a path to a field in the context, so use dlv to
+       * get the actual value */
+      const actualValue = dlv( context, field );
+
+      /**
+       * Use the doesValueMatch function from the find data query operator to ensure
+       * that the value, inside the context at the specified path, matches against
+       * either:
+       * - An explict value, like another string, or alternatively against a condition
+       * - Or an object based on the MongoDB query syntax.
+       */
+      if ( !doesValueMatch( actualValue, onlyShowIf[field], context )) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   render() {
-    const { component, props, children, context, repeat } = this.props;
+    const { component, props, children, context, repeat, onlyShowIf } = this.props;
 
     if ( !component )
       return children;
@@ -144,6 +177,14 @@ class Recursive extends PureComponent {
           ' does not exist
         </Text>
       );
+    }
+
+    /* Check whether this component has onlyShowIf logic attached */
+    if ( onlyShowIf ) {
+      /* Render out nothing if we don't meet that logic */
+      if ( !this.shouldRenderComponent( onlyShowIf, context )) {
+        return null;
+      }
     }
 
     const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;
