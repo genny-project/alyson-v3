@@ -131,7 +131,7 @@ class InputDropdown extends Component {
   }
 
   render() {
-    const { items, itemStringKey, itemValueKey, itemIdKey, disabled } = this.props;
+    const { items, itemStringKey, itemValueKey, itemIdKey, disabled, ...restProps } = this.props;
     const { value, isOpen } = this.state;
 
     const validItems = (
@@ -157,6 +157,7 @@ class InputDropdown extends Component {
           }}
         >
           <Input
+            {...restProps}
             type="text"
             value={(
               isValueObject
