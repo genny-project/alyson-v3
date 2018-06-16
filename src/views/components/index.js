@@ -37,9 +37,11 @@ export { default as Media } from './media';
 export { default as Status } from './status';
 export { default as EventButton } from './event-button';
 export { default as EventButtonLink } from './event-button-link';
+export { default as Payments } from './payments';
 
 export { default as alert } from './alert';
 
 export * from './keycloak';
 export * from './vertx';
 export * from './google';
+export * from './input';

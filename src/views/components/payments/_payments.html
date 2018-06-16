@@ -1,0 +1,22 @@
+<!doctype html>
+
+<html>
+
+<head></head>
+
+<body>
+  <script src="https://js.prelive.promisepay.com/PromisePay.js"></script>
+
+  <script>
+    function sendMessage( prefix ) {
+      return function( data ) {
+        window.postMessage( `${prefix}: ${data}` );
+      }
+    }
+
+    promisepay.captureDeviceId( sendMessage( 'device ID:' ));
+    promisepay.getIPAddress( sendMessage( 'IP address:' ));
+  </script>
+</body>
+
+</html>
