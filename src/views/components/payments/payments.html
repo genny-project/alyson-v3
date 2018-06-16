@@ -1,0 +1,69 @@
+<!doctype html>
+
+<html>
+
+<head></head>
+
+<body>
+  <script src="https://js.prelive.promisepay.com/PromisePay.js"></script>
+
+  <script>
+    window.postMessage( 'g' );
+    (function() {
+      function sendMessage( type ) {
+        return function( payload ) {
+          window.postMessage({
+            type,
+            payload,
+          });
+        };
+      }
+
+      window.postMessage( 'g' );
+
+      document.addEventListener( 'message', function( message ) {
+        window.postMessage( 'd' );
+
+        if ( !message.data.type || !message.data.payload )
+          return;
+
+        var type = message.data.type,
+            payload = message.data.payload;
+
+        switch ( type ) {
+          case 'CAPTURE_DEVICE_ID': {
+            promisepay.captureDeviceId(
+              sendMessage( type + '_SUCCESS' )
+            );
+
+            break;
+          }
+
+          case 'GET_IP_ADDRESS': {
+            promisepay.getIPAddress(
+              sendMessage( type + '_SUCCESS' )
+            );
+
+            break;
+          }
+
+          case 'CREATE_BANK_ACCOUNT': {
+            promisepay.createBankAccount(
+              payload.bankToken,
+              payload.data,
+              sendMessage( type + '_SUCCESS' ),
+              sendMessage( type + '_ERROR' )
+            );
+
+            break;
+          }
+
+          default:
+            break;
+        }
+      });
+    })();
+  </script>
+</body>
+
+</html>
