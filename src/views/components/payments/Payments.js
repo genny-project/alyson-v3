@@ -17,17 +17,21 @@ class Payments extends Component {
 
   state = {
     bankToken: null,
-    // deviceId: null,
+    deviceId: null,
   }
 
   componentDidMount() {
-    // this.getBankToken();
-    // this.getDeviceId();
+    this.getBankToken();
+    this.getDeviceId();
   }
 
   componentDidUpdate() {
     if ( !this.state.bankToken ) {
       this.getBankToken();
+    }
+
+    if ( !this.state.deviceId ) {
+      this.getDeviceId();
     }
   }
 
@@ -48,20 +52,25 @@ class Payments extends Component {
   }
 
   handleMessage = event => {
-    console.warn( 'message recived', event.nativeEvent.data );
-    if (
-      !event.nativeEvent.data.type ||
-      !event.nativeEvent.data.payload
-    ) {
+    let parsed = null;
+
+    try {
+      parsed = JSON.parse( event.nativeEvent.data );
+    }
+    catch ( e ) {
+      console.warn( 'Unable to parse message', event.nativeEvent.data );
+
       return;
     }
 
-    const { type, payload } = event.nativeEvent.data;
+    if ( !parsed.type )
+      return;
+
+    const { type, payload } = parsed;
 
     switch ( type ) {
       case 'CAPTURE_DEVICE_ID_SUCCESS': {
-        console.warn( 'deviceId', payload );
-        // this.setState({ deviceId: payload });
+        this.setState({ deviceId: payload });
 
         break;
       }
@@ -105,9 +114,9 @@ class Payments extends Component {
   }
 
   sendMessageToWebView = message => {
-    console.warn( 'sending', message );
-    this.webview.postMessage( 'hi' );
-    this.webview.postMessage( message );
+    this.webview.postMessage(
+      JSON.stringify( message )
+    );
   }
 
   render() {
@@ -177,6 +186,7 @@ class Payments extends Component {
             height={0}
             width={0}
             onMessage={this.handleMessage}
+            ref={webview => this.webview = webview}
             source={require( './payments.html' )}
           />
         </Box>

@@ -8,27 +8,34 @@
   <script src="https://js.prelive.promisepay.com/PromisePay.js"></script>
 
   <script>
-    window.postMessage( 'g' );
-    (function() {
-      function sendMessage( type ) {
-        return function( payload ) {
-          window.postMessage({
-            type,
-            payload,
-          });
-        };
+    function sendMessage( type ) {
+      return function( payload ) {
+        const data = JSON.stringify({ type, payload });
+
+        window.postMessage( data );
       }
+    }
 
-      window.postMessage( 'g' );
+    document.addEventListener( 'message', function( message ) {
+        let parsed = null;
 
-      document.addEventListener( 'message', function( message ) {
-        window.postMessage( 'd' );
+        try {
+          parsed = JSON.parse( message.data );
+        }
+        catch ( error ) {
+          sendMessage( 'PARSE_ERROR' )({
+            error,
+            message: message.data,
+          });
 
-        if ( !message.data.type || !message.data.payload )
+          return;
+        }
+
+        if ( !parsed.type )
           return;
 
-        var type = message.data.type,
-            payload = message.data.payload;
+        var type = parsed.type,
+            payload = parsed.payload;
 
         switch ( type ) {
           case 'CAPTURE_DEVICE_ID': {
@@ -62,7 +69,6 @@
             break;
         }
       });
-    })();
   </script>
 </body>
 
