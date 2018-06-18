@@ -35,7 +35,7 @@ export default ( data, options ) => {
   return single ? output[0] : output;
 };
 
-const doesValueMatch = ( key, actualValue, expectedValue, context ) => {
+const doesValueMatch = ( actualValue, expectedValue, context ) => {
   /* Check whether the query is actually a set of operators */
   if ( isOperatorObject( expectedValue )) {
     return matchesOperators( actualValue, expectedValue );
@@ -59,13 +59,13 @@ const arrayMatch = ( data, query, context ) => {
 };
 
 const objectMatch = ( item, query, context ) => {
-  /* Get all of the keys for the query */
-  const queryKeys = Object.keys( query );
+  /* Get all of the keys for the query, excluding then and else */
+  const queryKeys = Object.keys( query ).filter( key => !['then', 'else'].includes( key ));
 
   return !queryKeys.filter( queryKey => {
     const expectedValue = context ? injectContext( query[queryKey], context ) : query[queryKey];
 
-    return !doesValueMatch( queryKey, item[queryKey], expectedValue, context );
+    return !doesValueMatch( item[queryKey], expectedValue, context );
   }).length;
 };
 
@@ -74,12 +74,14 @@ const valueCompare = ( actual, expected ) => {
 };
 
 const isOperatorObject = object => {
-  return Object.keys( object ).find( operator => VALID_OPERATORS.includes( operator ));
+  return Object.keys( object ).filter( key => !['then', 'else'].includes( key )).find( operator => VALID_OPERATORS.includes( operator ));
 };
 
 const matchesOperators = ( value, operators ) => {
   /* Get all of the operators that are used */
-  return !Object.keys( operators ).find( key => {
+  return !Object.keys( operators ).filter( key => !['then', 'else'].includes( key )).find( key => {
     return !findOperators[key]( value, operators[key], matchesOperators );
   });
 };
+
+export { doesValueMatch };

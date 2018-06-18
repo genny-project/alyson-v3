@@ -20,6 +20,15 @@ class Input extends Component {
     type: string.isRequired,
   }
 
+  blur() {
+    if (
+      this.input &&
+      this.input.blur
+    ) {
+      this.input.blur();
+    }
+  }
+
   focus() {
     if (
       this.input &&

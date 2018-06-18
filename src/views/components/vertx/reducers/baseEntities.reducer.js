@@ -16,7 +16,7 @@ const getDisplayValueField = ( item ) => {
 
   if ( item.valueDouble != null ) {
     let local = navigator.language;
-  
+
     if ( local == null )
       local = 'en-AU';
 
@@ -53,18 +53,18 @@ const getDisplayValueField = ( item ) => {
   }
 
   if ( item.valueString != null ) {
-    if ( 
+    if (
       item.valueString.startsWith( '[{' ) &&
       item.valueString.endsWith( '}]' )
     ) {
       const object = JSON.parse( item.valueString );
-      
+
       return object;
     }
-  
+
     return item.valueString;
   }
-    
+
   return null;
 };
 
@@ -77,7 +77,7 @@ const handleReduceAttributeCodes = ( resultantAttributes, currentAttribute ) => 
   ) {
     currentAttribute['value'] = displayValue;
   }
-  
+
   resultantAttributes[currentAttribute.attributeCode] = currentAttribute;
 
   return resultantAttributes;
@@ -110,11 +110,16 @@ const handleReduceLinks = ( resultant, current ) => {
   current.links.forEach( handleCombineLinkValues );
 
   if ( current.parentCode ) {
-    const existingLinks = resultant[current.parentCode]
-      ? resultant[current.parentCode].links
-      : [];
+    const existingLinks = (
+      resultant[current.parentCode] &&
+      resultant[current.parentCode].links
+    );
 
-    if ( existingLinks.indexOf( current.code ) < 0 ) {
+    if (
+      existingLinks &&
+      existingLinks instanceof Array &&
+      existingLinks.indexOf( current.code ) < 0
+    ) {
       /* Group all the parent codes inside a links array. */
       resultant[current.parentCode] = ({
         ...resultant[current.parentCode],
