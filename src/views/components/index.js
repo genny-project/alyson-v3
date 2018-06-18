@@ -38,6 +38,7 @@ export { default as Status } from './status';
 export { default as EventButton } from './event-button';
 export { default as EventButtonLink } from './event-button-link';
 export { default as Payments } from './payments';
+export { default as WebView } from './web-view';
 
 export { default as alert } from './alert';
 

@@ -1,10 +1,9 @@
 import React, { Component, cloneElement } from 'react';
-import { WebView } from 'react-native';
 import { node, object, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { Formik } from 'formik';
 import dlv from 'dlv';
-import { Box, Button, Heading, KeyboardAwareScrollView } from '../../components';
+import { Box, Button, Heading, KeyboardAwareScrollView, WebView } from '../../components';
 
 class Payments extends Component {
   static propTypes = {
@@ -51,22 +50,11 @@ class Payments extends Component {
       this.setState({ bankToken });
   }
 
-  handleMessage = event => {
-    let parsed = null;
-
-    try {
-      parsed = JSON.parse( event.nativeEvent.data );
-    }
-    catch ( e ) {
-      console.warn( 'Unable to parse message', event.nativeEvent.data );
-
-      return;
-    }
-
-    if ( !parsed.type )
+  handleMessage = message => {
+    if ( !message.type )
       return;
 
-    const { type, payload } = parsed;
+    const { type, payload } = message;
 
     switch ( type ) {
       case 'CAPTURE_DEVICE_ID_SUCCESS': {
@@ -104,6 +92,14 @@ class Payments extends Component {
       payout_currency: 'AUD',
     };
 
+    console.warn({
+      type: 'CREATE_BANK_ACCOUNT',
+      payload: {
+        token: bankToken,
+        data,
+      },
+    });
+
     this.sendMessageToWebView({
       type: 'CREATE_BANK_ACCOUNT',
       payload: {
@@ -114,9 +110,7 @@ class Payments extends Component {
   }
 
   sendMessageToWebView = message => {
-    this.webview.postMessage(
-      JSON.stringify( message )
-    );
+    this.webview.postMessage( message );
   }
 
   render() {
@@ -161,11 +155,16 @@ class Payments extends Component {
 
                 {React.Children.map( children, child => (
                   cloneElement( child, {
-                    value: values && values[child.props.name],
-                    error: errors && errors[child.props.name],
-                    onChangeValue: value => {
-                      setFieldValue( child.props.name, value );
-                      setFieldTouched( child.props.name, true );
+                    props: {
+                      ...child.props.props,
+                      value: values && values[child.props.props.name],
+                      error: errors && errors[child.props.props.name],
+                      onChangeValue: value => {
+                        console.warn({ value }, child.props.props.name );
+
+                        setFieldValue( child.props.props.name, value );
+                        setFieldTouched( child.props.props.name, true );
+                      },
                     },
                   })
                 ))}
