@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { shape, object, any } from 'prop-types';
@@ -8,7 +8,7 @@ import DataQuery from '../../../utils/data-query';
 import { Box, Text, Timeout, Button } from '../../components';
 import Recursive from './Recursive';
 
-class LayoutLoader extends PureComponent {
+class LayoutLoader extends Component {
   static propTypes = {
     layout: shape({
       layout: object,
@@ -99,8 +99,6 @@ class LayoutLoader extends PureComponent {
       ),
       navigation: navigation.state.params,
     };
-    // console.warn( context );
-    // console.warn( layout );
 
     return (
       <Layout
