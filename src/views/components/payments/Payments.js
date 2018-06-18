@@ -6,7 +6,8 @@ import { BlurView } from 'expo';
 import { Formik } from 'formik';
 import capitalize from 'lodash.capitalize';
 import dlv from 'dlv';
-import { Box, Button, Heading, KeyboardAwareScrollView, WebView, Text, Icon } from '../../components';
+import { Bridge } from '../../../utils';
+import { Box, Button, Heading, KeyboardAwareScrollView, WebView, Text, Icon, alert } from '../../components';
 
 class Payments extends Component {
   static propTypes = {
@@ -57,7 +58,7 @@ class Payments extends Component {
   }
 
   handleMessage = form => message => {
-    if ( !message.type )
+    if ( !message || !message.type )
       return;
 
     const { setErrors, values } = form;
@@ -87,12 +88,17 @@ class Payments extends Component {
         });
 
         const miscErrors = [];
+        const formattedErrors = [];
         const errors = (
           Object
             .keys( payload.responseJSON.errors )
             .reduce(( errors, field ) => {
               if ( values[field] ) {
                 errors[field] = payload.responseJSON.errors[field][0];
+
+                formattedErrors.push(
+                  capitalize( `${field} ${payload.responseJSON.errors[field][0]}!` )
+                );
               }
               else {
                 miscErrors.push(
@@ -104,10 +110,14 @@ class Payments extends Component {
             }, {})
         );
 
-        console.warn({ errors, miscErrors });
+        const totalErrors = miscErrors.length + formattedErrors.length;
+
+        alert({
+          title: 'Uh oh!',
+          message: `${totalErrors} error${totalErrors > 1 ? 's' : ''} occurred:\n${formattedErrors.concat( miscErrors ).join( '\n' )}`,
+        });
 
         this.setState({ miscErrors });
-
         setErrors( errors );
 
         break;
@@ -144,13 +154,19 @@ class Payments extends Component {
     this.webview.postMessage( message );
   }
 
+  sendNewPaymentMethodToBridge( data ) {
+    Bridge.sendButtonEvent( 'PAYMENT_SUBMIT', {
+      code: 'USER_ADD_NEW_PAYMENT_METHOD',
+      value: JSON.stringify( data ),
+    });
+  }
+
   render() {
     const { children, initialValues, title } = this.props;
     const { miscErrors, isSubmitting, isSubmitted } = this.state;
 
     return (
       <Fragment>
-
         <KeyboardAwareScrollView>
           <Box
             height="100%"
@@ -186,32 +202,13 @@ class Payments extends Component {
                     </Heading>
                   </Box>
 
-                  {React.Children.map( children, child => (
-                    cloneElement( child, {
-                      props: {
-                        ...child.props.props,
-                        value: values && values[child.props.props.name],
-                        error: (
-                          errors &&
-                          errors[child.props.props.name] &&
-                          `${child.props.props.label} ${errors[child.props.props.name]}`
-                        ),
-                        onChangeValue: value => {
-                          console.warn({ value }, child.props.props.name );
-
-                          setFieldValue( child.props.props.name, value );
-                          setFieldTouched( child.props.props.name, true );
-                        },
-                      },
-                    })
-                  ))}
-
                   {miscErrors.length > 0 ? (
                     <Box
                       flexDirection="column"
                       justifyContent="center"
                       alignItems="center"
                       paddingY={15}
+                      marginTop={10}
                       marginBottom={20}
                       backgroundColor="red"
                     >
@@ -252,6 +249,24 @@ class Payments extends Component {
                       ))}
                     </Box>
                   ) : null}
+
+                  {React.Children.map( children, child => (
+                    cloneElement( child, {
+                      props: {
+                        ...child.props.props,
+                        value: values && values[child.props.props.name],
+                        error: (
+                          errors &&
+                          errors[child.props.props.name] &&
+                          `${child.props.props.label} ${errors[child.props.props.name]}`
+                        ),
+                        onChangeValue: value => {
+                          setFieldValue( child.props.props.name, value );
+                          setFieldTouched( child.props.props.name, true );
+                        },
+                      },
+                    })
+                  ))}
 
                   <Button
                     disabled={isSubmitting}
@@ -314,7 +329,7 @@ class Payments extends Component {
                   size="xs"
                   align="center"
                 >
-                  Redirecting you now...
+                  Please wait while we redirect you...
                 </Text>
               </Box>
             </Box>
