@@ -28,22 +28,36 @@ const InputWithLabel = ({
           {label}
         </Text>
 
-        {error ? (
-          <Icon
-            name="close"
-            color="red"
-          />
-        ) : valid ? (
-          <Icon
-            name="check"
-            color="green"
-          />
-        ) : (
-          <Icon
-            name="check"
-            color="lightgrey"
-          />
-        )}
+        <Box
+          alignItems="center"
+        >
+          {restProps.required && (
+            <Text
+              color="grey"
+              size="xs"
+            >
+              required
+              {' '}
+            </Text>
+          )}
+
+          {error ? (
+            <Icon
+              name="close"
+              color="red"
+            />
+          ) : valid ? (
+            <Icon
+              name="check"
+              color="green"
+            />
+          ) : (
+            <Icon
+              name="check"
+              color="lightgrey"
+            />
+          )}
+        </Box>
       </Box>
 
       <Box>
