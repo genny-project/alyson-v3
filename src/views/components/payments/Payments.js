@@ -1,6 +1,6 @@
 import React, { Component, cloneElement, Fragment } from 'react';
 import { StyleSheet, Modal } from 'react-native';
-import { node, object, string } from 'prop-types';
+import { node, object, string, oneOf } from 'prop-types';
 import { connect } from 'react-redux';
 import { BlurView } from 'expo';
 import { Formik } from 'formik';
@@ -16,10 +16,14 @@ class Payments extends Component {
     title: string,
     baseEntities: object,
     aliases: object,
+    type: oneOf(
+      ['bank', 'card']
+    ),
   }
 
   state = {
-    token: null,
+    bankToken: null,
+    cardToken: null,
     deviceId: null,
     miscErrors: [],
     isSubmitting: false,
@@ -27,13 +31,18 @@ class Payments extends Component {
   }
 
   componentDidMount() {
-    this.getToken();
+    this.getBankToken();
+    this.getCardToken();
     this.getDeviceId();
   }
 
   componentDidUpdate() {
-    if ( !this.state.token ) {
-      this.getToken();
+    if ( !this.state.bankToken ) {
+      this.getBankToken();
+    }
+
+    if ( !this.state.cardToken ) {
+      this.getCardToken();
     }
 
     if ( !this.state.deviceId ) {
@@ -47,14 +56,24 @@ class Payments extends Component {
     });
   }
 
-  getToken() {
+  getCardToken() {
     const { aliases, baseEntities } = this.props;
     const userAlias = aliases.USER;
 
-    const token = dlv( baseEntities, `attributes.${userAlias}.PRI_ASSEMBLY_BANK_TOKEN.value` );
+    const cardToken = dlv( baseEntities, `attributes.${userAlias}.PRI_ASSEMBLY_CARD_TOKEN.value` );
 
-    if ( token )
-      this.setState({ token });
+    if ( cardToken )
+      this.setState({ cardToken });
+  }
+
+  getBankToken() {
+    const { aliases, baseEntities } = this.props;
+    const userAlias = aliases.USER;
+
+    const bankToken = dlv( baseEntities, `attributes.${userAlias}.PRI_ASSEMBLY_BANK_TOKEN.value` );
+
+    if ( bankToken )
+      this.setState({ bankToken });
   }
 
   handleMessage = form => message => {
@@ -71,6 +90,25 @@ class Payments extends Component {
         break;
       }
 
+      case 'CREATE_CARD_ACCOUNT_SUCCESS': {
+        console.warn( 'success!', payload );
+
+        this.setState({
+          isSubmitted: true,
+          isSubmitting: false,
+        });
+
+        this.sendNewPaymentMethodToBridge({
+          type: 'CARD',
+          id: payload.id,
+          name: values.full_name,
+          number: values.number,
+          nickname: values.nickname,
+        });
+
+        break;
+      }
+
       case 'CREATE_BANK_ACCOUNT_SUCCESS': {
         console.warn( 'success!', payload );
 
@@ -79,9 +117,19 @@ class Payments extends Component {
           isSubmitting: false,
         });
 
+        this.sendNewPaymentMethodToBridge({
+          type: 'BANK_ACCOUNT',
+          id: payload.id,
+          name: values.account_name,
+          bsb: values.routing_number,
+          nickname: values.account_nickname,
+          accountNumber: values.account_number,
+        });
+
         break;
       }
 
+      case 'CREATE_CARD_ACCOUNT_ERROR':
       case 'CREATE_BANK_ACCOUNT_ERROR': {
         this.setState({
           isSubmitting: false,
@@ -129,20 +177,29 @@ class Payments extends Component {
   }
 
   handleSubmit = values => {
-    const { token } = this.state;
+    const { type } = this.props;
+    const { bankToken, cardToken } = this.state;
 
     this.setState({
       isSubmitting: true,
     });
 
+    const token = type === 'bank'
+      ? bankToken
+      : cardToken;
+
     const data = {
       ...values,
-      country: 'AUS',
-      payout_currency: 'AUD',
+      ...( type === 'bank' ) && {
+        country: 'AUS',
+        payout_currency: 'AUD',
+      },
     };
 
     this.sendMessageToWebView({
-      type: 'CREATE_BANK_ACCOUNT',
+      type: type === 'bank'
+        ? 'CREATE_BANK_ACCOUNT'
+        : 'CREATE_CARD_ACCOUNT',
       payload: {
         token,
         data,
@@ -162,7 +219,7 @@ class Payments extends Component {
   }
 
   render() {
-    const { children, initialValues, title } = this.props;
+    const { children, initialValues, title, type } = this.props;
     const { miscErrors, isSubmitting, isSubmitted } = this.state;
 
     return (
@@ -320,7 +377,10 @@ class Payments extends Component {
                   align="center"
                   bold
                 >
-                  Bank account created!
+                  {type === 'bank'
+                    ? 'Bank account created!'
+                    : 'Card added!'
+                  }
                 </Text>
               </Box>
 
