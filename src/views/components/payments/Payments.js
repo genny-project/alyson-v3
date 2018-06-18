@@ -21,6 +21,84 @@ class Payments extends Component {
     ),
   }
 
+  bankFields = {
+    account_nickname: {
+      validation: {
+        regex: /.+/g,
+        error: 'Please enter this field',
+      },
+    },
+    account_name: {
+      validation: {
+        regex: /(\w|\s)+/g,
+        error: 'Please only enter letters and spaces',
+      },
+    },
+    account_number: {
+      validation: {
+        regex: /(\w|\d)+/g,
+        error: 'Please only enter letters and numbers',
+      },
+    },
+    account_type: {
+      validation: {
+        regex: /(checking|savings)+/g,
+        error: 'Please enter this field',
+      },
+    },
+    routing_number: {
+      validation: {
+        regex: /\d{6}/g,
+        error: 'Please enter 6 numbers with no spaces or dashes',
+      },
+    },
+    bank_name: {
+      validation: {
+        regex: /.+/g,
+        error: 'Please enter this field',
+      },
+    },
+    holder_type: {
+      validation: {
+        regex: /(personal|business)/g,
+        error: 'Please enter this field',
+      },
+    },
+  }
+
+  cardFields = {
+    full_name: {
+      validation: {
+        regex: /(\w|\s)+/g,
+        error: 'Please enter only letters and spaces',
+      },
+    },
+    number: {
+      validation: {
+        regex: /\d+/g,
+        error: 'Please enter only numbers with no spaces or dashes',
+      },
+    },
+    cvv: {
+      validation: {
+        regex: /\d+/g,
+        error: 'Please enter only numbers',
+      },
+    },
+    expiry_month: {
+      validation: {
+        regex: /\d{2}/g,
+        error: 'Please enter a month number with 2 digits (e.g. 05)',
+      },
+    },
+    expiry_year: {
+      validation: {
+        regex: /\d{4}/g,
+        error: `Please enter only a full year (e.g. ${new Date().getFullYear()})`,
+      },
+    },
+  }
+
   state = {
     bankToken: null,
     cardToken: null,
@@ -136,33 +214,29 @@ class Payments extends Component {
         });
 
         const miscErrors = [];
-        const formattedErrors = [];
         const errors = (
           Object
             .keys( payload.responseJSON.errors )
             .reduce(( errors, field ) => {
-              if ( values[field] ) {
-                errors[field] = payload.responseJSON.errors[field][0];
+              const formattedError = capitalize(
+                `${field} ${payload.responseJSON.errors[field][0]}`
+              );
 
-                formattedErrors.push(
-                  capitalize( `${field} ${payload.responseJSON.errors[field][0]}!` )
-                );
-              }
-              else {
-                miscErrors.push(
-                  capitalize( `${field} ${payload.responseJSON.errors[field][0]}!` )
-                );
-              }
+              if ( values[field] )
+                errors[field] = formattedError;
+              else
+                miscErrors.push( formattedError );
 
               return errors;
             }, {})
         );
 
-        const totalErrors = miscErrors.length + formattedErrors.length;
+        const errorValues = Object.values( errors );
+        const totalErrors = miscErrors.length + errorValues.length;
 
         alert({
           title: 'Uh oh!',
-          message: `${totalErrors} error${totalErrors > 1 ? 's' : ''} occurred:\n${formattedErrors.concat( miscErrors ).join( '\n' )}`,
+          message: `${totalErrors} error${totalErrors > 1 ? 's' : ''} occurred:\n${errorValues.concat( miscErrors ).join( '\n' )}`,
         });
 
         this.setState({ miscErrors });
@@ -207,6 +281,39 @@ class Payments extends Component {
     });
   }
 
+  doValidate = values => {
+    if ( !values )
+      return {};
+
+    const { type } = this.props;
+    const errors = {};
+    const fields = type === 'bank'
+      ? this.bankFields
+      : this.cardFields;
+
+    Object.keys( values ).forEach( field => {
+      if ( !fields[field] ) {
+        errors[field] = 'Please enter this field';
+      }
+      else {
+        const value = values[field];
+        const { validation } = fields[field];
+
+        if ( validation ) {
+          let valid = true;
+
+          if ( validation.regex )
+            valid = new RegExp( validation.regex ).test( value );
+
+          if ( !valid )
+            errors[field] = validation.error || 'Please enter this field';
+        }
+      }
+    });
+
+    return errors;
+  }
+
   sendMessageToWebView = message => {
     this.webview.postMessage( message );
   }
@@ -235,10 +342,13 @@ class Payments extends Component {
             <Formik
               initialValues={initialValues}
               onSubmit={this.handleSubmit}
+              validate={this.doValidate}
+              validateOnChange
             >
               {({
                 values,
                 errors,
+                touched,
                 handleSubmit,
                 setFieldTouched,
                 setFieldValue,
@@ -312,10 +422,17 @@ class Payments extends Component {
                       props: {
                         ...child.props.props,
                         value: values && values[child.props.props.name],
+                        valid: (
+                          touched[child.props.props.name] &&
+                          (
+                            !errors ||
+                            !errors[child.props.props.name]
+                          )
+                        ),
                         error: (
+                          touched[child.props.props.name] &&
                           errors &&
-                          errors[child.props.props.name] &&
-                          `${child.props.props.label} ${errors[child.props.props.name]}`
+                          errors[child.props.props.name]
                         ),
                         onChangeValue: value => {
                           setFieldValue( child.props.props.name, value );
