@@ -49,6 +49,23 @@ const InputWithLabel = ({
       <Box>
         <Input {...restProps} />
       </Box>
+
+      {error ? (
+        <Box
+          paddingY={10}
+          width="100%"
+          justifyContent="flex-start"
+        >
+          <Text
+            color="red"
+            bold
+            align="left"
+            size="xs"
+          >
+            {error}
+          </Text>
+        </Box>
+      ) : null}
     </Box>
   );
 };

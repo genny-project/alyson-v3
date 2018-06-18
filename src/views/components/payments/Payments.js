@@ -1,9 +1,12 @@
-import React, { Component, cloneElement } from 'react';
+import React, { Component, cloneElement, Fragment } from 'react';
+import { StyleSheet, Modal } from 'react-native';
 import { node, object, string } from 'prop-types';
 import { connect } from 'react-redux';
+import { BlurView } from 'expo';
 import { Formik } from 'formik';
+import capitalize from 'lodash.capitalize';
 import dlv from 'dlv';
-import { Box, Button, Heading, KeyboardAwareScrollView, WebView } from '../../components';
+import { Box, Button, Heading, KeyboardAwareScrollView, WebView, Text, Icon } from '../../components';
 
 class Payments extends Component {
   static propTypes = {
@@ -15,18 +18,21 @@ class Payments extends Component {
   }
 
   state = {
-    bankToken: null,
+    token: null,
     deviceId: null,
+    miscErrors: [],
+    isSubmitting: false,
+    isSubmitted: false,
   }
 
   componentDidMount() {
-    this.getBankToken();
+    this.getToken();
     this.getDeviceId();
   }
 
   componentDidUpdate() {
-    if ( !this.state.bankToken ) {
-      this.getBankToken();
+    if ( !this.state.token ) {
+      this.getToken();
     }
 
     if ( !this.state.deviceId ) {
@@ -40,20 +46,21 @@ class Payments extends Component {
     });
   }
 
-  getBankToken() {
+  getToken() {
     const { aliases, baseEntities } = this.props;
     const userAlias = aliases.USER;
 
-    const bankToken = dlv( baseEntities, `attributes.${userAlias}.PRI_ASSEMBLY_BANK_TOKEN.value` );
+    const token = dlv( baseEntities, `attributes.${userAlias}.PRI_ASSEMBLY_BANK_TOKEN.value` );
 
-    if ( bankToken )
-      this.setState({ bankToken });
+    if ( token )
+      this.setState({ token });
   }
 
-  handleMessage = message => {
+  handleMessage = form => message => {
     if ( !message.type )
       return;
 
+    const { setErrors, values } = form;
     const { type, payload } = message;
 
     switch ( type ) {
@@ -66,11 +73,42 @@ class Payments extends Component {
       case 'CREATE_BANK_ACCOUNT_SUCCESS': {
         console.warn( 'success!', payload );
 
+        this.setState({
+          isSubmitted: true,
+          isSubmitting: false,
+        });
+
         break;
       }
 
       case 'CREATE_BANK_ACCOUNT_ERROR': {
-        console.warn( 'fail!', payload );
+        this.setState({
+          isSubmitting: false,
+        });
+
+        const miscErrors = [];
+        const errors = (
+          Object
+            .keys( payload.responseJSON.errors )
+            .reduce(( errors, field ) => {
+              if ( values[field] ) {
+                errors[field] = payload.responseJSON.errors[field][0];
+              }
+              else {
+                miscErrors.push(
+                  capitalize( `${field} ${payload.responseJSON.errors[field][0]}!` )
+                );
+              }
+
+              return errors;
+            }, {})
+        );
+
+        console.warn({ errors, miscErrors });
+
+        this.setState({ miscErrors });
+
+        setErrors( errors );
 
         break;
       }
@@ -80,11 +118,12 @@ class Payments extends Component {
     }
   }
 
-  handleSubmit = ( values, form ) => {
-    const { setSubmitting } = form;
-    const { bankToken } = this.state;
+  handleSubmit = values => {
+    const { token } = this.state;
 
-    setSubmitting( true );
+    this.setState({
+      isSubmitting: true,
+    });
 
     const data = {
       ...values,
@@ -92,18 +131,10 @@ class Payments extends Component {
       payout_currency: 'AUD',
     };
 
-    console.warn({
-      type: 'CREATE_BANK_ACCOUNT',
-      payload: {
-        token: bankToken,
-        data,
-      },
-    });
-
     this.sendMessageToWebView({
       type: 'CREATE_BANK_ACCOUNT',
       payload: {
-        token: bankToken,
+        token,
         data,
       },
     });
@@ -115,81 +146,181 @@ class Payments extends Component {
 
   render() {
     const { children, initialValues, title } = this.props;
+    const { miscErrors, isSubmitting, isSubmitted } = this.state;
 
     return (
-      <KeyboardAwareScrollView>
-        <Box
-          height="100%"
-          width="100%"
-          flex={1}
-          flexDirection="column"
-          padding={20}
-        >
-          <Formik
-            initialValues={initialValues}
-            onSubmit={this.handleSubmit}
+      <Fragment>
+
+        <KeyboardAwareScrollView>
+          <Box
+            height="100%"
+            width="100%"
+            flex={1}
+            flexDirection="column"
+            padding={20}
           >
-            {({
-              values,
-              errors,
-              isValid,
-              isSubmitting,
-              handleSubmit,
-              setFieldTouched,
-              setFieldValue,
-            }) => (
-              <Box
-                flexDirection="column"
-              >
+            <Formik
+              initialValues={initialValues}
+              onSubmit={this.handleSubmit}
+            >
+              {({
+                values,
+                errors,
+                handleSubmit,
+                setFieldTouched,
+                setFieldValue,
+                setErrors,
+              }) => (
                 <Box
-                  marginY={20}
-                  justifyContent="center"
+                  flexDirection="column"
                 >
-                  <Heading
-                    align="center"
-                    size="lg"
+                  <Box
+                    marginY={20}
+                    justifyContent="center"
                   >
-                    {title}
-                  </Heading>
-                </Box>
+                    <Heading
+                      align="center"
+                      size="lg"
+                    >
+                      {title}
+                    </Heading>
+                  </Box>
 
-                {React.Children.map( children, child => (
-                  cloneElement( child, {
-                    props: {
-                      ...child.props.props,
-                      value: values && values[child.props.props.name],
-                      error: errors && errors[child.props.props.name],
-                      onChangeValue: value => {
-                        console.warn({ value }, child.props.props.name );
+                  {React.Children.map( children, child => (
+                    cloneElement( child, {
+                      props: {
+                        ...child.props.props,
+                        value: values && values[child.props.props.name],
+                        error: (
+                          errors &&
+                          errors[child.props.props.name] &&
+                          `${child.props.props.label} ${errors[child.props.props.name]}`
+                        ),
+                        onChangeValue: value => {
+                          console.warn({ value }, child.props.props.name );
 
-                        setFieldValue( child.props.props.name, value );
-                        setFieldTouched( child.props.props.name, true );
+                          setFieldValue( child.props.props.name, value );
+                          setFieldTouched( child.props.props.name, true );
+                        },
                       },
-                    },
-                  })
-                ))}
+                    })
+                  ))}
 
-                <Button
-                  disabled={!isValid || isSubmitting}
-                  color="green"
-                  onPress={handleSubmit}
-                  showSpinnerOnClick
+                  {miscErrors.length > 0 ? (
+                    <Box
+                      flexDirection="column"
+                      justifyContent="center"
+                      alignItems="center"
+                      paddingY={15}
+                      marginBottom={20}
+                      backgroundColor="red"
+                    >
+                      <Box
+                        paddingY={5}
+                        justifyContent="center"
+                      >
+                        <Text
+                          color="white"
+                          bold
+                          align="center"
+                          size="xs"
+                        >
+                          {miscErrors.length}
+                          {' '}
+                          error
+                          {miscErrors.length > 1 ? 's' : ''}
+                          {' '}
+                          occurred:
+                        </Text>
+                      </Box>
+
+                      {miscErrors.map( error => (
+                        <Box
+                          key={error}
+                          paddingY={5}
+                          justifyContent="center"
+                        >
+                          <Text
+                            color="white"
+                            bold
+                            align="center"
+                            size="xs"
+                          >
+                            {error}
+                          </Text>
+                        </Box>
+                      ))}
+                    </Box>
+                  ) : null}
+
+                  <Button
+                    disabled={isSubmitting}
+                    color="green"
+                    onPress={handleSubmit}
+                    submitting={isSubmitting}
+                  >
+                    Submit
+                  </Button>
+
+                  <WebView
+                    height={0}
+                    width={0}
+                    onMessage={this.handleMessage({
+                      setErrors,
+                      values,
+                    })}
+                    ref={webview => this.webview = webview}
+                    source={require( './payments.html' )}
+                  />
+                </Box>
+              )}
+            </Formik>
+          </Box>
+        </KeyboardAwareScrollView>
+
+        <Modal
+          visible={isSubmitted}
+          animationType="fade"
+          transparent
+        >
+          <BlurView
+            tint="default"
+            style={StyleSheet.absoluteFill}
+          >
+            <Box
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              flex={1}
+            >
+              <Icon
+                size="xxl"
+                color="green"
+                name="check"
+              />
+
+              <Box paddingY={20}>
+                <Text
+                  size="md"
+                  align="center"
+                  bold
                 >
-                  Submit
-                </Button>
+                  Bank account created!
+                </Text>
               </Box>
-            )}
-          </Formik>
 
-          <WebView
-            height={0}
-            width={0}
-            onMessage={this.handleMessage}
-            ref={webview => this.webview = webview}
-            source={require( './payments.html' )}
-          />
-        </Box>
-      </KeyboardAwareScrollView>
+              <Box paddingY={10}>
+                <Text
+                  size="xs"
+                  align="center"
+                >
+                  Redirecting you now...
+                </Text>
+              </Box>
+            </Box>
+          </BlurView>
+        </Modal>
+      </Fragment>
     );
   }
 }

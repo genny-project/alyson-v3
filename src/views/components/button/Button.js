@@ -91,18 +91,15 @@ class Button extends Component {
     withFeedback: bool,
     shape: string,
     boxShadow: string,
+    submitting: bool,
   }
 
   state = {
-    hasBeenClickedOn: false,
+    isSpinning: false,
   }
 
-  componentDidMount() {
-    // console.warn( 'mounted button', this.props, this.state );
-  }
-
-  componentDidUpdate() {
-    // console.warn( 'updated button', this.props, this.state );
+  setSpinning = isSpinning => {
+    this.setState({ isSpinning });
   }
 
   handlePress = event => {
@@ -112,7 +109,8 @@ class Button extends Component {
     // )
       // return false;
 
-    this.setState({ hasBeenClickedOn: true });
+    if ( this.props.showSpinnerOnClick )
+      this.setState({ isSpinning: true });
 
     if ( this.props.onPress )
       this.props.onPress( event );
@@ -183,15 +181,15 @@ class Button extends Component {
       size,
       icon,
       children,
-      showSpinnerOnClick,
       shape,
       width,
       height,
       text,
       boxShadow,
+      submitting,
     } = this.props;
 
-    const { hasBeenClickedOn } = this.state;
+    const { isSpinning } = this.state;
 
     const isIconOnly = (
       typeof icon === 'string' &&
@@ -247,8 +245,8 @@ class Button extends Component {
         {child}
 
         {(
-          showSpinnerOnClick &&
-          hasBeenClickedOn
+          isSpinning ||
+          submitting
         )
           ? this.renderSpinnerChild()
           : null}

@@ -7,6 +7,7 @@ const sizes = {
   md: 24,
   lg: 36,
   xl: 48,
+  xxl: 64,
 };
 
 const colors = {
@@ -45,7 +46,7 @@ Icon.propTypes = {
   name: string.isRequired,
   color: string,
   size: oneOf(
-    ['xs', 'sm', 'md', 'lg', 'xl']
+    ['xs', 'sm', 'md', 'lg', 'xl', 'xxl']
   ),
   type: oneOf(
     ['material-icons', 'feather']
