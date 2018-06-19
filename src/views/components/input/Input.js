@@ -14,6 +14,7 @@ import InputDropdown from './dropdown';
 import Passcode from './passcode';
 import InputRead from './read';
 import InputCurrency from './currency';
+import InputCreditCard from './credit-card';
 
 class Input extends Component {
   static propTypes = {
@@ -228,6 +229,14 @@ class Input extends Component {
       case 'mobileverification':
         return (
           <Passcode
+            {...this.props}
+            ref={input => this.input = input}
+          />
+        );
+
+      case 'credit-card':
+        return (
+          <InputCreditCard
             {...this.props}
             ref={input => this.input = input}
           />

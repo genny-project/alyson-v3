@@ -66,6 +66,17 @@
             break;
           }
 
+          case 'CREATE_CARD_ACCOUNT': {
+            promisepay.createCardAccount(
+              payload.token,
+              payload.data,
+              sendMessage( type + '_SUCCESS' ),
+              sendMessage( type + '_ERROR' )
+            );
+
+            break;
+          }
+
           default:
             break;
         }

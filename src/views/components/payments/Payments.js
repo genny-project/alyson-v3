@@ -67,34 +67,45 @@ class Payments extends Component {
   }
 
   cardFields = {
-    full_name: {
+    nickname: {
       validation: {
-        regex: /(\w|\s)+/g,
-        error: 'Please enter only letters and spaces',
+        regex: /.+/g,
+        error: 'Please enter this field',
+      },
+    },
+    isCardValid: {
+      validation: {
+        assert: true,
+      },
+    },
+    name: {
+      validation: {
+        regex: /.+/g,
+        error: 'Please enter this field',
       },
     },
     number: {
       validation: {
-        regex: /\d+/g,
-        error: 'Please enter only numbers with no spaces or dashes',
+        regex: /.+/g,
+        error: 'Please enter this field',
       },
     },
-    cvv: {
+    expiry: {
       validation: {
-        regex: /\d+/g,
-        error: 'Please enter only numbers',
+        regex: /.+/g,
+        error: 'Please enter this field',
       },
     },
-    expiry_month: {
+    cvc: {
       validation: {
-        regex: /\d{2}/g,
-        error: 'Please enter a month number with 2 digits (e.g. 05)',
+        regex: /.+/g,
+        error: 'Please enter this field',
       },
     },
-    expiry_year: {
+    type: {
       validation: {
-        regex: /\d{4}/g,
-        error: `Please enter only a full year (e.g. ${new Date().getFullYear()})`,
+        regex: /.+/g,
+        error: 'Please enter this field',
       },
     },
   }
@@ -179,8 +190,8 @@ class Payments extends Component {
         this.sendNewPaymentMethodToBridge({
           type: 'CARD',
           id: payload.id,
-          name: values.full_name,
-          number: values.number,
+          name: values.name,
+          number: `XXXX-XXXX-XXXX-${values.number.slice( -4 )}`,
           nickname: values.nickname,
         });
 
@@ -262,13 +273,25 @@ class Payments extends Component {
       ? bankToken
       : cardToken;
 
-    const data = {
-      ...values,
-      ...( type === 'bank' ) && {
+    let data = null;
+
+    if ( type === 'bank' ) {
+      data = {
+        ...values,
         country: 'AUS',
         payout_currency: 'AUD',
-      },
-    };
+      };
+    }
+
+    if ( type === 'card' ) {
+      data = {
+        full_name: values.name,
+        number: values.number.replace( /\s/g, '' ),
+        expiry_month: values.expiry.split( '/' )[0],
+        expiry_year: `20${values.expiry.split( '/' )[1]}`,
+        cvv: values.cvc,
+      };
+    }
 
     this.sendMessageToWebView({
       type: type === 'bank'
@@ -304,6 +327,9 @@ class Payments extends Component {
 
           if ( validation.regex )
             valid = new RegExp( validation.regex ).test( value );
+
+          if ( validation.assert )
+            valid = value === validation.assert;
 
           if ( !valid )
             errors[field] = validation.error || 'Please enter this field';
@@ -353,6 +379,9 @@ class Payments extends Component {
                 setFieldTouched,
                 setFieldValue,
                 setErrors,
+                setValues,
+                setTouched,
+                validateForm,
               }) => (
                 <Box
                   flexDirection="column"
@@ -435,6 +464,23 @@ class Payments extends Component {
                           errors[child.props.props.name]
                         ),
                         onChangeValue: value => {
+                          if ( child.props.props.type === 'credit-card' ) {
+                            setValues({
+                              ...value.values,
+                              [child.props.props.name]: value.valid,
+                            });
+
+                            setTouched({
+                              ...value.values,
+                              [child.props.props.name]: true,
+                            });
+
+                            if ( value.valid )
+                              validateForm( value.values );
+
+                            return;
+                          }
+
                           setFieldValue( child.props.props.name, value );
                           setFieldTouched( child.props.props.name, true );
                         },
