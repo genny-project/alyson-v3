@@ -1,5 +1,5 @@
 import React, { Component, cloneElement, Fragment } from 'react';
-import { StyleSheet, Modal } from 'react-native';
+import { StyleSheet, Modal, ActivityIndicator } from 'react-native';
 import { node, object, string, oneOf } from 'prop-types';
 import { connect } from 'react-redux';
 import { BlurView } from 'expo';
@@ -116,7 +116,7 @@ class Payments extends Component {
     deviceId: null,
     miscErrors: [],
     isSubmitting: false,
-    isSubmitted: false,
+    isSubmitted: true,
   }
 
   componentDidMount() {
@@ -528,32 +528,49 @@ class Payments extends Component {
               alignItems="center"
               flex={1}
             >
-              <Icon
-                size="xxl"
-                color="green"
-                name="check"
-              />
+              <Box
+                padding={30}
+                borderRadius={10}
+                backgroundColor="white"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                borderStyle="solid"
+                borderWidth={2}
+                borderColor="#DDD"
+              >
+                <Icon
+                  size="xxl"
+                  color="green"
+                  name="check"
+                />
 
-              <Box paddingY={20}>
-                <Text
-                  size="md"
-                  align="center"
-                  bold
-                >
-                  {type === 'bank'
-                    ? 'Bank account created!'
-                    : 'Card added!'
-                  }
-                </Text>
-              </Box>
+                <Box paddingY={20}>
+                  <Text
+                    size="lg"
+                    align="center"
+                    bold
+                  >
+                    {type === 'bank'
+                      ? 'Bank account created!'
+                      : 'Card added!'
+                    }
+                  </Text>
+                </Box>
 
-              <Box paddingY={10}>
-                <Text
-                  size="xs"
-                  align="center"
+                <Box
+                  flexDirection="column"
                 >
-                  Please wait while we redirect you...
-                </Text>
+                  <Box marginBottom={20}>
+                    <Text
+                      size="xs"
+                      align="center"
+                    >
+                      Please wait while we redirect you...
+                    </Text>
+                  </Box>
+                  <ActivityIndicator size="small" />
+                </Box>
               </Box>
             </Box>
           </BlurView>
