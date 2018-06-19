@@ -116,7 +116,7 @@ class Payments extends Component {
     deviceId: null,
     miscErrors: [],
     isSubmitting: false,
-    isSubmitted: true,
+    isSubmitted: false,
   }
 
   componentDidMount() {
