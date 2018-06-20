@@ -1,7 +1,7 @@
 import React, { Component, createElement } from 'react';
 import { Platform, ActivityIndicator, TouchableNativeFeedback } from 'react-native';
-import { string, bool, func, oneOf, number, oneOfType } from 'prop-types';
-import { Text, Icon, Box, Touchable } from '../index';
+import { string, bool, func, oneOf, number, oneOfType, shape, arrayOf } from 'prop-types';
+import { Text, Icon, Box, Touchable, alert } from '../index';
 
 const buttonColors = {
   red: 'red',
@@ -92,6 +92,21 @@ class Button extends Component {
     shape: string,
     boxShadow: string,
     submitting: bool,
+    confirmation: shape({
+      message: string,
+      title: string,
+      buttons: arrayOf(
+        shape({
+          type: oneOf(
+            ['ok', 'cancel', 'no']
+          ),
+          style: oneOf(
+            ['default', 'cancel', 'destructive']
+          ),
+          text: string,
+        }),
+      ),
+    }),
   }
 
   state = {
@@ -102,18 +117,38 @@ class Button extends Component {
     this.setState({ isSpinning });
   }
 
-  handlePress = event => {
-    // if (
-      // this.props.showSpinnerOnClick &&
-      // this.state.hasBeenClickedOn
-    // )
-      // return false;
+  handlePressAttempt = event => {
+    const { confirmation } = this.props;
 
-    if ( this.props.showSpinnerOnClick )
+    if ( confirmation ) {
+      alert({
+        title: confirmation.title,
+        message: confirmation.message,
+        buttons: confirmation.buttons && (
+          confirmation.buttons.map( button => ({
+            ...button,
+            onPress: (
+              ( button.type === 'ok' ) ? () => this.handlePress( event )
+              : ( button.type === 'cancel' ) ? () => {}
+              : () => {}
+            ),
+          }))
+        ),
+      });
+    }
+    else {
+      this.handlePress( event );
+    }
+  }
+
+  handlePress = event => {
+    const { showSpinnerOnClick, onPress } = this.props;
+
+    if ( showSpinnerOnClick )
       this.setState({ isSpinning: true });
 
-    if ( this.props.onPress )
-      this.props.onPress( event );
+    if ( onPress )
+      onPress( event );
   }
 
   renderIconChild() {
@@ -276,7 +311,7 @@ class Button extends Component {
       {
         style,
         disabled,
-        onPress: this.handlePress,
+        onPress: this.handlePressAttempt,
         accessible,
         accessibilityLabel,
         accessibilityRole,
