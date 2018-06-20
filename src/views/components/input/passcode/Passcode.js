@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { number, func, oneOf } from 'prop-types';
+import { number, func, oneOf, string } from 'prop-types';
 import range from 'lodash.range';
 import { Box, Input } from '../../../components';
 
@@ -20,6 +20,7 @@ class Passcode extends Component {
     numberOfInputs: 4,
     charactersRequired: 1,
     size: 'md',
+    keyboardType: 'numeric',
   }
 
   static propTypes = {
@@ -30,6 +31,7 @@ class Passcode extends Component {
     size: oneOf(
       ['sm','md','lg']
     ),
+    keyboardType: string,
   }
 
   // static getDerivedStateFromProps( nextProps, prevState ) {
@@ -96,7 +98,7 @@ class Passcode extends Component {
   }
 
   render() {
-    const { numberOfInputs, charactersRequired, size } = this.props;
+    const { numberOfInputs, charactersRequired, size, keyboardType } = this.props;
     const { currentValues } = this.state;
 
     return (
@@ -123,6 +125,7 @@ class Passcode extends Component {
                 onChangeValue={this.handleChangeValue( i )}
                 onBlur={this.handleBlur}
                 ref={input => this.inputs[i] = input}
+                keyboardType={keyboardType}
               />
             </Box>
           ))}
