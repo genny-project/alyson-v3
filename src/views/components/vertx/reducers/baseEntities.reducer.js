@@ -121,13 +121,18 @@ const handleReduceLinks = ( resultant, current ) => {
       existingLinks.indexOf( current.code ) < 0
     ) {
       /* Group all the parent codes inside a links array. */
-      resultant[current.parentCode] = ({
+      resultant[current.parentCode] = {
         ...resultant[current.parentCode],
         links: [
           ...existingLinks,
           current.code,
         ],
-      });
+      };
+    }
+    else {
+      resultant[current.parentCode] = {
+        links: [current.code],
+      };
     }
   }
 
@@ -144,10 +149,35 @@ const handleReduceDefinitionData = ( resultant, current ) => {
 };
 
 const handleReduceData = ( resultant, current ) => {
-  /* Shortcut to remove properties inside the `current` object. */
+  /* Shortcut to remove properties inside the current base entity. */
   const { baseEntityAttributes, ...wantedData } = current; // eslint-disable-line no-unused-vars
 
   resultant[current.code] = wantedData;
+
+  /* If the current has a parentCode, ensure there is an accompanying base entity. */
+  if ( current.parentCode ) {
+    /* If the parent base entity does not exist, simply create a basic one with a link
+     * back to the current base entity. */
+    if ( !resultant[current.parentCode] ) {
+      resultant[current.parentCode] = {
+        links: [current],
+      };
+    }
+    /* If there already is a base entity, add the current base entity to the list of links
+     * inside of it. Be sure that no duplicates occur by filtering out the current's code
+     * from the list of existing links. */
+    else {
+      resultant[current.parentCode] = {
+        ...resultant[current.parentCode],
+        links: [
+          ...resultant[current.parentCode].links
+            ? resultant[current.parentCode].links.filter(({ code }) => code !== current.code )
+            : [],
+          current,
+        ],
+      };
+    }
+  }
 
   return resultant;
 };
@@ -238,8 +268,8 @@ const reducer = ( state = initialState, { type, payload }) => {
       };
 
     /**
-     * TODO:
-     * Documentation
+     * If we receive ask data, ensure all of the data and types that are used
+     * inside of the ask are stored inside this reducer.
      */
     case 'ASK_DATA':
       return {
