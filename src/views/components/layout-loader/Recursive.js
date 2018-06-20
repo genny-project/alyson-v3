@@ -53,22 +53,22 @@ class Recursive extends Component {
     }
 
     /* Check to make sure an if condition was provided */
-    const condition = conditionalProps.if;
+    const ifCondition = conditionalProps.if;
 
-    if ( !condition ) {
+    if ( !ifCondition ) {
       return {};
     }
 
     /* Get the "then" and "else" props */
-    const thenProps = condition.then;
-    const elseProps = condition.else;
+    const thenProps = conditionalProps.then;
+    const elseProps = conditionalProps.else;
 
     /**
      * Check whether the condition passes. We'll reuse the should
      * render component function for this. If the condition passes return the
      * "then" props, otherwise return the "else" props.
     */
-    if ( this.shouldRenderComponent( condition, context )) {
+    if ( this.shouldRenderComponent( ifCondition, context )) {
       return thenProps;
     }
 
@@ -147,9 +147,7 @@ class Recursive extends Component {
    * If the prop is not a string, simply return its current value so that functions work
    * correctly.
    */
-  injectContextIntoProps() {
-    const { props } = this.props;
-
+  injectContextIntoProps( props ) {
     if ( !props )
       return {};
 
@@ -246,12 +244,14 @@ class Recursive extends Component {
       }))
       : this.injectContextIntoChildren( context, children );
 
+    const componentProps = this.injectContextIntoProps({
+      ...props,
+      ...this.calculateConditionalProps( conditional, context ),
+    });
+
     return createElement(
       Components[component],
-      this.injectContextIntoProps( context, {
-        ...props,
-        ...this.calculateConditionalProps( conditional, context ),
-      }),
+      componentProps,
       repeatedChildren instanceof Array
         ? repeatedChildren.map(( child, index ) => (
           <Recursive
