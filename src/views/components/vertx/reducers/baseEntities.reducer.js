@@ -110,28 +110,27 @@ const handleReduceLinks = ( resultant, current ) => {
   current.links.forEach( handleCombineLinkValues );
 
   if ( current.parentCode ) {
-    const existingLinks = (
-      resultant[current.parentCode] &&
-      resultant[current.parentCode].links
-    );
+    if ( !resultant[current.parentCode] ) {
+      resultant[current.parentCode] = {
+        links: [current.code],
+      };
+    }
+    else {
+      const existingLinks = (
+        resultant[current.parentCode] &&
+        resultant[current.parentCode].links &&
+        resultant[current.parentCode].links instanceof Array
+      );
 
-    if (
-      existingLinks &&
-      existingLinks instanceof Array &&
-      existingLinks.indexOf( current.code ) < 0
-    ) {
       /* Group all the parent codes inside a links array. */
       resultant[current.parentCode] = {
         ...resultant[current.parentCode],
         links: [
-          ...existingLinks,
+          ...existingLinks
+            ? resultant[current.parentCode].links.filter(({ code }) => code !== current.code )
+            : [],
           current.code,
         ],
-      };
-    }
-    else {
-      resultant[current.parentCode] = {
-        links: [current.code],
       };
     }
   }

@@ -39,7 +39,7 @@ class DataQuery {
         output = result;
       }
     });
-    
+
     return output;
   }
 
@@ -49,7 +49,7 @@ class DataQuery {
     }
 
     const output = {};
-  
+
     Object.keys( data ).forEach( key => {
       output[key] = injectContext( data[key], context );
     });
