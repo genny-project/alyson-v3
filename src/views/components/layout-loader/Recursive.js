@@ -69,7 +69,7 @@ class Recursive extends Component {
      * render component function for this. If the condition passes return the
      * "then" props, otherwise return the "else" props.
     */
-    if ( this.shouldRenderComponent( ifCondition, context )) {
+    if ( this.ifConditionsPass( ifCondition )) {
       return thenProps;
     }
 
@@ -163,9 +163,8 @@ class Recursive extends Component {
   }
 
   /* Determines whether or not we should render a component, used for onlyShowIf functionality */
-  shouldRenderComponent() {
-    const { dontShowIf, onlyShowIf, context } = this.props;
-
+  ifConditionsPass( condition ) {
+    const { context } = this.props;
     const vertxStore = store.getState().vertx;
     const userAlias = vertxStore.aliases.USER;
     const userData = dlv( vertxStore, `baseEntities.attributes.${userAlias}` );
@@ -175,45 +174,29 @@ class Recursive extends Component {
       ...context,
     };
 
-    if ( onlyShowIf ) {
+    /**
+     * Loop through all of the keys in the condition query and see whether
+     * any of them don't match
+     */
+    const fields = Object.keys( condition );
+
+    for ( let i = 0; i < fields.length; i++ ) {
+      const field = fields[i];
+
       /**
-       * Loop through all of the keys in the onlyShowIf query and see whether
-       * any of them don't match
+       * Each key is actually a path to a field in the context, so use dlv to
+       * get the actual value */
+      const actualValue = dlv( dataPool, field );
+
+      /**
+       * Use the doesValueMatch function from the find data query operator to ensure
+       * that the value, inside the context at the specified path, matches against
+       * either:
+       * - An explict value, like another string, or alternatively against a condition
+       * - Or an object based on the MongoDB query syntax.
        */
-      const onlyShowIfFields = Object.keys( onlyShowIf );
-
-      for ( let i = 0; i < onlyShowIfFields.length; i++ ) {
-        const field = onlyShowIfFields[i];
-
-        /**
-         * Each key is actually a path to a field in the context, so use dlv to
-         * get the actual value */
-        const actualValue = dlv( dataPool, field );
-
-        /**
-         * Use the doesValueMatch function from the find data query operator to ensure
-         * that the value, inside the context at the specified path, matches against
-         * either:
-         * - An explict value, like another string, or alternatively against a condition
-         * - Or an object based on the MongoDB query syntax.
-         */
-        if ( !doesValueMatch( actualValue, onlyShowIf[field], dataPool )) {
-          return false;
-        }
-      }
-    }
-
-    if ( dontShowIf ) {
-      /* See above for docs, but invert the points. */
-      const dontShowIfFields = Object.keys( dontShowIf );
-
-      for ( let i = 0; i < dontShowIfFields.length; i++ ) {
-        const field = dontShowIfFields[i];
-        const actualValue = dlv( dataPool, field );
-
-        if ( doesValueMatch( actualValue, dontShowIf[field], dataPool )) {
-          return false;
-        }
+      if ( !doesValueMatch( actualValue, condition[field], dataPool )) {
+        return false;
       }
     }
 
@@ -246,9 +229,17 @@ class Recursive extends Component {
     }
 
     /* Check whether this component has onlyShowIf logic attached */
-    if ( onlyShowIf || dontShowIf ) {
+    if ( onlyShowIf ) {
       /* Render out nothing if we don't meet that logic */
-      if ( !this.shouldRenderComponent()) {
+      if ( !this.ifConditionsPass( onlyShowIf )) {
+        return null;
+      }
+    }
+
+    /* Check whether this component has dontShowIf logic attached */
+    if ( dontShowIf ) {
+      /* Render out nothing if we do meet that logic */
+      if ( this.ifConditionsPass( dontShowIf )) {
         return null;
       }
     }
