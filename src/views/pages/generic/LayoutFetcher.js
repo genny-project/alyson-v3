@@ -10,6 +10,7 @@ class LayoutFetcher extends Component {
     children: func.isRequired,
     currentUrl: string.isRequired,
     dispatch: func,
+    navigation: object,
   }
 
   state = {
@@ -18,6 +19,14 @@ class LayoutFetcher extends Component {
 
   componentDidMount() {
     this.getLayout();
+  }
+
+  shouldComponentUpdate( nextProps ) {
+    const { index, routes } = nextProps.navigation;
+    const strippedCurrentUrl = removeStartingAndEndingSlashes( this.props.currentUrl );
+    const strippedLastRoute = removeStartingAndEndingSlashes( routes[index].params.layout );
+
+    return strippedCurrentUrl === strippedLastRoute;
   }
 
   componentDidUpdate( prevProps ) {
@@ -217,6 +226,7 @@ class LayoutFetcher extends Component {
 
 const mapStateToProps = state => ({
   baseEntities: state.vertx.baseEntities,
+  navigation: state.navigation,
 });
 
 export default connect( mapStateToProps )( LayoutFetcher );
