@@ -172,7 +172,6 @@ const handleReduceData = ( resultant, current ) => {
           ...resultant[current.parentCode].links
             ? resultant[current.parentCode].links.filter(({ code }) => code !== current.code )
             : [],
-          current,
         ],
       };
     }

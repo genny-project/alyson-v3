@@ -267,11 +267,16 @@ class Form extends Component {
 
     if ( ask.attributeCode.indexOf( 'ADDRESS_FULL' ) !== -1 ) {
       finalAttributeCode = ask.attributeCode.replace( 'ADDRESS_FULL', 'ADDRESS_JSON' );
-      finalValue = JSON.stringify( finalValue );
     }
-
     else if ( ask.attributeCode.indexOf( 'PRI_RATING' ) !== -1 ) {
       finalAttributeCode = 'PRI_RATING_RAW';
+    }
+
+    if (
+      finalValue != null &&
+      typeof finalValue === 'object'
+    ) {
+      finalValue = JSON.stringify( finalValue );
     }
 
     console.warn( 'sending answer...', {

@@ -39,6 +39,12 @@ const middleware = store => next => action => {
     );
   }
 
+  if ( action.type === 'ROUTE_BACK' ) {
+    store.dispatch(
+      NavigationActions.back()
+    );
+  }
+
   if ( action.type === 'NOTIFICATION_MESSAGE' ) {
     const { style, message } = action.payload;
 

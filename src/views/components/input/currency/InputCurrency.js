@@ -19,7 +19,7 @@ class InputCurrency extends Component {
   }
 
   state = {
-    // currency: this.props.defaultCurrency,
+    currency: this.props.defaultCurrency,
     value: '',
   }
 

@@ -1,5 +1,6 @@
 import dlv from 'dlv';
 import dset from 'dset';
+import copy from 'fast-copy';
 
 export default ( data, options, allData ) => {
   if ( !data ) {
@@ -8,7 +9,8 @@ export default ( data, options, allData ) => {
 
   const input = data.length ? data : [data];
 
-  input.map( item => {
+  input.map( itemOriginal => {
+    const item = copy( itemOriginal );
     const data = options.field
       ? dlv( item, options.field )
       : item;
@@ -21,7 +23,7 @@ export default ( data, options, allData ) => {
     const multipleArray = [];
 
     links.forEach( link => {
-      const beg = allData.baseEntities.data[link.link.targetCode];
+      const beg = link.link && allData.baseEntities.data[link.link.targetCode];
 
       if ( !beg ) {
         return;
