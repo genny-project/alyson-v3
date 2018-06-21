@@ -33,13 +33,17 @@ class HeaderLeft extends Component {
     const { baseEntities, aliases, navigationReducer } = this.props;
     const projectAttributes = baseEntities.attributes[aliases.PROJECT];
     const { index, routes } = navigationReducer;
-    const { params, routeName } = routes[index];
+    const { params } = routes[index];
+    const title = params && params.title;
+    const strippedLayoutName = (
+      params != null &&
+      removeStartingAndEndingSlashes( params.layout )
+    );
 
     const showBack = (
       index > 0 &&
-      params != null &&
-      params.layout != null &&
-      removeStartingAndEndingSlashes( params.layout ) !== 'home'
+      strippedLayoutName &&
+      strippedLayoutName !== 'home'
     );
 
     return (
@@ -52,40 +56,45 @@ class HeaderLeft extends Component {
               ? (
                 <Button
                   onPress={this.handleBack}
-                  size="lg"
+                  size="md"
                   color="transparent"
                   textColor={layout.textColor}
                   icon="arrow-back"
-                  paddingX={10}
+                  paddingX={15}
                 />
               ) : (
                 <Button
                   onPress={this.handleToggleMenu}
-                  size="lg"
+                  size="md"
                   color="transparent"
                   textColor={layout.textColor}
                   icon="menu"
-                  paddingX={10}
+                  paddingX={15}
                 />
               )
             }
 
-            <Heading
-              size="lg"
-              marginY={0}
-              color={layout.textColor}
-            >
-              {routeName !== 'home'
-                ? layout.title
-                : (
-                  projectAttributes &&
-                  projectAttributes.PRI_NAME &&
-                  projectAttributes.PRI_NAME.valueString
-                ) || (
-                  'Loading...'
+            <Box marginLeft={5}>
+              <Heading
+                size="lg"
+                color={layout.textColor}
+              >
+                {(
+                  strippedLayoutName &&
+                  strippedLayoutName !== 'home' &&
+                  title
                 )
-              }
-            </Heading>
+                  ? title
+                  : (
+                    projectAttributes &&
+                    projectAttributes.PRI_NAME &&
+                    projectAttributes.PRI_NAME.valueString
+                  ) || (
+                    'Loading...'
+                  )
+                }
+              </Heading>
+            </Box>
           </Box>
         )}
       </LayoutConsumer>

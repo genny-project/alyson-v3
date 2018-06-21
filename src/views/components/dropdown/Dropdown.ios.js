@@ -1,32 +1,28 @@
 import React, { PureComponent, Fragment } from 'react';
-import { TouchableOpacity, TouchableWithoutFeedback, Modal } from 'react-native';
+import { Modal, StyleSheet } from 'react-native';
+import { BlurView } from 'expo';
 import { array, string, bool, number, node } from 'prop-types';
-import { isIphoneX } from 'react-native-iphone-x-helper';
-import { Box, Text, Icon } from '../../components';
+import { Box, Text, Icon, Touchable } from '../../components';
 import DropdownItem from './item';
 
 class Dropdown extends PureComponent {
   static defaultProps = {
     padding: 20,
-    backgroundColor: '#FFF',
     textColor: '#000',
   }
 
   static propTypes = {
     items: array.isRequired,
     text: node.isRequired,
-    facingRight: bool,
     padding: number,
     paddingX: number,
     paddingY: number,
-    backgroundColor: string,
     textColor: string,
     disabled: bool,
   }
 
   state = {
     isOpen: false,
-    buttonHeight: 0,
   }
 
   handleOpen = () => {
@@ -47,32 +43,23 @@ class Dropdown extends PureComponent {
     this.setState( state => ({ isOpen: !state.isOpen }));
   }
 
-  handleLayout = ({ nativeEvent }) => {
-    const { height } = nativeEvent.layout;
-
-    this.setState({
-      buttonHeight: height,
-    });
-  }
-
   render() {
     const {
       items,
       text,
-      facingRight,
       padding,
       paddingX,
       paddingY,
       textColor,
-      backgroundColor,
     } = this.props;
 
-    const { isOpen, buttonHeight } = this.state;
+    const { isOpen } = this.state;
 
     return (
       <Fragment>
         <Box zIndex={110}>
-          <TouchableOpacity
+          <Touchable
+            withFeedback
             onPress={this.handleToggle}
           >
             <Box
@@ -91,14 +78,12 @@ class Dropdown extends PureComponent {
                 </Text>
               ) : text}
 
-              <Box width={5} />
-
               <Icon
                 name="expand-more"
                 color={textColor}
               />
             </Box>
-          </TouchableOpacity>
+          </Touchable>
         </Box>
 
         <Modal
@@ -106,60 +91,91 @@ class Dropdown extends PureComponent {
           visible={isOpen}
           transparent
         >
-          <TouchableWithoutFeedback
+          <BlurView
+            style={StyleSheet.absoluteFill}
+            intensity={75}
+          />
+
+          <Touchable
             onPress={this.handleClose}
           >
             <Box
-              flex={1}
+              paddingX={20}
+              width="100%"
+              height="100%"
               justifyContent="center"
               alignItems="center"
-              backgroundColor="#000"
-              opacity={0.5}
-              width="100%"
               zIndex={10}
-            />
-          </TouchableWithoutFeedback>
-
-          <Box
-            position="absolute"
-            top={(
-              // TODO: improve positioning
-              buttonHeight + (
-                isIphoneX() ? 44 : 20
-              )
-            )}
-            backgroundColor={backgroundColor}
-            flexDirection="column"
-            minWidth={170}
-            zIndex={10}
-            {...facingRight
-              ? { right: 0 }
-              : { left: 0 }
-            }
-          >
-            {(
-              items &&
-              items instanceof Array &&
-              items.length > 0
-            ) ? (
-                items.map( item => (
-                  <DropdownItem
-                    text={item.text}
-                    icon={item.icon}
-                    key={item.text}
-                    href={item.href}
-                    onPress={this.handleClose}
-                    textColor={textColor}
-                  />
-                ))
-              ) : (
-                <DropdownItem
-                  text="No items to show."
-                  onPress={this.handleClose}
-                  textColor={textColor}
+            >
+              <Box
+                width="100%"
+                backgroundColor="white"
+                flexDirection="column"
+                position="relative"
+                borderRadius={10}
+                flex={1}
+                borderStyle="solid"
+                borderWidth={2}
+                borderColor="#DDD"
+              >
+                <Box
+                  position="absolute"
+                  right={10}
+                  bottom="100%"
+                  borderLeftWidth={10}
+                  borderRightWidth={10}
+                  borderBottomWidth={15}
+                  borderStyle="solid"
+                  borderLeftColor="transparent"
+                  borderRightColor="transparent"
+                  borderBottomColor="white"
                 />
-              )}
-          </Box>
+
+                <Box
+                  justifyContent="space-between"
+                  alignItems="center"
+                  padding={10}
+                >
+                  <Text
+                    color="grey"
+                    size="xs"
+                  >
+                    Menu options
+                  </Text>
+
+                  <Icon
+                    name="clear"
+                    color="grey"
+                    size="sm"
+                  />
+                </Box>
+
+                {(
+                  items &&
+                  items instanceof Array &&
+                  items.length > 0
+                ) ? (
+                    items.map(( item, index ) => (
+                      <DropdownItem
+                        text={item.text}
+                        icon={item.icon}
+                        key={item.text}
+                        href={item.href}
+                        onPress={this.handleClose}
+                        textColor="black"
+                        borderBottomColor={index < items.length && 'black'}
+                      />
+                    ))
+                  ) : (
+                    <DropdownItem
+                      text="No items to show."
+                      onPress={this.handleClose}
+                      textColor={textColor}
+                    />
+                  )}
+              </Box>
+            </Box>
+          </Touchable>
         </Modal>
       </Fragment>
     );
