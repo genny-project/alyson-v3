@@ -61,6 +61,8 @@ class Bridge {
       ? events[event]( eventType, data, token )
       : events[event]( eventType, data );
 
+    console.warn( 'sending event', eventObject );
+
     Vertx.sendMessage( eventObject );
   }
 

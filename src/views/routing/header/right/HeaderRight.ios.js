@@ -21,6 +21,8 @@ const HeaderRight = () => {
             href="profile"
             icon="account-circle"
             textColor={textColor}
+            eventType="PROFILE"
+            buttonCode="PROFILE"
           />
         </Box>
       )}
