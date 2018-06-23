@@ -173,6 +173,7 @@ class Button extends Component {
         size={textSizes[size]}
         align="center"
         width="100%"
+        bold
       >
         {text || children}
       </Text>
