@@ -1,6 +1,5 @@
 import dlv from 'dlv';
 import dset from 'dset';
-import copy from 'fast-copy';
 
 export default ( data, options, allData ) => {
   if ( !data ) {
@@ -9,8 +8,7 @@ export default ( data, options, allData ) => {
 
   const input = data.length ? data : [data];
 
-  input.map( itemOriginal => {
-    const item = copy( itemOriginal );
+  input.map( item => {
     const data = options.field
       ? dlv( item, options.field )
       : item;
