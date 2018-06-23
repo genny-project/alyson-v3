@@ -7,10 +7,11 @@ const Date = ({
   children,
   format = 'HH:mm DDDD MMMM Do, YYYY',
   options,
+  date,
   ...restProps
 }) => (
   <Text {...restProps}>
-    {formatDate( children, format, options )}
+    {formatDate( date || children, format, options )}
   </Text>
 );
 
@@ -20,6 +21,7 @@ Date.propTypes = {
   ),
   format: string,
   options: object,
+  date: string,
 };
 
 export default Date;
