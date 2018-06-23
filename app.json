@@ -6,7 +6,10 @@
     "version": "0.0.3",
     "slug": "channel40-v3",
     "ios": {
-      "bundleIdentifier": "com.channel40.v3"
+      "bundleIdentifier": "com.channel40.v3",
+      "config": {
+        "googleMapsApiKey": "AIzaSyC5HjeRqeoqbxHEQWieE0g9hLaN6snjorA"
+      }
     },
     "android": {
       "package": "com.channel40.v3"
