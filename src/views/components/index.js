@@ -41,6 +41,7 @@ export { default as Payments } from './payments';
 export { default as WebView } from './web-view';
 export { default as CreditCard } from './credit-card';
 export { default as LinkButton } from './link-button';
+export { default as PhoneNumber } from './phone-number';
 
 export { default as alert } from './alert';
 
