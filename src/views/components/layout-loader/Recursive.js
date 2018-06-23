@@ -215,14 +215,14 @@ class Recursive extends Component {
       conditional,
     } = this.props;
 
-    if ( !component )
-      return children;
-
-    if ( !Components[component] ) {
+    if (
+      !component ||
+      !Components[component]
+    ) {
       return (
         <Text>
           Component '
-          {component}
+          {component || 'undefined'}
           ' does not exist
         </Text>
       );
