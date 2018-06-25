@@ -113,6 +113,12 @@ class Recursive extends Component {
             result[current][i] = this.curlyBracketParse( element );
           }
         }
+
+        if ( typeof element === 'object' ) {
+          const keys = Object.keys( element );
+
+          result[current][i] = keys.reduce( this.handleReducePropInjection, element );
+        }
       }
 
       result[current] = result[current].reduce(
