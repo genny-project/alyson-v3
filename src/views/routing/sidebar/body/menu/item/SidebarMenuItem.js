@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { TouchableOpacity } from 'react-native';
 import { func, string } from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { LayoutConsumer } from '../../../../../layout';
-import { Link, Box, Icon, Text } from '../../../../../components';
+import { Link, Box, Icon, Text, Touchable } from '../../../../../components';
 import { closeSidebar } from '../../../../../../redux/actions';
 
 class SidebarMenuItem extends Component {
@@ -23,12 +22,9 @@ class SidebarMenuItem extends Component {
     const element = (
       <LayoutConsumer>
         {layout => (
-          <TouchableOpacity
+          <Touchable
+            withFeedback
             onPress={onPress}
-            style={{
-              flex: 1,
-              alignItems: 'center',
-            }}
           >
             <Box
               paddingY={10}
@@ -66,7 +62,7 @@ class SidebarMenuItem extends Component {
                 </Box>
               ) : null}
             </Box>
-          </TouchableOpacity>
+          </Touchable>
         )}
       </LayoutConsumer>
     );
