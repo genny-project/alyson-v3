@@ -1,21 +1,62 @@
 import React, { Component, Fragment } from 'react';
 import { Dimensions } from 'react-native';
 import { MapView } from 'expo';
-import { array, bool } from 'prop-types';
+import { number, arrayOf, shape, bool } from 'prop-types';
 import MapViewDirections from 'react-native-maps-directions';
 import config from '../../../config';
+import { isArray, isObject } from '../../../utils';
 import { Box } from '../';
 
 class Map extends Component {
   static propTypes = {
-    markers: array,
+    markers: arrayOf(
+      shape({
+        latitude: number,
+        longitude: number,
+      })
+    ),
     showDirections: bool,
+  }
+
+  static getDerivedStateFromProps( props, state ) {
+    /* Ensure the new markers are a valid array. */
+    if ( isArray( props.markers, { ofMinLength: 1 })) {
+      /* If the lengths are different, update the state with the new markers. */
+      if ( !isArray( state.markers, { ofExactLength: props.markers.length })) {
+        return { markers: props.markers };
+      }
+
+      /* Loop through the markers and check if the lat/long
+       * of any have changed between props and state. */
+      for ( let i = 0; i < props.markers.length; i++ ) {
+        const propsMarker = props.markers[i];
+        const stateMarker = state.markers[i];
+
+        /* If the marker in props is NOT a valid marker object,
+         * cancel this whole operation and don't update the state. */
+        if ( !isObject( propsMarker, { withProperties: ['latitude', 'longitude'] }))
+          return null;
+
+        if (
+          propsMarker.latitude !== stateMarker.latitude ||
+          propsMarker.longitude !== stateMarker.longitude
+        ) {
+          return { markers: props.markers };
+        }
+      }
+    }
+
+    return null;
   }
 
   mapStyle = {
     height: '100%',
     width: '100%',
     flex: 1,
+  }
+
+  state = {
+    markers: this.props.markers,
   }
 
   handleReady = result => {
@@ -32,7 +73,8 @@ class Map extends Component {
   }
 
   render() {
-    const { markers, showDirections } = this.props;
+    const { showDirections } = this.props;
+    const { markers } = this.state;
 
     return (
       <Box
@@ -45,11 +87,7 @@ class Map extends Component {
           ref={mapView => this.mapView = mapView}
           style={this.mapStyle}
         >
-          {(
-            markers &&
-            markers instanceof Array &&
-            markers.length > 0
-          ) ? (
+          {isArray( markers, { ofMinLength: 1 }) ? (
             <Fragment>
               {markers.map( marker => (
                 <MapView.Marker
@@ -78,7 +116,7 @@ class Map extends Component {
                 />
                 ) : null}
             </Fragment>
-            ) : null}
+          ) : null}
         </MapView>
       </Box>
 
