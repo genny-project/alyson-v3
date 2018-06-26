@@ -3,6 +3,7 @@ import { oneOf, string } from 'prop-types';
 import { MaterialIcons, Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const sizes = {
+  xs: 16,
   sm: 18,
   md: 24,
   lg: 36,
@@ -39,7 +40,12 @@ const Icon = ({
     color: colors[color] || color,
   };
 
-  return createElement( types[type], { name, style });
+  const normalizedName = name.replace( /_/g, '-' );
+
+  return createElement( types[type], {
+    name: normalizedName,
+    style,
+  });
 };
 
 Icon.propTypes = {
@@ -49,7 +55,7 @@ Icon.propTypes = {
     ['xs', 'sm', 'md', 'lg', 'xl', 'xxl']
   ),
   type: oneOf(
-    ['material-icons', 'feather']
+    ['material-icons', 'feather', 'font-awesome', 'material-icons-community']
   ),
 };
 
