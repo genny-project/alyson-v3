@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { array, object } from 'prop-types';
 import SidebarMenuItem from './item';
 import SidebarMenuDropdown from './dropdown';
@@ -33,22 +33,33 @@ class SidebarMenu extends Component {
   render() {
     const { items } = this.props;
 
-    return items.map( item => (
-      item.isDropdown ? (
-        <SidebarMenuDropdown
-          {...item}
-          key={item.name}
-          onToggle={this.handleToggle}
-          isOpen={this.isOpen}
-        />
-      ) : (
+    return (
+      <Fragment>
+        {items.map( item => (
+          item.isDropdown ? (
+            <SidebarMenuDropdown
+              {...item}
+              key={item.name}
+              onToggle={this.handleToggle}
+              isOpen={this.isOpen}
+            />
+          ) : (
+            <SidebarMenuItem
+              {...item}
+              key={item.name}
+              iconLeft={item.icon}
+            />
+          )
+        ))}
+
         <SidebarMenuItem
-          {...item}
-          key={item.name}
-          iconLeft={item.icon}
+          path="logout"
+          key="logout"
+          iconLeft="exit-to-app"
+          name="Logout"
         />
-      )
-    ));
+      </Fragment>
+    );
   }
 }
 

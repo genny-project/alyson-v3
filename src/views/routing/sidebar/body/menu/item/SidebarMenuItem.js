@@ -22,47 +22,42 @@ class SidebarMenuItem extends Component {
     const element = (
       <LayoutConsumer>
         {layout => (
-          <Touchable
-            withFeedback
-            onPress={onPress}
+          <Box
+            paddingY={10}
+            flex={1}
+            alignItems="center"
+            justifyContent="space-between"
+            width="100%"
           >
             <Box
-              paddingY={10}
               flex={1}
               alignItems="center"
-              justifyContent="space-between"
-              width="100%"
             >
-              <Box
-                flex={1}
-                alignItems="center"
-              >
-                <Box paddingX={15}>
-                  {iconLeft ? (
-                    <Icon
-                      name={iconLeft}
-                      color={layout.textColor}
-                    />
-                  ) : (
-                    <Box width={24} />
-                  )}
-                </Box>
-
-                <Text color={layout.textColor}>
-                  {name}
-                </Text>
-              </Box>
-
-              {iconRight ? (
-                <Box paddingX={15}>
+              <Box paddingX={15}>
+                {iconLeft ? (
                   <Icon
-                    name={iconRight}
+                    name={iconLeft}
                     color={layout.textColor}
                   />
-                </Box>
-              ) : null}
+                ) : (
+                  <Box width={24} />
+                )}
+              </Box>
+
+              <Text color={layout.textColor}>
+                {name}
+              </Text>
             </Box>
-          </Touchable>
+
+            {iconRight ? (
+              <Box paddingX={15}>
+                <Icon
+                  name={iconRight}
+                  color={layout.textColor}
+                />
+              </Box>
+            ) : null}
+          </Box>
         )}
       </LayoutConsumer>
     );
@@ -78,7 +73,14 @@ class SidebarMenuItem extends Component {
       );
     }
 
-    return element;
+    return (
+      <Touchable
+        withFeedback
+        onPress={onPress}
+      >
+        {element}
+      </Touchable>
+    );
   }
 }
 
