@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import { Dimensions } from 'react-native';
 import { MapView } from 'expo';
 import { number, arrayOf, shape, bool } from 'prop-types';
 import MapViewDirections from 'react-native-maps-directions';
@@ -60,14 +59,12 @@ class Map extends Component {
   }
 
   handleReady = result => {
-    const { width, height } = Dimensions.get( 'window' );
-
     this.mapView.fitToCoordinates( result.coordinates, {
       edgePadding: {
-        right: ( width / 30 ),
-        bottom: ( height / 30 ),
-        left: ( width / 30 ),
-        top: ( height / 30 ),
+        right: 40,
+        bottom: 40,
+        left: 40,
+        top: 40,
       },
     });
   }
@@ -119,7 +116,6 @@ class Map extends Component {
           ) : null}
         </MapView>
       </Box>
-
     );
   }
 }
