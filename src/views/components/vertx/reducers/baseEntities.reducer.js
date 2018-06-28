@@ -24,23 +24,23 @@ const getDisplayValueField = ( item ) => {
 
     return value
       ? new Intl.NumberFormat( local ).format( item.valueDouble )
-      : item.valueDouble.toString();
+      : item.valueDouble;
   }
 
   if ( item.valueInteger != null )
-    return item.valueInteger.toString();
+    return item.valueInteger;
 
   if ( item.valueLong != null )
-    return item.valueLong.toString();
+    return item.valueLong;
 
   if ( item.valueDateTime != null )
-    return item.valueDateTime.toString();
+    return item.valueDateTime;
 
   if ( item.valueDate != null )
-    return item.valueDate.toString();
+    return item.valueDate;
 
   if ( item.valueBoolean != null )
-    return item.valueBoolean.toString();
+    return item.valueBoolean;
 
   if ( item.valueMoney != null ) {
     const formatter = new Intl.NumberFormat( 'en-AU', {
@@ -54,12 +54,17 @@ const getDisplayValueField = ( item ) => {
 
   if ( item.valueString != null ) {
     if (
-      item.valueString.startsWith( '[{' ) &&
-      item.valueString.endsWith( '}]' )
+      item.valueString.startsWith( '[' ) &&
+      item.valueString.endsWith( ']' )
     ) {
-      const object = JSON.parse( item.valueString );
+      try {
+        const object = JSON.parse( item.valueString );
 
-      return object;
+        return object;
+      }
+      catch ( error ) {
+        return item.valueString;
+      }
     }
 
     return item.valueString;
