@@ -171,12 +171,10 @@ class Recursive extends Component {
   /* Determines whether or not we should render a component, used for onlyShowIf functionality */
   ifConditionsPass( condition ) {
     const { context } = this.props;
-    const vertxStore = store.getState().vertx;
-    const userAlias = vertxStore.aliases.USER;
-    const userData = dlv( vertxStore, `baseEntities.attributes.${userAlias}` );
+    const { user } = store.getState().vertx;
 
     const dataPool = {
-      user: userData,
+      user,
       ...context,
     };
 
