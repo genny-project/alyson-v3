@@ -31,7 +31,7 @@ const textSizes = {
 
 const sizeMapping = {
   sm: 'small',
-  md: 'medium',
+  md: 'small',
   lg: 'large',
 };
 
@@ -181,27 +181,27 @@ class Button extends Component {
   }
 
   renderSpinnerChild() {
-    const { size, disabled, color } = this.props;
+    const { size, color } = this.props;
 
     return (
       <Box
         position="absolute"
         width="100%"
         height="100%"
-        top={0}
-        left={0}
-        backgroundColor={(
-          disabled
-            ? buttonColors.disabled
-            : buttonColors[color]
-        )}
-        opacity={0.8}
-        flex={1}
         justifyContent="center"
         alignItems="center"
       >
+        <Box
+          position="absolute"
+          width="100%"
+          height="100%"
+          backgroundColor={buttonColors[color]}
+          opacity={0.8}
+        />
+
         <ActivityIndicator
           size={sizeMapping[size]}
+          color={textColors[color]}
         />
       </Box>
     );
@@ -252,19 +252,7 @@ class Button extends Component {
             ? buttonColors.disabled
             : buttonColors[color]
         )}
-        padding={padding}
-        paddingX={(
-          paddingX == null &&
-          !isIconOnly
-        )
-          ? paddingSizes[size].paddingX
-          : paddingX}
-        paddingY={(
-          paddingY == null &&
-          !isIconOnly
-        )
-          ? paddingSizes[size].paddingY
-          : paddingY}
+
         width={(
           isIconOnly &&
           shape === 'circle'
@@ -278,7 +266,23 @@ class Button extends Component {
           ? iconOnlyButtonSizes[size]
           : height}
       >
-        {child}
+        <Box
+          padding={padding}
+          paddingX={(
+            paddingX == null &&
+            !isIconOnly
+          )
+            ? paddingSizes[size].paddingX
+            : paddingX}
+          paddingY={(
+            paddingY == null &&
+            !isIconOnly
+          )
+            ? paddingSizes[size].paddingY
+            : paddingY}
+        >
+          {child}
+        </Box>
 
         {(
           isSpinning ||
@@ -300,7 +304,10 @@ class Button extends Component {
       accessibilityRole,
       width,
       height,
+      submitting,
     } = this.props;
+
+    const { isSpinning } = this.state;
 
     const style = {
       height,
@@ -311,7 +318,11 @@ class Button extends Component {
       Touchable,
       {
         style,
-        disabled,
+        disabled: (
+          disabled ||
+          isSpinning ||
+          submitting
+        ),
         onPress: this.handlePressAttempt,
         accessible,
         accessibilityLabel,
