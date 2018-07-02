@@ -15,8 +15,14 @@ class LinkButton extends Component {
       <Link
         {...linkProps}
         to={to}
+        useAppNavigator={false}
       >
-        <Button {...restProps} />
+        {({ onPress }) => (
+          <Button
+            {...restProps}
+            onPress={onPress}
+          />
+        )}
       </Link>
     );
   }

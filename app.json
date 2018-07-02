@@ -9,10 +9,18 @@
       "bundleIdentifier": "com.channel40.v3",
       "config": {
         "googleMapsApiKey": "AIzaSyC5HjeRqeoqbxHEQWieE0g9hLaN6snjorA"
-      }
+      },
+      "publishBundlePath": "ios/channel40/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/channel40/Supporting/shell-app-manifest.json"
     },
     "android": {
       "package": "com.channel40.v3"
+    },
+    "isDetached": true,
+    "detach": {
+      "scheme": "expc0853f3b51514bdaa88f2167200966e9",
+      "iosExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/ios-v2.4.4-sdk26.0.0-3bd935c7-cdd3-4002-8e44-4df857a675f2.tar.gz",
+      "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v2.4.0-sdk26.0.0-e63d9209-070c-4118-b06b-c60e82da0b66.tar.gz"
     }
   }
 }

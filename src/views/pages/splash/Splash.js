@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { object } from 'prop-types';
 import { Platform } from 'react-native';
-import { Link, Box, Button, KeycloakConsumer, Redirect } from '../../components';
+import { LinkButton, Box, KeycloakConsumer, Redirect, Heading } from '../../components';
 import Layout from '../../layout';
 
 class Splash extends Component {
@@ -37,17 +37,23 @@ class Splash extends Component {
               alignItems="center"
               flex={1}
               flexDirection="column"
+              padding={20}
             >
-              <Link
-                to="login"
-                useAppNavigator={false}
-              >
-                <Button
-                  color="red"
+              <Box marginBottom={40}>
+                <Heading
+                  size="lg"
+                  align="center"
                 >
-                  Login
-                </Button>
-              </Link>
+                  Welcome!
+                </Heading>
+              </Box>
+
+              <LinkButton
+                to="login"
+                color="red"
+              >
+                Login
+              </LinkButton>
             </Box>
           </Layout>
         )}
