@@ -15,6 +15,7 @@ export default {
     },
   },
   google: {
+    apiKey: 'AIzaSyC5HjeRqeoqbxHEQWieE0g9hLaN6snjorA',
     maps: {
       apiUrl: 'https://maps.googleapis.com/maps/api/js',
     },

@@ -2,6 +2,7 @@
 import * as findOperators from './findOperators';
 import { injectContext } from './helpers';
 
+const IGNORE_KEYS = ['then', 'else'];
 const VALID_OPERATORS = Object.keys( findOperators );
 
 export default ( data, options ) => {
@@ -38,7 +39,7 @@ export default ( data, options ) => {
 const doesValueMatch = ( actualValue, expectedValue, context ) => {
   /* Check whether the query is actually a set of operators */
   if ( isOperatorObject( expectedValue )) {
-    return matchesOperators( actualValue, expectedValue );
+    return matchesOperators( actualValue, expectedValue, context );
   }
 
   switch ( typeof( expectedValue )) {
@@ -77,10 +78,21 @@ const isOperatorObject = object => {
   return Object.keys( object ).filter( key => !['then', 'else'].includes( key )).find( operator => VALID_OPERATORS.includes( operator ));
 };
 
-const matchesOperators = ( value, operators ) => {
+const matchesOperators = ( value, operators, context ) => {
   /* Get all of the operators that are used */
-  return !Object.keys( operators ).filter( key => !['then', 'else'].includes( key )).find( key => {
-    return !findOperators[key]( value, operators[key], matchesOperators );
+  const keys = Object.keys( operators );
+
+  return !keys.find( key => {
+    /* Skip all ignored keys. */
+    if ( IGNORE_KEYS.includes( key ))
+      return false;
+
+    /* If context is passed in, attempt to inject context to the value. */
+    const operatorValue = context
+      ? injectContext( operators[key], context )
+      : operators[key];
+
+    return !findOperators[key]( value, operatorValue, matchesOperators );
   });
 };
 

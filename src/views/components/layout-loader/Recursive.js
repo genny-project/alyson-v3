@@ -113,6 +113,12 @@ class Recursive extends Component {
             result[current][i] = this.curlyBracketParse( element );
           }
         }
+
+        if ( typeof element === 'object' ) {
+          const keys = Object.keys( element );
+
+          result[current][i] = keys.reduce( this.handleReducePropInjection, element );
+        }
       }
 
       result[current] = result[current].reduce(
@@ -165,12 +171,10 @@ class Recursive extends Component {
   /* Determines whether or not we should render a component, used for onlyShowIf functionality */
   ifConditionsPass( condition ) {
     const { context } = this.props;
-    const vertxStore = store.getState().vertx;
-    const userAlias = vertxStore.aliases.USER;
-    const userData = dlv( vertxStore, `baseEntities.attributes.${userAlias}` );
+    const { user } = store.getState().vertx;
 
     const dataPool = {
-      user: userData,
+      user,
       ...context,
     };
 

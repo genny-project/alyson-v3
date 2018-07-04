@@ -42,6 +42,8 @@ export { default as WebView } from './web-view';
 export { default as CreditCard } from './credit-card';
 export { default as LinkButton } from './link-button';
 export { default as PhoneNumber } from './phone-number';
+export { default as Map } from './map';
+export { default as Toggle } from './toggle';
 
 export { default as alert } from './alert';
 
@@ -49,3 +51,4 @@ export * from './keycloak';
 export * from './vertx';
 export * from './google';
 export * from './input';
+export * from './toggle';

@@ -1,7 +1,7 @@
 import { NavigationActions } from 'react-navigation';
 import { routes } from '../../../config';
 import * as actions from './vertx.actions';
-import { Bridge } from '../../../utils';
+import { Bridge, removeStartingAndEndingSlashes } from '../../../utils';
 import { alert } from '../../components';
 
 const middleware = store => next => action => {
@@ -27,16 +27,22 @@ const middleware = store => next => action => {
   }
 
   if ( action.type === 'ROUTE_CHANGE' ) {
-    const { code } = action.payload;
+    const code = removeStartingAndEndingSlashes( action.payload.code );
+    const { navigation } = store.getState();
+    const { params, routeName } = navigation.routes[navigation.index];
+    const currentRoute = ( params && params.layout ) || routeName;
 
-    store.dispatch(
-      NavigationActions.navigate({
-        routeName: routes[code] ? code : 'generic',
-        params: {
-          layout: code,
-        },
-      })
-    );
+    /* Stop route change from pushing the same route as the current route. */
+    if ( code !== currentRoute ) {
+      store.dispatch(
+        NavigationActions.navigate({
+          routeName: routes[code] ? code : 'generic',
+          params: {
+            layout: code,
+          },
+        })
+      );
+    }
   }
 
   if ( action.type === 'ROUTE_BACK' ) {

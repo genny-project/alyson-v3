@@ -25,7 +25,7 @@ class GoogleProvider extends Component {
     return new Promise(( resolve, reject ) => {
       if ( !autocompleter ) {
         return reject(
-          new Error( 'Unable to autocomplete - Google Places has not been initialized. Please call `initGeocoder()` from `GoogleConsumer`.' )
+          new Error( 'Unable to autocomplete - Google Places has not been initialized. Please call `init()` from `GoogleConsumer`.' )
         );
       }
 
@@ -70,6 +70,8 @@ class GoogleProvider extends Component {
   state = {
     geocoder: null,
     autocompleter: null,
+    geocodeOK: '',
+    autocompleteOK: '',
     geocodeAddress: this.geocodeAddress,
     autocompleteAddress: this.autocompleteAddress,
   }
@@ -141,10 +143,8 @@ class GoogleProvider extends Component {
     if ( isAlreadyInjected )
       throw new Error( 'Attempted to inject Google Maps script when the script has already been injected.' );
 
-    const apiKey = 'AIzaSyC5HjeRqeoqbxHEQWieE0g9hLaN6snjorA'; // TODO: remove hardcode
-
     const { initCallbackName } = this.props;
-    const { apiUrl } = config.google.maps;
+    const { maps, apiKey } = config.google;
     const scriptTag = document.createElement( 'script' );
 
     const apiUrlQuery = queryString.stringify({
@@ -153,7 +153,7 @@ class GoogleProvider extends Component {
       callback: initCallbackName,
     });
 
-    scriptTag.src = `${apiUrl}?${apiUrlQuery}`;
+    scriptTag.src = `${maps.apiUrl}?${apiUrlQuery}`;
     scriptTag.async = true;
     scriptTag.id = scriptTagId;
 

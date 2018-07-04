@@ -51,6 +51,7 @@ const EventButton = ({
   const addedProps = {
     ...restProps,
     onPress: handlePress,
+    showSpinnerOnClick: true,
   };
 
   return React.createElement(
