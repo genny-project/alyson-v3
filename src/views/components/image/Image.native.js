@@ -1,13 +1,16 @@
 import React from 'react';
 import { Image as NativeImage } from 'react-native';
 import { string, oneOf, oneOfType, number } from 'prop-types';
-import { Box, Icon } from '../../components';
+import { Box, Icon } from '../';
 
 const Image = ({
   width,
   height,
   source,
   shape,
+  fallbackIcon = 'photo',
+  fallbackIconSize = 'lg',
+  fallbackColor = 'gray',
 }) => {
   const borderRadius = {
     square: 0,
@@ -33,15 +36,15 @@ const Image = ({
     <Box
       width={width}
       height={height}
-      backgroundColor="gray"
+      backgroundColor={fallbackColor}
       justifyContent="center"
       alignItems="center"
       borderRadius={borderRadius[shape]}
     >
       <Icon
-        name="photo"
+        name={fallbackIcon}
         color="white"
-        size="lg"
+        size={fallbackIconSize}
       />
     </Box>
   );
@@ -58,6 +61,9 @@ Image.propTypes = {
   shape: oneOf(
     ['square', 'rounded', 'circle']
   ),
+  fallbackIcon: string,
+  fallbackIconSize: string,
+  fallbackColor: string,
 };
 
 export default Image;

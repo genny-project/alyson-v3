@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { object, func, string } from 'prop-types';
+import { NavigationActions } from 'react-navigation';
 import { removeStartingAndEndingSlashes } from '../../../utils';
 
 class LayoutFetcher extends Component {
@@ -8,6 +9,8 @@ class LayoutFetcher extends Component {
     baseEntities: object.isRequired,
     children: func.isRequired,
     currentUrl: string.isRequired,
+    dispatch: func,
+    navigation: object,
   }
 
   state = {
@@ -16,6 +19,14 @@ class LayoutFetcher extends Component {
 
   componentDidMount() {
     this.getLayout();
+  }
+
+  shouldComponentUpdate( nextProps ) {
+    const { index, routes } = nextProps.navigation;
+    const strippedCurrentUrl = removeStartingAndEndingSlashes( this.props.currentUrl );
+    const strippedLastRoute = removeStartingAndEndingSlashes( routes[index].params.layout );
+
+    return strippedCurrentUrl === strippedLastRoute;
   }
 
   componentDidUpdate( prevProps ) {
@@ -195,9 +206,14 @@ class LayoutFetcher extends Component {
       return false;
     });
 
+    if ( Object.keys( params ).length > 0 ) {
+      this.props.dispatch(
+        NavigationActions.setParams({ params })
+      );
+    }
+
     return {
       layoutAttribute,
-      params,
     };
   }
 
@@ -210,6 +226,7 @@ class LayoutFetcher extends Component {
 
 const mapStateToProps = state => ({
   baseEntities: state.vertx.baseEntities,
+  navigation: state.navigation,
 });
 
 export default connect( mapStateToProps )( LayoutFetcher );

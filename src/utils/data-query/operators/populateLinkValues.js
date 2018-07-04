@@ -21,7 +21,7 @@ export default ( data, options, allData ) => {
     const multipleArray = [];
 
     links.forEach( link => {
-      const beg = allData.baseEntities.data[link.link.targetCode];
+      const beg = link.link && allData.baseEntities.data[link.link.targetCode];
 
       if ( !beg ) {
         return;

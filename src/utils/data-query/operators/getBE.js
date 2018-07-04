@@ -1,3 +1,4 @@
+import copy from 'fast-copy';
 import { injectContext } from './helpers';
 
 export default ( data, options, allData ) => {
@@ -11,7 +12,7 @@ export default ( data, options, allData ) => {
 
 const lookupBE = ( data, options, allData ) => {
   /* Create the path to the base entity */
-  const be = allData.baseEntities.data[injectContext( options.id, data )];
+  const be = copy( allData.baseEntities.data[injectContext( options.id, data )] );
 
   return options.as ? { ...data, [options.as]: be } : be;
 };

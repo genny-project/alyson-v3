@@ -1,12 +1,13 @@
-import React from 'react';
+import { createElement } from 'react';
 import { oneOf, string } from 'prop-types';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const sizes = {
   sm: 18,
   md: 24,
   lg: 36,
   xl: 48,
+  xxl: 64,
 };
 
 const colors = {
@@ -20,29 +21,35 @@ const colors = {
   yellow: 'yellow',
 };
 
+const types = {
+  'material-icons': MaterialIcons,
+  'material-icons-community': MaterialCommunityIcons,
+  'feather': Feather,
+  'font-awesome': FontAwesome,
+};
+
 const Icon = ({
   name,
   color = 'white',
   size = 'md',
+  type = 'material-icons',
 }) => {
   const style = {
     fontSize: sizes[size],
     color: colors[color] || color,
   };
 
-  return (
-    <MaterialIcons
-      name={name}
-      style={style}
-    />
-  );
+  return createElement( types[type], { name, style });
 };
 
 Icon.propTypes = {
   name: string.isRequired,
   color: string,
   size: oneOf(
-    ['xs', 'sm', 'md', 'lg', 'xl']
+    ['xs', 'sm', 'md', 'lg', 'xl', 'xxl']
+  ),
+  type: oneOf(
+    ['material-icons', 'feather']
   ),
 };
 

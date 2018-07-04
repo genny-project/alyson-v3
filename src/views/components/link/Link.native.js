@@ -79,7 +79,7 @@ class Link extends Component {
     return React.Children.map( children, child => {
       if (
         pure ||
-        child.type.name === 'Button'
+        child.type.name.includes( 'Button' )
       ) {
         return cloneElement(
           child,

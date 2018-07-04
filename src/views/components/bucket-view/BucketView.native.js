@@ -41,6 +41,7 @@ class BucketView extends Component {
 
     return (
       <Tabs
+        scrollEnabled
         bottomTabs
         tabs={tabData}
       >

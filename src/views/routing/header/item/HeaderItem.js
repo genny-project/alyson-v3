@@ -1,29 +1,36 @@
-import React, { Component } from 'react';
+import React, { Component, createElement } from 'react';
 import { string } from 'prop-types';
-import { Link, Button } from '../../../components';
+import { Link, Button, EventButton } from '../../../components';
 
 class HeaderItem extends Component {
   static propTypes = {
     icon: string,
     href: string,
     textColor: string,
+    buttonCode: string,
   }
 
   render() {
-    const { icon, href, textColor } = this.props;
+    const { icon, href, textColor, buttonCode, ...restProps } = this.props;
+
+    const buttonProps = {
+      size: 'md',
+      color: 'transparent',
+      padding: 5,
+      textColor,
+      icon,
+      buttonCode,
+      ...restProps,
+    };
 
     return (
       <Link
         to={href}
       >
-        <Button
-          size="md"
-          color="transparent"
-          textColor={textColor}
-          icon={icon}
-          paddingX={5}
-          paddingY={5}
-        />
+        {createElement(
+          buttonCode ? EventButton : Button,
+          buttonProps
+        )}
       </Link>
     );
   }

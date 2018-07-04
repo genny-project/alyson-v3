@@ -161,6 +161,8 @@ class Input extends Component {
     returnKeyType: oneOf(
       ['done', 'next', 'go', 'search', 'send', 'default']
     ),
+    prefixIconType: string,
+    iconType: string,
   }
 
   getStatusColor() {
@@ -188,7 +190,7 @@ class Input extends Component {
   }
 
   renderPrefix() {
-    const { prefix, prefixIcon, prefixColor } = this.props;
+    const { prefix, prefixIcon, prefixColor, prefixIconType } = this.props;
 
     if ( prefixIcon ) {
       return (
@@ -196,6 +198,7 @@ class Input extends Component {
           <Icon
             name={prefixIcon}
             color={prefixColor}
+            type={prefixIconType}
           />
         </InputPrefixWrapper>
       );
@@ -216,7 +219,7 @@ class Input extends Component {
   }
 
   renderSuffix() {
-    const { suffix, icon, suffixColor, iconColor } = this.props;
+    const { suffix, icon, suffixColor, iconColor, iconType } = this.props;
 
     if ( icon ) {
       return (
@@ -224,6 +227,7 @@ class Input extends Component {
           <Icon
             name={icon}
             color={iconColor || suffixColor || this.getStatusColor()}
+            type={iconType}
           />
         </InputSuffixWrapper>
       );

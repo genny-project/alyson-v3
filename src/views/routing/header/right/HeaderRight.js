@@ -3,7 +3,7 @@ import { Platform, ActivityIndicator } from 'react-native';
 import { object } from 'prop-types';
 import { connect } from 'react-redux';
 import dlv from 'dlv';
-import { Box, Dropdown } from '../../../components';
+import { Box, Dropdown, Icon } from '../../../components';
 import { LayoutConsumer } from '../../../layout';
 import HeaderItem from '../item';
 
@@ -23,28 +23,29 @@ const HeaderRight = ({ aliases, baseEntities }) => {
             textColor={textColor}
           />
 
-          <HeaderItem
-            href="alerts"
-            icon="notifications"
-            textColor={textColor}
-          />
-
           <Dropdown
+            padding={0}
             paddingX={5}
             backgroundColor={appColor}
             textColor={textColor}
             text={(
-              firstName ? (
-                Platform.select({
-                  ios: firstName,
-                  android: firstName,
-                  web: `Hi, ${firstName}!`,
-                })
-              ) : (
-                <ActivityIndicator
-                  size="small"
-                />
-              )
+              Platform.select({
+                web: (
+                  firstName ? (
+                    `Hi, ${firstName}!`
+                  ) : (
+                    <ActivityIndicator
+                      size="small"
+                    />
+                  )
+                ),
+                default: (
+                  <Icon
+                    name="account-circle"
+                    color="white"
+                  />
+                ),
+              })
             )}
             disabled={!firstName}
             facingRight

@@ -34,6 +34,7 @@ class Tabs extends Component {
     textColor: string,
     bottomTabs: bool,
     onPress: func,
+    scrollEnabled: bool,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -78,6 +79,7 @@ class Tabs extends Component {
       tabBarBackground,
       activeTabBackground,
       textColor,
+      scrollEnabled,
     } = this.props;
 
     const style = {
@@ -98,7 +100,7 @@ class Tabs extends Component {
       <TabBar
         {...props}
         onTabPress={this.handlePress}
-        scrollEnabled
+        scrollEnabled={scrollEnabled}
         renderIcon={this.renderIcon}
         style={style}
         labelStyle={labelStyle}

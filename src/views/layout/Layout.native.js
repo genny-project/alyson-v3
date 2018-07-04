@@ -36,6 +36,10 @@ class Layout extends Component {
       this.props.title != null
     ) {
       this.props.layout.setTitle( this.props.title );
+
+      this.props.navigation.setParams({
+        title: this.props.title,
+      });
     }
 
     if (
@@ -66,6 +70,7 @@ class Layout extends Component {
       if ( this.props.navigation ) {
         this.props.navigation.setParams({
           hideHeader: true,
+          title,
         });
       }
     }

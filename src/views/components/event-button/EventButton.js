@@ -9,6 +9,8 @@ const EventButton = ({
   disabled = false,
   onPress,
   children,
+  eventType = 'BTN_CLICK',
+  messageType = 'BTN',
   ...restProps
 }) => {
   const handlePress = event => {
@@ -26,12 +28,15 @@ const EventButton = ({
       ? value
       : JSON.stringify( value );
 
-    Bridge.sendButtonEvent(
-      'BTN_CLICK', {
+    Bridge.sendEvent({
+      event: messageType,
+      eventType,
+      sendWithToken: true,
+      data: {
         code: buttonCode,
         value: valueString || null,
-      }
-    );
+      },
+    });
 
     if ( onPress )
       onPress( event );
@@ -61,6 +66,8 @@ EventButton.propTypes = {
   value: string.isRequired,
   onPress: func,
   disabled: bool,
+  eventType: string,
+  messageType: string,
 };
 
 export default EventButton;

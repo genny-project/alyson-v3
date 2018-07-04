@@ -15,6 +15,7 @@ class Recursive extends Component {
     context: any,
     repeat: any,
     onlyShowIf: object,
+    dontShowIf: object,
     conditional: object,
   }
 
@@ -53,22 +54,22 @@ class Recursive extends Component {
     }
 
     /* Check to make sure an if condition was provided */
-    const condition = conditionalProps.if;
+    const ifCondition = conditionalProps.if;
 
-    if ( !condition ) {
+    if ( !ifCondition ) {
       return {};
     }
 
     /* Get the "then" and "else" props */
-    const thenProps = condition.then;
-    const elseProps = condition.else;
+    const thenProps = conditionalProps.then;
+    const elseProps = conditionalProps.else;
 
     /**
      * Check whether the condition passes. We'll reuse the should
      * render component function for this. If the condition passes return the
      * "then" props, otherwise return the "else" props.
     */
-    if ( this.shouldRenderComponent( condition, context )) {
+    if ( this.ifConditionsPass( ifCondition )) {
       return thenProps;
     }
 
@@ -147,9 +148,7 @@ class Recursive extends Component {
    * If the prop is not a string, simply return its current value so that functions work
    * correctly.
    */
-  injectContextIntoProps() {
-    const { props } = this.props;
-
+  injectContextIntoProps( props ) {
     if ( !props )
       return {};
 
@@ -164,7 +163,8 @@ class Recursive extends Component {
   }
 
   /* Determines whether or not we should render a component, used for onlyShowIf functionality */
-  shouldRenderComponent( onlyShowIf, context ) {
+  ifConditionsPass( condition ) {
+    const { context } = this.props;
     const vertxStore = store.getState().vertx;
     const userAlias = vertxStore.aliases.USER;
     const userData = dlv( vertxStore, `baseEntities.attributes.${userAlias}` );
@@ -175,10 +175,10 @@ class Recursive extends Component {
     };
 
     /**
-     * Loop through all of the keys in the onlyShowIf query and see whether
+     * Loop through all of the keys in the condition query and see whether
      * any of them don't match
      */
-    const fields = Object.keys( onlyShowIf );
+    const fields = Object.keys( condition );
 
     for ( let i = 0; i < fields.length; i++ ) {
       const field = fields[i];
@@ -195,7 +195,7 @@ class Recursive extends Component {
        * - An explict value, like another string, or alternatively against a condition
        * - Or an object based on the MongoDB query syntax.
        */
-      if ( !doesValueMatch( actualValue, onlyShowIf[field], dataPool )) {
+      if ( !doesValueMatch( actualValue, condition[field], dataPool )) {
         return false;
       }
     }
@@ -204,16 +204,25 @@ class Recursive extends Component {
   }
 
   render() {
-    const { component, props, children, context, repeat, onlyShowIf, conditional } = this.props;
+    const {
+      component,
+      props,
+      children,
+      context,
+      repeat,
+      onlyShowIf,
+      dontShowIf,
+      conditional,
+    } = this.props;
 
-    if ( !component )
-      return children;
-
-    if ( !Components[component] ) {
+    if (
+      !component ||
+      !Components[component]
+    ) {
       return (
         <Text>
           Component '
-          {component}
+          {component || 'undefined'}
           ' does not exist
         </Text>
       );
@@ -222,7 +231,15 @@ class Recursive extends Component {
     /* Check whether this component has onlyShowIf logic attached */
     if ( onlyShowIf ) {
       /* Render out nothing if we don't meet that logic */
-      if ( !this.shouldRenderComponent( onlyShowIf, context )) {
+      if ( !this.ifConditionsPass( onlyShowIf )) {
+        return null;
+      }
+    }
+
+    /* Check whether this component has dontShowIf logic attached */
+    if ( dontShowIf ) {
+      /* Render out nothing if we do meet that logic */
+      if ( this.ifConditionsPass( dontShowIf )) {
         return null;
       }
     }
@@ -246,12 +263,14 @@ class Recursive extends Component {
       }))
       : this.injectContextIntoChildren( context, children );
 
+    const componentProps = this.injectContextIntoProps({
+      ...props,
+      ...this.calculateConditionalProps( conditional, context ),
+    });
+
     return createElement(
       Components[component],
-      this.injectContextIntoProps( context, {
-        ...props,
-        ...this.calculateConditionalProps( conditional, context ),
-      }),
+      componentProps,
       repeatedChildren instanceof Array
         ? repeatedChildren.map(( child, index ) => (
           <Recursive
