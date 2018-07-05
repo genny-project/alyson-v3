@@ -1,5 +1,4 @@
 import { Linking } from 'react-native';
-import { WebBrowser } from 'expo';
 
 class Url {
   constructor( url ) {
@@ -18,13 +17,15 @@ class Url {
     return this;
   }
 
-  open() {
-    return WebBrowser.openBrowserAsync( this.url );
+  canOpen() {
+    return Linking.canOpenURL( this.url );
   }
 
-  close() {
-    return WebBrowser.dismissBrowser();
+  open() {
+    return Linking.openURL( this.url );
   }
+
+  close() {}
 
   getUrl() {
     return this.url;

@@ -7,6 +7,7 @@ class Url {
   addEventListener() { return this; }
   removeEventListener() { return this; }
   close() {}
+  canOpen() { return true; }
 
   open( options = {}) {
     const {

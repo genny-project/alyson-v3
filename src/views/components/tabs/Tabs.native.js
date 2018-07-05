@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { ActivityIndicator, Dimensions } from 'react-native';
 import { any, array, bool, string, number, oneOfType, func } from 'prop-types';
-import { TabViewAnimated, TabBar } from 'react-native-tab-view';
+import { TabView, TabBar } from 'react-native-tab-view';
 import { Box, Text, Icon, Timeout } from '../../components';
 
 class Tabs extends Component {
@@ -74,7 +74,7 @@ class Tabs extends Component {
       : null;
   }
 
-  renderHeader = props => {
+  renderTabBar = props => {
     const {
       tabBarBackground,
       activeTabBackground,
@@ -179,16 +179,18 @@ class Tabs extends Component {
     };
 
     return (
-      <TabViewAnimated
+      <TabView
         style={style}
         navigationState={navigationState}
         renderScene={this.renderScene}
-        {...bottomTabs
-          ? { renderFooter: this.renderHeader }
-          : { renderHeader: this.renderHeader }
-        }
+        renderTabBar={this.renderTabBar}
         onIndexChange={this.handleIndexChange}
         initialLayout={initialLayout}
+        tabBarPosition={(
+          bottomTabs
+            ? 'bottom'
+            : 'top'
+        )}
       />
     );
   }

@@ -23,4 +23,7 @@ export default {
   uppy: {
     url: 'https://uppych40.channel40.com.au/s3/',
   },
+  keycloak: {
+    redirectUri: 'http://genny-public-files.s3-website-ap-southeast-2.amazonaws.com',
+  },
 };

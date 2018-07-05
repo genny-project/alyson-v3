@@ -2,7 +2,7 @@ import React, { Component, cloneElement, Fragment } from 'react';
 import { StyleSheet, Modal, ActivityIndicator } from 'react-native';
 import { node, object, string, oneOf } from 'prop-types';
 import { connect } from 'react-redux';
-import { BlurView } from 'expo';
+import { BlurView } from 'react-native-blur';
 import { Formik } from 'formik';
 import capitalize from 'lodash.capitalize';
 import dlv from 'dlv';
