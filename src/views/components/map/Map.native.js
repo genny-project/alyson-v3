@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { MapView } from 'expo';
+import MapView, { Marker } from 'react-native-maps';
 import { number, arrayOf, shape, bool } from 'prop-types';
 import MapViewDirections from 'react-native-maps-directions';
 import config from '../../../config';
@@ -87,7 +87,7 @@ class Map extends Component {
           {isArray( markers, { ofMinLength: 1 }) ? (
             <Fragment>
               {markers.map( marker => (
-                <MapView.Marker
+                <Marker
                   key={marker.key}
                   coordinate={{
                     latitude: marker.latitude,

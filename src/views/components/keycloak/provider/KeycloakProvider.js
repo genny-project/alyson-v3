@@ -4,6 +4,7 @@ import { Platform, Linking } from 'react-native';
 import { string, any } from 'prop-types';
 import queryString from 'query-string';
 import uuid from 'uuid/v4';
+import config from '../../../../config';
 import * as actions from '../../../../redux/actions';
 import store from '../../../../redux/store';
 import KeycloakContext from '../context';
@@ -136,6 +137,34 @@ class KeycloakProvider extends Component {
     });
   }
 
+  createLoginUrl = options => {
+    const url = this.createActionUrl( 'auth', options );
+
+    return new Url( url );
+  }
+
+  handleUrlDecoding = async url => {
+    const sessionState = await Storage.get( 'kcSessionState' );
+    const { query } = queryString.parseUrl( url );
+
+    if ( !query ) return;
+    if ( typeof query !== 'object' ) return;
+    if ( Object.keys( query ).length === 0 ) return;
+
+    console.warn({ query });
+
+    if (
+      query.state &&
+      query.state === sessionState &&
+      query.code
+    ) {
+      this.handleAuthSuccess( query.code );
+    }
+    else {
+      this.handleError( 'Unable to decode keycloak URL after returning from auth screen.', { query, sessionState });
+    }
+  }
+
   /* eslint-enable react/sort-comp */
 
   state = {
@@ -151,10 +180,12 @@ class KeycloakProvider extends Component {
     error: null,
     user: {},
     isFetchingToken: false,
+    consecutiveTokenFails: 0,
     attemptLogin: this.attemptLogin,
     attemptRegister: this.attemptRegister,
     attemptLogout: this.attemptLogout,
-    consecutiveTokenFails: 0,
+    createLoginUrl: this.createLoginUrl,
+    handleUrlDecoding: this.handleUrlDecoding,
   }
 
   componentDidMount = () => {
@@ -296,7 +327,7 @@ class KeycloakProvider extends Component {
 
     const {
       response_type = 'code',
-      redirect_uri = redirectUri,
+      redirect_uri = query.redirectUri || redirectUri,
       client_id = this.props.clientId,
       response_mode = 'query',
     } = query;
@@ -314,12 +345,6 @@ class KeycloakProvider extends Component {
     Storage.set( 'kcSessionNonce', sessionNonce );
 
     return `${realmUrl}/protocol/openid-connect/${action}?${stringifiedQuery}`;
-  }
-
-  createLoginUrl = options => {
-    const url = this.createActionUrl( 'auth', options );
-
-    return new Url( url );
   }
 
   createRegisterUrl = options => {
@@ -387,7 +412,7 @@ class KeycloakProvider extends Component {
     const redirectUrl = keycloakUtils.getValidRedirectUri({
       excludeSearch: true,
       excludePathname: true,
-    });
+    }) || config.keycloak.redirectUri;
 
     const grantType = code
       ? 'authorization_code'
@@ -570,37 +595,10 @@ class KeycloakProvider extends Component {
 
   handleAuthUrlChange = event => {
     const { url } = event;
-    const { browserSession } = this.state;
     const appUrl = keycloakUtils.getValidRedirectUri();
 
     if ( url.startsWith( appUrl )) {
-      if ( browserSession ) {
-        browserSession
-          .removeEventListener( 'url', this.handleAuthUrlChange )
-          .close();
-      }
-
       this.handleUrlDecoding( url );
-    }
-  }
-
-  handleUrlDecoding = async url => {
-    const sessionState = await Storage.get( 'kcSessionState' );
-    const { query } = queryString.parseUrl( url );
-
-    if ( !query ) return;
-    if ( typeof query !== 'object' ) return;
-    if ( Object.keys( query ).length === 0 ) return;
-
-    if (
-      query.state &&
-      query.state === sessionState &&
-      query.code
-    ) {
-      this.handleAuthSuccess( query.code );
-    }
-    else {
-      this.handleError( 'Unable to decode keycloak URL after returning from auth screen.', { query, sessionState });
     }
   }
 

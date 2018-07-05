@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { Modal, StyleSheet } from 'react-native';
-import { BlurView } from 'expo';
+import { BlurView } from 'react-native-blur';
 import { array, string, bool, number, node } from 'prop-types';
 import { Box, Text, Icon, Touchable } from '../../components';
 import DropdownItem from './item';
