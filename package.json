@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start:native": "node node_modules/react-native/local-cli/cli.js start",
+    "start:native": "rndebugger-open &&node node_modules/react-native/local-cli/cli.js start",
     "start:web": "./node_modules/.bin/webpack-dev-server -d --config ./webpack.config.js --inline --hot --colors",
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/alysonv3/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
     "build:web": "./node_modules/.bin/webpack -p --config ./webpack.config.js",
@@ -74,6 +74,7 @@
     "react-router-dom": "^4.3.1",
     "react-router-redux": "^4.0.8",
     "redux": "^4.0.0",
+    "redux-devtools-extension": "^2.13.5",
     "redux-logger": "^3.0.6",
     "redux-observable": "^0.18.0",
     "rxjs": "^5.5.10",
@@ -90,7 +91,9 @@
     "babel-jest": "23.2.0",
     "babel-preset-react-native": "4.0.0",
     "jest": "23.2.0",
-    "react-test-renderer": "16.3.1"
+    "react-native-debugger-open": "^0.3.17",
+    "react-test-renderer": "16.3.1",
+    "remotedev-rn-debugger": "^0.8.3"
   },
   "jest": {
     "preset": "react-native"
