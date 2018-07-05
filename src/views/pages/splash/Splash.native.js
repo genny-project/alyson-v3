@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { object } from 'prop-types';
 import { Platform, Modal, SafeAreaView } from 'react-native';
 import config from '../../../config';
-import { Button, Box, KeycloakConsumer, Redirect, Heading, WebView } from '../../components';
+import { Button, Box, KeycloakConsumer, Redirect, Heading, WebView, Icon, Touchable } from '../../components';
 import Layout from '../../layout';
 
 class Splash extends Component {
@@ -31,6 +31,10 @@ class Splash extends Component {
     this.setState({ showLoginScreen: true });
   }
 
+  handleHideLoginScreen = () => {
+    this.setState({ showLoginScreen: false });
+  }
+
   render() {
     const { location, keycloak } = this.props;
     const { showLoginScreen } = this.state;
@@ -40,7 +44,7 @@ class Splash extends Component {
       location.search.startsWith( '?redirectURL=/' )
     )
       ? location.search.split( '?redirectURL=/' )[1]
-      : 'home';
+      : 'app';
 
     const loginUrl = keycloak.createLoginUrl({
       redirectUri: config.keycloak.redirectUri,
@@ -53,6 +57,7 @@ class Splash extends Component {
             <Redirect
               to={redirectURL}
               removeRedirectURL
+              useAppNavigator={false}
             />
           ) : (
             <Layout
@@ -67,7 +72,10 @@ class Splash extends Component {
                 flexDirection="column"
                 padding={20}
               >
-                <Box marginBottom={40}>
+                <Box
+                  marginBottom={40}
+                  justifyContent="center"
+                >
                   <Heading
                     size="lg"
                     align="center"
@@ -90,10 +98,34 @@ class Splash extends Component {
               >
                 <SafeAreaView style={{ flex: 1 }}>
                   <Box
+                    backgroundColor="white"
+                    padding={15}
+                    paddingLeft={25}
+                    position="relative"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Heading>
+                      Login
+                    </Heading>
+
+                    <Touchable
+                      withFeedback
+                      onPress={this.handleHideLoginScreen}
+                    >
+                      <Icon
+                        name="close"
+                        size="md"
+                        color="grey"
+                      />
+                    </Touchable>
+                  </Box>
+
+                  <Box
                     flex={1}
-                    borderWidth={2}
-                    borderColor="grey"
-                    borderStyle="solid"
+                    borderTopWidth={2}
+                    borderTopColor="grey"
+                    borderTopStyle="solid"
                   >
                     <WebView
                       source={{ uri: loginUrl.url }}

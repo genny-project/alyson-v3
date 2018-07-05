@@ -13,4 +13,6 @@ export default {
   register: {
     screen: Pages.Register,
   },
+  auth: {},
+  app: {},
 };
