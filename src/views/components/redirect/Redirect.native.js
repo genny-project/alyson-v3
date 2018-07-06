@@ -3,6 +3,7 @@ import { withNavigation, NavigationActions } from 'react-navigation';
 import { string, object, bool } from 'prop-types';
 import { routes } from '../../../config';
 import { store } from '../../../redux';
+import { navigator } from '../../../utils';
 
 class Redirect extends Component {
   static defaultProps = {
@@ -14,11 +15,12 @@ class Redirect extends Component {
     navigation: object,
     replace: bool,
     useAppNavigator: bool,
+    useTopLevelNavigator: bool,
     params: object,
   }
 
   componentDidMount() {
-    const { navigation, to, replace, useAppNavigator, params } = this.props;
+    const { navigation, to, replace, useAppNavigator, useTopLevelNavigator, params } = this.props;
 
     const newPath = to.includes( '?' )
       ? to.split( '?' )[0]
@@ -26,7 +28,17 @@ class Redirect extends Component {
 
     const action = replace ? 'replace' : 'navigate';
 
-    if ( useAppNavigator ) {
+    if ( useTopLevelNavigator ) {
+      navigator.navigate({
+        useAuthNavigator: true,
+        routeName: to,
+      });
+    }
+    else if (
+      useAppNavigator &&
+      newPath !== 'app' &&
+      newPath !== 'auth'
+    ) {
       store.dispatch(
         NavigationActions[action]({
           routeName: routes[newPath] ? newPath : 'generic',
@@ -38,8 +50,15 @@ class Redirect extends Component {
       );
     }
     else {
+      console.warn( routes[newPath] ? newPath : 'generic' );
       navigation[action]({
-        routeName: routes[newPath] ? newPath : 'generic',
+        routeName: (
+          routes[newPath] ||
+          newPath === 'app' ||
+          newPath === 'auth'
+        )
+          ? newPath
+          : 'generic',
         params: {
           ...params,
           layout: newPath,

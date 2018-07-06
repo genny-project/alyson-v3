@@ -16,7 +16,7 @@ class Splash extends Component {
   }
 
   handleNavigationStateChange = event => {
-    console.warn({ event });
+    // console.warn({ event });
 
     if ( event.url.startsWith( config.keycloak.redirectUri )) {
       const { keycloak } = this.props;
@@ -129,8 +129,6 @@ class Splash extends Component {
                   >
                     <WebView
                       source={{ uri: loginUrl.url }}
-                      onMessage={this.handleMessage}
-                      ref={webview => this.webview = webview}
                       onNavigationStateChange={this.handleNavigationStateChange}
                       style={{ flex: 1 }}
                     />

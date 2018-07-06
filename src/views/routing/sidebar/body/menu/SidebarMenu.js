@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { array, object } from 'prop-types';
+import { array, object, func } from 'prop-types';
 import SidebarMenuItem from './item';
 import SidebarMenuDropdown from './dropdown';
 
@@ -7,6 +7,7 @@ class SidebarMenu extends Component {
   static propTypes = {
     items: array,
     navigation: object,
+    onPress: func,
   }
 
   state = {
@@ -31,7 +32,7 @@ class SidebarMenu extends Component {
   }
 
   render() {
-    const { items } = this.props;
+    const { items, onPress } = this.props;
 
     return (
       <Fragment>
@@ -48,6 +49,7 @@ class SidebarMenu extends Component {
               {...item}
               key={item.name}
               iconLeft={item.icon}
+              onPress={onPress}
             />
           )
         ))}
@@ -57,6 +59,7 @@ class SidebarMenu extends Component {
           key="logout"
           iconLeft="exit-to-app"
           name="Logout"
+          onPress={onPress}
         />
       </Fragment>
     );

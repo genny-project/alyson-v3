@@ -91,7 +91,8 @@ class KeycloakProvider extends Component {
   }
 
   attemptLogout = async ( options = {}) => {
-    if ( !this.state.isAuthenticated ) return;
+    if ( !this.state.isAuthenticated )
+      throw new Error( 'You are already logged out!' );
 
     const {
       replaceUrl = false,
@@ -100,10 +101,11 @@ class KeycloakProvider extends Component {
     const LogoutUrl = this.createLogoutUrl();
     const isValidUrl = Linking.canOpenURL( LogoutUrl.getUrl());
 
-    if ( !isValidUrl ) {
-      console.warn( `Attempted to open invalid logout URL: ${LogoutUrl.getUrl()}` );
-
-      return;
+    if (
+      !isValidUrl &&
+      Platform.OS === 'web'
+    ) {
+      return new Error( `Attempted to open invalid logout URL: ${LogoutUrl.getUrl()}` );
     }
 
     if ( this.state.refreshTimer )
@@ -124,16 +126,26 @@ class KeycloakProvider extends Component {
         user: {},
         consecutiveTokenFails: 0,
       }),
-      LogoutUrl
-        .addEventListener( 'url', this.handleLogoutUrlChange )
-        .open({ replaceUrl }),
     ];
+
+    if ( Platform.OS === 'web' ) {
+      promises.push(
+        LogoutUrl
+          .addEventListener( 'url', this.handleLogoutUrlChange )
+          .open({ replaceUrl })
+      );
+    }
 
     /* Wait for the above promises to all finish. */
     await Promise.all( promises );
 
     return new Promise(( resolve, reject ) => {
-      this.setState({ promise: { resolve, reject } });
+      if ( Platform.OS === 'web' ) {
+        this.setState({ promise: { resolve, reject } });
+      }
+      else {
+        resolve();
+      }
     });
   }
 
@@ -141,6 +153,35 @@ class KeycloakProvider extends Component {
     const url = this.createActionUrl( 'auth', options );
 
     return new Url( url );
+  }
+
+  createLogoutUrl = options => {
+    const realmUrl = this.createRealmUrl();
+    const redirectUri = keycloakUtils.getValidRedirectUri();
+
+    const query = queryString.stringify({
+      redirect_uri: redirectUri,
+      ...options,
+    });
+
+    const url = `${realmUrl}/protocol/openid-connect/logout?${query}`;
+
+    return new Url( url );
+  }
+
+  handleAuthSuccess = async code => {
+    this.setState({
+      isAuthenticating: false,
+      isAuthenticated: true,
+    });
+
+    this.startTokenRefresh( code );
+
+    if ( this.state.promise ) {
+      this.state.promise.resolve();
+
+      this.setState({ promise: null });
+    }
   }
 
   handleUrlDecoding = async url => {
@@ -185,6 +226,7 @@ class KeycloakProvider extends Component {
     attemptRegister: this.attemptRegister,
     attemptLogout: this.attemptLogout,
     createLoginUrl: this.createLoginUrl,
+    createLogoutUrl: this.createLogoutUrl,
     handleUrlDecoding: this.handleUrlDecoding,
   }
 
@@ -351,35 +393,6 @@ class KeycloakProvider extends Component {
     const url = this.createActionUrl( 'registrations', options );
 
     return new Url( url );
-  }
-
-  createLogoutUrl = options => {
-    const realmUrl = this.createRealmUrl();
-    const redirectUri = keycloakUtils.getValidRedirectUri();
-
-    const query = queryString.stringify({
-      redirect_uri: redirectUri,
-      ...options,
-    });
-
-    const url = `${realmUrl}/protocol/openid-connect/logout?${query}`;
-
-    return new Url( url );
-  }
-
-  handleAuthSuccess = async code => {
-    this.setState({
-      isAuthenticating: false,
-      isAuthenticated: true,
-    });
-
-    this.startTokenRefresh( code );
-
-    if ( this.state.promise ) {
-      this.state.promise.resolve();
-
-      this.setState({ promise: null });
-    }
   }
 
   startTokenRefresh( code ) {
