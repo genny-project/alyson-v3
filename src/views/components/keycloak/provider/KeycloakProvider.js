@@ -238,10 +238,7 @@ class KeycloakProvider extends Component {
      *
      * Issue seems to be with the tokens being used from storage
      */
-    if ( Platform.OS !== 'android' )
-      this.checkStorage();
-    else
-      this.setState({ isCheckingStorage: false });
+    this.checkStorage();
 
     if ( Platform.OS === 'web' )
       this.checkCallback();
@@ -505,16 +502,14 @@ class KeycloakProvider extends Component {
     const refreshExpiresInSeconds = refresh_expires_in * 1000; // Convert from seconds to ms
 
     const setTokens = new Promise( resolve => {
-      if ( Platform.OS !== 'android' ) {
-        this.setState({
-          refreshToken: refresh_token,
-          refreshTokenExpiresOn: currentTime + refreshExpiresInSeconds,
-          accessToken: access_token,
-          accessTokenExpiresOn: currentTime + accessExpiresInSeconds,
-          idToken: id_token,
-          consecutiveTokenFails: 0,
-        }, resolve );
-      }
+      this.setState({
+        refreshToken: refresh_token,
+        refreshTokenExpiresOn: currentTime + refreshExpiresInSeconds,
+        accessToken: access_token,
+        accessTokenExpiresOn: currentTime + accessExpiresInSeconds,
+        idToken: id_token,
+        consecutiveTokenFails: 0,
+      }, resolve );
     });
 
     const setUserData = new Promise(( resolve, reject ) => {
