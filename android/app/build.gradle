@@ -97,7 +97,7 @@ android {
     compileSdkVersion 26
 
     defaultConfig {
-        applicationId "org.alysonv3"
+        applicationId "com.alysonv3"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
