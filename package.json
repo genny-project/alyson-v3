@@ -82,7 +82,7 @@
     "uppy": "^0.26.0",
     "url-loader": "^1.0.1",
     "uuid": "^3.3.2",
-    "vertx3-eventbus-client": "^3.5.2",
+    "vertx3-eventbus-client": "genny-project/vertx3-eventbus-client",
     "webpack": "^4.14.0",
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.4"
