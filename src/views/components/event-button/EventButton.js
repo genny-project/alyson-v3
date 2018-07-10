@@ -11,6 +11,7 @@ const EventButton = ({
   children,
   eventType = 'BTN_CLICK',
   messageType = 'BTN',
+  showSpinnerOnClick = true,
   ...restProps
 }) => {
   const handlePress = event => {
@@ -51,7 +52,7 @@ const EventButton = ({
   const addedProps = {
     ...restProps,
     onPress: handlePress,
-    showSpinnerOnClick: true,
+    showSpinnerOnClick,
   };
 
   return React.createElement(
@@ -69,6 +70,7 @@ EventButton.propTypes = {
   disabled: bool,
   eventType: string,
   messageType: string,
+  showSpinnerOnClick: bool,
 };
 
 export default EventButton;
