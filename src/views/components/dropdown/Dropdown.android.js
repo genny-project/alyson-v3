@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { withNavigation } from 'react-navigation';
-import { array, string, number, func, object, node, bool } from 'prop-types';
+import { NavigationActions } from 'react-navigation';
+import { array, string, number, func, node, bool } from 'prop-types';
+import { store } from '../../../redux';
+import { routes } from '../../../config';
 import { Box, Icon, Text, PopupMenu } from '../../components';
 
 class Dropdown extends Component {
@@ -17,7 +19,6 @@ class Dropdown extends Component {
     paddingX: number,
     paddingY: number,
     onSelect: func,
-    navigation: object,
     textColor: string,
     disabled: bool,
   }
@@ -28,7 +29,14 @@ class Dropdown extends Component {
       item instanceof Object &&
       item.href
     ) {
-      this.props.navigation.navigate( item.href );
+      store.dispatch(
+        NavigationActions.navigate({
+          routeName: routes[item.href] ? item.href : 'generic',
+          params: {
+            layout: item.href,
+          },
+        }),
+      );
     }
 
     if ( this.props.onSelect )
@@ -81,4 +89,4 @@ class Dropdown extends Component {
   }
 }
 
-export default withNavigation( Dropdown );
+export default Dropdown;
