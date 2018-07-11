@@ -92,4 +92,13 @@ const Main = SwitchNavigator({
 
 export { AppStack };
 
-export default Main;
+export default (
+  props => (
+    <Main
+      {...props}
+      ref={ref => (
+        navigator.setMainNavigator( ref )
+      )}
+    />
+  )
+);
