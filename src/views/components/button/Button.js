@@ -181,7 +181,13 @@ class Button extends Component {
   }
 
   renderSpinnerChild() {
-    const { size, color } = this.props;
+    const { size, color, children, text, icon } = this.props;
+
+    const isIconOnly = (
+      typeof icon === 'string' &&
+      children == null &&
+      text == null
+    );
 
     return (
       <Box
@@ -190,6 +196,7 @@ class Button extends Component {
         height="100%"
         justifyContent="center"
         alignItems="center"
+        shape={isIconOnly && 'circle'}
       >
         <Box
           position="absolute"
@@ -197,6 +204,7 @@ class Button extends Component {
           height="100%"
           backgroundColor={buttonColors[color]}
           opacity={0.8}
+          shape={isIconOnly && 'circle'}
         />
 
         <ActivityIndicator
