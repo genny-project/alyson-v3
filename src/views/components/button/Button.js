@@ -62,6 +62,7 @@ class Button extends Component {
     size: 'lg',
     accessible: true,
     withFeedback: true,
+    isSpinning: false,
   }
 
   static propTypes = {
@@ -107,10 +108,26 @@ class Button extends Component {
         }),
       ),
     }),
+    isSpinning: bool,
+  }
+
+  static getDerivedStateFromProps( props, state ) {
+    if (
+      props.isSpinning != null &&
+      props.isSpinning !== state.isSpinning
+    ) {
+      return { isSpinning: props.isSpinning };
+    }
+
+    return null;
   }
 
   state = {
-    isSpinning: false,
+    isSpinning: this.props.isSpinning,
+  }
+
+  componentDidMount() {
+    console.warn( 'button mounted' );
   }
 
   setSpinning = isSpinning => {
