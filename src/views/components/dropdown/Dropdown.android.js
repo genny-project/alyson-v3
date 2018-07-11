@@ -54,7 +54,11 @@ class Dropdown extends Component {
       >
         {({ showPopupMenu, setAnchorRef }) => (
           <TouchableOpacity
-            onPress={!disabled && showPopupMenu}
+            onPress={
+              !disabled
+                ? showPopupMenu
+                : null
+              }
             ref={setAnchorRef}
             style={{ alignItems: 'center' }}
           >
