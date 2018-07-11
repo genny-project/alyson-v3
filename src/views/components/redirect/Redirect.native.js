@@ -12,15 +12,26 @@ class Redirect extends Component {
 
   static propTypes = {
     to: string.isRequired,
+    appTo: string, // temp for main navigator second navigation action
     navigation: object,
     replace: bool,
     useAppNavigator: bool,
+    useMainNavigator: bool,
     useTopLevelNavigator: bool,
     params: object,
   }
 
   componentDidMount() {
-    const { navigation, to, replace, useAppNavigator, useTopLevelNavigator, params } = this.props;
+    const {
+      navigation,
+      to,
+      replace,
+      useAppNavigator,
+      useTopLevelNavigator,
+      useMainNavigator,
+      params,
+      appTo,
+    } = this.props;
 
     const newPath = to.includes( '?' )
       ? to.split( '?' )[0]
@@ -28,20 +39,44 @@ class Redirect extends Component {
 
     const action = replace ? 'replace' : 'navigate';
 
-    if ( useTopLevelNavigator ) {
+    if (
+      useMainNavigator ||
+      useTopLevelNavigator
+    ) {
+      if ( appTo ) {
+        store.dispatch(
+          NavigationActions[action]({
+            routeName: (
+              appTo ? (
+                routes[appTo] ? appTo : 'generic'
+              ) : (
+                routes[newPath] ? newPath : 'generic'
+              )
+            ),
+            params: {
+              ...params,
+              layout: newPath,
+            },
+          }),
+        );
+      }
+
       navigator.navigate({
-        useAuthNavigator: true,
+        useMainNavigator,
+        useTopLevelNavigator,
         routeName: to,
       });
     }
-    else if (
-      useAppNavigator &&
-      newPath !== 'app' &&
-      newPath !== 'auth'
-    ) {
+    else if ( useAppNavigator ) {
       store.dispatch(
         NavigationActions[action]({
-          routeName: routes[newPath] ? newPath : 'generic',
+          routeName: (
+            appTo ? (
+              routes[appTo] ? appTo : 'generic'
+            ) : (
+              routes[newPath] ? newPath : 'generic'
+            )
+          ),
           params: {
             ...params,
             layout: newPath,
@@ -50,12 +85,11 @@ class Redirect extends Component {
       );
     }
     else {
-      console.warn( routes[newPath] ? newPath : 'generic' );
       navigation[action]({
         routeName: (
           routes[newPath] ||
-          newPath === 'app' ||
-          newPath === 'auth'
+            newPath === 'app' ||
+            newPath === 'auth'
         )
           ? newPath
           : 'generic',

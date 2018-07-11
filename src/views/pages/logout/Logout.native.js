@@ -70,7 +70,8 @@ class Logout extends Component {
       return (
         <Redirect
           to="auth"
-          useAppNavigator={false}
+          useMainNavigator
+          appTo="home"
         />
       );
     }
