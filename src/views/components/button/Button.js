@@ -126,10 +126,6 @@ class Button extends Component {
     isSpinning: this.props.isSpinning,
   }
 
-  componentDidMount() {
-    console.warn( 'button mounted' );
-  }
-
   setSpinning = isSpinning => {
     this.setState({ isSpinning });
   }
