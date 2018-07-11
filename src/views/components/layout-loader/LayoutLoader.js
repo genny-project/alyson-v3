@@ -1,11 +1,9 @@
 import React, { Component, Fragment } from 'react';
-import { ActivityIndicator } from 'react-native';
-import { withNavigation } from 'react-navigation';
 import { shape, object, any } from 'prop-types';
 import Layout from '../../layout';
 import { refresh } from '../../../utils';
 import DataQuery from '../../../utils/data-query';
-import { Box, Text, Timeout, Button } from '../../components';
+import { Box, Text, Timeout, Button, ActivityIndicator } from '../../components';
 import Recursive from './Recursive';
 
 class LayoutLoader extends Component {
@@ -96,9 +94,9 @@ class LayoutLoader extends Component {
     const context = {
       query: new DataQuery( data ).query(
         layout.query || [],
-        { navigation: navigation.state.params }
+        { navigation: navigation && navigation.state ? navigation.state.params : {} }
       ),
-      navigation: navigation.state.params,
+      navigation: navigation && navigation.state ? navigation.state.params : {},
     };
 
     return (
@@ -126,4 +124,4 @@ class LayoutLoader extends Component {
   }
 }
 
-export default withNavigation( LayoutLoader );
+export default LayoutLoader;
