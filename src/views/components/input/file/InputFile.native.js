@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import Expo, { ImagePicker, DocumentPicker } from 'expo';
+// import Expo, { ImagePicker, DocumentPicker } from 'expo';
 import { bool, func } from 'prop-types';
 import dlv from 'dlv';
 import fastXmlParser from 'fast-xml-parser';
@@ -127,18 +127,18 @@ class InputFile extends Component {
     const { imageOnly } = this.props;
 
     if ( imageOnly ) {
-      await Expo.Permissions.askAsync( Expo.Permissions.CAMERA_ROLL );
-      await Expo.Permissions.askAsync( Expo.Permissions.CAMERA );
+      // await Expo.Permissions.askAsync( Expo.Permissions.CAMERA_ROLL );
+      // await Expo.Permissions.askAsync( Expo.Permissions.CAMERA );
 
       try {
-        const result = await ImagePicker.launchImageLibraryAsync({
-          allowsEditing: true,
-          aspect: [4, 3],
-        });
+        // const result = await ImagePicker.launchImageLibraryAsync({
+          // allowsEditing: true,
+          // aspect: [4, 3],
+        // });
 
-        if ( !result.cancelled ) {
-          this.uploadFile( result );
-        }
+        // if ( !result.cancelled ) {
+          // this.uploadFile( result );
+        // }
       }
       catch ( e ) {
         // do nothing
@@ -146,11 +146,11 @@ class InputFile extends Component {
     }
     else {
       try {
-        const result = await DocumentPicker.getDocumentAsync();
+        // const result = await DocumentPicker.getDocumentAsync();
 
-        if ( result.type !== 'cancel' ) {
-          this.uploadFile( result );
-        }
+        // if ( result.type !== 'cancel' ) {
+          // this.uploadFile( result );
+        // }
       }
       catch ( e ) {
         // do nothing

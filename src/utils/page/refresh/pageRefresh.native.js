@@ -1,7 +1,7 @@
-import { Util } from 'expo';
+// import { Util } from 'expo';
 
 const pageRefresh = () => {
-  Util.reload();
+  // Util.reload(); TODO:
 };
 
 export default pageRefresh;

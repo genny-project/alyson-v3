@@ -1,6 +1,5 @@
 import { createElement } from 'react';
 import { oneOf, string } from 'prop-types';
-import { MaterialIcons, Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const sizes = {
   xs: 16,
@@ -23,10 +22,10 @@ const colors = {
 };
 
 const types = {
-  'material-icons': MaterialIcons,
-  'material-icons-community': MaterialCommunityIcons,
-  'feather': Feather,
-  'font-awesome': FontAwesome,
+  'material-icons': require( 'react-native-vector-icons/MaterialIcons' ).default,
+  'material-icons-community': require( 'react-native-vector-icons/MaterialCommunityIcons' ).default,
+  'feather': require( 'react-native-vector-icons/Feather' ).default,
+  'font-awesome': require( 'react-native-vector-icons/FontAwesome' ).default,
 };
 
 const Icon = ({

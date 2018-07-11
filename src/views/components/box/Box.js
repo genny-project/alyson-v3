@@ -96,7 +96,14 @@ const Box = ({
     marginLeft,
     marginBottom,
     backgroundColor,
-    position,
+    position: (
+      (
+        position === 'sticky' &&
+        Platform.OS !== 'web'
+      )
+        ? 'relative'
+        : position
+    ),
     top,
     right,
     bottom,

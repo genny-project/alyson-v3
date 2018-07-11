@@ -36,16 +36,47 @@ class InputFile extends Component {
     let files = [];
 
     try {
-      files = ( this.props.value && this.props.value !== 'null' ) ? JSON.parse( this.props.value ) : this.props.defaultValue;
-    } catch ( e ) { 
+      files = ( this.props.value && this.props.value !== 'null' )
+        ? JSON.parse( this.props.value )
+        : this.props.defaultValue;
+    } catch ( e ) {
       //
     }
 
     this.setState({
       files,
-    }, () => {
-      // console.log( this.state );
     });
+
+    const { autoProceed } = this.props;
+
+    /** const hosturlattr = BaseEntityQuery.getBaseEntityAttribute(
+    * GennyBridge.getProject(), 'PRI_UPPY_URL'
+    * );
+    */
+    // if (hosturlattr != null && hosturlattr.value != null) {
+
+    this.uppy = new Uppy({
+      autoProceed,
+      debug: false,
+      restrictions: {
+        maxNumberOfFiles: this.props.maxNumberOfFiles,
+        // allowedFileTypes: this.props.allowedFileTypes,
+      },
+      onBeforeFileAdded: ( currentFile ) => this.checkFileType( currentFile ),
+    })
+      .use( Dashboard, {
+        closeModalOnClickOutside: true,
+        note: this.props.imageOnly
+          ? '.jpeg, .jpg, and .png file types allowed only'
+          : 'any file type allowed',
+        hideProgressAfterFinish: true,
+      })
+      .use( AwsS3, { host: config.uppy.url })
+      .use( Webcam, { target: Dashboard })
+      .run();
+
+    this.uppy.on( 'complete', this.handleComplete );
+    // }
   }
 
   componentWillUnmount() {
@@ -62,17 +93,17 @@ class InputFile extends Component {
   checkFileType = ( currentFile ) => {
     const imageTypes = ['image/jpeg', 'image/png'];
 
-    if ( 
-      !this.props.imageOnly || 
+    if (
+      !this.props.imageOnly ||
       ( this.props.imageOnly &&
         imageTypes.includes( currentFile.type ))
     ) {
       this.uppy.info( 'Upload successful', 'success', 3000 );
-      
+
       return true;
     }
     this.uppy.info( 'Invalid file type', 'error', 3000 );
-    
+
     return false;
   }
 
@@ -191,7 +222,7 @@ class InputFile extends Component {
 
     try {
       files = ( nextProps.value && nextProps.value !== 'null' ) ? JSON.parse( nextProps.value ) : nextProps.defaultValue;
-    } catch ( e ) { 
+    } catch ( e ) {
       //
     }
 
@@ -200,39 +231,6 @@ class InputFile extends Component {
     }, () => {
       // console.log( this.state );
     });
-  }
-
-  componentWillMount() {
-    const { autoProceed } = this.props;
-
-    /** const hosturlattr = BaseEntityQuery.getBaseEntityAttribute(
-    * GennyBridge.getProject(), 'PRI_UPPY_URL'
-    * );
-    */
-    // if (hosturlattr != null && hosturlattr.value != null) {
-
-    this.uppy = new Uppy({
-      autoProceed,
-      debug: false,
-      restrictions: {
-        maxNumberOfFiles: this.props.maxNumberOfFiles,
-        // allowedFileTypes: this.props.allowedFileTypes,
-      },
-      onBeforeFileAdded: ( currentFile ) => this.checkFileType( currentFile ),
-    })
-      .use( Dashboard, {
-        closeModalOnClickOutside: true,
-        note: this.props.imageOnly
-          ? '.jpeg, .jpg, and .png file types allowed only'
-          : 'any file type allowed',
-        hideProgressAfterFinish: true,
-      })
-      .use( AwsS3, { host: config.uppy.url })
-      .use( Webcam, { target: Dashboard })
-      .run();
-
-    this.uppy.on( 'complete', this.handleComplete );
-    // }
   }
 
   render() {

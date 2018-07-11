@@ -169,7 +169,7 @@ module.exports = {
     'react/no-multi-comp': ['error', { ignoreStateless: true }],
     'react/no-string-refs': 'error',
     'react/require-render-return': 'error',
-    'react/sort-comp': ['error', {
+    'react/sort-comp': [1, {
       order: [
         'static-methods',
         'instance-variables',

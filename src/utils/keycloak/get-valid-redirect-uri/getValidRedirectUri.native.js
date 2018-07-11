@@ -1,3 +1,3 @@
-import { Constants } from 'expo';
+// import { Constants } from 'expo';
 
-export default () => Constants.linkingUri;
+export default () => '';
