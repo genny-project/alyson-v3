@@ -1,5 +1,6 @@
 import areIntlLocalesSupported from 'intl-locales-supported';
 import IntlPolyfill from 'intl';
+import 'intl/locale-data/jsonp/en-AU';
 
 const supportedLocales = [
   'en-AU',
