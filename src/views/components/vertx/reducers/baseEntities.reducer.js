@@ -226,6 +226,16 @@ const handleReduceAskQuestionTypes = ( resultant, current ) => {
   return resultant;
 };
 
+const handleRemoveLayoutAttributes = attributes => {
+  return Object
+    .keys( attributes )
+    .filter( key => !key.startsWith( 'LAY_' ))
+    .reduce(( result, current ) => ({
+      ...result,
+      [current]: attributes[current],
+    }), {});
+};
+
 const reducer = ( state = initialState, { type, payload }) => {
   switch ( type ) {
     /**
@@ -282,6 +292,28 @@ const reducer = ( state = initialState, { type, payload }) => {
           ...state.definitions,
           data: payload.items.reduce( handleReduceAskQuestionData, state.definitions.data ),
           types: payload.items.reduce( handleReduceAskQuestionTypes, state.definitions.types ),
+        },
+      };
+
+    /**
+     * If we receive a CLEAR_ALL_LAYOUTS we need to remove any attributes that start with LAY_
+     * We do this so that we can load in all of our development layouts.
+     */
+    case 'CLEAR_ALL_LAYOUTS':
+      return {
+        ...state,
+        attributes: handleRemoveLayoutAttributes( state.attributes ),
+      };
+
+    /**
+     * Loads in an individual dev layout as an attribute
+     */
+    case 'LOAD_DEV_LAYOUT':
+      return {
+        ...state,
+        attributes: {
+          ...state.attributes,
+          ...payload,
         },
       };
 
