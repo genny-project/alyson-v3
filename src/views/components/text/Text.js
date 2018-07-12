@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text as NativeText } from 'react-native';
+import { Text as NativeText, Platform } from 'react-native';
 import { string, number, oneOf, oneOfType, bool } from 'prop-types';
 
 const textSizes = {
@@ -43,7 +43,10 @@ const Text = ({
     textAlign: align,
     width,
     color: colors[color] || color,
-    fontFamily: fontFamily ? fontFamily : 'system-ui, san-serif',
+    fontFamily: fontFamily || Platform.select({
+      web: 'system-ui, sans-serif',
+      native: 'System',
+    }),
   };
 
   return (
