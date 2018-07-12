@@ -1,1 +1,1 @@
-export { default } from './sublayout';
+export { default } from './Sublayout';
