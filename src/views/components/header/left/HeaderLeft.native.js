@@ -19,6 +19,7 @@ class HeaderLeft extends Component {
     showTitle: bool,
     logoSource: string,
     showLogo: bool,
+    showMenu: bool,
   }
 
   handleToggleMenu = () => {
@@ -36,7 +37,14 @@ class HeaderLeft extends Component {
   }
 
   render() {
-    const { navigationReducer, alwaysHideBack, showTitle, logoSource, showLogo } = this.props;
+    const {
+      navigationReducer,
+      alwaysHideBack,
+      logoSource,
+      showTitle,
+      showLogo,
+      showMenu,
+    } = this.props;
     const { index, routes } = navigationReducer;
     const { params } = routes[index];
     const title = params && params.title;
@@ -69,7 +77,7 @@ class HeaderLeft extends Component {
                   icon="arrow-back"
                   paddingX={15}
                 />
-              ) : (
+              ) : showMenu ? (
                 <Button
                   onPress={this.handleToggleMenu}
                   size="md"
@@ -78,7 +86,7 @@ class HeaderLeft extends Component {
                   icon="menu"
                   paddingX={15}
                 />
-              )
+              ) : null
             }
 
             {showLogo ? (

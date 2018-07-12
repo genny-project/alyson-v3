@@ -1,5 +1,5 @@
 import React from 'react';
-import { string, object, number, oneOfType, shape, arrayOf, bool } from 'prop-types';
+import { string, object, number, oneOfType, shape, arrayOf, bool, oneOf } from 'prop-types';
 import { Box, StatusBar } from '../index';
 import HeaderLeft from './left';
 import HeaderRight from './right';
@@ -14,43 +14,8 @@ const Header = ({
   paddingY,
   padding,
   height = 60,
-  itemsRight = [
-    {
-      id: 'chat',
-      icon: 'chat',
-      href: 'chat',
-      platforms: ['ios'],
-      buttonCode: 'ad',
-    },
-    {
-      id: 'profile',
-      icon: 'account-circle',
-      href: '/profile',
-      eventType: 'PROFILE',
-      buttonCode: 'PROFILE',
-      platforms: ['ios'],
-    },
-    {
-      id: 'dropdown',
-      dropdown: true,
-      text: 'Hi, {{user.attributes.PRI_FIRST_NAME.value}}!',
-      platforms: ['android', 'web'],
-      items: [
-        {
-          id: 'profile',
-          href: '/profile',
-          icon: 'person',
-          text: 'Profile',
-        },
-        {
-          id: 'logout',
-          icon: 'power-settings-new',
-          href: '/logout',
-          text: 'Logout',
-        },
-      ],
-    },
-  ],
+  headerLeft,
+  headerRight,
 }) => (
   <StatusBar
     barStyle={barStyle}
@@ -67,11 +32,8 @@ const Header = ({
       padding={padding}
       boxShadow={boxShadow}
     >
-      <HeaderLeft />
-
-      <HeaderRight
-        items={itemsRight}
-      />
+      <HeaderLeft {...headerLeft} />
+      <HeaderRight {...headerRight} />
     </Box>
   </StatusBar>
 );
@@ -101,7 +63,20 @@ Header.propTypes = {
   barStyle: string,
   backgroundColor: string,
   layout: object,
-  itemsRight: arrayOf( headerItemPropTypes ),
+  headerLeft: shape({
+    showMenu: oneOfType(
+      [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
+    ),
+    showTitle: oneOfType(
+      [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
+    ),
+    showLogo: oneOfType(
+      [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
+    ),
+  }),
+  headerRight: shape({
+    items: arrayOf( headerItemPropTypes ),
+  }),
 };
 
 export default props => (
