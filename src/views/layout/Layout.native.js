@@ -3,6 +3,7 @@ import { oneOf, node, object, string, bool } from 'prop-types';
 import { withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
 import { LayoutConsumer } from '../layout';
+import shallowCompare from '../../utils/shallow-compare';
 
 class Layout extends Component {
   static propTypes = {
@@ -10,9 +11,6 @@ class Layout extends Component {
     appColor: oneOf(
       ['light', 'dark']
     ),
-    // backgroundColor: oneOf(
-    // ['white', 'grey']
-    // ),
     title: string,
     layout: object,
     header: object,
@@ -43,10 +41,14 @@ class Layout extends Component {
         title: this.props.title,
       });
     }
+
+    if ( !shallowCompare( this.props.header, prevProps.header )) {
+      this.setHeaderProperties();
+    }
   }
 
   setLayoutProperties() {
-    const { layout, title, appColor, header, hideSidebar, navigation } = this.props;
+    const { layout, title, appColor, hideSidebar, navigation } = this.props;
 
     if ( !layout )
       return;
@@ -80,14 +82,6 @@ class Layout extends Component {
     }
 
     this.setHeaderProperties();
-
-    layout.setHeaderVisibility( !!header );
-
-    if ( navigation ) {
-      navigation.setParams({
-        showHeader: !!header,
-      });
-    }
   }
 
   setHeaderProperties() {
@@ -115,10 +109,12 @@ class Layout extends Component {
 
             if ( parsed ) {
               this.props.layout.setHeaderProps( parsed );
+              this.props.layout.setHeaderVisibility( true );
 
               if ( navigation ) {
                 navigation.setParams({
                   headerProps: parsed,
+                  showHeader: true,
                 });
               }
             }
@@ -126,6 +122,15 @@ class Layout extends Component {
             break;
           }
         }
+      }
+    }
+    else {
+      this.props.layout.setHeaderVisibility( false );
+
+      if ( navigation ) {
+        navigation.setParams({
+          showHeader: false,
+        });
       }
     }
   }
