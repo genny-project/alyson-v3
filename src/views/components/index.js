@@ -15,6 +15,7 @@ export { default as Form } from './form';
 export { default as Heading } from './heading';
 export { default as Image } from './image';
 export { default as Icon } from './icon';
+export { default as Collection } from './collection';
 export { default as Input } from './input';
 export { default as InputText } from './input/text';
 export { default as Label } from './label';
