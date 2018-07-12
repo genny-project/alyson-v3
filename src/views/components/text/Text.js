@@ -31,6 +31,7 @@ const Text = ({
   align,
   width,
   bold,
+  fontFamily,
   text,
   ...restProps
 }) => {
@@ -42,6 +43,7 @@ const Text = ({
     textAlign: align,
     width,
     color: colors[color] || color,
+    fontFamily: fontFamily ? fontFamily : 'system-ui, san-serif',
   };
 
   return (
@@ -77,6 +79,7 @@ Text.propTypes = {
     [number, string]
   ),
   bold: bool,
+  fontFamily: string,
 };
 
 export default Text;
