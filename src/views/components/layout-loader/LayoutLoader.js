@@ -3,6 +3,7 @@ import { shape, object, any } from 'prop-types';
 import Layout from '../../layout';
 import { refresh } from '../../../utils';
 import DataQuery from '../../../utils/data-query';
+import { store } from '../../../redux';
 import { Box, Text, Timeout, Button, ActivityIndicator } from '../../components';
 import Recursive from './Recursive';
 
@@ -90,13 +91,20 @@ class LayoutLoader extends Component {
       );
     }
 
+    const { routes, index } = store.getState().navigation;
+    const currentRoute = routes[index];
+    const currentRouteParams = currentRoute && currentRoute.params;
+
     /* Calculate the data for the layout */
     const context = {
       query: new DataQuery( data ).query(
         layout.query || [],
         { navigation: navigation && navigation.state ? navigation.state.params : {} }
       ),
-      navigation: navigation && navigation.state ? navigation.state.params : {},
+      navigation: {
+        ...( navigation && navigation.state && navigation.state.params ) || {},
+        ...currentRouteParams,
+      },
     };
 
     return (

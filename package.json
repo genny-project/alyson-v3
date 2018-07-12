@@ -19,7 +19,7 @@
     "base-64": "^0.1.0",
     "css-loader": "^0.28.11",
     "dlv": "^1.1.2",
-    "downshift": "^2.0.10",
+    "downshift": "zcallan/downshift#check-for-rn",
     "dset": "^1.0.1",
     "eslint": "^5.0.1",
     "eslint-plugin-import": "^2.13.0",
