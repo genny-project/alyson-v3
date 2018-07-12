@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { object, func, string } from 'prop-types';
 import { withNavigation } from 'react-navigation';
+import NavigationActions from '../../../utils/navigation-actions';
 import { removeStartingAndEndingSlashes } from '../../../utils';
 
 class LayoutFetcher extends Component {
@@ -22,11 +23,15 @@ class LayoutFetcher extends Component {
   }
 
   shouldComponentUpdate( nextProps ) {
-    const { index, routes } = nextProps.navigationReducer;
-    const strippedCurrentUrl = removeStartingAndEndingSlashes( this.props.currentUrl );
-    const strippedLastRoute = removeStartingAndEndingSlashes( routes[index].params.layout );
+    if ( nextProps.navigation && nextProps.navigation.index != null && nextProps.navigation.routes ) {
+      const { index, routes } = nextProps.navigation;
+      const strippedCurrentUrl = removeStartingAndEndingSlashes( this.props.currentUrl );
+      const strippedLastRoute = removeStartingAndEndingSlashes( routes[index].params.layout );
 
-    return strippedCurrentUrl === strippedLastRoute;
+      return strippedCurrentUrl === strippedLastRoute;
+    }
+
+    return true;
   }
 
   componentDidUpdate( prevProps ) {

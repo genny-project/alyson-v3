@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link as ReactRouterLink, browserHistory } from 'react-router-dom';
-import { string, bool, any, func, oneOf } from 'prop-types';
+import { Link as ReactRouterLink, withRouter } from 'react-router-dom';
+import { string, bool, any, func, oneOf, object } from 'prop-types';
 
 const Link = ({
   children = 'Link',
@@ -8,6 +8,7 @@ const Link = ({
   disabled = false,
   onPress,
   decoration = 'none',
+  history,
   ...restProps
 }) => {
   const href = to === 'home'
@@ -28,7 +29,7 @@ const Link = ({
 
   const handleNavigate = event => {
     if ( !disabled )
-      browserHistory.push( to );
+      history.push( to );
 
     handleClick( event );
   };
@@ -62,6 +63,7 @@ Link.propTypes = {
   decoration: oneOf(
     ['none', 'underline', 'line-through']
   ),
+  history: object,
 };
 
-export default Link;
+export default withRouter( Link );

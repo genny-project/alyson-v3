@@ -11,7 +11,7 @@ class InputDropdown extends Component {
 
   static propTypes = {
     value: any,
-    onChange: func,
+    onChangeValue: func,
     itemStringKey: string,
     itemValueKey: string,
     itemIdKey: string,
@@ -51,8 +51,8 @@ class InputDropdown extends Component {
   handleChange = value => {
     this.setState({ value });
 
-    if ( this.props.onChange )
-      this.props.onChange( value );
+    if ( this.props.onChangeValue )
+      this.props.onChangeValue( value );
   }
 
   render() {
