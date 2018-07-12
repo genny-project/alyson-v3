@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { object } from 'prop-types';
 import { Platform, Modal, SafeAreaView } from 'react-native';
 import config from '../../../config';
-import { Button, Box, KeycloakConsumer, Redirect, Heading, WebView } from '../../components';
+import { Button, Box, KeycloakConsumer, Redirect, Heading, WebView, Icon, Touchable } from '../../components';
 import Layout from '../../layout';
 
 class Splash extends Component {
@@ -16,7 +16,7 @@ class Splash extends Component {
   }
 
   handleNavigationStateChange = event => {
-    console.warn({ event });
+    // console.warn({ event });
 
     if ( event.url.startsWith( config.keycloak.redirectUri )) {
       const { keycloak } = this.props;
@@ -31,6 +31,10 @@ class Splash extends Component {
     this.setState({ showLoginScreen: true });
   }
 
+  handleHideLoginScreen = () => {
+    this.setState({ showLoginScreen: false });
+  }
+
   render() {
     const { location, keycloak } = this.props;
     const { showLoginScreen } = this.state;
@@ -40,7 +44,7 @@ class Splash extends Component {
       location.search.startsWith( '?redirectURL=/' )
     )
       ? location.search.split( '?redirectURL=/' )[1]
-      : 'home';
+      : 'app';
 
     const loginUrl = keycloak.createLoginUrl({
       redirectUri: config.keycloak.redirectUri,
@@ -48,66 +52,89 @@ class Splash extends Component {
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <KeycloakConsumer>
-          {({ isAuthenticated }) => isAuthenticated ? (
-            <Redirect
-              to={redirectURL}
-              removeRedirectURL
-            />
-          ) : (
-            <Layout
-              title="Splash"
-              appColor="light"
-              hideHeader
+        {keycloak.isAuthenticated ? (
+          <Redirect
+            to={redirectURL}
+            removeRedirectURL
+          />
+        ) : (
+          <Layout
+            title="Splash"
+            appColor="light"
+            hideHeader
+          >
+            <Box
+              justifyContent="center"
+              alignItems="center"
+              flex={1}
+              flexDirection="column"
+              padding={20}
             >
               <Box
+                marginBottom={40}
                 justifyContent="center"
-                alignItems="center"
-                flex={1}
-                flexDirection="column"
-                padding={20}
               >
-                <Box marginBottom={40}>
-                  <Heading
-                    size="lg"
-                    align="center"
-                  >
-                    Welcome!
-                  </Heading>
-                </Box>
-
-                <Button
-                  color="red"
-                  onPress={this.handleShowLoginScreen}
+                <Heading
+                  size="lg"
+                  align="center"
                 >
-                  Login
-                </Button>
+                  Welcome!
+                </Heading>
               </Box>
 
-              <Modal
-                visible={showLoginScreen}
-                animationType="slide"
+              <Button
+                color="red"
+                onPress={this.handleShowLoginScreen}
               >
-                <SafeAreaView style={{ flex: 1 }}>
-                  <Box
-                    flex={1}
-                    borderWidth={2}
-                    borderColor="grey"
-                    borderStyle="solid"
+                Login
+              </Button>
+            </Box>
+
+            <Modal
+              visible={showLoginScreen}
+              animationType="slide"
+            >
+              <SafeAreaView style={{ flex: 1 }}>
+                <Box
+                  backgroundColor="white"
+                  padding={15}
+                  paddingLeft={25}
+                  position="relative"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Heading>
+                    Login
+                  </Heading>
+
+                  <Touchable
+                    withFeedback
+                    onPress={this.handleHideLoginScreen}
                   >
-                    <WebView
-                      source={{ uri: loginUrl.url }}
-                      onMessage={this.handleMessage}
-                      ref={webview => this.webview = webview}
-                      onNavigationStateChange={this.handleNavigationStateChange}
-                      style={{ flex: 1 }}
+                    <Icon
+                      name="close"
+                      size="md"
+                      color="grey"
                     />
-                  </Box>
-                </SafeAreaView>
-              </Modal>
-            </Layout>
-          )}
-        </KeycloakConsumer>
+                  </Touchable>
+                </Box>
+
+                <Box
+                  flex={1}
+                  borderTopWidth={2}
+                  borderTopColor="grey"
+                  borderTopStyle="solid"
+                >
+                  <WebView
+                    source={{ uri: loginUrl.url }}
+                    onNavigationStateChange={this.handleNavigationStateChange}
+                    style={{ flex: 1 }}
+                  />
+                </Box>
+              </SafeAreaView>
+            </Modal>
+          </Layout>
+        )}
       </SafeAreaView>
     );
   }

@@ -18,7 +18,12 @@ class Loading extends Component {
     } = this.props.keycloak;
 
     if ( isAuthenticated ) {
-      return <Redirect to="app" />;
+      return (
+        <Redirect
+          to="app"
+          useAppNavigator={false}
+        />
+      );
     }
 
     if (
@@ -47,7 +52,12 @@ class Loading extends Component {
       );
     }
 
-    return <Redirect to="auth" />;
+    return (
+      <Redirect
+        to="auth"
+        useAppNavigator={false}
+      />
+    );
   }
 }
 

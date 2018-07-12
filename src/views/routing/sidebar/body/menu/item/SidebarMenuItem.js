@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import { func, string } from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { LayoutConsumer } from '../../../../../layout';
 import { Link, Box, Icon, Text, Touchable } from '../../../../../components';
-import { closeSidebar } from '../../../../../../redux/actions';
 
 class SidebarMenuItem extends Component {
   static propTypes = {
@@ -13,11 +10,10 @@ class SidebarMenuItem extends Component {
     iconLeft: string,
     iconRight: string,
     onPress: func,
-    closeSidebar: func,
   }
 
   render() {
-    const { name, onPress, path, iconLeft, iconRight, closeSidebar } = this.props;
+    const { name, onPress, path, iconLeft, iconRight } = this.props;
 
     const element = (
       <LayoutConsumer>
@@ -66,7 +62,7 @@ class SidebarMenuItem extends Component {
       return (
         <Link
           to={path}
-          onPress={closeSidebar}
+          onPress={onPress}
         >
           {element}
         </Link>
@@ -84,10 +80,4 @@ class SidebarMenuItem extends Component {
   }
 }
 
-export { SidebarMenuItem };
-
-const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ closeSidebar }, dispatch );
-};
-
-export default connect( null, mapDispatchToProps )( SidebarMenuItem );
+export default SidebarMenuItem;

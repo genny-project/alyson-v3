@@ -6,7 +6,7 @@ import { objectClean } from '../../../utils';
 const shapeStyles = {
   square: 0,
   rounded: 5,
-  circle: '50%',
+  circle: 100000,
 };
 
 const boxShadows = {

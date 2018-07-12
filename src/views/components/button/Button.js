@@ -62,6 +62,7 @@ class Button extends Component {
     size: 'lg',
     accessible: true,
     withFeedback: true,
+    isSpinning: false,
   }
 
   static propTypes = {
@@ -107,10 +108,22 @@ class Button extends Component {
         }),
       ),
     }),
+    isSpinning: bool,
+  }
+
+  static getDerivedStateFromProps( props, state ) {
+    if (
+      props.isSpinning != null &&
+      props.isSpinning !== state.isSpinning
+    ) {
+      return { isSpinning: props.isSpinning };
+    }
+
+    return null;
   }
 
   state = {
-    isSpinning: false,
+    isSpinning: this.props.isSpinning,
   }
 
   setSpinning = isSpinning => {
@@ -181,7 +194,13 @@ class Button extends Component {
   }
 
   renderSpinnerChild() {
-    const { size, color } = this.props;
+    const { size, color, children, text, icon } = this.props;
+
+    const isIconOnly = (
+      typeof icon === 'string' &&
+      children == null &&
+      text == null
+    );
 
     return (
       <Box
@@ -190,6 +209,7 @@ class Button extends Component {
         height="100%"
         justifyContent="center"
         alignItems="center"
+        shape={isIconOnly && 'circle'}
       >
         <Box
           position="absolute"
@@ -197,6 +217,7 @@ class Button extends Component {
           height="100%"
           backgroundColor={buttonColors[color]}
           opacity={0.8}
+          shape={isIconOnly && 'circle'}
         />
 
         <ActivityIndicator

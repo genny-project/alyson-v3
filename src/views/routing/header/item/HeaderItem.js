@@ -20,6 +20,7 @@ class HeaderItem extends Component {
       textColor,
       icon,
       buttonCode,
+      showSpinnerOnClick: false,
       ...restProps,
     };
 

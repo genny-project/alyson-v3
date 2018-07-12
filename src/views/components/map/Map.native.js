@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { number, arrayOf, shape, bool } from 'prop-types';
+import { number, arrayOf, oneOfType, shape, bool, string } from 'prop-types';
 import MapViewDirections from 'react-native-maps-directions';
 import config from '../../../config';
 import { isArray, isObject } from '../../../utils';
@@ -10,8 +10,8 @@ class Map extends Component {
   static propTypes = {
     markers: arrayOf(
       shape({
-        latitude: number,
-        longitude: number,
+        latitude: oneOfType( [number, string] ),
+        longitude: oneOfType( [number, string] ),
       })
     ),
     showDirections: bool,
@@ -90,8 +90,8 @@ class Map extends Component {
                 <Marker
                   key={marker.key}
                   coordinate={{
-                    latitude: marker.latitude,
-                    longitude: marker.longitude,
+                    latitude: Number( marker.latitude ),
+                    longitude: Number( marker.longitude ),
                   }}
                 />
               ))}
@@ -101,8 +101,16 @@ class Map extends Component {
                 markers.length === 2
               ) ? (
                 <MapViewDirections
-                  origin={markers[0]}
-                  destination={markers[1]}
+                  origin={{
+                    latitude: Number( markers[0].latitude ),
+                    longitude: Number( markers[0].longitude ),
+                    key: markers.key,
+                  }}
+                  destination={{
+                    latitude: Number( markers[1].latitude ),
+                    longitude: Number( markers[1].longitude ),
+                    key: markers.key,
+                  }}
                   apikey={config.google.apiKey}
                   strokeColor="blue"
                   strokeWidth={2}

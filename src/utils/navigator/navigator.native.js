@@ -4,6 +4,7 @@ import { routes } from '../../config';
 const navigator = {
   __appNavigator: null,
   __authNavigator: null,
+  __mainNavigator: null,
 
   setTopLevelAppNavigator: ref => {
     navigator.__appNavigator = ref;
@@ -13,16 +14,23 @@ const navigator = {
     navigator.__authNavigator = ref;
   },
 
+  setMainNavigator: ref => {
+    navigator.__mainNavigator = ref;
+  },
+
   listeners: {
     __appNavigator: {},
     __authNavigator: {},
+    __mainNavigator: {},
   },
 
   /* FIXME: listener never fires a callback */
-  addListener: ({ useAuthNavigator, on, callback }) => {
-    const navigatorType = useAuthNavigator
-      ? '__authNavigator'
-      : '__appNavigator';
+  addListener: ({ useAuthNavigator, on, callback, useMainNavigator }) => {
+    const navigatorType = (
+      useAuthNavigator ? '__authNavigator'
+      : useMainNavigator ? '__mainNavigator'
+      : '__appNavigator'
+    );
 
     if ( !navigator[navigatorType] )
       return false;
@@ -33,10 +41,12 @@ const navigator = {
     return navigator.listeners[navigatorType][on];
   },
 
-  removeListener: ({ useAuthNavigator, listener }) => {
-    const navigatorType = useAuthNavigator
-      ? '__authNavigator'
-      : '__appNavigator';
+  removeListener: ({ useAuthNavigator, listener, useMainNavigator }) => {
+    const navigatorType = (
+      useAuthNavigator ? '__authNavigator'
+      : useMainNavigator ? '__mainNavigator'
+      : '__appNavigator'
+    );
 
     if ( !navigator[navigatorType] )
       return false;
@@ -58,12 +68,18 @@ const navigator = {
     return navigator.__authNavigator;
   },
 
-  goBack: ( options = {}) => {
-    const { key, useAuthNavigator } = options;
+  getMainNavigator: () => {
+    return navigator.__mainNavigator;
+  },
 
-    const navigatorType = useAuthNavigator
-      ? '__authNavigator'
-      : '__appNavigator';
+  goBack: ( options = {}) => {
+    const { key, useAuthNavigator, useMainNavigator } = options;
+
+    const navigatorType = (
+      useAuthNavigator ? '__authNavigator'
+      : useMainNavigator ? '__mainNavigator'
+      : '__appNavigator'
+    );
 
     if ( !navigator[navigatorType] )
       return;
@@ -77,10 +93,13 @@ const navigator = {
     param,
     defaultValue,
     useAuthNavigator,
+    useMainNavigator,
   }) => {
-    const navigatorType = useAuthNavigator
-      ? '__authNavigator'
-      : '__appNavigator';
+    const navigatorType = (
+      useAuthNavigator ? '__authNavigator'
+      : useMainNavigator ? '__mainNavigator'
+      : '__appNavigator'
+    );
 
     if ( !navigator[navigatorType] )
       return defaultValue;
@@ -92,10 +111,13 @@ const navigator = {
     params,
     key,
     useAuthNavigator,
+    useMainNavigator,
   }) => {
-    const navigatorType = useAuthNavigator
-      ? '__authNavigator'
-      : '__appNavigator';
+    const navigatorType = (
+      useAuthNavigator ? '__authNavigator'
+      : useMainNavigator ? '__mainNavigator'
+      : '__appNavigator'
+    );
 
     navigator[navigatorType].dispatch(
       NavigationActions.setParams({
@@ -110,10 +132,13 @@ const navigator = {
     params = {},
     key,
     useAuthNavigator,
+    useMainNavigator,
   }) => {
-    const navigatorType = useAuthNavigator
-      ? '__authNavigator'
-      : '__appNavigator';
+    const navigatorType = (
+      useAuthNavigator ? '__authNavigator'
+      : useMainNavigator ? '__mainNavigator'
+      : '__appNavigator'
+    );
 
     if ( !navigator[navigatorType] )
       return;
@@ -121,7 +146,12 @@ const navigator = {
     navigator[navigatorType].dispatch(
       NavigationActions.navigate({
         type: NavigationActions.NAVIGATE,
-        routeName: routes[routeName] ? routeName : 'generic',
+        routeName: (
+          navigatorType === '__appNavigator' &&
+          !routes[routeName]
+        )
+          ? 'generic'
+          : routeName,
         params: {
           ...params,
           layout: routeName,

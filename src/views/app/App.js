@@ -12,7 +12,11 @@ class App extends Component {
           <SafeAreaView
             style={{
               flex: 1,
-              marginTop: StatusBar.currentHeight,
+              marginTop: (
+                Platform.OS === 'ios'
+                  ? StatusBar.currentHeight
+                  : 0
+              ),
               backgroundColor: (
                 Platform.OS === 'ios' ? layout.appColor : 'transparent'
               ),

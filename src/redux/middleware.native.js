@@ -1,4 +1,4 @@
-import { applyMiddleware } from 'redux';
+import { applyMiddleware, compose } from 'redux';
 import { createEpicMiddleware } from 'redux-observable';
 import logger from 'redux-logger';
 import epics from './epics';
@@ -7,6 +7,7 @@ import navigationMiddleware from '../views/routing/navigation.middleware';
 import sidebarMiddleware from '../views/routing/sidebar/sidebar.middleware';
 
 const epicMiddleware = createEpicMiddleware( epics );
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const developmentMiddleware = [
   epicMiddleware,
@@ -23,8 +24,8 @@ const productionMiddleware = [
   sidebarMiddleware,
 ];
 
-export default applyMiddleware(
+export default composeEnhancers( applyMiddleware(
   ...( process.env.NODE_ENV === 'production' )
     ? productionMiddleware
     : developmentMiddleware
-);
+));

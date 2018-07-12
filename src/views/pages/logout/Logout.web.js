@@ -9,31 +9,20 @@ class Logout extends Component {
     keycloak: object,
   }
 
-  state = {
-    browserDismissed: false,
-  }
-
   componentDidMount() {
     this.doLogout();
   }
 
-  doLogout = async () => {
+  doLogout = () => {
     const { attemptLogout } = this.props.keycloak;
 
-    const attempt = await attemptLogout({ replaceUrl: true });
-
-    if ( attempt && attempt.type === 'cancel' )
-      this.setState({ browserDismissed: true });
+    attemptLogout({ replaceUrl: true });
   }
 
   render() {
     const { isAuthenticated, error } = this.props.keycloak;
-    const { browserDismissed } = this.state;
 
     if ( !isAuthenticated )
-      return <Redirect to="auth" />;
-
-    if ( browserDismissed )
       return <Redirect to="auth" />;
 
     if ( error )

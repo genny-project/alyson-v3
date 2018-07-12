@@ -1,48 +1,61 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Image } from 'react-native';
-import { string, array } from 'prop-types';
+import { string, array, object } from 'prop-types';
+import { withNavigation } from 'react-navigation';
 import { ScrollView, Box } from '../../../components';
 import { LayoutConsumer } from '../../../layout';
 import SidebarMenu from './menu';
 
-const Sidebar = ({ headerImage, items }) => (
-  <LayoutConsumer>
-    {layout => (
-      <ScrollView
-        backgroundColor={layout.appColor}
-      >
-        <Box
-          flexDirection="column"
-          paddingY={20}
-        >
-          <Box>
-            <Image
-              style={{
-                resizeMode: 'contain',
-                width: '100%',
-                height: 200,
-              }}
-              flex={1}
-              source={{ uri: headerImage }}
-            />
-          </Box>
+class Sidebar extends Component {
+  static propTypes = {
+    headerImage: string,
+    items: array,
+    navigation: object,
+  }
 
-          <Box
-            flexDirection="column"
+  handleCloseSidebar = () => {
+    this.props.navigation.navigate( 'DrawerClose' );
+  }
+
+  render() {
+    const { headerImage, items } = this.props;
+
+    return (
+      <LayoutConsumer>
+        {layout => (
+          <ScrollView
+            backgroundColor={layout.appColor}
           >
-            <SidebarMenu
-              items={items}
-            />
-          </Box>
-        </Box>
-      </ScrollView>
-    )}
-  </LayoutConsumer>
-);
+            <Box
+              flexDirection="column"
+              paddingY={20}
+            >
+              <Box>
+                <Image
+                  style={{
+                    resizeMode: 'contain',
+                    width: '100%',
+                    height: 200,
+                  }}
+                  flex={1}
+                  source={{ uri: headerImage }}
+                />
+              </Box>
 
-Sidebar.propTypes = {
-  headerImage: string,
-  items: array,
-};
+              <Box
+                flexDirection="column"
+              >
+                <SidebarMenu
+                  items={items}
+                  onPress={this.handleCloseSidebar}
+                />
+              </Box>
+            </Box>
+          </ScrollView>
+        )}
+      </LayoutConsumer>
+    );
+  }
+}
 
-export default Sidebar;
+export default withNavigation( Sidebar );
