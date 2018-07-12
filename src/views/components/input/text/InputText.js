@@ -405,8 +405,12 @@ class Input extends Component {
           onSubmitEditing={onSubmitEditing}
           placeholder={placeholder}
           placeholderTextColor={this.getStatusColor()}
-          returnKeyLabel={!multiline && returnKeyLabel}
-          returnKeyType={!multiline && returnKeyType}
+          returnKeyLabel={
+            !multiline ? returnKeyLabel : null
+            }
+          returnKeyType={
+            !multiline ? returnKeyType : null
+            }
           secureTextEntry={secureTextEntry}
           selection={selection}
           selectTextOnFocus={selectTextOnFocus}
