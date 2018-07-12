@@ -18,7 +18,7 @@ const handleFilterItem = item => {
 };
 
 const HeaderRight = ({ items }) => {
-  const filteredItems = items.filter( handleFilterItem );
+  const filteredItems = isArray( items ) && items.filter( handleFilterItem );
 
   return (
     <LayoutConsumer>

@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { oneOf, node, object, string, bool } from 'prop-types';
 import { withNavigation } from 'react-navigation';
+import { store } from '../../redux';
 import { LayoutConsumer } from '../layout';
 
 class Layout extends Component {
@@ -78,7 +79,37 @@ class Layout extends Component {
     }
 
     layout.setHeaderVisibility( !!header );
-    layout.setHeaderProps( header );
+
+    if ( header.variant ) {
+      const { attributes } = store().getState().vertx.baseEntities;
+      const keys = Object.keys( attributes );
+
+      for ( let i = 0; i < keys.length; i++ ) {
+        const attribute = keys[i];
+
+        if ( attribute.startsWith( 'LAY_' )) {
+          if ( attributes[attribute].LAYOUT_URI.value === `sublayouts/header-${header.variant}/` ) {
+            const layout = attributes[attribute].PRI_LAYOUT_DATA.value;
+
+            console.warn({ layout });
+
+            let parsed = null;
+
+            try {
+              parsed = JSON.parse( layout );
+              layout.setHeaderProps( parsed );
+            }
+            catch ( e ) {
+              console.warn( 'Unable to parse header layout data', layout );
+            }
+
+            break;
+          }
+        }
+      }
+
+      layout.setHeaderProps( header );
+    }
 
     if ( navigation ) {
       navigation.setParams({

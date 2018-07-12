@@ -7,17 +7,13 @@ import { Button, Box, Heading, Image } from '../../index';
 import { LayoutConsumer } from '../../../layout';
 
 class HeaderLeft extends Component {
-  static defaultProps = {
-    showTitle: true,
-  }
-
   static propTypes = {
     navigationReducer: object,
     navigation: object,
     dispatch: func,
-    alwaysHideBack: bool,
-    showTitle: bool,
     logoSource: string,
+    showBack: bool,
+    showTitle: bool,
     showLogo: bool,
     showMenu: bool,
   }
@@ -39,7 +35,7 @@ class HeaderLeft extends Component {
   render() {
     const {
       navigationReducer,
-      alwaysHideBack,
+      showBack,
       logoSource,
       showTitle,
       showLogo,
@@ -54,7 +50,7 @@ class HeaderLeft extends Component {
       removeStartingAndEndingSlashes( params.layout )
     );
 
-    const showBack = (
+    const canShowBack = (
       index > 0 &&
       strippedLayoutName &&
       strippedLayoutName !== 'home'
@@ -66,7 +62,7 @@ class HeaderLeft extends Component {
           <Box alignItems="center">
             {(
               showBack &&
-              !alwaysHideBack
+              canShowBack
             )
               ? (
                 <Button
