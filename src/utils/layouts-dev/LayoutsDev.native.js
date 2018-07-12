@@ -59,7 +59,7 @@ class LayoutsDev {
     store.dispatch( clearAllLayouts());
 
     routes.forEach( route => {
-      const code = `LAY_${realm.toUpperCase()}_${route.name.toUpperCase()}`;
+      const code = `LAY_${realm.toUpperCase()}_${route.path.split( '/' ).join( '-' ).toUpperCase()}`;
 
       this.getLayoutData( realm, route.path, data => {
         const attribute = {

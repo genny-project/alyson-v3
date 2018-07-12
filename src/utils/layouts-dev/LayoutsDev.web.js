@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { push } from 'react-router-redux';
 import { store } from '../../redux';
-import { loadDevLayouts, clearAllLayouts, loadDevLayout } from '../../redux/actions';
+import { loadDevLayouts, clearAllLayouts, loadDevLayout, updateProjectName } from '../../redux/actions';
 
 class LayoutsDev {
   constructor() {
@@ -43,7 +43,11 @@ class LayoutsDev {
     this.navigate( '/tmp' );
     setTimeout(() => {
       this.navigate( path );
-    }, 500 );
+    }, 1000 );
+  }
+
+  setProjectName( name ) {
+    store.dispatch( updateProjectName( name ));
   }
 
   processRoutes( realm, routes ) {
@@ -51,7 +55,7 @@ class LayoutsDev {
     store.dispatch( clearAllLayouts());
 
     routes.forEach( route => {
-      const code = `LAY_${realm.toUpperCase()}_${route.name.toUpperCase()}`;
+      const code = `LAY_${realm.toUpperCase()}_${route.path.split( '/' ).join( '-' ).toUpperCase()}`;
 
       this.getLayoutData( realm, route.path, data => {
         const attribute = {

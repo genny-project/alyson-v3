@@ -12,3 +12,7 @@ export const loadDevLayout = payload => ({
   payload,
 });
 
+export const updateProjectName = name => ({
+  type: 'UPDATE_PROJECT_NAME',
+  payload: name,
+});
