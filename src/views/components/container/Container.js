@@ -1,10 +1,11 @@
 import React from 'react';
-import { any, string } from 'prop-types';
+import { any, string, bool } from 'prop-types';
 import Box from '../box';
 
 const Container = ({
   children,
   size = 'sm',
+  fullWidth = false,
   ...restProps
 }) => {
   const containerWidth = {
@@ -16,10 +17,10 @@ const Container = ({
   return (
     <Box
       {...restProps}
-      maxWidth={containerWidth[size]}
-      justifyContent="center"
+      maxWidth={fullWidth ? '100%' : containerWidth[size]}
       width="100%"
       marginX="auto"
+      fullHeightOnWeb
       cleanStyleObject
     >
       {children}
@@ -30,6 +31,7 @@ const Container = ({
 Container.propTypes = {
   children: any,
   size: string,
+  fullWidth: bool,
 };
 
 export default Container;
