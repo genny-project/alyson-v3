@@ -67,11 +67,23 @@ class Tabs extends Component {
       ? (
         <Icon
           name={route.icon}
-          size="sm"
+          size="md"
           color={this.props.iconColor}
         />
       )
       : null;
+  }
+
+  renderLabel = ({ route }) => {
+    const { textColor } = this.props;
+
+    return (
+      <Text
+        color={textColor}
+      >
+        {route.title}
+      </Text>
+    );
   }
 
   renderTabBar = props => {
@@ -101,6 +113,7 @@ class Tabs extends Component {
         {...props}
         onTabPress={this.handlePress}
         scrollEnabled={scrollEnabled}
+        renderLabel={this.renderLabel}
         renderIcon={this.renderIcon}
         style={style}
         labelStyle={labelStyle}
