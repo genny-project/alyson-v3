@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { shape, object, any } from 'prop-types';
+import { shape, object, any, bool } from 'prop-types';
 import Layout from '../../layout';
 import { refresh } from '../../../utils';
 import DataQuery from '../../../utils/data-query';
@@ -15,6 +15,8 @@ class LayoutLoader extends Component {
     }),
     data: object,
     navigation: object,
+    sublayoutProps: object,
+    sublayout: bool,
   }
 
   handleRetry = () => {
@@ -22,7 +24,7 @@ class LayoutLoader extends Component {
   }
 
   render() {
-    const { layout, data, navigation } = this.props;
+    const { layout, data, navigation, sublayoutProps, sublayout } = this.props;
 
     if ( !layout ) {
       return (
@@ -97,10 +99,13 @@ class LayoutLoader extends Component {
         { navigation: navigation && navigation.state ? navigation.state.params : {} }
       ),
       navigation: navigation && navigation.state ? navigation.state.params : {},
+      props: sublayoutProps,
     };
 
+    const Holder = sublayout ? Box : Layout;
+
     return (
-      <Layout
+      <Holder
         {...layout.layout}
         context={context}
       >
@@ -119,7 +124,7 @@ class LayoutLoader extends Component {
             layout.children ||
             null
           )}
-      </Layout>
+      </Holder>
     );
   }
 }
