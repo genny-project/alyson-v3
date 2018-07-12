@@ -316,13 +316,11 @@ class Form extends Component {
   }
 
   handleFocusNextInput = ( questionGroupCode, currentFocusedIndex ) => () => {
-    console.warn( 'trying to focus...', this.inputRefs, { questionGroupCode, currentFocusedIndex }, this.inputRefs[questionGroupCode][currentFocusedIndex], this.inputRefs[questionGroupCode][currentFocusedIndex].focus );
     if (
       this.inputRefs[questionGroupCode] &&
       this.inputRefs[questionGroupCode][currentFocusedIndex + 1] &&
       this.inputRefs[questionGroupCode][currentFocusedIndex + 1].focus
     ) {
-      console.warn( 'focussing...' );
       this.inputRefs[questionGroupCode][currentFocusedIndex + 1].focus();
     }
   }
