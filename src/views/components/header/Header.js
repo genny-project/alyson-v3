@@ -73,6 +73,9 @@ Header.propTypes = {
     showLogo: oneOfType(
       [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
     ),
+    showBack: oneOfType(
+      [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
+    ),
   }),
   headerRight: shape({
     items: arrayOf( headerItemPropTypes ),

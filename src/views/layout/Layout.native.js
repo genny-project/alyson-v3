@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { oneOf, node, object, string, bool } from 'prop-types';
 import { withNavigation } from 'react-navigation';
-import { store } from '../../redux';
+import { connect } from 'react-redux';
 import { LayoutConsumer } from '../layout';
 
 class Layout extends Component {
@@ -18,6 +18,7 @@ class Layout extends Component {
     header: object,
     hideSidebar: bool,
     navigation: object,
+    baseEntities: object,
   }
 
   componentDidMount() {
@@ -78,44 +79,54 @@ class Layout extends Component {
       layout.setSidebarVisibility( true );
     }
 
+    this.setHeaderProperties();
+
     layout.setHeaderVisibility( !!header );
 
-    if ( header.variant ) {
-      const { attributes } = store().getState().vertx.baseEntities;
-      const keys = Object.keys( attributes );
+    if ( navigation ) {
+      navigation.setParams({
+        showHeader: !!header,
+      });
+    }
+  }
+
+  setHeaderProperties() {
+    const { header, navigation } = this.props;
+
+    if ( header && header.variant ) {
+      const { attributes } = this.props.baseEntities;
+      const keys = Object.keys( this.props.baseEntities.attributes );
 
       for ( let i = 0; i < keys.length; i++ ) {
-        const attribute = keys[i];
+        if ( keys[i].startsWith( 'LAY_' )) {
+          const attribute = attributes[keys[i]];
 
-        if ( attribute.startsWith( 'LAY_' )) {
-          if ( attributes[attribute].LAYOUT_URI.value === `sublayouts/header-${header.variant}/` ) {
-            const layout = attributes[attribute].PRI_LAYOUT_DATA.value;
-
-            console.warn({ layout });
+          if ( attribute.PRI_LAYOUT_URI.value === `sublayouts/header-${header.variant}/` ) {
+            const layout = attribute.PRI_LAYOUT_DATA.valueString;
 
             let parsed = null;
 
             try {
               parsed = JSON.parse( layout );
-              layout.setHeaderProps( parsed );
             }
             catch ( e ) {
               console.warn( 'Unable to parse header layout data', layout );
+            }
+
+            if ( parsed ) {
+              this.props.layout.setHeaderProps( parsed );
+
+              if ( navigation ) {
+                navigation.setParams({
+                  headerProps: parsed,
+                });
+              }
             }
 
             break;
           }
         }
       }
-
-      layout.setHeaderProps( header );
-    }
-
-    if ( navigation ) {
-      navigation.setParams({
-        showHeader: !!header,
-        headerProps: header,
-      });
     }
   }
 
@@ -130,15 +141,23 @@ class Layout extends Component {
   }
 }
 
-export default withNavigation(
-  props => (
-    <LayoutConsumer>
-      {layout => (
-        <Layout
-          {...props}
-          layout={layout}
-        />
-      )}
-    </LayoutConsumer>
+const mapStateToProps = state => ({
+  baseEntities: state.vertx.baseEntities,
+});
+
+export default (
+  connect( mapStateToProps )(
+    withNavigation(
+      props => (
+        <LayoutConsumer>
+          {layout => (
+            <Layout
+              {...props}
+              layout={layout}
+            />
+          )}
+        </LayoutConsumer>
+      )
+    )
   )
 );
