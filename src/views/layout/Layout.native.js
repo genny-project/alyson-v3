@@ -14,7 +14,7 @@ class Layout extends Component {
     // ),
     title: string,
     layout: object,
-    hideHeader: bool,
+    header: object,
     hideSidebar: bool,
     navigation: object,
   }
@@ -41,22 +41,10 @@ class Layout extends Component {
         title: this.props.title,
       });
     }
-
-    if (
-      prevProps.hideHeader === true &&
-      this.props.hideHeader == null &&
-      this.props.navigation != null
-    ) {
-      this.props.navigation.setParams({
-        hideHeader: false,
-      });
-
-      this.props.layout.setHeaderVisibility( false );
-    }
   }
 
   setLayoutProperties() {
-    const { layout, title, appColor, hideHeader, hideSidebar, navigation } = this.props;
+    const { layout, title, appColor, header, hideSidebar, navigation } = this.props;
 
     if ( !layout )
       return;
@@ -67,8 +55,8 @@ class Layout extends Component {
     ) {
       layout.setTitle( title );
 
-      if ( this.props.navigation ) {
-        this.props.navigation.setParams({
+      if ( navigation ) {
+        navigation.setParams({
           hideHeader: true,
           title,
         });
@@ -89,23 +77,14 @@ class Layout extends Component {
       layout.setSidebarVisibility( true );
     }
 
-    if ( hideHeader !== layout.hideHeader ) {
-      layout.setHeaderVisibility( hideHeader );
+    layout.setHeaderVisibility( !!header );
+    layout.setHeaderProps( header );
 
-      if ( navigation ) {
-        this.props.navigation.setParams({
-          hideHeader: hideHeader,
-        });
-      }
-    }
-    else if ( hideHeader == null ) {
-      layout.setHeaderVisibility( true );
-
-      if ( navigation ) {
-        this.props.navigation.setParams({
-          hideHeader: false,
-        });
-      }
+    if ( navigation ) {
+      navigation.setParams({
+        showHeader: !!header,
+        headerProps: header,
+      });
     }
   }
 

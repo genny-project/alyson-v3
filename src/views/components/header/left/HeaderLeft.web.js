@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dlv from 'dlv';
 import config from '../../../../config';
-import { Link, Button, Box, Heading } from '../../../components';
+import { Link, Button, Box, Heading } from '../../index';
 import { LayoutConsumer } from '../../../layout';
 import { toggleSidebar } from '../../../../redux/actions';
 

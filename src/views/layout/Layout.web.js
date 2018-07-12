@@ -3,13 +3,14 @@ import { any, string, bool, object } from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import LayoutConsumer from './consumer';
-import { Header, Sidebar } from '../routing';
+import { Header } from '../components';
+import { Sidebar } from '../routing';
 
 class Layout extends PureComponent {
   static propTypes = {
     children: any,
     title: string,
-    hideHeader: bool,
+    header: object,
     hideSidebar: bool,
     layout: object,
     appColor: string,
@@ -37,7 +38,7 @@ class Layout extends PureComponent {
   }
 
   setLayoutProperties() {
-    const { layout, title, appColor, hideSidebar, hideHeader } = this.props;
+    const { layout, title, appColor, hideSidebar, header } = this.props;
 
     if (
       typeof title === 'string' &&
@@ -60,16 +61,12 @@ class Layout extends PureComponent {
       layout.setSidebarVisibility( false );
     }
 
-    if ( hideHeader !== layout.hideHeader ) {
-      layout.setHeaderVisibility( hideHeader );
-    }
-    else if ( hideHeader == null ) {
-      layout.setHeaderVisibility( false );
-    }
+    layout.setHeaderVisibility( !!header );
+    layout.setHeaderProps( header );
   }
 
   render() {
-    const { children, title, hideHeader, hideSidebar, appName } = this.props;
+    const { children, title, header, hideSidebar, appName } = this.props;
 
     return (
       <Fragment>
@@ -84,8 +81,8 @@ class Layout extends PureComponent {
           </title>
         </Helmet>
 
-        {!hideHeader && (
-          <Header />
+        {header && (
+          <Header {...header} />
         )}
 
         {!hideSidebar && (

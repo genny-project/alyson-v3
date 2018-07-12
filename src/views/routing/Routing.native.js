@@ -8,8 +8,8 @@ import { connect } from 'react-redux';
 import * as Pages from '../../views/pages';
 import { routes } from '../../config';
 import { navigator } from '../../utils';
+import { Header } from '../components';
 import Sidebar from './sidebar';
-import Header from './header';
 
 const addListener = createReduxBoundAddListener( 'root' );
 
@@ -23,15 +23,23 @@ const AppStack = StackNavigator({
     shadowColor: 'transparent',
   },
   navigationOptions: props => {
-    const hideHeader = (
+    const showHeader = (
       props.navigation.state.params &&
-      props.navigation.state.params.hideHeader
+      props.navigation.state.params.showHeader
+    );
+
+    const headerProps = (
+      props.navigation.state.params &&
+      props.navigation.state.params.headerProps
     );
 
     return {
-      header: hideHeader
-        ? null
-        : <Header {...props} />,
+      header: showHeader ? (
+        <Header
+          {...props}
+          {...headerProps}
+        />
+      ) : null,
     };
   },
   transitionConfig: () => ({

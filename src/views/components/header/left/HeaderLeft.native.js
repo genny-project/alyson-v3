@@ -1,18 +1,24 @@
 import React, { Component } from 'react';
-import { object, func } from 'prop-types';
+import { object, func, bool, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { NavigationActions, withNavigation } from 'react-navigation';
 import { removeStartingAndEndingSlashes } from '../../../../utils';
-import { Button, Box, Heading } from '../../../components';
+import { Button, Box, Heading, Image } from '../../index';
 import { LayoutConsumer } from '../../../layout';
 
 class HeaderLeft extends Component {
+  static defaultProps = {
+    showTitle: true,
+  }
+
   static propTypes = {
     navigationReducer: object,
     navigation: object,
-    baseEntities: object,
-    aliases: object,
     dispatch: func,
+    alwaysHideBack: bool,
+    showTitle: bool,
+    logoSource: string,
+    showLogo: bool,
   }
 
   handleToggleMenu = () => {
@@ -30,11 +36,11 @@ class HeaderLeft extends Component {
   }
 
   render() {
-    const { baseEntities, aliases, navigationReducer } = this.props;
-    const projectAttributes = baseEntities.attributes[aliases.PROJECT];
+    const { navigationReducer, alwaysHideBack, showTitle, logoSource, showLogo } = this.props;
     const { index, routes } = navigationReducer;
     const { params } = routes[index];
     const title = params && params.title;
+
     const strippedLayoutName = (
       params != null &&
       removeStartingAndEndingSlashes( params.layout )
@@ -49,10 +55,11 @@ class HeaderLeft extends Component {
     return (
       <LayoutConsumer>
         {layout => (
-          <Box
-            alignItems="center"
-          >
-            {showBack
+          <Box alignItems="center">
+            {(
+              showBack &&
+              !alwaysHideBack
+            )
               ? (
                 <Button
                   onPress={this.handleBack}
@@ -74,27 +81,28 @@ class HeaderLeft extends Component {
               )
             }
 
-            <Box marginLeft={5}>
-              <Heading
-                size="lg"
-                color={layout.textColor}
+            {showLogo ? (
+              <Box
+                marginLeft={5}
+                marginRight={20}
               >
-                {(
-                  strippedLayoutName &&
-                  strippedLayoutName !== 'home' &&
-                  title
-                )
-                  ? title
-                  : (
-                    projectAttributes &&
-                    projectAttributes.PRI_NAME &&
-                    projectAttributes.PRI_NAME.valueString
-                  ) || (
-                    'Loading...'
-                  )
-                }
-              </Heading>
-            </Box>
+                <Image
+                  height="100%"
+                  source={logoSource}
+                />
+              </Box>
+            ) : null}
+
+            {showTitle ? (
+              <Box marginLeft={5}>
+                <Heading
+                  size="lg"
+                  color={layout.textColor}
+                >
+                  {title}
+                </Heading>
+              </Box>
+            ) : null}
           </Box>
         )}
       </LayoutConsumer>
@@ -105,8 +113,6 @@ class HeaderLeft extends Component {
 export { HeaderLeft };
 
 const mapStateToProps = state => ({
-  baseEntities: state.vertx.baseEntities,
-  aliases: state.vertx.aliases,
   navigationReducer: state.navigation,
 });
 
