@@ -179,6 +179,16 @@ class Input extends Component {
     this.input = input;
   }
 
+  handleChangeText = event => {
+    if ( this.props.onChangeText ) {
+      this.props.onChangeText( event );
+    }
+
+    if ( this.props.onChangeValue ) {
+      this.props.onChangeValue( event );
+    }
+  }
+
   focus() {
     if ( this.input )
       this.input.focus();
@@ -398,7 +408,7 @@ class Input extends Component {
           multiline={multiline}
           onBlur={onBlur}
           onChange={onChange}
-          onChangeText={onChangeValue}
+          onChangeText={this.handleChangeText}
           onFocus={onFocus}
           onKeyPress={onKeyPress}
           onSelectionChange={onSelectionChange}

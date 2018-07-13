@@ -305,6 +305,7 @@ class Form extends Component {
   }
 
   handleChange = ( field, setFieldValue, setFieldTouched, ask ) => ( value, sendOnChange ) => {
+    console.log( value );
     if ( value == null )
       return;
 
