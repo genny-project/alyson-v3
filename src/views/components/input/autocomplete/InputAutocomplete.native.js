@@ -175,7 +175,7 @@ class InputAutocomplete extends Component {
                         />
                       </Touchable>
                     </Box>
-
+                    {console.log( getInputProps())}
                     <Input
                       {...getInputProps()}
                       type={inputType}
@@ -193,26 +193,28 @@ class InputAutocomplete extends Component {
                       borderTopWidth={0}
                     />
 
-                    {inputValue && (
-                      <Box
-                        position="absolute"
-                        height="100%"
-                        alignItems="center"
-                        right={10}
-                        zIndex={5}
-                      >
-                        <Touchable
-                          withFeedback
-                          onPress={this.handleClearInputValue( setState )}
+                    {
+                      inputValue ? (
+                        <Box
+                          position="absolute"
+                          height="100%"
+                          alignItems="center"
+                          right={10}
+                          zIndex={5}
                         >
-                          <Icon
-                            name="close"
-                            color="black"
-                            size="md"
-                          />
-                        </Touchable>
-                      </Box>
-                    )}
+                          <Touchable
+                            withFeedback
+                            onPress={this.handleClearInputValue( setState )}
+                          >
+                            <Icon
+                              name="close"
+                              color="black"
+                              size="md"
+                            />
+                          </Touchable>
+                        </Box>
+                      ) : null
+                    }
                   </Box>
 
                   {(
