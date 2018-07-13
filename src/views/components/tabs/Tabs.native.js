@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { ActivityIndicator, Dimensions } from 'react-native';
-import { any, array, bool, string, number, oneOfType, func } from 'prop-types';
+import { any, array, bool, string, number, oneOfType, func, object } from 'prop-types';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { Box, Text, Icon, Timeout } from '../../components';
 
@@ -9,12 +9,7 @@ class Tabs extends Component {
     tabs: [],
     height: '100%',
     width: '100%',
-    tabBarSize: 'md',
-    tabBarBackground: '#3f3f3f',
-    activeTabBackground: '#232323',
-    iconColor: 'white',
-    textColor: 'white',
-    bottomTabs: false,
+    labelProps: {},
   }
 
   static propTypes = {
@@ -31,10 +26,15 @@ class Tabs extends Component {
     activeTabBackground: string,
     tabBarSize: string,
     iconColor: string,
-    textColor: string,
+    labelColor: string,
     bottomTabs: bool,
     onPress: func,
     scrollEnabled: bool,
+    iconSize: string,
+    iconProps: object,
+    labelProps: object,
+    activeLabelColor: string,
+    activeIconColor: string,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -51,7 +51,7 @@ class Tabs extends Component {
   state = {
     index: 0,
     routes: [],
-  };
+  }
 
   handleIndexChange = index => {
     this.setState({ index });
@@ -63,26 +63,73 @@ class Tabs extends Component {
   }
 
   renderIcon = ({ route }) => {
+    const { iconColor, iconSize, iconProps, activeIconColor } = this.props;
+
     return route.icon
       ? (
         <Icon
+          {...iconProps}
           name={route.icon}
-          size="md"
-          color={this.props.iconColor}
+          size={iconSize}
+          color={(
+            activeIconColor &&
+            route.key === this.state.index
+          )
+            ? activeIconColor
+            : iconColor}
         />
       )
       : null;
   }
 
   renderLabel = ({ route }) => {
-    const { textColor } = this.props;
+    const { labelColor, labelProps, activeLabelColor } = this.props;
+
+    const {
+      paddingX = 5,
+      paddingY = 5,
+      padding,
+      paddingTop,
+      paddingLeft,
+      paddingBottom,
+      paddingRight,
+      minHeight = 50,
+      height,
+      maxHeight,
+      justifyContent = 'center',
+      alignItems = 'center',
+      ...textProps
+    } = labelProps;
 
     return (
-      <Text
-        color={textColor}
+      <Box
+        padding={padding}
+        paddingY={paddingY}
+        paddingX={paddingX}
+        paddingTop={paddingTop}
+        paddingLeft={paddingLeft}
+        paddingBottom={paddingBottom}
+        paddingRight={paddingRight}
+        height={height}
+        minHeight={minHeight}
+        maxHeight={maxHeight}
+        alignItems={alignItems}
+        justifyContent={justifyContent}
       >
-        {route.title}
-      </Text>
+        <Text
+          transform="upperCase"
+          align="center"
+          {...textProps}
+          color={(
+            activeLabelColor &&
+            route.key === this.state.index
+          )
+            ? activeLabelColor
+            : labelColor}
+        >
+          {route.title}
+        </Text>
+      </Box>
     );
   }
 
@@ -90,17 +137,11 @@ class Tabs extends Component {
     const {
       tabBarBackground,
       activeTabBackground,
-      textColor,
       scrollEnabled,
     } = this.props;
 
     const style = {
       backgroundColor: tabBarBackground,
-    };
-
-    const labelStyle = {
-      color: textColor,
-      textAlign: 'center',
     };
 
     const indicatorStyle = {
@@ -116,7 +157,6 @@ class Tabs extends Component {
         renderLabel={this.renderLabel}
         renderIcon={this.renderIcon}
         style={style}
-        labelStyle={labelStyle}
         indicatorStyle={indicatorStyle}
       />
     );
@@ -124,6 +164,11 @@ class Tabs extends Component {
 
   renderScene = ({ route }) => {
     const { children } = this.props;
+
+    /* Only render the scene if it's within 2 routes either side of the current route. */
+    if ( Math.abs( this.state.index - this.state.routes.indexOf( route )) > 2 ) {
+      return <Box />;
+    }
 
     return (
       <Box
