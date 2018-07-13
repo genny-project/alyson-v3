@@ -117,7 +117,6 @@ class Tabs extends Component {
         justifyContent={justifyContent}
       >
         <Text
-          transform="upperCase"
           align="center"
           {...textProps}
           color={(
