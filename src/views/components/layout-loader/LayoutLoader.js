@@ -29,8 +29,8 @@ class LayoutLoader extends Component {
       return (
         <Layout
           title="Loading..."
-          hideHeader
-          appColor="light"
+          appColor="dark"
+          header={{ variant: 'default' }}
         >
           <Timeout duration={60000}>
             {({ isTimeUp, secondsElapsed }) => (

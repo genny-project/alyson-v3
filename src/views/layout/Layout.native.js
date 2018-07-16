@@ -4,6 +4,7 @@ import { withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
 import { LayoutConsumer } from '../layout';
 import shallowCompare from '../../utils/shallow-compare';
+import removeStartingAndEndingSlashes from '../../utils/string/removeStartingAndEndingSlashes';
 
 class Layout extends Component {
   static propTypes = {
@@ -17,6 +18,10 @@ class Layout extends Component {
     hideSidebar: bool,
     navigation: object,
     baseEntities: object,
+  }
+
+  state = {
+    hasLoadedLayouts: false,
   }
 
   componentDidMount() {
@@ -45,6 +50,21 @@ class Layout extends Component {
     if ( !shallowCompare( this.props.header, prevProps.header )) {
       this.setHeaderProperties();
     }
+
+    if ( !this.state.hasLoadedLayouts ) {
+      const hasNowLoadedLayouts = (
+        Object
+          .keys( this.props.baseEntities.attributes )
+          .find( attribute => attribute.startsWith( 'LAY_' ))
+      );
+
+      if (
+        hasNowLoadedLayouts &&
+        this.props.header != null
+      ) {
+        this.setHeaderProperties();
+      }
+    }
   }
 
   setLayoutProperties() {
@@ -60,10 +80,7 @@ class Layout extends Component {
       layout.setTitle( title );
 
       if ( navigation ) {
-        navigation.setParams({
-          hideHeader: true,
-          title,
-        });
+        navigation.setParams({ title });
       }
     }
 
@@ -93,9 +110,17 @@ class Layout extends Component {
 
       for ( let i = 0; i < keys.length; i++ ) {
         if ( keys[i].startsWith( 'LAY_' )) {
-          const attribute = attributes[keys[i]];
+          if ( !this.state.hasLoadedLayouts ) {
+            this.setState({ hasLoadedLayouts: true });
+          }
 
-          if ( attribute.PRI_LAYOUT_URI.value === `sublayouts/header-${header.variant}/` ) {
+          const attribute = attributes[keys[i]];
+          const layoutPath = removeStartingAndEndingSlashes( attribute.PRI_LAYOUT_URI.value );
+
+          if (
+            layoutPath === `header/header.${header.variant}` ||
+            layoutPath === `sublayouts/header-${header.variant}`
+          ) {
             const layout = attribute.PRI_LAYOUT_DATA.valueString;
 
             let parsed = null;

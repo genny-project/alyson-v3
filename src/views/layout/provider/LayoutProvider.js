@@ -50,7 +50,7 @@ class LayoutProvider extends Component {
   }
 
   setHeaderVisibility = visible => {
-    this.setState({ hideHeader: visible });
+    this.setState({ showHeader: visible });
 
     store.dispatch(
       actions.setHeaderVisibility( visible )
