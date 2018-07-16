@@ -74,6 +74,15 @@ class Tabs extends Component {
       : null;
   }
 
+  renderLabel = ({ route }) => {
+    return (
+      <Text
+        text={route.title}
+        color={this.props.textColor}
+      />
+    );
+  }
+
   renderTabBar = props => {
     const {
       tabBarBackground,
@@ -102,6 +111,7 @@ class Tabs extends Component {
         onTabPress={this.handlePress}
         scrollEnabled={scrollEnabled}
         renderIcon={this.renderIcon}
+        // renderLabel={this.renderLabel}
         style={style}
         labelStyle={labelStyle}
         indicatorStyle={indicatorStyle}

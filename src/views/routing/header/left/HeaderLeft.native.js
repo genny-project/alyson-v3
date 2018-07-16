@@ -63,14 +63,15 @@ class HeaderLeft extends Component {
                   paddingX={15}
                 />
               ) : (
-                <Button
-                  onPress={this.handleToggleMenu}
-                  size="md"
-                  color="transparent"
-                  textColor={layout.textColor}
-                  icon="menu"
-                  paddingX={15}
-                />
+                // <Button
+                //   onPress={this.handleToggleMenu}
+                //   size="md"
+                //   color="transparent"
+                //   textColor={layout.textColor}
+                //   icon="menu"
+                //   paddingX={15}
+                // />
+                null
               )
             }
 
@@ -88,7 +89,7 @@ class HeaderLeft extends Component {
                   : (
                     projectAttributes &&
                     projectAttributes.PRI_NAME &&
-                    projectAttributes.PRI_NAME.valueString
+                    projectAttributes.PRI_NAME.valueString && 'Four Degrees'
                   ) || (
                     'Loading...'
                   )
