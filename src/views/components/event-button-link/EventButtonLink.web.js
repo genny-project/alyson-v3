@@ -9,23 +9,22 @@
  */
 
 import React from 'react';
-import { Link as ReactRouterLink, browserHistory } from 'react-router-dom';
 import { string, bool, any, func, object } from 'prop-types';
-import { EventButton } from '../../components';
+import { EventButton, Link } from '../../components';
 
 const EventButtonLink = ({
   disabled = false,
   onPress,
   children,
   to,
-  decoration = 'none',
   ...restProps
 }) => {
-  const href = to === 'home'
-    ? '/'
-    : `/${to}`;
+  const handlePress = event => {
+    if ( onPress )
+      onPress( event );
+  };
 
-  const handleClick = event => {
+  const handlePressAttempt = event => {
     if ( disabled ) {
       event.preventDefault();
       event.stopPropagation();
@@ -33,46 +32,31 @@ const EventButtonLink = ({
       return false;
     }
 
-    if ( onPress )
-      onPress( event );
-  };
-
-  const handlePress = event => {
-    if ( !disabled )
-      browserHistory.push( to );
-
-    handleClick( event );
+    handlePress( event );
   };
 
   if ( typeof children === 'function' ) {
     return children({
-      onPress: handlePress,
+      onPress: handlePressAttempt,
     });
   }
 
   const addedProps = {
     ...restProps,
-    onPress: handlePress,
+    onPress: handlePressAttempt,
   };
 
   return (
-    <ReactRouterLink
-      {...restProps}
-      to={href}
-      onClick={handleClick}
-      style={{
-        ...restProps.style,
-        textDecoration: decoration,
-      }}
+    <Link
+      disabled={disabled}
+      to={to}
     >
-      {
-        React.createElement(
-          EventButton,
-          addedProps,
-          children
-        )
-      }
-    </ReactRouterLink>
+      {React.createElement(
+        EventButton,
+        addedProps,
+        children
+      )}
+    </Link>
   );
 };
 

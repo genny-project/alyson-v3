@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start:native": "rndebugger-open &&node node_modules/react-native/local-cli/cli.js start",
+    "start:native": "node node_modules/react-native/local-cli/cli.js start",
     "start:web": "./node_modules/.bin/webpack-dev-server -d --config ./webpack.config.js --inline --hot --colors",
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/alysonv3/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
     "build:web": "./node_modules/.bin/webpack -p --config ./webpack.config.js",
