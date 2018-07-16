@@ -17,45 +17,7 @@ const handleFilterItem = item => {
   return true;
 };
 
-const HeaderRight = ({
-  items = [
-    {
-      id: 'chat',
-      icon: 'chat',
-      href: 'chat',
-      platforms: ['ios'],
-      buttonCode: 'ad',
-    },
-    {
-      id: 'profile',
-      icon: 'account-circle',
-      href: '/profile',
-      eventType: 'PROFILE',
-      buttonCode: 'PROFILE',
-      platforms: ['ios'],
-    },
-    {
-      id: 'dropdown',
-      dropdown: true,
-      text: 'Hi, {{user.attributes.PRI_FIRST_NAME.value}}!',
-      platforms: ['android', 'web'],
-      items: [
-        {
-          id: 'profile',
-          href: '/profile',
-          icon: 'person',
-          text: 'Profile',
-        },
-        {
-          id: 'logout',
-          icon: 'power-settings-new',
-          href: '/logout',
-          text: 'Logout',
-        },
-      ],
-    },
-  ],
-}) => (
+const HeaderRight = ({ items }) => (
   <LayoutConsumer>
     {({ textColor }) => (
       <Box

@@ -92,7 +92,7 @@ class LayoutLoader extends Component {
     }
 
     const { routes, index } = store.getState().navigation;
-    const currentRoute = routes[index];
+    const currentRoute = routes && routes[index];
     const currentRouteParams = currentRoute && currentRoute.params;
 
     /* Calculate the data for the layout */

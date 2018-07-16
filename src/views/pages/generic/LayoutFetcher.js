@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { object, func, string } from 'prop-types';
-import { withNavigation } from 'react-navigation';
 import { removeStartingAndEndingSlashes } from '../../../utils';
 
 class LayoutFetcher extends Component {
@@ -214,7 +213,10 @@ class LayoutFetcher extends Component {
       return false;
     });
 
-    if ( Object.keys( params ).length > 0 ) {
+    if (
+      Object.keys( params ).length > 0 &&
+      this.props.navigation
+    ) {
       this.props.navigation.setParams( params );
     }
 
@@ -235,4 +237,4 @@ const mapStateToProps = state => ({
   navigationReducer: state.navigation,
 });
 
-export default withNavigation( connect( mapStateToProps )( LayoutFetcher ));
+export default connect( mapStateToProps )( LayoutFetcher );

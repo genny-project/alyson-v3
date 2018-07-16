@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { func, bool, string } from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Link, Button, Box, Heading, Image } from '../../index';
 import { LayoutConsumer } from '../../../layout';
+import { toggleSidebar } from '../../../../redux/actions';
 
 class HeaderLeft extends Component {
   static propTypes = {
@@ -13,9 +16,12 @@ class HeaderLeft extends Component {
     title: string,
   }
 
+  handleToggleSidebar = () => {
+    this.props.toggleSidebar();
+  }
+
   render() {
     const {
-      toggleSidebar,
       showMenu,
       showLogo,
       showTitle,
@@ -31,7 +37,7 @@ class HeaderLeft extends Component {
           >
             {showMenu ? (
               <Button
-                onPress={toggleSidebar}
+                onPress={this.handleToggleSidebar}
                 size="lg"
                 color="transparent"
                 textColor={layout.textColor}
@@ -72,4 +78,8 @@ class HeaderLeft extends Component {
   }
 }
 
-export default HeaderLeft;
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({ toggleSidebar }, dispatch )
+);
+
+export default connect( null, mapDispatchToProps )( HeaderLeft );
