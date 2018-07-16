@@ -13,7 +13,9 @@ const Link = ({
 }) => {
   const href = to === 'home'
     ? '/'
-    : `/${to}`;
+    : to.startsWith( '/' )
+      ? to
+      : `/${to}`;
 
   const handleClick = event => {
     if ( disabled ) {

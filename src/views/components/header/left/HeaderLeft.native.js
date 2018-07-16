@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
-import { object, func } from 'prop-types';
+import { object, func, bool, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { NavigationActions, withNavigation } from 'react-navigation';
 import { removeStartingAndEndingSlashes } from '../../../../utils';
-import { Button, Box, Heading } from '../../../components';
+import { Button, Box, Heading, Image } from '../../index';
 import { LayoutConsumer } from '../../../layout';
 
 class HeaderLeft extends Component {
   static propTypes = {
     navigationReducer: object,
     navigation: object,
-    baseEntities: object,
-    aliases: object,
     dispatch: func,
+    logoSource: string,
+    showBack: bool,
+    showTitle: bool,
+    showLogo: bool,
+    showMenu: bool,
   }
 
   handleToggleMenu = () => {
@@ -30,17 +33,24 @@ class HeaderLeft extends Component {
   }
 
   render() {
-    const { baseEntities, aliases, navigationReducer } = this.props;
-    const projectAttributes = baseEntities.attributes[aliases.PROJECT];
+    const {
+      navigationReducer,
+      showBack,
+      logoSource,
+      showTitle,
+      showLogo,
+      showMenu,
+    } = this.props;
     const { index, routes } = navigationReducer;
     const { params } = routes[index];
     const title = params && params.title;
+
     const strippedLayoutName = (
       params != null &&
       removeStartingAndEndingSlashes( params.layout )
     );
 
-    const showBack = (
+    const canShowBack = (
       index > 0 &&
       strippedLayoutName &&
       strippedLayoutName !== 'home'
@@ -49,10 +59,11 @@ class HeaderLeft extends Component {
     return (
       <LayoutConsumer>
         {layout => (
-          <Box
-            alignItems="center"
-          >
-            {showBack
+          <Box alignItems="center">
+            {(
+              showBack &&
+              canShowBack
+            )
               ? (
                 <Button
                   onPress={this.handleBack}
@@ -62,7 +73,7 @@ class HeaderLeft extends Component {
                   icon="arrow-back"
                   paddingX={15}
                 />
-              ) : (
+              ) : showMenu ? (
                 <Button
                   onPress={this.handleToggleMenu}
                   size="md"
@@ -71,30 +82,31 @@ class HeaderLeft extends Component {
                   icon="menu"
                   paddingX={15}
                 />
-              )
+              ) : null
             }
 
-            <Box marginLeft={5}>
-              <Heading
-                size="lg"
-                color={layout.textColor}
+            {showLogo ? (
+              <Box
+                marginLeft={5}
+                marginRight={20}
               >
-                {(
-                  strippedLayoutName &&
-                  strippedLayoutName !== 'home' &&
-                  title
-                )
-                  ? title
-                  : (
-                    projectAttributes &&
-                    projectAttributes.PRI_NAME &&
-                    projectAttributes.PRI_NAME.valueString
-                  ) || (
-                    'Loading...'
-                  )
-                }
-              </Heading>
-            </Box>
+                <Image
+                  height="100%"
+                  source={logoSource}
+                />
+              </Box>
+            ) : null}
+
+            {showTitle ? (
+              <Box marginLeft={5}>
+                <Heading
+                  size="lg"
+                  color={layout.textColor}
+                >
+                  {title}
+                </Heading>
+              </Box>
+            ) : null}
           </Box>
         )}
       </LayoutConsumer>
@@ -105,8 +117,6 @@ class HeaderLeft extends Component {
 export { HeaderLeft };
 
 const mapStateToProps = state => ({
-  baseEntities: state.vertx.baseEntities,
-  aliases: state.vertx.aliases,
   navigationReducer: state.navigation,
 });
 

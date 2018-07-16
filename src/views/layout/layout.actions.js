@@ -8,6 +8,11 @@ export const setHeaderVisibility = visible => ({
   payload: visible,
 });
 
+export const setHeaderProps = props => ({
+  type: 'LAYOUT_HEADER_PROPS_SET',
+  payload: props || {},
+});
+
 export const setAppName = appName => ({
   type: 'APP_NAME_SET',
   payload: appName,
