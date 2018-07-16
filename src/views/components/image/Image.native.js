@@ -1,6 +1,6 @@
 import React from 'react';
-import { Image as NativeImage } from 'react-native';
-import { string, oneOf, oneOfType, number } from 'prop-types';
+import { Image as NativeImage, Dimensions } from 'react-native';
+import { string, oneOf, oneOfType, number, array } from 'prop-types';
 import { Box, Icon } from '../';
 
 const Image = ({
@@ -8,6 +8,7 @@ const Image = ({
   height,
   source,
   shape,
+  children,
   fallbackIcon = 'photo',
   fallbackIconSize = 'lg',
   fallbackColor = 'gray',
@@ -24,6 +25,31 @@ const Image = ({
     source.length > 0 &&
     source !== 'undefined'
   ) {
+    if (
+      children &&
+      children.length > 0
+    ) {
+      const { width, height } = Dimensions.get( 'window' );
+     
+      return (
+        <Box>
+          <NativeImage 
+            source={{ uri: source }}
+            style={{ width, height, borderRadius: borderRadius[shape] }}
+          />
+          <Box 
+            position="absolute" 
+            width={width} 
+            height={height}
+            top={0}
+            left={0}
+          >
+            {children}
+          </Box>
+        </Box>
+      );
+    }
+    
     return (
       <NativeImage
         source={{ uri: source }}
@@ -58,6 +84,7 @@ Image.propTypes = {
     [string, number]
   ),
   source: string,
+  children: array,
   shape: oneOf(
     ['square', 'rounded', 'circle']
   ),

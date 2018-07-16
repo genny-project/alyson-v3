@@ -72,6 +72,7 @@ class Button extends Component {
     onPress: func,
     color: string,
     textColor: string,
+    fontWeight: string,
     icon: string,
     size: oneOf(
       ['sm', 'md', 'lg']
@@ -109,6 +110,12 @@ class Button extends Component {
       ),
     }),
     isSpinning: bool,
+    marginTop: number,
+    marginBottom: number,
+    marginLeft: number,
+    marginRight: number,
+    borderWidth: number,
+    borderColor: string,
   }
 
   static getDerivedStateFromProps( props, state ) {
@@ -177,7 +184,7 @@ class Button extends Component {
   }
 
   renderTextChild() {
-    const { textColor, color, children, size, text } = this.props;
+    const { textColor, color, children, size, text, fontWeight } = this.props;
 
     return (
       <Text
@@ -186,7 +193,8 @@ class Button extends Component {
         size={textSizes[size]}
         align="center"
         width="100%"
-        bold
+        bold={!fontWeight}
+        fontWeight={fontWeight}
       >
         {text || children}
       </Text>
@@ -215,7 +223,7 @@ class Button extends Component {
           position="absolute"
           width="100%"
           height="100%"
-          backgroundColor={buttonColors[color]}
+          backgroundColor={buttonColors[color] || color}
           opacity={0.8}
           shape={isIconOnly && 'circle'}
         />
@@ -326,6 +334,12 @@ class Button extends Component {
       width,
       height,
       submitting,
+      marginTop,
+      marginBottom,
+      marginLeft,
+      marginRight,
+      borderWidth,
+      borderColor,
     } = this.props;
 
     const { isSpinning } = this.state;
@@ -333,6 +347,12 @@ class Button extends Component {
     const style = {
       height,
       width,
+      marginTop,
+      marginBottom,
+      marginLeft,
+      marginRight,
+      borderWidth,
+      borderColor,
     };
 
     return createElement(

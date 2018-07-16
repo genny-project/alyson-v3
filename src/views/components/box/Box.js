@@ -72,12 +72,13 @@ const Box = ({
   cleanStyleObject,
   shape,
   boxShadow,
+  fullHeightOnWeb,
   ...restProps
 }) => {
   const style = {
     justifyContent,
     alignItems,
-    height,
+    height: Platform.OS === 'web' && fullHeightOnWeb ? '100vh' : height,
     minHeight,
     maxHeight,
     width,
@@ -231,6 +232,7 @@ Box.propTypes = {
   boxShadow: oneOf(
     ['light', 'medium', 'dark']
   ),
+  fullHeightOnWeb: bool,
 };
 
 export default Box;

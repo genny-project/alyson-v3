@@ -236,6 +236,22 @@ const handleRemoveLayoutAttributes = attributes => {
     }), {});
 };
 
+const handleUpdateProjectName = ( attributes, name ) => {
+  /* Find the project key */
+  const key = Object.keys( attributes ).find( key => key.startsWith( 'PRJ_' ));
+
+  return {
+    [key]: {
+      ...attributes[key],
+      PRI_NAME: {
+        ...attributes[key].PRI_NAME,
+        value: name,
+        valueString: name,
+      },
+    },
+  };
+};
+
 const reducer = ( state = initialState, { type, payload }) => {
   switch ( type ) {
     /**
@@ -314,6 +330,18 @@ const reducer = ( state = initialState, { type, payload }) => {
         attributes: {
           ...state.attributes,
           ...payload,
+        },
+      };
+
+    /**
+     * Updates the project name in the reducer. Used for development
+     */
+    case 'UPDATE_PROJECT_NAME':
+      return {
+        ...state,
+        attributes: {
+          ...state.attributes,
+          ...handleUpdateProjectName( state.attributes, payload ),
         },
       };
 
