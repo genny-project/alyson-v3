@@ -1,42 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { string, object, number, oneOfType, shape, arrayOf, bool, oneOf } from 'prop-types';
 import { Box, StatusBar } from '../index';
 import HeaderLeft from './left';
 import HeaderRight from './right';
 import { LayoutConsumer } from '../../layout';
-
-const Header = ({
-  layout,
-  backgroundColor = layout.appColor,
-  barStyle = 'light-content',
-  boxShadow = 'light',
-  paddingX = 5,
-  paddingY,
-  padding,
-  height = 60,
-  headerLeft,
-  headerRight,
-}) => (
-  <StatusBar
-    barStyle={barStyle}
-    backgroundColor={backgroundColor}
-  >
-    <Box
-      height={height}
-      justifyContent="space-between"
-      alignItems="center"
-      width="100%"
-      backgroundColor={backgroundColor}
-      paddingX={paddingX}
-      paddingY={paddingY}
-      padding={padding}
-      boxShadow={boxShadow}
-    >
-      <HeaderLeft {...headerLeft} />
-      <HeaderRight {...headerRight} />
-    </Box>
-  </StatusBar>
-);
+import { PropInjection } from '../prop-injection';
 
 const headerItemPropTypes = shape({
   icon: string,
@@ -46,49 +14,81 @@ const headerItemPropTypes = shape({
   items: arrayOf( headerItemPropTypes ),
 });
 
-Header.propTypes = {
-  height: oneOfType(
-    [string, number]
-  ),
-  padding: oneOfType(
-    [string, number]
-  ),
-  paddingX: oneOfType(
-    [string, number]
-  ),
-  paddingY: oneOfType(
-    [string, number]
-  ),
-  boxShadow: string,
-  barStyle: string,
-  backgroundColor: string,
-  layout: object,
-  headerLeft: shape({
-    showMenu: oneOfType(
-      [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
-    ),
-    showTitle: oneOfType(
-      [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
-    ),
-    showLogo: oneOfType(
-      [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
-    ),
-    showBack: oneOfType(
-      [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
-    ),
-  }),
-  headerRight: shape({
-    items: arrayOf( headerItemPropTypes ),
-  }),
-};
+class Header extends Component {
+  static defaultProps = {
+    barStyle: 'light-content',
+    boxShadow: 'light',
+    paddingX: 5,
+    height: 60,
+  }
 
-export default props => (
-  <LayoutConsumer>
-    {layout => (
-      <Header
-        {...props}
-        layout={layout}
-      />
-    )}
-  </LayoutConsumer>
-);
+  static propTypes = {
+    height: oneOfType(
+      [string, number]
+    ),
+    padding: oneOfType(
+      [string, number]
+    ),
+    paddingX: oneOfType(
+      [string, number]
+    ),
+    paddingY: oneOfType(
+      [string, number]
+    ),
+    boxShadow: string,
+    barStyle: string,
+    backgroundColor: string,
+    layout: object,
+    headerLeft: shape({
+      showMenu: oneOfType(
+        [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
+      ),
+      showTitle: oneOfType(
+        [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
+      ),
+      showLogo: oneOfType(
+        [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
+      ),
+      showBack: oneOfType(
+        [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
+      ),
+    }),
+    headerRight: shape({
+      items: arrayOf( headerItemPropTypes ),
+    }),
+  }
+
+  render() {
+    return (
+      <PropInjection {...this.props}>
+        {props => (
+          <LayoutConsumer>
+            {layout => (
+              <StatusBar
+                barStyle={props.barStyle}
+                backgroundColor={props.backgroundColor || layout.appColor}
+              >
+                <Box
+                  height={props.height}
+                  justifyContent="space-between"
+                  alignItems="center"
+                  width="100%"
+                  backgroundColor={props.backgroundColor || layout.appColor}
+                  paddingX={props.paddingX}
+                  paddingY={props.paddingY}
+                  padding={props.padding}
+                  boxShadow={props.boxShadow}
+                >
+                  <HeaderLeft {...props.headerLeft} />
+                  <HeaderRight {...props.headerRight} />
+                </Box>
+              </StatusBar>
+            )}
+          </LayoutConsumer>
+        )}
+      </PropInjection>
+    );
+  }
+}
+
+export default Header;
