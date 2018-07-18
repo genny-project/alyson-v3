@@ -274,7 +274,10 @@ class Form extends Component {
 
     if (
       finalValue != null &&
-      typeof finalValue === 'object'
+      (
+        typeof finalValue === 'object' ||
+        Array.isArray( finalValue )
+      )
     ) {
       finalValue = JSON.stringify( finalValue );
     }
@@ -305,6 +308,7 @@ class Form extends Component {
   }
 
   handleChange = ( field, setFieldValue, setFieldTouched, ask ) => ( value, sendOnChange ) => {
+    console.warn( value );
     if ( value == null )
       return;
 
