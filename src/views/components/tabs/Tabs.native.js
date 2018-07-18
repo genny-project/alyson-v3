@@ -93,7 +93,7 @@ class Tabs extends Component {
       paddingLeft,
       paddingBottom,
       paddingRight,
-      minHeight = 50,
+      minHeight = 40,
       height,
       maxHeight,
       justifyContent = 'center',

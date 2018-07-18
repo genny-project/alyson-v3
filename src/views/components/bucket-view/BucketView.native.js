@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { any, array, string } from 'prop-types';
+import { any, array } from 'prop-types';
 import { Tabs } from '../../components';
 
 class BucketView extends Component {
@@ -10,22 +10,13 @@ class BucketView extends Component {
   static propTypes = {
     children: any,
     tabs: array,
-    tabBarSize: string,
-    tabBarBackground: string,
-    activeTabBackground: string,
-    iconColor: string,
-    textColor: string,
   }
 
   render() {
     const {
       children,
       tabs,
-      tabBarSize,
-      tabBarBackground,
-      activeTabBackground,
-      iconColor,
-      textColor,
+      ...restProps
     } = this.props;
 
     const tabData = (
@@ -53,12 +44,8 @@ class BucketView extends Component {
       <Tabs
         scrollEnabled
         bottomTabs
+        {...restProps}
         tabs={tabData}
-        tabBarSize={tabBarSize}
-        tabBarBackground={tabBarBackground}
-        activeTabBackground={activeTabBackground}
-        iconColor={iconColor}
-        textColor={textColor}
       >
         {children}
       </Tabs>
