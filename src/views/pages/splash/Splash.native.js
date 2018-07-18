@@ -56,6 +56,8 @@ class Splash extends Component {
           <Redirect
             to={redirectURL}
             removeRedirectURL
+            useMainNavigator
+            appTo="home"
           />
         ) : (
           <Layout
