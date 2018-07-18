@@ -111,6 +111,10 @@ class KeycloakProvider extends Component {
     if ( this.state.refreshTimer )
       clearInterval( this.state.refreshTimer );
 
+    store.dispatch(
+      actions.userLogout()
+    );
+
     /* Make sure to wait for each of these functions to finish. */
     const promises = [
       Storage.remove( 'kcSessionState' ),
