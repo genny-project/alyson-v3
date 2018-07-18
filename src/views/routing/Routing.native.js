@@ -16,9 +16,13 @@ const addListener = createReduxBoundAddListener( 'root' );
 
 const AppStack = StackNavigator({
   ...routes,
-  logout: () => <Pages.Logout />,
   generic: () => <Pages.Generic />,
+  logout: () => <Pages.Logout />,
 }, {
+  initialRouteName: 'generic',
+  initialRouteParams: {
+    layout: 'home',
+  },
   cardStyle: {
     backgroundColor: '#FFF',
     shadowColor: 'transparent',
@@ -90,7 +94,7 @@ const AuthStack = SwitchNavigator({
 
 const Main = SwitchNavigator({
   loading: () => <Pages.Loading />,
-  app: AppDrawer,
+  app: () => <AppDrawer />,
   auth: AuthStack,
 }, {
   initialRouteName: 'loading',
