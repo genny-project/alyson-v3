@@ -4,7 +4,7 @@ import dlv from 'dlv';
 import { string, object, number, oneOfType, shape, arrayOf, bool, oneOf, node } from 'prop-types';
 import { store } from '../../../redux';
 
-const handleMapCurlyTemplate = ( template, data ) => {
+const handleMapCurlyTemplate = data => ( template ) => {
   if (
     !template ||
     !template.includes( '}}' )
@@ -21,11 +21,11 @@ const handleMapCurlyTemplate = ( template, data ) => {
   return `${resolved}${textAfterTemplate}`;
 };
 
-const curlyBracketParse = string => {
+const curlyBracketParse = ( string, data ) => {
   return (
     String( string )
       .split( '{{' )
-      .map( handleMapCurlyTemplate )
+      .map( handleMapCurlyTemplate( data ))
       .join( '' )
   );
 };
@@ -35,7 +35,6 @@ const handleReducePropInjection = data => ( result, current ) => {
     return result;
 
   if ( typeof result[current] === 'string' ) {
-    // console.warn( result[current] );
     if ( result[current].startsWith( '_' )) {
       result[current] = dlv( data, result[current].substring( 1 ));
 
@@ -43,10 +42,7 @@ const handleReducePropInjection = data => ( result, current ) => {
     }
 
     if ( result[current].includes( '{{' )) {
-      console.warn( '###########################' );
-      console.warn( result[current] );
-      result[current] = curlyBracketParse( result[current] );
-      console.warn( result[current] );
+      result[current] = curlyBracketParse( result[current], data );
 
       return result;
     }
@@ -55,8 +51,16 @@ const handleReducePropInjection = data => ( result, current ) => {
   }
 
   if ( result[current] instanceof Array ) {
-    result[current] = result[current].reduce(
-      handleReducePropInjection( data ), result[current]
+    result[current] = result[current].map(
+      item => {
+        if ( typeof item === 'object' ) {
+          const keys = Object.keys( item );
+
+          return keys.reduce( handleReducePropInjection( data ), item );
+        }
+
+        return item;
+      }
     );
 
     return result;
@@ -81,8 +85,6 @@ const injectProps = props => {
   const injectedProps =
     Object.keys( props ).reduce( handleReducePropInjection( data ),  copy( props ));
 
-  console.warn( injectedProps );
-
   return injectedProps;
 };
 
@@ -99,8 +101,6 @@ class PropInjection extends Component {
   }
 
   render() {
-    console.warn({ props: this.props, state: this.state });
-
     return ( this.props.children(
       this.state
     ));
