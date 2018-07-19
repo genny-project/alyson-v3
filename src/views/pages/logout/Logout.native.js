@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { object } from 'prop-types';
+import { NavigationActions } from 'react-navigation';
 import { Text, Box, KeycloakConsumer, Redirect, WebView } from '../../components';
+import { store } from '../../../redux';
 import Layout from '../../layout';
 import config from '../../../config';
 
@@ -29,14 +31,16 @@ class Logout extends Component {
   doLogout = async () => {
     const { attemptLogout } = this.props.keycloak;
 
+    store.dispatch(
+      NavigationActions.popToTop()
+    );
+
     try {
       await attemptLogout();
     }
     catch ( e ) {
       console.warn({ e });
     }
-
-    console.warn( 'doLogout done' );
 
     this.setState({ areTokensCleared: true });
   }

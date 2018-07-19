@@ -15,6 +15,7 @@ import Passcode from './passcode';
 import InputRead from './read';
 import InputCurrency from './currency';
 import InputCreditCard from './credit-card';
+import InputCheckbox from './checkbox-2';
 
 class Input extends Component {
   static propTypes = {
@@ -237,6 +238,14 @@ class Input extends Component {
       case 'credit-card':
         return (
           <InputCreditCard
+            {...this.props}
+            ref={input => this.input = input}
+          />
+        );
+
+      case 'checkboxmultiple':
+        return (
+          <InputCheckbox
             {...this.props}
             ref={input => this.input = input}
           />

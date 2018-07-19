@@ -39,6 +39,12 @@ const configReducer = ( state = configInitialState, { type, payload }) => {
         accessToken: payload.accessToken,
       };
 
+    case 'USER_LOGOUT':
+      return {
+        ...state,
+        accessToken: null,
+      };
+
     default:
       return state;
   }

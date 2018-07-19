@@ -46,16 +46,10 @@ class Redirect extends Component {
       if ( appTo ) {
         store.dispatch(
           NavigationActions[action]({
-            routeName: (
-              appTo ? (
-                routes[appTo] ? appTo : 'generic'
-              ) : (
-                routes[newPath] ? newPath : 'generic'
-              )
-            ),
+            routeName: routes[appTo] ? appTo : 'generic',
             params: {
               ...params,
-              layout: newPath,
+              layout: appTo,
             },
           }),
         );

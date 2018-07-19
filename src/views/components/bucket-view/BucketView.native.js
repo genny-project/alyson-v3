@@ -16,6 +16,7 @@ class BucketView extends Component {
     const {
       children,
       tabs,
+      ...restProps
     } = this.props;
 
     const tabData = (
@@ -43,6 +44,7 @@ class BucketView extends Component {
       <Tabs
         scrollEnabled
         bottomTabs
+        {...restProps}
         tabs={tabData}
       >
         {children}
