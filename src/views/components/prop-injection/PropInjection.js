@@ -43,6 +43,8 @@ const handleReducePropInjection = data => ( result, current ) => {
     }
 
     if ( result[current].includes( '{{' )) {
+      console.warn( '###########################' );
+      console.warn( result[current] );
       result[current] = curlyBracketParse( result[current] );
       console.warn( result[current] );
 
@@ -90,10 +92,6 @@ class PropInjection extends Component {
 
   static propTypes = {
     children: node,
-  }
-
-  state = {
-
   }
 
   static getDerivedStateFromProps( props ) {
