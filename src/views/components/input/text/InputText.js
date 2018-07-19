@@ -155,6 +155,10 @@ class Input extends Component {
     borderLeftWidth: number,
     borderColor: string,
     borderRadius: number,
+    borderBottomLeftRadius: number,
+    borderBottomRightRadius: number,
+    borderTopLeftRadius: number,
+    borderTopRightRadius: number,
     borderSize: number,
     wrapperProps: object,
     returnKeyLabel: string,
@@ -312,6 +316,10 @@ class Input extends Component {
       wrapperProps,
       returnKeyLabel,
       returnKeyType,
+      borderBottomLeftRadius,
+      borderBottomRightRadius,
+      borderTopLeftRadius,
+      borderTopRightRadius,
     } = this.props;
 
     const statusStyle =
@@ -365,6 +373,10 @@ class Input extends Component {
       borderColor,
       borderRadius,
       borderSize,
+      borderBottomLeftRadius,
+      borderBottomRightRadius,
+      borderTopLeftRadius,
+      borderTopRightRadius,
     });
 
     const nativeProps = {
