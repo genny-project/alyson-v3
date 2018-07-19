@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { any, bool, func } from 'prop-types';
 import { TouchableOpacity } from 'react-native';
 import { Box, Icon }  from '../../components';
+import Recursive from '../layout-loader/Recursive';
 
 class Collapsible extends Component {
   static defaultProps = {
@@ -56,8 +57,17 @@ class Collapsible extends Component {
             onPress={this.handlePress}
           >
             {
-              header ?
-                header : (
+              header
+                ? (
+                  <Recursive
+                    {...header}
+                    props={{
+                      ...header.props,
+                      isOpen: isOpen,
+                    }}
+                  />
+                )
+                : (
                   <Box
                     justifyContent="center"
                     transform={[
@@ -74,7 +84,12 @@ class Collapsible extends Component {
           </TouchableOpacity>
         ) : null}
         {isOpen ? (
-          children
+          React.Children.map( children, child => (
+            React.cloneElement( child, {
+              ...child.props,
+              isOpen: isOpen,
+            })
+          ))
         ) : null}
       </Box>
     );

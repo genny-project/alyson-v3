@@ -7,6 +7,7 @@ const shapeStyles = {
   square: 0,
   rounded: 5,
   circle: 100000,
+  pill: 999,
 };
 
 const boxShadows = {
@@ -35,6 +36,7 @@ const Box = ({
   maxWidth,
   flex,
   flexDirection = 'row',
+  flexWrap,
   padding,
   paddingX,
   paddingY,
@@ -86,6 +88,7 @@ const Box = ({
     maxWidth,
     flex,
     flexDirection,
+    flexWrap,
     padding,
     paddingHorizontal: paddingX,
     paddingVertical: paddingY,
@@ -178,6 +181,9 @@ Box.propTypes = {
   ),
   flexDirection: oneOf(
     ['row', 'row-reverse', 'column', 'column-reverse']
+  ),
+  flexWrap: oneOf(
+    ['nowrap', 'wrap', 'wrap-reverse']
   ),
   flex: number,
   padding: number,
