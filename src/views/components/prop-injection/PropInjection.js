@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import copy from 'fast-copy';
 import dlv from 'dlv';
-import { string, object, number, oneOfType, shape, arrayOf, bool, oneOf, node } from 'prop-types';
+import { node } from 'prop-types';
 import { store } from '../../../redux';
 
 const handleMapCurlyTemplate = data => ( template ) => {
