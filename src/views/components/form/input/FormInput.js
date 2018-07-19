@@ -38,6 +38,15 @@ class FormInput extends Component {
           />
         );
 
+      case 'address':
+        return (
+          <Input
+            {...this.props}
+            onChangeValue={this.handleChangeValueWithSend}
+            ref={input => this.input = input}
+          />
+        );
+
       case 'dropdown':
         return (
           <FormInputDropdown

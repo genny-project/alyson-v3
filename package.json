@@ -55,6 +55,7 @@
     "react-modal": "^3.4.5",
     "react-native": "0.55.4",
     "react-native-blur": "^3.2.2",
+    "react-native-code-push": "^5.4.0",
     "react-native-credit-card-input": "^0.4.1",
     "react-native-gesture-handler": "^1.0.5",
     "react-native-image-picker": "^0.26.10",
