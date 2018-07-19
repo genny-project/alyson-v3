@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { object, func, string } from 'prop-types';
-import NavigationActions from '../../../utils/navigation-actions';
 import { removeStartingAndEndingSlashes } from '../../../utils';
 
 class LayoutFetcher extends Component {
@@ -9,8 +8,8 @@ class LayoutFetcher extends Component {
     baseEntities: object.isRequired,
     children: func.isRequired,
     currentUrl: string.isRequired,
-    dispatch: func,
     navigation: object,
+    navigationReducer: object,
   }
 
   state = {
@@ -22,8 +21,12 @@ class LayoutFetcher extends Component {
   }
 
   shouldComponentUpdate( nextProps ) {
-    if ( nextProps.navigation && nextProps.navigation.index && nextProps.navigation.routes ) {
-      const { index, routes } = nextProps.navigation;
+    if (
+      nextProps.navigationReducer &&
+      nextProps.navigationReducer.index != null &&
+      nextProps.navigationReducer.routes
+    ) {
+      const { index, routes } = nextProps.navigationReducer;
       const strippedCurrentUrl = removeStartingAndEndingSlashes( this.props.currentUrl );
       const strippedLastRoute = removeStartingAndEndingSlashes( routes[index].params.layout );
 
@@ -210,10 +213,11 @@ class LayoutFetcher extends Component {
       return false;
     });
 
-    if ( Object.keys( params ).length > 0 ) {
-      this.props.dispatch(
-        NavigationActions.setParams({ params })
-      );
+    if (
+      Object.keys( params ).length > 0 &&
+      this.props.navigation
+    ) {
+      this.props.navigation.setParams( params );
     }
 
     return {
@@ -230,7 +234,7 @@ class LayoutFetcher extends Component {
 
 const mapStateToProps = state => ({
   baseEntities: state.vertx.baseEntities,
-  navigation: state.navigation,
+  navigationReducer: state.navigation,
 });
 
 export default connect( mapStateToProps )( LayoutFetcher );

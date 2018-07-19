@@ -1,6 +1,6 @@
 import React, { Component, createElement } from 'react';
 import { string } from 'prop-types';
-import { Link, Button, EventButton } from '../../../components';
+import { Link, Button, EventButton } from '../../index';
 
 class HeaderItem extends Component {
   static propTypes = {
@@ -26,6 +26,7 @@ class HeaderItem extends Component {
 
     return (
       <Link
+        pure
         to={href}
       >
         {createElement(

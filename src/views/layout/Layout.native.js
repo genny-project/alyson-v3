@@ -1,7 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { oneOf, node, object, string, bool } from 'prop-types';
 import { withNavigation } from 'react-navigation';
+import { connect } from 'react-redux';
 import { LayoutConsumer } from '../layout';
+import shallowCompare from '../../utils/shallow-compare';
+import removeStartingAndEndingSlashes from '../../utils/string/removeStartingAndEndingSlashes';
 
 class Layout extends Component {
   static propTypes = {
@@ -9,14 +12,16 @@ class Layout extends Component {
     appColor: oneOf(
       ['light', 'dark']
     ),
-    // backgroundColor: oneOf(
-    // ['white', 'grey']
-    // ),
     title: string,
     layout: object,
-    hideHeader: bool,
+    header: object,
     hideSidebar: bool,
     navigation: object,
+    baseEntities: object,
+  }
+
+  state = {
+    hasLoadedLayouts: false,
   }
 
   componentDidMount() {
@@ -42,21 +47,28 @@ class Layout extends Component {
       });
     }
 
-    if (
-      prevProps.hideHeader === true &&
-      this.props.hideHeader == null &&
-      this.props.navigation != null
-    ) {
-      this.props.navigation.setParams({
-        hideHeader: false,
-      });
+    if ( !shallowCompare( this.props.header, prevProps.header )) {
+      this.setHeaderProperties();
+    }
 
-      this.props.layout.setHeaderVisibility( false );
+    if ( !this.state.hasLoadedLayouts ) {
+      const hasNowLoadedLayouts = (
+        Object
+          .keys( this.props.baseEntities.attributes )
+          .find( attribute => attribute.startsWith( 'LAY_' ))
+      );
+
+      if (
+        hasNowLoadedLayouts &&
+        this.props.header != null
+      ) {
+        this.setHeaderProperties();
+      }
     }
   }
 
   setLayoutProperties() {
-    const { layout, title, appColor, hideHeader, hideSidebar, navigation } = this.props;
+    const { layout, title, appColor, hideSidebar, navigation } = this.props;
 
     if ( !layout )
       return;
@@ -67,11 +79,8 @@ class Layout extends Component {
     ) {
       layout.setTitle( title );
 
-      if ( this.props.navigation ) {
-        this.props.navigation.setParams({
-          hideHeader: true,
-          title,
-        });
+      if ( navigation ) {
+        navigation.setParams({ title });
       }
     }
 
@@ -89,21 +98,63 @@ class Layout extends Component {
       layout.setSidebarVisibility( true );
     }
 
-    if ( hideHeader !== layout.hideHeader ) {
-      layout.setHeaderVisibility( hideHeader );
+    this.setHeaderProperties();
+  }
 
-      if ( navigation ) {
-        this.props.navigation.setParams({
-          hideHeader: hideHeader,
-        });
+  setHeaderProperties() {
+    const { header, navigation } = this.props;
+
+    if ( header && header.variant ) {
+      const { attributes } = this.props.baseEntities;
+      const keys = Object.keys( this.props.baseEntities.attributes );
+
+      for ( let i = 0; i < keys.length; i++ ) {
+        if ( keys[i].startsWith( 'LAY_' )) {
+          if ( !this.state.hasLoadedLayouts ) {
+            this.setState({ hasLoadedLayouts: true });
+          }
+
+          const attribute = attributes[keys[i]];
+          const layoutPath = removeStartingAndEndingSlashes( attribute.PRI_LAYOUT_URI.value );
+
+          if (
+            layoutPath === `header/header.${header.variant}` ||
+            layoutPath === `sublayouts/header-${header.variant}`
+          ) {
+            const layout = attribute.PRI_LAYOUT_DATA.valueString;
+
+            let parsed = null;
+
+            try {
+              parsed = JSON.parse( layout );
+            }
+            catch ( e ) {
+              console.warn( 'Unable to parse header layout data', layout );
+            }
+
+            if ( parsed ) {
+              this.props.layout.setHeaderProps( parsed );
+              this.props.layout.setHeaderVisibility( true );
+
+              if ( navigation ) {
+                navigation.setParams({
+                  headerProps: parsed,
+                  showHeader: true,
+                });
+              }
+            }
+
+            break;
+          }
+        }
       }
     }
-    else if ( hideHeader == null ) {
-      layout.setHeaderVisibility( true );
+    else {
+      this.props.layout.setHeaderVisibility( false );
 
       if ( navigation ) {
-        this.props.navigation.setParams({
-          hideHeader: false,
+        navigation.setParams({
+          showHeader: false,
         });
       }
     }
@@ -120,15 +171,23 @@ class Layout extends Component {
   }
 }
 
-export default withNavigation(
-  props => (
-    <LayoutConsumer>
-      {layout => (
-        <Layout
-          {...props}
-          layout={layout}
-        />
-      )}
-    </LayoutConsumer>
+const mapStateToProps = state => ({
+  baseEntities: state.vertx.baseEntities,
+});
+
+export default (
+  connect( mapStateToProps )(
+    withNavigation(
+      props => (
+        <LayoutConsumer>
+          {layout => (
+            <Layout
+              {...props}
+              layout={layout}
+            />
+          )}
+        </LayoutConsumer>
+      )
+    )
   )
 );

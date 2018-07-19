@@ -31,8 +31,8 @@ class LayoutLoader extends Component {
       return (
         <Layout
           title="Loading..."
-          hideHeader
-          appColor="light"
+          appColor="dark"
+          header={{ variant: 'default' }}
         >
           <Timeout duration={60000}>
             {({ isTimeUp, secondsElapsed }) => (
@@ -94,7 +94,7 @@ class LayoutLoader extends Component {
     }
 
     const { routes, index } = store.getState().navigation;
-    const currentRoute = routes[index];
+    const currentRoute = routes && routes[index];
     const currentRouteParams = currentRoute && currentRoute.params;
 
     /* Calculate the data for the layout */

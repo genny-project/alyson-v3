@@ -5,4 +5,4 @@ const mapStateToProps = state => ({
   data: state.vertx,
 });
 
-export default connect( mapStateToProps, null )( LayoutLoader );
+export default connect( mapStateToProps )( LayoutLoader );
