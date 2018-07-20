@@ -5,5 +5,5 @@ export { default as routes } from './routes';
 export { default as sidebar } from './sidebar';
 
 export default process.env.NODE_ENV === 'production'
-  ? prodConfig
+  ? devConfig
   : devConfig;
