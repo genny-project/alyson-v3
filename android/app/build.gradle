@@ -95,12 +95,12 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 25
 
     defaultConfig {
         applicationId "com.alysonv3"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         ndk {
@@ -153,7 +153,7 @@ dependencies {
     compile project(':appcenter-analytics')
     compile project(':appcenter')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:appcompat-v7:25.0.0'
     implementation 'com.facebook.react:react-native:+'
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-image-picker')
