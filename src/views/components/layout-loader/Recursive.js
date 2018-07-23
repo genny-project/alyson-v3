@@ -250,6 +250,11 @@ class Recursive extends Component {
 
     const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;
 
+    /**
+     * TODO:
+     *
+     * Investigate performance optimisation
+     */
     const repeatedChildren = (
       injectedRepeat &&
       injectedRepeat instanceof Array
@@ -257,7 +262,8 @@ class Recursive extends Component {
       ? injectedRepeat.map( child => ({
         ...children,
         props: {
-          ...children.props, ...child,
+          ...children.props,
+          ...child,
         },
         context: {
           ...context,
