@@ -360,6 +360,62 @@ class Form extends Component {
     Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
   }
 
+  handlePressNo = () => {
+    const { questionGroups } = this.state;
+
+    const questionGroup = questionGroups.find( group => {
+      return group.attributeCode.includes( 'BUTTON' );
+    }) || (
+      questionGroups.length > 0 &&
+      questionGroups[0]
+    );
+
+    if ( !questionGroup ) {
+      console.warn( 'Could not submit form - no question group associated with form.' );
+
+      return;
+    }
+
+    /* send event to back end */
+    const eventData = {
+      code: questionGroup.questionCode,
+      value: JSON.stringify({
+        targetCode: questionGroup.targetCode,
+        action: 'no',
+      }),
+    };
+
+    Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
+  }
+
+  handlePressYes = () => {
+    const { questionGroups } = this.state;
+
+    const questionGroup = questionGroups.find( group => {
+      return group.attributeCode.includes( 'BUTTON' );
+    }) || (
+      questionGroups.length > 0 &&
+      questionGroups[0]
+    );
+
+    if ( !questionGroup ) {
+      console.warn( 'Could not submit form - no question group associated with form.' );
+
+      return;
+    }
+
+    /* send event to back end */
+    const eventData = {
+      code: questionGroup.questionCode,
+      value: JSON.stringify({
+        targetCode: questionGroup.targetCode,
+        action: 'yes',
+      }),
+    };
+
+    Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
+  }
+
   handleBlur = ( ask, values, errors ) => () => {
     if ( ask ) {
       const questionCode = ask.questionCode;
@@ -594,30 +650,80 @@ class Form extends Component {
                       </Heading>
                     </Box>
 
-                    {questionGroup.childAsks.map(
-                      this.renderInput(
-                        values,
-                        errors,
-                        touched,
-                        setFieldValue,
-                        setFieldTouched,
-                        isSubmitting,
-                        questionGroup.questionCode,
-                        questionGroup.childAsks.length - 1
+                    {(
+                      /* If there is only one child ask and it's a Boolean question,
+                       * don't show it - the 'YES'/'NO' buttons underneath this will suffice. */
+                      questionGroup.childAsks.length === 1 &&
+                      questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                    )
+                      ? null
+                      : (
+                        questionGroup.childAsks.map(
+                          this.renderInput(
+                            values,
+                            errors,
+                            touched,
+                            setFieldValue,
+                            setFieldTouched,
+                            isSubmitting,
+                            questionGroup.questionCode,
+                            questionGroup.childAsks.length - 1
+                          )
+                        )
                       )
-                    )}
+                    }
                   </Fragment>
                 ))}
 
-                <Button
-                  disabled={!isValid || isSubmitting}
-                  color="green"
-                  onPress={handleSubmit}
-                  showSpinnerOnClick
-                  key={questionGroups[0].name}
-                >
-                  Submit
-                </Button>
+                {questionGroups.reduce(( buttons, { attributeCode }) => {
+                  if ( attributeCode.includes( 'YES' )) {
+                    buttons.push(
+                      <Box marginTop={10}>
+                        <Button
+                          color="green"
+                          onPress={this.handlePressYes}
+                          showSpinnerOnClick
+                          key="YES"
+                        >
+                          Yes
+                        </Button>
+                      </Box>
+                    );
+                  }
+
+                  if ( attributeCode.includes( 'NO' )) {
+                    buttons.push(
+                      <Box marginTop={10}>
+                        <Button
+                          color="green"
+                          onPress={this.handlePressNo}
+                          showSpinnerOnClick
+                          key="NO"
+                        >
+                          No
+                        </Button>
+                      </Box>
+                    );
+                  }
+
+                  if ( attributeCode.includes( 'SUBMIT' )) {
+                    buttons.push(
+                      <Box marginTop={10}>
+                        <Button
+                          disabled={!isValid || isSubmitting}
+                          color="green"
+                          onPress={handleSubmit}
+                          showSpinnerOnClick
+                          key="YES"
+                        >
+                          Submit
+                        </Button>
+                      </Box>
+                    );
+                  }
+
+                  return buttons;
+                }, [] )}
               </Box>
             </KeyboardAwareScrollView>
           );
