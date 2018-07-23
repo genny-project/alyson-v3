@@ -39,7 +39,7 @@ class AuthenticatedApp extends Component {
         baseUrl={keycloak.data.url}
         realm={keycloak.data.realm}
         clientId={keycloak.data.clientId}
-        clientSecret={keycloak.data.credentials.secret}
+        clientSecret={keycloak.data.credentials && keycloak.data.credentials.secret}
       >
         {children}
       </KeycloakProvider>
