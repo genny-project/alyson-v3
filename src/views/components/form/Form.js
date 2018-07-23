@@ -3,6 +3,7 @@ import { ActivityIndicator } from 'react-native';
 import { string, object, oneOfType, array } from 'prop-types';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
+import { isArray, isObject, isString } from '../../../utils';
 import { Bridge } from '../../../utils/vertx';
 import { Box, Text, Button, Heading, Icon, KeyboardAwareScrollView } from '../index';
 import FormInput from './input';
@@ -12,7 +13,7 @@ class Form extends Component {
     questionGroupCode: oneOfType(
       [string, array]
     ),
-    asks: object,
+    asks: object, // eslint-disable-line react/no-unused-prop-types
     baseEntities: object,
   }
 
@@ -33,10 +34,7 @@ class Form extends Component {
     const { questionGroupCode } = this.props;
     const { questionGroups } = this.state;
 
-    if (
-      typeof questionGroupCode === 'string' &&
-      questionGroups.length === 0
-    ) {
+    if ( isString( questionGroupCode, { ofMinLength: 1 })) {
       const newGroups = this.getQuestionGroups();
 
       if ( newGroups.length > 0 ) {
@@ -46,7 +44,7 @@ class Form extends Component {
     }
 
     else if (
-      questionGroupCode instanceof Array &&
+      isArray( questionGroupCode ) &&
       questionGroupCode.length !== questionGroups.length
     ) {
       const newGroups = this.getQuestionGroups();
@@ -68,38 +66,23 @@ class Form extends Component {
     const { questionGroups } = this.state;
     const { attributes } = this.props.baseEntities;
 
-    if (
-      !questionGroups ||
-      !questionGroups.length
-    ) {
+    if ( !isArray( questionGroups, { ofMinLength: 1 })) {
       return;
     }
 
     const initialValues = {};
 
     questionGroups.forEach( questionGroup => {
-      if (
-        !questionGroup.childAsks ||
-        !( questionGroup.childAsks instanceof Array ) ||
-        questionGroup.childAsks.length === 0
-      )
+      if ( !isArray( questionGroup.childAsks, { ofMinLength: 1 }))
         return;
 
       questionGroup.childAsks.forEach( ask => {
-        if (
-          ask.childAsks &&
-          ask.childAsks instanceof Array &&
-          ask.childAsks.length > 0
-        ) {
+        if ( isArray( ask.childAsks, { ofMinLength: 1 })) {
           ask.childAsks.forEach( childAsk => {
             const value = (
               attributes[childAsk.targetCode] &&
               attributes[childAsk.targetCode][childAsk.attributeCode] &&
-              (
-                attributes[childAsk.targetCode][childAsk.attributeCode].valueString ||
-                attributes[childAsk.targetCode][childAsk.attributeCode].valueDate ||
-                attributes[childAsk.targetCode][childAsk.attributeCode].valueBoolean
-              )
+              attributes[childAsk.targetCode][childAsk.attributeCode].value
             );
 
             /* TODO: better handle `false` value */
@@ -112,11 +95,7 @@ class Form extends Component {
           const value = (
             attributes[ask.targetCode] &&
             attributes[ask.targetCode][ask.attributeCode] &&
-            (
-              attributes[ask.targetCode][ask.attributeCode].valueString ||
-              attributes[ask.targetCode][ask.attributeCode].valueDate ||
-              attributes[ask.targetCode][ask.attributeCode].valueBoolean
-            )
+            attributes[ask.targetCode][ask.attributeCode].value
           );
 
           /* TODO: better handle `false` value */
@@ -134,10 +113,7 @@ class Form extends Component {
     const { questionGroups } = this.state;
     const { data } = this.props.baseEntities.definitions;
 
-    if (
-      !questionGroups ||
-      !questionGroups.length
-    ) {
+    if ( !isArray( questionGroups, { ofMinLength: 1 })) {
       this.setState({ validationList: {} });
 
       return;
@@ -146,12 +122,9 @@ class Form extends Component {
     const validationList = {};
 
     questionGroups.forEach( questionGroup => {
-      if (
-        !questionGroup.childAsks ||
-        !( questionGroup.childAsks instanceof Array ) ||
-        questionGroup.childAsks.length === 0
-      )
+      if ( !isArray( questionGroup.childAsks, { ofMinLength: 1 })) {
         return;
+      }
 
       questionGroup.childAsks.forEach( ask => {
         const dataType = (
@@ -197,28 +170,6 @@ class Form extends Component {
     return [];
   }
 
-  /* UNUSED function - kept for reference in future for form recursive functions  */
-  findAsk = field => {
-    const { questionGroupCode, asks } = this.props;
-    const questionGroup = asks[questionGroupCode];
-
-    let ask = null;
-
-    const deepSearch = array => array.forEach( element => {
-      console.warn({ element });
-
-      if ( element.questionCode === field )
-        ask = element;
-
-      else if ( element.childAsks )
-        deepSearch( element.childAsks );
-    });
-
-    deepSearch( questionGroup.childAsks );
-
-    return ask;
-  }
-
   doValidate = values => {
     if ( !values )
       return {};
@@ -230,18 +181,16 @@ class Form extends Component {
     Object.keys( values ).forEach( field => {
       const validationData = validationList[field];
 
-      if ( !validationData )
+      if ( !validationData ) {
         return;
+      }
 
       const { dataType, required } = validationData;
       const validationArray = types[dataType] && types[dataType].validationList;
 
-      if (
-        !validationArray ||
-        !( validationArray instanceof Array ) ||
-        validationArray.length === 0
-      )
+      if ( !isArray( validationArray, { ofMinLength: 1 })) {
         return;
+      }
 
       if (
         values[field] == null &&
@@ -272,12 +221,10 @@ class Form extends Component {
       finalAttributeCode = 'PRI_RATING_RAW';
     }
 
+    /* If the form is an object or an array, stringify it. */
     if (
-      finalValue != null &&
-      (
-        typeof finalValue === 'object' ||
-        Array.isArray( finalValue )
-      )
+      isObject( finalValue ) ||
+      isArray( finalValue )
     ) {
       finalValue = JSON.stringify( finalValue );
     }
@@ -308,7 +255,6 @@ class Form extends Component {
   }
 
   handleChange = ( field, setFieldValue, setFieldTouched, ask ) => ( value, sendOnChange ) => {
-    console.warn( value );
     if ( value == null )
       return;
 
@@ -447,11 +393,7 @@ class Form extends Component {
     const { questionCode, attributeCode, name, mandatory, question, childAsks } = ask;
     const { dataType } = definitions.data[attributeCode];
 
-    if (
-      childAsks &&
-      childAsks instanceof Array &&
-      childAsks.length > 0
-    ) {
+    if ( isArray( childAsks, { ofMinLength: 1 })) {
       return (
         <Box
           flexDirection="column"
@@ -578,10 +520,9 @@ class Form extends Component {
     const { questionGroups } = this.state;
 
     if (
-      !questionGroups ||
-      !questionGroups.length ||
+      !isArray( questionGroups, { ofMinLength: 1 }) ||
       (
-        questionGroupCode instanceof Array &&
+        isArray( questionGroupCode ) &&
         questionGroupCode.length !== questionGroups.length
       )
     ) {
