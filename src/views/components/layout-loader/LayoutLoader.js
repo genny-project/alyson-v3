@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { shape, object, any, bool } from 'prop-types';
 import Layout from '../../layout';
-import { refresh } from '../../../utils';
 import DataQuery from '../../../utils/data-query';
 import { store } from '../../../redux';
 import { Box, Text, Timeout, Button, ActivityIndicator } from '../../components';
@@ -21,7 +20,8 @@ class LayoutLoader extends Component {
   }
 
   handleRetry = () => {
-    refresh();
+    if ( this.timeout )
+      this.timeout.startTimeout();
   }
 
   render() {
@@ -34,7 +34,10 @@ class LayoutLoader extends Component {
           appColor="dark"
           header={{ variant: 'default' }}
         >
-          <Timeout duration={60000}>
+          <Timeout
+            duration={60000}
+            ref={timeout => this.timeout = timeout}
+          >
             {({ isTimeUp, secondsElapsed }) => (
               <Box
                 justifyContent="center"
@@ -97,6 +100,12 @@ class LayoutLoader extends Component {
     const currentRoute = routes && routes[index];
     const currentRouteParams = currentRoute && currentRoute.params;
 
+    /**
+     * TODO:
+     *
+     * Move the context object into state so it doesn't happen every render
+     */
+
     /* Calculate the data for the layout */
     const context = {
       query: new DataQuery( data ).query(
@@ -123,7 +132,7 @@ class LayoutLoader extends Component {
         )
           ? layout.children.map(( child, index ) => (
             <Recursive
-              key={`${child.component}_${index}`} // eslint-disable-line react/no-array-index-key
+              key={index} // eslint-disable-line react/no-array-index-key
               {...child}
               context={context}
             />
