@@ -10,6 +10,8 @@ class Tabs extends Component {
     height: '100%',
     width: '100%',
     labelProps: {},
+    indicatorProps: {},
+    sceneProps: {},    
   }
 
   static propTypes = {
@@ -33,8 +35,11 @@ class Tabs extends Component {
     iconSize: string,
     iconProps: object,
     labelProps: object,
+    indicatorProps: object,
+    sceneProps: object,
     activeLabelColor: string,
     activeIconColor: string,
+    restrictSceneHeights: bool,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -51,6 +56,7 @@ class Tabs extends Component {
   state = {
     index: 0,
     routes: [],
+    sceneHeights: {},
   }
 
   handleIndexChange = index => {
@@ -60,6 +66,17 @@ class Tabs extends Component {
   handlePress = () => {
     if ( this.props.onPress )
       this.props.onPress();
+  }
+
+  handleSceneHeight = ( route ) =>  ( event ) => {
+    var { height } = event.nativeEvent.layout;      
+
+    this.setState( state => ({
+      sceneHeights: {
+        ...state.sceneHeights,
+        [route && route.key]: height,
+      },
+    }));
   }
 
   renderIcon = ({ route }) => {
@@ -84,7 +101,6 @@ class Tabs extends Component {
 
   renderLabel = ({ route }) => {
     const { labelColor, labelProps, activeLabelColor } = this.props;
-
     const {
       paddingX = 5,
       paddingY = 5,
@@ -137,6 +153,7 @@ class Tabs extends Component {
       tabBarBackground,
       activeTabBackground,
       scrollEnabled,
+      indicatorProps,
     } = this.props;
 
     const style = {
@@ -146,6 +163,7 @@ class Tabs extends Component {
     const indicatorStyle = {
       height: '100%',
       backgroundColor: activeTabBackground,
+      ...indicatorProps,
     };
 
     return (
@@ -155,7 +173,6 @@ class Tabs extends Component {
         scrollEnabled={scrollEnabled}
         renderLabel={this.renderLabel}
         renderIcon={this.renderIcon}
-        // renderLabel={this.renderLabel}
         style={style}
         indicatorStyle={indicatorStyle}
       />
@@ -163,18 +180,47 @@ class Tabs extends Component {
   };
 
   renderScene = ({ route }) => {
-    const { children } = this.props;
+    const { sceneProps, restrictSceneHeights } = this.props;
+    const { sceneHeights, index, routes } = this.state;
+    let { children } = this.props;
 
     /* Only render the scene if it's within 2 routes either side of the current route. */
-    if ( Math.abs( this.state.index - this.state.routes.indexOf( route )) > 2 ) {
+    if ( Math.abs( index - routes.indexOf( route )) > 2 ) {
       return <Box />;
     }
 
+    const currentSceneHeight = sceneHeights[index] || 'auto';
+
+    const height = (
+      restrictSceneHeights
+        ? index === route.key
+          ? { flexBasis: currentSceneHeight, flexShrink: 1 }
+          : { maxHeight: currentSceneHeight, flex: 0, flexGrow: 0 }
+        : {}
+    );
+
+    const onLayout = restrictSceneHeights ? { onLayout: this.handleSceneHeight( route ) } : {};
+
+    children = React.Children.map( children, child => (
+      React.cloneElement( child, {
+        ...child.props,
+        props: child.props.props && {
+          ...child.props.props,
+          ...onLayout,
+        },
+      })
+    ));
+
+    const sceneStyle = {
+      ...height,
+      ...sceneProps,
+    };
+
     return (
       <Box
-        flex={1}
         alignItems="center"
         justifyContent="center"
+        {...sceneStyle}
       >
         {(
           children &&
@@ -220,7 +266,6 @@ class Tabs extends Component {
   render() {
     const { bottomTabs, height, width } = this.props;
     const { index, routes } = this.state;
-
     const initialLayout = {
       height: 20,
       width: Dimensions.get( 'window' ).width,

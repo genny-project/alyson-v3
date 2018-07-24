@@ -17,6 +17,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "base-64": "^0.1.0",
+    "color": "^3.0.0",
     "css-loader": "^0.28.11",
     "dlv": "^1.1.2",
     "downshift": "zcallan/downshift#check-for-rn",

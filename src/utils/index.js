@@ -15,3 +15,4 @@ export * from './page';
 export * from './object';
 export * from './string';
 export * from './types';
+export * from './color';
