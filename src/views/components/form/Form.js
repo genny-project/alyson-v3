@@ -34,7 +34,10 @@ class Form extends Component {
     const { questionGroupCode } = this.props;
     const { questionGroups } = this.state;
 
-    if ( isString( questionGroupCode, { ofMinLength: 1 })) {
+    if (
+      isString( questionGroupCode ) &&
+      isArray( questionGroups, { ofExactLength: 0 })
+    ) {
       const newGroups = this.getQuestionGroups();
 
       if ( newGroups.length > 0 ) {
