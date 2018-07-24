@@ -619,7 +619,7 @@ class Form extends Component {
                   </Fragment>
                 ))}
 
-                {questionGroups.reduce(( buttons, { attributeCode }) => {
+                {questionGroups.reduce(( buttons, { attributeCode }, index ) => {
                   if ( attributeCode.includes( 'YES' )) {
                     buttons.push(
                       <Box marginTop={10}>
@@ -651,6 +651,26 @@ class Form extends Component {
                   }
 
                   if ( attributeCode.includes( 'SUBMIT' )) {
+                    buttons.push(
+                      <Box marginTop={10}>
+                        <Button
+                          disabled={!isValid || isSubmitting}
+                          color="green"
+                          onPress={handleSubmit}
+                          showSpinnerOnClick
+                          key="YES"
+                        >
+                          Submit
+                        </Button>
+                      </Box>
+                    );
+                  }
+
+                  /* If there are no buttons to show, render the submit button. */
+                  if (
+                    index === questionGroups.length - 1
+                    && buttons.length === 0
+                  ) {
                     buttons.push(
                       <Box marginTop={10}>
                         <Button
