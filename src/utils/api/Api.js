@@ -71,7 +71,6 @@ class Api {
   }
 
   getGeocodedAddress = ( components, options = {}) => {
-    const {} = options; // eslint-disable-line no-empty-pattern
     const query = queryString.stringify( components );
 
     return this.googleMapsCall({
