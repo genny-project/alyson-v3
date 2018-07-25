@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 import { func, any } from 'prop-types';
-import { TouchableOpacity } from 'react-native';
 import prettierBytes from 'prettier-bytes';
-import { Box, Text, Icon, Image } from '../../../../components';
+import { Box, Text, Icon, Image, Touchable } from '../../../../components';
 
 class InputFileItem extends Component {
-  static defaultProps = {
-  }
-
   static propTypes = {
     id: any,
     size: any,
@@ -20,7 +16,16 @@ class InputFileItem extends Component {
     onRemove: func,
   }
 
-  state = {
+  getIconName() {
+    const { type } = this.props;
+
+    return (
+      type.includes( 'image' ) ? 'image'
+      : type.includes( 'video' ) ? 'videocam'
+      : type.includes( 'audio' ) ? 'audiotrack'
+      : type.includes( 'pdf' ) ? 'picture-as-pdf'
+      : 'insert-drive-file'
+    );
   }
 
   render() {
@@ -35,7 +40,12 @@ class InputFileItem extends Component {
       error,
       onRemove,
     } = this.props;
-    
+
+    const hasImagePreview = (
+      type.includes( 'image' ) &&
+      ( !!preview || !!uploadURL )
+    );
+
     return (
       <Box
         key={id}
@@ -44,36 +54,22 @@ class InputFileItem extends Component {
         alignItems="center"
         padding={10}
       >
-        {
-          ( 
-            type.includes( 'image' ) && ( !!preview || !!uploadURL )
-          ) ? (
-            <Image
-              source={uploadURL || preview}
-              width={40}
-              height={40}
-              shape="circle"
+        {hasImagePreview ? (
+          <Image
+            source={uploadURL || preview}
+            width={40}
+            height={40}
+            shape="circle"
+          />
+        ) : (
+          <Box>
+            <Icon
+              name={this.getIconName( type )}
+              color="grey"
             />
-            ) : (
-              <Box>
-                <Icon
-                  name={(
-                    type &&
-                    type.includes( 'image' )
-                      ? 'image'
-                      : type.includes( 'video' )
-                        ? 'videocam'
-                        : type.includes( 'audio' )
-                          ? 'audiotrack'
-                          : type.includes( 'pdf' )
-                            ? 'picture-as-pdf'
-                            : 'insert-drive-file'
-                  )}
-                  color="grey"
-                />
-              </Box>
-            )
-        }
+          </Box>
+        )}
+
         <Box
           flexDirection="column"
           alignItems="flex-start"
@@ -91,28 +87,27 @@ class InputFileItem extends Component {
               : ' (not uploaded)'}
             {error && '(ERROR)'}
           </Text>
-          <Text
-            size="xxs"
-            color="black"
-          >
-            {
-              size
-                ? prettierBytes( size )
-                : 'size unknown'
-            }
-          </Text>
+
+          {size ? (
+            <Text
+              size="xxs"
+              color="black"
+            >
+              {prettierBytes( size )}
+            </Text>
+          ) : null}
         </Box>
-        <Box
-          marginLeft="auto"
-        >
-          <TouchableOpacity
+
+        <Box marginLeft="auto">
+          <Touchable
+            withFeedback
             onPress={onRemove( id )}
           >
             <Icon
               name="close"
               color="grey"
             />
-          </TouchableOpacity>
+          </Touchable>
         </Box>
       </Box>
     );

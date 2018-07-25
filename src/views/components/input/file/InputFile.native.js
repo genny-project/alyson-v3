@@ -1,31 +1,80 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-// import Expo, { ImagePicker, DocumentPicker } from 'expo';
-import { bool, func } from 'prop-types';
+import ImagePicker from 'react-native-image-picker';
+import { bool, func, string, shape, number, oneOf, oneOfType, array } from 'prop-types';
 import dlv from 'dlv';
 import fastXmlParser from 'fast-xml-parser';
 import mime from 'react-native-mime-types';
-import { Box } from '../../../components';
+import { Box, alert } from '../../../components';
 import InputFileItem from './file-item';
 import InputFileTouchable from './file-touchable';
+import { isArray } from '../../../../utils';
 import config from '../../../../config';
 
 class InputFile extends Component {
   static defaultProps = {
+    multiple: false,
     imageOnly: false,
+    config: {},
   }
 
   static propTypes = {
     imageOnly: bool,
     onChange: func,
     onChangeValue: func,
+    multiple: bool,
+    config: shape({
+      title: string,
+      cancelButtonTile: string,
+      takePhotoButtonTitle: string,
+      chooseFromLibraryButtonTitle: string,
+      customButtons: array,
+      cameraType: oneOf(
+        ['front', 'back']
+      ),
+      mediaType: oneOf(
+        ['photo', 'video', 'mixed', 'photo', 'video']
+      ),
+      maxWidth: oneOfType(
+        [number, string]
+      ),
+      maxHeight: oneOfType(
+        [number, string]
+      ),
+      quality: number,
+      videoQuality: oneOf(
+        ['low', 'high']
+      ),
+      durationLimit: number,
+      rotation: number,
+      allowsEditing: bool,
+      noData: bool,
+      storageOptions: shape({
+        skipBackup: bool,
+        path: string,
+        cameraRoll: bool,
+        waitUntilSaved: bool,
+      }),
+      permissionDenied: shape({
+        tile: string,
+        text: string,
+        reTryTile: string,
+        okTitle: string,
+      }),
+    }),
   }
 
   state = {
     files: [],
-  };
+  }
+
+  componentDidMount() {
+    console.warn( this.props );
+  }
 
   handleComplete = result => {
+    console.warn({ result });
+
     this.setState( prevState => ({
       files: [
         ...prevState.files,
@@ -44,11 +93,10 @@ class InputFile extends Component {
       this.props.onChangeValue( files );
   }
 
-  uploadFile = async ( result ) => {
-    const localUri = result.uri;
-    const fileName = localUri.split( '/' ).pop();
-    const match = /\.(\w+)$/.exec( fileName );
-    const mimeType = match ? mime.contentType( match[1] ).split( ';' )[0] : 'file';
+  uploadFile = async result => {
+    const { uri, fileName } = result;
+    const fileParts = /\.(\w+)$/.exec( fileName );
+    const mimeType = fileParts ? mime.contentType( fileParts[1] ).split( ';' )[0] : 'file';
     const formData = new FormData();
     const url = config.uppy.url;
 
@@ -73,7 +121,7 @@ class InputFile extends Component {
     });
 
     formData.append( 'file', {
-      uri: localUri,
+      uri,
       name: fileName,
       fileType: mimeType,
     });
@@ -123,7 +171,7 @@ class InputFile extends Component {
     this.handleComplete( formattedFile );
   }
 
-  handlePress = async () => {
+  __legacy__handlePress = async () => {
     const { imageOnly } = this.props;
 
     if ( imageOnly ) {
@@ -158,6 +206,23 @@ class InputFile extends Component {
     }
   }
 
+  handlePress = () => {
+    ImagePicker.showImagePicker( this.props.config, response => {
+      if ( response.didCancel ) {
+        // do nothing
+      }
+      else if ( response.error ) {
+        alert({
+          title: 'Error',
+          message: response.error,
+        });
+      }
+      else {
+        this.uploadFile( response );
+      }
+    });
+  }
+
   handleRemoveFile = removeId => () => {
     this.setState( prevState => ({
       files: prevState.files.filter(({ id }) => id !== removeId ),
@@ -165,7 +230,7 @@ class InputFile extends Component {
   }
 
   render() {
-    const { imageOnly } = this.props;
+    const { imageOnly, multiple } = this.props;
     const { files } = this.state;
 
     return (
@@ -173,12 +238,8 @@ class InputFile extends Component {
         width="100%"
         flexDirection="column"
       >
-        {(
-          files &&
-          files instanceof Array &&
-          files.length > 0
-        )
-          ? files.map( file => (
+        {isArray( files, { ofMinLength: 1 }) ? (
+          files.map( file => (
             <InputFileItem
               key={file.id}
               id={file.id}
@@ -191,18 +252,23 @@ class InputFile extends Component {
               onRemove={this.handleRemoveFile}
             />
           ))
-          : null}
+        ) : null}
 
-        <InputFileTouchable
-          onPress={this.handlePress}
-          text={
-            `Pick a${
-              imageOnly
-                ? `n${files.length > 0 ? 'other' : ''} image from camera roll`
-                : `${files.length > 0 ? 'nother' : ''} file from your device`
-            }`
-          }
-        />
+        {(
+          isArray( files, { ofExactLength: 0 }) ||
+          multiple
+        ) ? (
+          <InputFileTouchable
+            onPress={this.handlePress}
+            text={
+              `Pick a${
+                imageOnly
+                  ? `n${files.length > 0 ? 'other' : ''} image from camera roll`
+                  : `${files.length > 0 ? 'nother' : ''} file from your device`
+              }`
+            }
+          />
+          ) : null}
       </Box>
     );
   }
