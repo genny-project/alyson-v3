@@ -53,6 +53,7 @@ class InputFileItem extends Component {
         justifyContent="flex-start"
         alignItems="center"
         padding={10}
+        paddingBottom={15}
       >
         {hasImagePreview ? (
           <Image

@@ -73,14 +73,17 @@ class InputFile extends Component {
   }
 
   handleComplete = result => {
-    console.warn({ result });
+    this.setState( state => {
+      if ( this.props.multiple ) {
+        return {
+          files: state.files.concat( result ),
+        };
+      }
 
-    this.setState( prevState => ({
-      files: [
-        ...prevState.files,
-        result,
-      ],
-    }), this.propagateParentOnChange );
+      return {
+        files: [result],
+      };
+    }, this.propagateParentOnChange );
   }
 
   propagateParentOnChange = () => {
@@ -233,6 +236,11 @@ class InputFile extends Component {
     const { imageOnly, multiple } = this.props;
     const { files } = this.state;
 
+    const multipleFiles = (
+      multiple &&
+      files.length > 0
+    );
+
     return (
       <Box
         width="100%"
@@ -254,21 +262,16 @@ class InputFile extends Component {
           ))
         ) : null}
 
-        {(
-          isArray( files, { ofExactLength: 0 }) ||
-          multiple
-        ) ? (
-          <InputFileTouchable
-            onPress={this.handlePress}
-            text={
-              `Pick a${
-                imageOnly
-                  ? `n${files.length > 0 ? 'other' : ''} image from camera roll`
-                  : `${files.length > 0 ? 'nother' : ''} file from your device`
-              }`
-            }
-          />
-          ) : null}
+        <InputFileTouchable
+          onPress={this.handlePress}
+          text={
+            `Pick a${
+              imageOnly
+                ? `n${multipleFiles ? 'other' : ''} image from camera roll`
+                : `${multipleFiles ? 'nother' : ''} file from your device`
+            }`
+          }
+        />
       </Box>
     );
   }
