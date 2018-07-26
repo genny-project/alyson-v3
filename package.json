@@ -7,7 +7,9 @@
     "start:web": "./node_modules/.bin/webpack-dev-server -d --config ./webpack.config.js --inline --hot --colors",
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/alysonv3/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
     "build:web": "./node_modules/.bin/webpack -p --config ./webpack.config.js",
-    "test": "jest"
+    "test": "jest",
+    "setup-files": "node generate-configs.js $ENVFILE",
+    "setup-images": "app-icon generate -i $IMAGE"
   },
   "dependencies": {
     "appcenter": "^1.6.0",
@@ -119,7 +121,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "node generate_configs.js .env.genny && lint-staged"
+      "pre-commit": "app-icon generate -i genny-logo.png && node generate-configs.js && lint-staged"
     }
   },
   "lint-staged": {
