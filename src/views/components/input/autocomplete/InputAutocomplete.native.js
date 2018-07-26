@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { SafeAreaView } from 'react-native';
 import { func, string, number, oneOfType, array, bool, object } from 'prop-types';
 import Downshift from 'downshift';
-import { Text, Box, Input, Icon, Touchable, alert, Modal } from '../../index';
+import { Text, Box, Input, Icon, Touchable, Modal } from '../../index';
 
 class InputAutocomplete extends Component {
   static defaultProps = {

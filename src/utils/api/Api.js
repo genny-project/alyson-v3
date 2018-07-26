@@ -70,7 +70,7 @@ class Api {
     });
   }
 
-  getGeocodedAddress = ( components, options = {}) => {
+  getGeocodedAddress = ( components ) => {
     const query = queryString.stringify( components );
 
     return this.googleMapsCall({

@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import { string, number, bool, func } from 'prop-types';
+import { string, bool, func } from 'prop-types';
 import { DatePickerAndroid, TimePickerAndroid  } from 'react-native';
-import Touchable from '../../touchable/Touchable';
 import moment from 'moment';
+import Touchable from '../../touchable/Touchable';
+
 import { Box, Text } from '../../../components';
-import Map from '../../map/Map.native';
+// import Map from '../../map/Map.native';
 
 class DatePicker extends Component {
   static defaultProps = {
     // value: '',
-    minuteInterval: 10,
+    // minuteInterval: 10,
     date: true,
-    defaultDateTimeFormat: 'hh:mm a Do MMM YYYY',
+    // defaultDateTimeFormat: 'hh:mm a Do MMM YYYY',
     defaultTimeFormat: 'hh:mm a',
     defaultDateFormat: 'DD MMM YYYY',
   }
@@ -20,15 +21,15 @@ class DatePicker extends Component {
     // value: string,
     maximumDate: string,
     minimumDate: string,
-    minuteInterval: number,
+    // minuteInterval: number,
     date: bool,
     time: bool,
     onChangeValue: func,
-    defaultDateTimeFormat: string,
+    // defaultDateTimeFormat: string,
     defaultTimeFormat: string,
     defaultDateFormat: string,
-    format: string,
-    onBlur: func,
+    // format: string,
+    // onBlur: func,
   }
 
   constructor( props ) {
@@ -89,10 +90,10 @@ class DatePicker extends Component {
     const {
       date,
       time,
-      format,
+      // format,
       defaultTimeFormat,
       defaultDateFormat,
-      defaultDateTimeFormat,
+      // defaultDateTimeFormat,
     } = this.props;
 
     const { year, month, day, hour, minute } = this.state;
