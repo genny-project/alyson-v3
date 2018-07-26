@@ -122,14 +122,14 @@ android {
             buildConfigField "String", "CODEPUSH_KEY", '""'
         }
         releaseStaging {
-            buildConfigField "String", "CODEPUSH_KEY", '"DL5doACtiR0mDnCdpDy7PFvb48q9ByIdYsam7"'
+            buildConfigField "String", "CODEPUSH_KEY", project.env.get("CODEPUSH_KEY")
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             matchingFallbacks = ['release']
             applicationIdSuffix = ".staging"
         }
         release {
-            buildConfigField "String", "CODEPUSH_KEY", '"AAGaDvSRhBtgmbIS5I9fGbZeNZoMHyUdKs6Xm"'
+            buildConfigField "String", "CODEPUSH_KEY", project.env.get("CODEPUSH_KEY")
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

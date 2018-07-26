@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
+import  { bool, func } from 'prop-types';
 import { Modal } from 'react-native';
-import { bool, func } from 'prop-types';
-// import { Text } from '../../components';
 
 class NativeModalWrapper extends Component {
   static defaultProps = {

@@ -3,9 +3,7 @@ import { string, bool, func } from 'prop-types';
 import { DatePickerAndroid, TimePickerAndroid  } from 'react-native';
 import moment from 'moment';
 import Touchable from '../../touchable/Touchable';
-
 import { Box, Text } from '../../../components';
-// import Map from '../../map/Map.native';
 
 class DatePicker extends Component {
   static defaultProps = {
