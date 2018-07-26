@@ -10,6 +10,7 @@ const EventLink = ({
   disabled = false,
   onPress,
   to,
+  ...restProps
 }) => {
   const handlePress = event => {
     if ( disabled ) {
@@ -47,6 +48,7 @@ const EventLink = ({
     if ( to ) {
       return React.createElement( Link, {
         ...this.props,
+        ...restProps,
         buttonCode: buttonCode,
         value: value,
         disabled: disabled,
@@ -57,6 +59,7 @@ const EventLink = ({
 
     return React.cloneElement( child, {
       ...child.props,
+      ...restProps,
       onPress: handlePress,
     });
   });
