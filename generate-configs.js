@@ -4,6 +4,8 @@ const hb = require( 'handlebars' );
 const fs = require( 'fs-extra' );
 const path = require( 'path' );
 
+const envPath = process.argv[2] || '.env';
+
 const walk = async ( dir, cb ) => {
   const files = await fs.readdir( dir );
 
@@ -32,7 +34,7 @@ const fillTemplate = data =>
   async filepath => hb.compile( await fs.readFile( filepath, 'utf8' ))( data );
 
 const getData = async () => {
-  const data = await fs.readFile( '.env.ch40.dev', 'utf8' );
+  const data = await fs.readFile( envPath, 'utf8' );
   const lines = data.split( '\n' );
 
   return lines
