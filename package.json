@@ -98,6 +98,7 @@
     "webpack-dev-server": "^3.1.4"
   },
   "devDependencies": {
+    "app-icon": "^0.6.3",
     "babel-jest": "23.2.0",
     "babel-preset-react-native": "4.0.0",
     "enzyme": "^3.3.0",
@@ -118,7 +119,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "node generate_configs.js .env.genny && lint-staged"
     }
   },
   "lint-staged": {
