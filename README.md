@@ -26,10 +26,12 @@ cd ios && pod install
 cd .. && npm run start:native
 ```
 
-4. Open XCode
-5. Build the project
-6. If using a simulator, run the project under the selected simulator in XCode
-7. If using a device, run the project under the selected device in XCode
+1. place your environment variables into a .env file in the root of the project, or place them into a .env.project-name file
+2. Open XCode
+3. Build the project
+4. If using a simulator, run the project under the selected simulator in XCode
+5. If using a device, run the project under the selected device in XCode
+6. If using an environment variable file that is not .env, run `ENVFILE=.env.project-name react-native run-ios`
 
 ## !WARNING!
 
