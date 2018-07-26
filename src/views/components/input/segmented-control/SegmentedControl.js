@@ -39,8 +39,6 @@ class Checkbox extends Component {
         selected: [value],
       };
     }, () => {
-      console.warn( 'hello', this.state.selected, this.props );
-
       if ( this.props.onChangeValue ) {
         this.props.onChangeValue( this.state.selected );
       }
@@ -50,8 +48,6 @@ class Checkbox extends Component {
   render() {
     const { items } = this.props;
     const { selected } = this.state;
-
-    console.warn({ selected, items });
   
     return (
       <Box

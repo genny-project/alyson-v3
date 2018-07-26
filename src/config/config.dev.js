@@ -3,7 +3,7 @@ export default {
     name: 'Genny',
   },
   genny: {
-    host: 'http://10.123.123.123:8088/',
+    host: 'http://10.123.123.123:8088/', 
     initUrl: 'http://alyson.genny.life',
     bridge: {
       port: '80',
