@@ -56,17 +56,10 @@ class FormInput extends Component {
         );
 
       case 'address':
-        return (
-          <Input
-            {...this.props}
-            ref={input => this.input = input}
-            onChangeValue={this.handleChangeValueWithSend}
-          />
-        );
-
       case 'upload':
       case 'switch':
       case 'java.lang.boolean':
+      case 'payment':
         return (
           <Input
             {...this.props}
