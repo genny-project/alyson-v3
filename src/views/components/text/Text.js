@@ -1,6 +1,9 @@
 import React from 'react';
 import { Text as NativeText, Platform } from 'react-native';
 import { string, number, oneOf, oneOfType, bool } from 'prop-types';
+import capitalize from 'lodash.capitalize';
+import upperCase from 'lodash.uppercase';
+import lowerCase from 'lodash.lowercase';
 
 const textSizes = {
   xxs: 12,
@@ -21,6 +24,12 @@ const colors = {
   transparent: 'transparent',
 };
 
+const transforms = {
+  upperCase: text => upperCase( text ),
+  lowerCase: text => lowerCase( text ),
+  capitalize: text => capitalize( text ),
+};
+
 const Text = ({
   children,
   color = 'black',
@@ -33,6 +42,7 @@ const Text = ({
   bold,
   fontFamily,
   text,
+  transform,
   ...restProps
 }) => {
   const style = {
@@ -49,6 +59,15 @@ const Text = ({
     }),
   };
 
+  let child = text || children;
+
+  if (
+    transform &&
+    transforms[transform]
+  ) {
+    child = transforms[transform]( child );
+  }
+
   return (
     <NativeText
       {...restProps}
@@ -56,7 +75,7 @@ const Text = ({
         style,
       ]}
     >
-      {text || children}
+      {child}
     </NativeText>
   );
 };
@@ -83,6 +102,9 @@ Text.propTypes = {
   ),
   bold: bool,
   fontFamily: string,
+  transform: oneOf(
+    ['upperCase', 'lowerCase', 'capitalize']
+  ),
 };
 
 export default Text;

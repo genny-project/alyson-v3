@@ -83,6 +83,7 @@ class Recursive extends Component {
       return result;
 
     if ( typeof result[current] === 'string' ) {
+      // console.warn( result[current] );
       if ( result[current].startsWith( '_' )) {
         result[current] = dlv( context, result[current].substring( 1 ));
 
@@ -98,29 +99,7 @@ class Recursive extends Component {
       return result;
     }
 
-    /* TODO: Make this call the current function recursively.
-     * Issue is that `context` suddenly becomes undefined. Look into. */
     if ( result[current] instanceof Array ) {
-      for ( let i = 0; i < result[current].length; i++ ) {
-        const element = result[current][i];
-
-        if ( typeof element === 'string' ) {
-          if ( element.startsWith( '_' )) {
-            result[current][i] = dlv( context, element.substring( 1 ));
-          }
-
-          if ( element.includes( '{{' )) {
-            result[current][i] = this.curlyBracketParse( element );
-          }
-        }
-
-        if ( typeof element === 'object' ) {
-          const keys = Object.keys( element );
-
-          result[current][i] = keys.reduce( this.handleReducePropInjection, element );
-        }
-      }
-
       result[current] = result[current].reduce(
         this.handleReducePropInjection, result[current]
       );
@@ -162,7 +141,7 @@ class Recursive extends Component {
 
     const afterProps =
       Object
-        .keys( props )
+        .keys( propsCopy )
         .reduce( this.handleReducePropInjection, propsCopy );
 
     return afterProps;

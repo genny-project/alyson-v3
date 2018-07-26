@@ -155,6 +155,10 @@ class Input extends Component {
     borderLeftWidth: number,
     borderColor: string,
     borderRadius: number,
+    borderBottomLeftRadius: number,
+    borderBottomRightRadius: number,
+    borderTopLeftRadius: number,
+    borderTopRightRadius: number,
     borderSize: number,
     wrapperProps: object,
     returnKeyLabel: string,
@@ -177,6 +181,16 @@ class Input extends Component {
 
   handleRef = input => {
     this.input = input;
+  }
+
+  handleChangeText = event => {
+    if ( this.props.onChangeText ) {
+      this.props.onChangeText( event );
+    }
+
+    if ( this.props.onChangeValue ) {
+      this.props.onChangeValue( event );
+    }
   }
 
   focus() {
@@ -312,6 +326,10 @@ class Input extends Component {
       wrapperProps,
       returnKeyLabel,
       returnKeyType,
+      borderBottomLeftRadius,
+      borderBottomRightRadius,
+      borderTopLeftRadius,
+      borderTopRightRadius,
     } = this.props;
 
     const statusStyle =
@@ -365,6 +383,10 @@ class Input extends Component {
       borderColor,
       borderRadius,
       borderSize,
+      borderBottomLeftRadius,
+      borderBottomRightRadius,
+      borderTopLeftRadius,
+      borderTopRightRadius,
     });
 
     const nativeProps = {
@@ -398,7 +420,7 @@ class Input extends Component {
           multiline={multiline}
           onBlur={onBlur}
           onChange={onChange}
-          onChangeText={onChangeValue}
+          onChangeText={this.handleChangeText}
           onFocus={onFocus}
           onKeyPress={onKeyPress}
           onSelectionChange={onSelectionChange}
