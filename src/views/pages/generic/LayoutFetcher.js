@@ -42,10 +42,10 @@ class LayoutFetcher extends Component {
       !this.state.layout
     ) {
       /* --- ADDED FOR 4* DEV --- */
-      // if ( !this.f ) {
-      //   this.f = true;
-      //   global.LayoutsDev.load( 'fourdegrees-new' );
-      // }
+      if ( !this.f ) {
+        this.f = true;
+        global.LayoutsDev.load( 'fourdegrees-new' );
+      }
       /* ------------------------ */
 
       this.getLayout();
@@ -168,10 +168,14 @@ class LayoutFetcher extends Component {
   }
 
   findLayoutAttribute() {
-    const { currentUrl, baseEntities } = this.props;
+    const { currentUrl, baseEntities, navigationReducer } = this.props;
     const attributes = this.getAttributes();
     const strippedCurrentUrl = removeStartingAndEndingSlashes( currentUrl );
     const params = {};
+    const currentRoute = (
+      navigationReducer.routes &&
+      navigationReducer[navigationReducer.index]
+    );
 
     const layoutAttribute = attributes.find( attribute => {
       const layoutUrl = (
@@ -199,7 +203,15 @@ class LayoutFetcher extends Component {
             /* Remove the colon at the start. */
             const param = fragment.substr( 1 );
 
-            params[param] = currentUrlFragments[index];
+            console.warn({ currentRoute });
+            if (
+              currentRoute &&
+              currentRoute.params &&
+              currentRoute.params[param] &&
+              currentRoute.params[param] !== currentUrlFragments[index]
+            ) {
+              params[param] = currentUrlFragments[index];
+            }
 
             return currentUrlFragments[index];
           }

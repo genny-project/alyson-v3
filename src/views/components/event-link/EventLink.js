@@ -1,7 +1,7 @@
 import React from 'react';
 import { string, bool, any, func } from 'prop-types';
 import { Bridge } from '../../../utils';
-import { Link } from '../index';
+import { Link, Touchable } from '../index';
 
 const EventLink = ({
   children = 'Event',
@@ -33,7 +33,7 @@ const EventLink = ({
         value: valueString || null,
       }
     );
-
+    
     if ( onPress )
       onPress( event );
   };
@@ -57,11 +57,22 @@ const EventLink = ({
       }, child );
     }
 
-    return React.cloneElement( child, {
-      ...child.props,
-      ...restProps,
-      onPress: handlePress,
-    });
+    if (
+      child.type.name.includes( 'Button' ) ||
+      child.type.name.includes( 'Touchable' )
+    ) {
+      return React.cloneElement(
+        child,
+      );
+    }
+
+    return React.createElement(
+      Touchable,
+      {
+        onPress: handlePress,
+      },
+      child
+    );
   });
 };
 

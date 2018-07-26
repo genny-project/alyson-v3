@@ -11,7 +11,7 @@ const Avatar = ({
 }) => {
   const sizes = {
     sm: 30,
-    md: 40,
+    md: 60,
     lg: 80,
   };
 
@@ -45,7 +45,7 @@ const Avatar = ({
       backgroundColor="gray"
       justifyContent="center"
       alignItems="center"
-      borderRadius="50%"
+      shape="circle"
       borderStyle={outline && 'solid'}
       borderWidth={outline && borderSizes[size] || 2}
       borderColor={outline && 'white'}
@@ -56,7 +56,8 @@ const Avatar = ({
       {(
         src &&
         typeof src === 'string' &&
-        src.length > 0
+        src.length > 0 &&
+        typeof src !== 'undefined'
       ) ? (
         <Image
           source={src}
