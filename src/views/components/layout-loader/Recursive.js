@@ -6,6 +6,8 @@ import { object, any, string } from 'prop-types';
 import { doesValueMatch } from '../../../utils/data-query/operators/find';
 import { store } from '../../../redux';
 import * as Components from '../index';
+import props from '../input/address/InputAddress';
+import isObject from '../../../utils/types/object/isObject';
 
 class Recursive extends Component {
   static propTypes = {
@@ -76,13 +78,14 @@ class Recursive extends Component {
     return elseProps;
   };
 
-  handleReducePropInjection = ( result, current ) => {
+  handleReducePropInjection = ( result, current, index ) => {
     const { context } = this.props;
 
-    if ( result[current] == null )
+    if ( result[current] == null && result[index] == null )
       return result;
 
     if ( typeof result[current] === 'string' ) {
+      // console.warn( result[current] );
       if ( result[current].startsWith( '_' )) {
         result[current] = dlv( context, result[current].substring( 1 ));
 
@@ -98,29 +101,7 @@ class Recursive extends Component {
       return result;
     }
 
-    /* TODO: Make this call the current function recursively.
-     * Issue is that `context` suddenly becomes undefined. Look into. */
     if ( result[current] instanceof Array ) {
-      for ( let i = 0; i < result[current].length; i++ ) {
-        const element = result[current][i];
-
-        if ( typeof element === 'string' ) {
-          if ( element.startsWith( '_' )) {
-            result[current][i] = dlv( context, element.substring( 1 ));
-          }
-
-          if ( element.includes( '{{' )) {
-            result[current][i] = this.curlyBracketParse( element );
-          }
-        }
-
-        if ( typeof element === 'object' ) {
-          const keys = Object.keys( element );
-
-          result[current][i] = keys.reduce( this.handleReducePropInjection, element );
-        }
-      }
-
       result[current] = result[current].reduce(
         this.handleReducePropInjection, result[current]
       );
@@ -128,10 +109,15 @@ class Recursive extends Component {
       return result;
     }
 
-    if ( typeof result[current] === 'object' ) {
-      const keys = Object.keys( result[current] );
+    if ( typeof result[current] === 'object' || isObject( current )) {
+      const targetObject = result[current] || current;
+      const keys = Object.keys( targetObject );
 
-      result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
+      if ( result[current] ) {
+        result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
+      } else {
+        result[index] = keys.reduce( this.handleReducePropInjection, result[index] );
+      }
 
       return result;
     }
@@ -162,7 +148,7 @@ class Recursive extends Component {
 
     const afterProps =
       Object
-        .keys( props )
+        .keys( propsCopy )
         .reduce( this.handleReducePropInjection, propsCopy );
 
     return afterProps;
@@ -248,7 +234,7 @@ class Recursive extends Component {
       }
     }
 
-    const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;
+    const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;    
 
     /**
      * TODO:

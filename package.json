@@ -10,6 +10,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "appcenter": "^1.6.0",
+    "appcenter-analytics": "^1.6.0",
+    "appcenter-crashes": "^1.6.0",
     "axios": "^0.18.0",
     "babel-eslint": "^8.2.5",
     "babel-loader": "^7.1.4",
@@ -17,6 +20,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "base-64": "^0.1.0",
+    "color": "^3.0.0",
     "css-loader": "^0.28.11",
     "dlv": "^1.1.2",
     "downshift": "zcallan/downshift#check-for-rn",
@@ -36,7 +40,9 @@
     "lint-staged": "^7.2.0",
     "lodash.capitalize": "^4.2.1",
     "lodash.debounce": "^4.0.8",
+    "lodash.lowercase": "^4.3.0",
     "lodash.range": "^3.2.0",
+    "lodash.uppercase": "^4.3.0",
     "moment": "^2.22.2",
     "prettier": "^1.13.7",
     "prettier-bytes": "^1.0.4",
@@ -52,6 +58,7 @@
     "react-modal": "^3.4.5",
     "react-native": "0.55.4",
     "react-native-blur": "^3.2.2",
+    "react-native-code-push": "^5.4.0",
     "react-native-credit-card-input": "^0.4.1",
     "react-native-gesture-handler": "^1.0.5",
     "react-native-image-picker": "^0.26.10",
@@ -99,7 +106,12 @@
     "remotedev-rn-debugger": "^0.8.3"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "setupFiles": [
+      "./node_modules/appcenter/test/AppCenterMock.js",
+      "./node_modules/appcenter-analytics/test/AppCenterAnalyticsMock.js",
+      "./node_modules/appcenter-crashes/test/AppCenterCrashesMock.js"
+    ]
   },
   "husky": {
     "hooks": {

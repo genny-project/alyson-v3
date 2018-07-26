@@ -17,42 +17,46 @@ const handleFilterItem = item => {
   return true;
 };
 
-const HeaderRight = ({ items }) => (
-  <LayoutConsumer>
-    {({ textColor }) => (
-      <Box
-        paddingX={5}
-        alignItems="center"
-      >
-        {isArray( items, { ofMinLength: 1 }) ? (
-          items.map( item => (
-            item.dropdown ? (
-              <Dropdown
-                {...item}
-                padding={0}
-                paddingX={5}
-                textColor={textColor}
-                text={item.text}
-                facingRight
-                items={item.items.filter( handleFilterItem )}
-              />
-            ) : (
-              <HeaderItem
-                {...item}
-                key={item.id}
-                href={item.href}
-                icon={item.icon}
-                eventType={item.eventType}
-                buttonCode={item.buttonCode}
-                textColor={textColor}
-              />
-            )
-          ))
-        ) : null}
-      </Box>
-    )}
-  </LayoutConsumer>
-);
+const HeaderRight = ({ items }) => {
+  const filteredItems = isArray( items ) && items.filter( handleFilterItem );
+
+  return (
+    <LayoutConsumer>
+      {({ textColor }) => (
+        <Box
+          paddingX={5}
+          alignItems="center"
+        >
+          {isArray( filteredItems, { ofMinLength: 1 }) ? (
+            filteredItems.map( item => (
+              item.dropdown ? (
+                <Dropdown
+                  {...item}
+                  padding={0}
+                  paddingX={5}
+                  textColor={textColor}
+                  text={item.text}
+                  facingRight
+                  items={item.items.filter( handleFilterItem )}
+                />
+              ) : (
+                <HeaderItem
+                  {...item}
+                  key={item.id}
+                  href={item.href}
+                  icon={item.icon}
+                  eventType={item.eventType}
+                  buttonCode={item.buttonCode}
+                  textColor={textColor}
+                />
+              )
+            ))
+          ) : null}
+        </Box>
+      )}
+    </LayoutConsumer>
+  );
+};
 
 const headerItemPropTypes = shape({
   icon: string,

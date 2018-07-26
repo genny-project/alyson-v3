@@ -1,6 +1,6 @@
 import React from 'react';
-import { Image as NativeImage, Dimensions } from 'react-native';
-import { string, oneOf, oneOfType, number, array } from 'prop-types';
+import { Image as NativeImage, ImageBackground as NativeImageBackground, Dimensions } from 'react-native';
+import { string, oneOf, oneOfType, number, array, bool } from 'prop-types';
 import { Box, Icon } from '../';
 
 const Image = ({
@@ -8,6 +8,7 @@ const Image = ({
   height,
   source,
   shape,
+  fullscreen = false,
   children,
   fallbackIcon = 'photo',
   fallbackIconSize = 'lg',
@@ -19,6 +20,9 @@ const Image = ({
     circle: width / 2,
   };
 
+  const imageWidth = fullscreen ? Dimensions.get( 'window' ).width : width;
+  const imageHeight = fullscreen ? Dimensions.get( 'window' ).height : height;
+
   if (
     source &&
     typeof source === 'string' &&
@@ -29,39 +33,36 @@ const Image = ({
       children &&
       children.length > 0
     ) {
-      const { width, height } = Dimensions.get( 'window' );
-     
       return (
-        <Box>
-          <NativeImage 
-            source={{ uri: source }}
-            style={{ width, height, borderRadius: borderRadius[shape] }}
-          />
+        <NativeImageBackground 
+          source={{ uri: source }}
+          style={{ width: imageWidth, height: imageHeight, borderRadius: borderRadius[shape] }}
+        >
           <Box 
             position="absolute" 
-            width={width} 
-            height={height}
             top={0}
             left={0}
+            width={imageWidth}
+            height={imageHeight}
           >
             {children}
           </Box>
-        </Box>
+        </NativeImageBackground>
       );
     }
     
     return (
       <NativeImage
         source={{ uri: source }}
-        style={{ width, height, borderRadius: borderRadius[shape] }}
+        style={{ width: imageWidth, height: imageHeight, borderRadius: borderRadius[shape] }}
       />
     );
   }
 
   return (
     <Box
-      width={width}
-      height={height}
+      width={imageWidth}
+      height={imageHeight}
       backgroundColor={fallbackColor}
       justifyContent="center"
       alignItems="center"
@@ -84,6 +85,7 @@ Image.propTypes = {
     [string, number]
   ),
   source: string,
+  fullscreen: bool,
   children: array,
   shape: oneOf(
     ['square', 'rounded', 'circle']

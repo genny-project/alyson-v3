@@ -1,20 +1,35 @@
 import React, { Component } from 'react';
-import { Text } from '../../components';
+import { Modal } from 'react-native';
+import { bool, func } from 'prop-types';
+// import { Text } from '../../components';
 
-class Modal extends Component {  
+class NativeModalWrapper extends Component {
   static defaultProps = {
   }
 
   static propTypes = {
+    visible: bool,
+    onDismiss: func,
+  }
+
+  componentDidUpdate( prevProps ) {
+    if ( this.props.visible !== prevProps.visible ) {
+      if ( !this.props.visible ) {
+        if ( this.props.onDismiss ) {
+          this.props.onDismiss();
+        }
+      }
+    }
   }
 
   render() {
     return (
-      <Text>
-        native modal
-      </Text>
+      <Modal
+        {...this.props}
+        visible={this.props.visible}
+      />
     );
   }
 }
 
-export default Modal;
+export default NativeModalWrapper;
