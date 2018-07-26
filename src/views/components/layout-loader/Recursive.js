@@ -6,6 +6,8 @@ import { object, any, string } from 'prop-types';
 import { doesValueMatch } from '../../../utils/data-query/operators/find';
 import { store } from '../../../redux';
 import * as Components from '../index';
+import props from '../input/address/InputAddress';
+import isObject from '../../../utils/types/object/isObject';
 
 class Recursive extends Component {
   static propTypes = {
@@ -76,10 +78,10 @@ class Recursive extends Component {
     return elseProps;
   };
 
-  handleReducePropInjection = ( result, current ) => {
+  handleReducePropInjection = ( result, current, index ) => {
     const { context } = this.props;
 
-    if ( result[current] == null )
+    if ( result[current] == null && result[index] == null )
       return result;
 
     if ( typeof result[current] === 'string' ) {
@@ -107,10 +109,15 @@ class Recursive extends Component {
       return result;
     }
 
-    if ( typeof result[current] === 'object' ) {
-      const keys = Object.keys( result[current] );
+    if ( typeof result[current] === 'object' || isObject( current )) {
+      const targetObject = result[current] || current;
+      const keys = Object.keys( targetObject );
 
-      result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
+      if ( result[current] ) {
+        result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
+      } else {
+        result[index] = keys.reduce( this.handleReducePropInjection, result[index] );
+      }
 
       return result;
     }
@@ -229,6 +236,11 @@ class Recursive extends Component {
 
     const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;    
 
+    /**
+     * TODO:
+     *
+     * Investigate performance optimisation
+     */
     const repeatedChildren = (
       injectedRepeat &&
       injectedRepeat instanceof Array
@@ -236,7 +248,8 @@ class Recursive extends Component {
       ? injectedRepeat.map( child => ({
         ...children,
         props: {
-          ...children.props, ...child,
+          ...children.props,
+          ...child,
         },
         context: {
           ...context,

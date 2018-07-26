@@ -1,8 +1,15 @@
 import React from 'react';
 import { any } from 'prop-types';
 import Layout from '../../../layout';
-import { Box, Text, Button } from '../../../components';
-import { refresh } from '../../../../utils';
+import { Box, Text, Button, Heading } from '../../../components';
+import { store } from '../../../../redux';
+import { fetchKeycloakConfig } from '../../../../redux/actions';
+
+const handleRetry = () => {
+  store.dispatch(
+    fetchKeycloakConfig()
+  );
+};
 
 const AuthenticatedAppError = ({ error }) => ( // eslint-disable-line no-unused-vars
   <Layout
@@ -17,22 +24,26 @@ const AuthenticatedAppError = ({ error }) => ( // eslint-disable-line no-unused-
       flex={1}
       flexDirection="column"
     >
-      {/* TODO: improve the error message */}
-      <Text>
-Failed to load the page!
+      <Box marginBottom={20}>
+        <Heading align="center">
+          Failed to load the page!
+        </Heading>
+      </Box>
+
+      <Text align="center">
+        {error}
       </Text>
-      <Text>
-Please refresh the page to try again.
-      </Text>
-      <Box  
+
+      <Box
         marginTop={20}
+        padding={20}
       >
         <Button
           color="green"
           size="md"
-          onPress={refresh}
+          onPress={handleRetry}
         >
-          Refresh
+          Retry
         </Button>
       </Box>
     </Box>
