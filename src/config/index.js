@@ -21,7 +21,7 @@ export default {
     },
   },
   google: {
-    apiKey: Config.GOOGLE_APIKEY,
+    apiKey: Config.GOOGLE_MAPS_APIKEY,
     maps: {
       apiUrl: Config.GOOGLE_MAPS_APIURL,
     },
