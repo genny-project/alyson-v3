@@ -55,4 +55,20 @@ buck-out/
 # Bundle artifact
 *.jsbundle
 
+<<<<<<< HEAD
 .env.*
+=======
+.env
+.env*
+
+#various android build artifacts + private configs
+android/app/debug
+android/app/release
+android/app/releaseStaging
+
+android/app/src/main/assets/appcenter-config.json
+
+*.jks
+ios/alysonv3/AppCenter-Config.plist
+
+>>>>>>> 006239c... built config script and templates, started using config vars in android build
