@@ -3,8 +3,8 @@ export default {
     name: 'Genny',
   },
   genny: {
-    host: 'https://bridge-channel40-staging.outcome-hub.com',
-    initUrl: 'http://app-staging.outcome-hub.com',
+    host: 'http://10.123.123.123:8088/', 
+    initUrl: 'http://alyson.genny.life',
     bridge: {
       port: '80',
       endpoints: {

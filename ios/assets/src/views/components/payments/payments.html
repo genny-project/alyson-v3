@@ -1,0 +1,88 @@
+<!doctype html>
+
+<html>
+
+<head></head>
+
+<body>
+  <script src="https://js.prelive.promisepay.com/PromisePay.js"></script>
+
+  <script>
+    (function() {
+      function sendMessage( type ) {
+        return function( payload ) {
+          const data = JSON.stringify({ type, payload });
+
+          window.postMessage( data );
+        }
+      }
+
+      document.addEventListener( 'message', function( message ) {
+        let parsed = null;
+
+        try {
+          parsed = JSON.parse( message.data );
+        }
+        catch ( error ) {
+          sendMessage( 'PARSE_ERROR' )({
+            error,
+            message: message.data,
+          });
+
+          return;
+        }
+
+        if ( !parsed.type )
+          return;
+
+        var type = parsed.type,
+            payload = parsed.payload;
+
+        switch ( type ) {
+          case 'CAPTURE_DEVICE_ID': {
+            promisepay.captureDeviceId(
+              sendMessage( type + '_SUCCESS' )
+            );
+
+            break;
+          }
+
+          case 'GET_IP_ADDRESS': {
+            promisepay.getIPAddress(
+              sendMessage( type + '_SUCCESS' )
+            );
+
+            break;
+          }
+
+          case 'CREATE_BANK_ACCOUNT': {
+            promisepay.createBankAccount(
+              payload.token,
+              payload.data,
+              sendMessage( type + '_SUCCESS' ),
+              sendMessage( type + '_ERROR' )
+            );
+
+            break;
+          }
+
+          case 'CREATE_CARD_ACCOUNT': {
+            promisepay.createCardAccount(
+              payload.token,
+              payload.data,
+              sendMessage( type + '_SUCCESS' ),
+              sendMessage( type + '_ERROR' )
+            );
+
+            break;
+          }
+
+          default:
+            break;
+        }
+      });
+    })();
+  </script>
+</body>
+
+</html>

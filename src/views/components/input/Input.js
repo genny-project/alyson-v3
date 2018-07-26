@@ -16,6 +16,7 @@ import InputRead from './read';
 import InputCurrency from './currency';
 import InputCreditCard from './credit-card';
 import InputCheckbox from './checkbox-2';
+import SegmentedControl from './segmented-control';
 
 class Input extends Component {
   static propTypes = {
@@ -246,6 +247,14 @@ class Input extends Component {
       case 'checkboxmultiple':
         return (
           <InputCheckbox
+            {...this.props}
+            ref={input => this.input = input}
+          />
+        );
+
+      case 'segmentedcontrol':
+        return (
+          <SegmentedControl
             {...this.props}
             ref={input => this.input = input}
           />

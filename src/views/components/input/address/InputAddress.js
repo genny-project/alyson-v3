@@ -128,7 +128,6 @@ class InputAddress extends Component {
   }
 
   handleChange = async item => {
-    console.log( item );
     const { google } = this.props;
     const { place_id } = item;
 

@@ -2,39 +2,40 @@ import React, { Component } from 'react';
 import { any, bool, func } from 'prop-types';
 import { TouchableOpacity } from 'react-native';
 import { Box, Icon }  from '../../components';
+import Recursive from '../layout-loader/Recursive';
 
 class Collapsible extends Component {
   static defaultProps = {
     showHeader: true,
-    open: false,
   }
 
   static propTypes = {
     children: any,
     showHeader: bool,
     header: any,
-    open: bool,
+    // open: bool,
     onToggle: func,
   }
 
-  static getDerivedStateFromProps( nextProps, nextState ) {
-    if (
-      nextProps.open != null &&
-      nextProps.open !== nextState.open
-    ) {
-      return { isOpen: nextProps.open };
-    }
+  // static getDerivedStateFromProps( nextProps, nextState ) {
+  //   if (
+  //     nextProps.open != null &&
+  //     nextProps.open !== undefined &&
+  //     nextProps.open !== nextState.open
+  //   ) {
+  //     return { isOpen: nextProps.open };
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
   state = {
-    isOpen: this.props.open,
+    isOpen: false,
   }
 
   handlePress = () => {
     this.setState( state => ({ isOpen: !state.isOpen }));
-    if ( this.props.onToggle ) this.props.onToggle();
+    // if ( this.props.onToggle ) this.props.onToggle();
   }
 
   render() {
@@ -56,8 +57,17 @@ class Collapsible extends Component {
             onPress={this.handlePress}
           >
             {
-              header ?
-                header : (
+              header
+                ? (
+                  <Recursive
+                    {...header}
+                    props={{
+                      ...header.props,
+                      isOpen: isOpen,
+                    }}
+                  />
+                )
+                : (
                   <Box
                     justifyContent="center"
                     transform={[
@@ -74,7 +84,12 @@ class Collapsible extends Component {
           </TouchableOpacity>
         ) : null}
         {isOpen ? (
-          children
+          React.Children.map( children, child => (
+            React.cloneElement( child, {
+              ...child.props,
+              isOpen: isOpen,
+            })
+          ))
         ) : null}
       </Box>
     );

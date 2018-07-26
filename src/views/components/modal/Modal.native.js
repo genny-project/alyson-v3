@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { Modal } from 'react-native';
-import { Text } from '../../components';
+import { bool, func } from 'prop-types';
+// import { Text } from '../../components';
 
 class NativeModalWrapper extends Component {
   static defaultProps = {
   }
 
   static propTypes = {
+    visible: bool,
+    onDismiss: func,
   }
 
   componentDidUpdate( prevProps ) {
