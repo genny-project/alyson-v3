@@ -4,7 +4,7 @@ const hb = require( 'handlebars' );
 const fs = require( 'fs-extra' );
 const path = require( 'path' );
 
-const envPath = process.argv[2] || '.env';
+const envPath = process.argv[2] || '.env.genny';
 
 const walk = async ( dir, cb ) => {
   const files = await fs.readdir( dir );
@@ -41,7 +41,7 @@ const getData = async () => {
     .map( line => line.split( '=' ))
     .reduce(( data, current ) => {
       if ( current[0].length ) {
-        data[current[0].trim()] = current[1].trim();
+        data[current[0].trim()] = current[1] ? current[1].trim() : ' ';
       }
 
       return data;
