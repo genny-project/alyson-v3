@@ -160,24 +160,44 @@ const handleReduceData = ( resultant, current ) => {
 
   /* If the current has a parentCode, ensure there is an accompanying base entity. */
   if ( current.parentCode ) {
+    const fakeLink = {
+      created: current.created,
+      updated: current.updated,
+      code: current.code,
+      weight: ( current.weight != null ) ? current.weight : 1,
+      link: {
+        attributeCode: 'LNK_CORE',
+        targetCode: current.code,
+        sourceCode: current.parentCode,
+        weight: 1,
+        linkValue: 'LINK',
+        ...current.link,
+      },
+    };
+
     /* If the parent base entity does not exist, simply create a basic one with a link
      * back to the current base entity. */
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
-        links: [current],
+        links: [fakeLink],
       };
     }
     /* If there already is a base entity, add the current base entity to the list of links
      * inside of it. Be sure that no duplicates occur by filtering out the current's code
      * from the list of existing links. */
     else {
+      const noExistingLinks = !resultant[current.parentCode].links;
+
+      const newLinks = noExistingLinks ? [current] : [
+        fakeLink,
+        ...resultant[current.parentCode].links.filter( link => {
+          return link.code !== current.code;
+        }),
+      ];
+
       resultant[current.parentCode] = {
         ...resultant[current.parentCode],
-        links: [
-          ...resultant[current.parentCode].links
-            ? resultant[current.parentCode].links.filter(({ code }) => code !== current.code )
-            : [],
-        ],
+        links: newLinks,
       };
     }
   }

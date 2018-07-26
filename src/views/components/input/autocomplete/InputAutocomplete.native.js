@@ -175,7 +175,6 @@ class InputAutocomplete extends Component {
                         />
                       </Touchable>
                     </Box>
-                    {console.log( getInputProps())}
                     <Input
                       {...getInputProps()}
                       type={inputType}

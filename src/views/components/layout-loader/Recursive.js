@@ -227,7 +227,7 @@ class Recursive extends Component {
       }
     }
 
-    const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;
+    const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;    
 
     const repeatedChildren = (
       injectedRepeat &&
