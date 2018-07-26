@@ -28,15 +28,16 @@ const AppStack = StackNavigator({
     shadowColor: 'transparent',
   },
   navigationOptions: props => {
-    const { headerProps } = store.getState().layout;
+    const { headerProps, showHeader } = store.getState().layout;
 
-    const showHeader = (
+    const shouldShowHeader = (
+      showHeader &&
       headerProps != null &&
       Object.keys( headerProps ).length > 0
     );
 
     return {
-      header: showHeader ? (
+      header: shouldShowHeader ? (
         <Header
           {...props}
           {...headerProps}

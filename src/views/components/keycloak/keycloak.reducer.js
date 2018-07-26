@@ -2,8 +2,8 @@
 import { KEYCLOAK_CONFIG_FETCH_REQUEST, KEYCLOAK_CONFIG_FETCH_SUCCESS, KEYCLOAK_CONFIG_FETCH_FAILURE } from '../../../constants';
 
 const configInitialState = {
-  data: {},
-  fetching: false,
+  data: null,
+  fetching: true,
   fetched: false,
   error: null,
   accessToken: null,

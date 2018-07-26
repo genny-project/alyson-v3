@@ -21,20 +21,25 @@ class AuthenticatedApp extends Component {
   render() {
     const { children, keycloak } = this.props;
 
-    if ( !keycloak.fetched )
+    if ( keycloak.fetching )
       return <AuthenticatedAppLoading />;
 
+    if ( keycloak.error )
+      return <AuthenticatedAppError error={JSON.stringify( keycloak.error )} />;
+
     if (
-      keycloak.error
-    )
-      return <AuthenticatedAppError error={keycloak.error} />;
+      keycloak.fetched &&
+      !keycloak.data
+    ) {
+      return <AuthenticatedAppError error="Unable to find Keycloak settings." />;
+    }
 
     return (
       <KeycloakProvider
         baseUrl={keycloak.data.url}
         realm={keycloak.data.realm}
         clientId={keycloak.data.clientId}
-        clientSecret={keycloak.data.credentials.secret}
+        clientSecret={keycloak.data.credentials && keycloak.data.credentials.secret}
       >
         {children}
       </KeycloakProvider>

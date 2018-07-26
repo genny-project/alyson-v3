@@ -70,7 +70,7 @@
       <string>UIInterfaceOrientationPortrait</string>
       <string>UIInterfaceOrientationLandscapeLeft</string>
       <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
+    </arr
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
     <key>CodePushDeploymentKey</key>
