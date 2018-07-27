@@ -3,6 +3,6 @@
 <plist version="1.0">
     <dict>
     <key>AppSecret</key>
-    <string>{{APPCENTER_IOS_SECRET}}</string>
+    <string>{{IOS_APPCENTER_SECRET}}</string>
     </dict>
 </plist>
