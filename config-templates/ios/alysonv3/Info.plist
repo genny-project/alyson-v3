@@ -5,7 +5,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleDisplayName</key>
-    <string>Genny</string>
+    <string>{{APP_NAME}}</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -38,7 +38,7 @@
     <key>NSCameraUsageDescription</key>
     <string>$(PRODUCT_NAME) would like to use your camera</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string></string>
+    <string/>
     <key>NSMicrophoneUsageDescription</key>
     <string>$(PRODUCT_NAME) would like to your microphone (for videos)</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
@@ -70,10 +70,10 @@
       <string>UIInterfaceOrientationPortrait</string>
       <string>UIInterfaceOrientationLandscapeLeft</string>
       <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
+    </arr
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
     <key>CodePushDeploymentKey</key>
-    <string></string>
+    <string>{{IOS_CODEPUSH_KEY}}</string>
   </dict>
 </plist>

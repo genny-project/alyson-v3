@@ -133,16 +133,16 @@
       "filename": "ipad-20x20-1x.png"
     },
     {
-      "size": "83.5x83.5",
-      "idiom": "ipad",
-      "scale": "2x",
-      "filename": "ipad-83.5x83.5-2x.png"
-    },
-    {
       "size": "76x76",
       "idiom": "ipad",
       "scale": "2x",
       "filename": "ipad-76x76-2x.png"
+    },
+    {
+      "size": "83.5x83.5",
+      "idiom": "ipad",
+      "scale": "2x",
+      "filename": "ipad-83.5x83.5-2x.png"
     },
     {
       "size": "1024x1024",
