@@ -1,5 +1,5 @@
 
-import Config from 'react-native-config';
+import Config from './config';
 
 export { default as routes } from './routes';
 export { default as sidebar } from './sidebar';
