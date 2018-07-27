@@ -9,6 +9,8 @@ import { Box, Text, Button, Heading, Icon, KeyboardAwareScrollView } from '../in
 import FormInput from './input';
 
 class Form extends Component {
+  inputRefs = {}
+
   static propTypes = {
     questionGroupCode: oneOfType(
       [string, array]
@@ -16,8 +18,6 @@ class Form extends Component {
     asks: object, // eslint-disable-line react/no-unused-prop-types
     baseEntities: object,
   }
-
-  inputRefs = {}
 
   state = {
     validationList: {},

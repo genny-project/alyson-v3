@@ -90,8 +90,8 @@ class LayoutFetcher extends Component {
       this.setState({ layout: parsed });
 
     // navigator.setParams({
-      // params,
-      // key: layoutAttribute,
+    //   params,
+    //   key: layoutAttribute,
     // });
   }
 
@@ -209,6 +209,9 @@ class LayoutFetcher extends Component {
               currentRoute.params[param] &&
               currentRoute.params[param] !== currentUrlFragments[index]
             ) {
+              params[param] = currentUrlFragments[index];
+            }
+            else {
               params[param] = currentUrlFragments[index];
             }
 
