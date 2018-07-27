@@ -3,8 +3,8 @@ export default {
     name: 'Genny',
   },
   genny: {
-    host: 'http://10.123.123.123:8088/', 
-    initUrl: 'http://alyson.genny.life',
+    host: 'https://bridge-fourdegrees-dev.outcome-hub.com/', 
+    initUrl: 'https://fourdegrees-dev.outcome-hub.com/',
     bridge: {
       port: '80',
       endpoints: {

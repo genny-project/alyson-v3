@@ -8,6 +8,7 @@ class SidebarMenu extends Component {
     items: array,
     navigation: object,
     onPress: func,
+    sidebarItemProps: object,
   }
 
   state = {
@@ -32,7 +33,7 @@ class SidebarMenu extends Component {
   }
 
   render() {
-    const { items, onPress } = this.props;
+    const { items, onPress, sidebarItemProps } = this.props;
 
     return (
       <Fragment>
@@ -50,6 +51,7 @@ class SidebarMenu extends Component {
               key={item.name}
               iconLeft={item.icon}
               onPress={onPress}
+              {...sidebarItemProps}
             />
           )
         ))}
@@ -60,6 +62,7 @@ class SidebarMenu extends Component {
           iconLeft="exit-to-app"
           name="Logout"
           onPress={onPress}
+          {...sidebarItemProps}
         />
       </Fragment>
     );
