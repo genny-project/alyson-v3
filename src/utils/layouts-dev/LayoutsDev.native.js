@@ -19,7 +19,7 @@ class LayoutsDev {
     }).then( success => {
       this.processRoutes( realm, success.data );
     }).catch( error => {
-      console.error( error );
+      console.error( 'ERROR', `http://localhost:2223/${realm}/routing.dev.json`, error );
     });
     store.dispatch( loadDevLayouts( realm ));
   }
@@ -31,7 +31,7 @@ class LayoutsDev {
     }).then( success => {
       callback( success.data );
     }).catch( error => {
-      console.error( error );
+      console.error( 'ERROR', `http://localhost:2223/${realm}/routing.dev.json`, error );
     });
   }
 

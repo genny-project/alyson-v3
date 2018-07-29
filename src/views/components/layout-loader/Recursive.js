@@ -244,24 +244,43 @@ class Recursive extends Component {
       injectedRepeat &&
       injectedRepeat instanceof Array
     )
-      ? injectedRepeat.map( child => ({
-        ...children,
-        props: {
-          ...children.props,
-          ...child,
-        },
-        context: {
-          ...context,
-          repeater: child,
-          parentRepeater: context.repeater,
-        },
-      }))
+      ? injectedRepeat.map( child => { 
+        component === 'Sublayout' && console.warn({
+          ...children,
+          props: {
+            ...children.props,
+            ...child,
+          },
+          context: {
+            ...context,
+            repeater: child,
+            parentRepeater: context.repeater,
+          },
+        });
+
+        return {
+          ...children,
+          props: {
+            ...children.props,
+            ...child,
+          },
+          context: {
+            ...context,
+            repeater: child,
+            parentRepeater: context.repeater,
+          },
+        };
+      })
       : this.injectContextIntoChildren( context, children );
 
     const componentProps = this.injectContextIntoProps({
       ...props,
       ...this.calculateConditionalProps( conditional, context ),
     });
+
+    // component == 'Sublayout' && console.warn( component, { context });
+
+    // console.log( repeatedChildren );
 
     return createElement(
       Components[component],

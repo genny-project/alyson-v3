@@ -42,10 +42,10 @@ class LayoutFetcher extends Component {
       !this.state.layout
     ) {
       /* --- ADDED FOR 4* DEV --- */
-      // if ( !this.f ) {
-      //   this.f = true;
-      //   global.LayoutsDev.load( 'fourdegrees-new' );
-      // }
+      if ( !this.f ) {
+        this.f = true;
+        global.LayoutsDev.load( 'fourdegrees-new' );
+      }
       /* ------------------------ */
 
       this.getLayout();
