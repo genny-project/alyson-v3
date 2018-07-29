@@ -29,7 +29,7 @@ const AppStack = StackNavigator({
   },
   navigationOptions: props => {
     const { headerProps, showHeader } = store.getState().layout;
-
+    
     const shouldShowHeader = (
       showHeader &&
       headerProps != null &&

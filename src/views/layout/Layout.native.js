@@ -15,6 +15,7 @@ class Layout extends Component {
     title: string,
     layout: object,
     header: object,
+    sidebar: object,
     hideSidebar: bool,
     navigation: object,
     baseEntities: object,
@@ -51,6 +52,10 @@ class Layout extends Component {
       this.setHeaderProperties();
     }
 
+    if ( !shallowCompare( this.props.sidebar, prevProps.sidebar )) {
+      this.setSidebarProperties();
+    }
+
     if ( !this.state.hasLoadedLayouts ) {
       const hasNowLoadedLayouts = (
         Object
@@ -64,12 +69,19 @@ class Layout extends Component {
       ) {
         this.setHeaderProperties();
       }
+
+      if (
+        hasNowLoadedLayouts &&
+        this.props.sidebar != null
+      ) {
+        this.setSidebarProperties();
+      }
     }
   }
 
   setLayoutProperties() {
     const { layout, title, appColor, hideSidebar, navigation } = this.props;
-
+    
     if ( !layout )
       return;
 
@@ -97,13 +109,11 @@ class Layout extends Component {
     else if ( hideSidebar == null ) {
       layout.setSidebarVisibility( true );
     }
-
-    this.setHeaderProperties();
   }
 
   setHeaderProperties() {
     const { header, navigation } = this.props;
-
+    
     if ( header && header.variant ) {
       const { attributes } = this.props.baseEntities;
       const keys = Object.keys( this.props.baseEntities.attributes );
@@ -116,7 +126,7 @@ class Layout extends Component {
 
           const attribute = attributes[keys[i]];
           const layoutPath = removeStartingAndEndingSlashes( attribute.PRI_LAYOUT_URI.value );
-
+          
           if (
             layoutPath === `header/header.${header.variant}` ||
             layoutPath === `sublayouts/header-${header.variant}`
@@ -151,10 +161,68 @@ class Layout extends Component {
     }
     else {
       this.props.layout.setHeaderVisibility( false );
-
+      
       if ( navigation ) {
         navigation.setParams({
           showHeader: false,
+        });
+      }
+    }
+  }
+
+  setSidebarProperties() {
+    const { sidebar, navigation } = this.props;
+    
+    if ( sidebar && sidebar.variant ) {
+      const { attributes } = this.props.baseEntities;
+      const keys = Object.keys( this.props.baseEntities.attributes );
+
+      for ( let i = 0; i < keys.length; i++ ) {
+        if ( keys[i].startsWith( 'LAY_' )) {
+          if ( !this.state.hasLoadedLayouts ) {
+            this.setState({ hasLoadedLayouts: true });
+          }
+
+          const attribute = attributes[keys[i]];
+          const layoutPath = removeStartingAndEndingSlashes( attribute.PRI_LAYOUT_URI.value );
+          
+          if (
+            layoutPath === `sidebar/sidebar.${sidebar.variant}` ||
+            layoutPath === `sublayouts/sidebar-${sidebar.variant}`
+          ) {
+            const layout = attribute.PRI_LAYOUT_DATA.valueString;
+            let parsed = null;
+
+            try {
+              parsed = JSON.parse( layout );
+            }
+            catch ( e ) {
+              console.warn( 'Unable to parse sidebar layout data', layout );
+            }
+
+            if ( parsed ) {
+              this.props.layout.setSidebarProps( parsed );
+              this.props.layout.setSidebarVisibility( true );
+
+              if ( navigation ) {
+                navigation.setParams({
+                  sidebarProps: parsed,
+                  showSidebar: true,
+                });
+              }
+            }
+
+            break;
+          }
+        }
+      }
+    }
+    else {
+      this.props.layout.setSidebarVisibility( false );
+      
+      if ( navigation ) {
+        navigation.setParams({
+          showSidebar: false,
         });
       }
     }

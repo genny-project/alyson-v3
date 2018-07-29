@@ -33,6 +33,7 @@ class LayoutLoader extends Component {
           title="Loading..."
           appColor="dark"
           header={{ variant: 'default' }}
+          sidebar={{ variant: 'default' }}
         >
           <Timeout
             duration={60000}

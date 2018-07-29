@@ -11,6 +11,7 @@ class Sidebar extends Component {
     headerImage: string,
     items: array,
     navigation: object,
+    sidebarItemProps: object,
   }
 
   handleCloseSidebar = () => {
@@ -18,7 +19,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { headerImage, items } = this.props;
+    const { headerImage, items, sidebarItemProps } = this.props;
 
     return (
       <LayoutConsumer>
@@ -48,6 +49,7 @@ class Sidebar extends Component {
                 <SidebarMenu
                   items={items}
                   onPress={this.handleCloseSidebar}
+                  sidebarItemProps={sidebarItemProps}
                 />
               </Box>
             </Box>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { object } from 'prop-types';
+import { object, string, bool } from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dlv from 'dlv';
@@ -9,12 +9,28 @@ import SidebarBody from './body';
 
 class Sidebar extends Component {
   static propTypes = {
-    baseEntities: object,
-    aliases: object,
+    getItemDataFromStore: false,
   }
 
+  static propTypes = {
+    baseEntities: object,
+    aliases: object,
+    sidebarRootCode: string,
+    sidebarItemProps: object,
+    getItemDataFromStore: bool,
+  }
+
+  /*
+    getItemDataFromStore prop allows the data of the item
+    from the store will be passed down to the render and
+    be assessible in a custom sublayout:
+
+    itemBaseEntity: base entity from data field,
+    itemAttributes: attributes from attribute field
+  */
+
   getLinkedBaseEntities = ( root, isRecursive ) => {
-    const { baseEntities } = this.props;
+    const { baseEntities, getItemDataFromStore } = this.props;
     const links = dlv( baseEntities, `data.${root}.links` );
 
     if ( !isArray( links, { ofMinLength: 1 }))
@@ -34,7 +50,15 @@ class Sidebar extends Component {
 
       const { targetCode } = link.link;
       const baseEntityName = dlv( baseEntities, `data.${targetCode}.name` );
+      let itemData = {};
 
+      if ( getItemDataFromStore ) {
+        itemData = {
+          itemBaseEntity: dlv( baseEntities, `data.${targetCode}` ),
+          itemAttributes: dlv( baseEntities, `attributes.${targetCode}` ),
+        };
+      }
+      
       if ( isString( baseEntityName, { ofMinLength: 1 })) {
         const icon = dlv( baseEntities, `attributes.${targetCode}.PRI_IMAGE_URL.valueString` );
 
@@ -43,6 +67,7 @@ class Sidebar extends Component {
 
           if ( isArray( linkedBaseEntities, { ofMinLength: 1 })) {
             items.push({
+              ...itemData,
               icon,
               name: baseEntityName,
               items: linkedBaseEntities,
@@ -93,13 +118,15 @@ class Sidebar extends Component {
   }
 
   render() {
-    const items = this.getLinkedBaseEntities( 'GRP_ROOT', true );
-    const logo = this.getSidebarImage();
-
+    const { sidebarRootCode, sidebarItemProps } = this.props;
+    const items = this.getLinkedBaseEntities( `${sidebarRootCode || 'GRP_ROOT'}`, true );
+    const logo = this.getSidebarImage(); 
+    
     return (
       <SidebarBody
         items={items}
         headerImage={logo}
+        sidebarItemProps={sidebarItemProps}
       />
     );
   }
@@ -111,6 +138,7 @@ const mapStateToProps = state => ({
   sidebar: state.sidebar,
   baseEntities: state.vertx.baseEntities,
   aliases: state.vertx.aliases,
+  ...state.layout.sidebarProps,
 });
 
 const mapDispatchToProps = dispatch => {

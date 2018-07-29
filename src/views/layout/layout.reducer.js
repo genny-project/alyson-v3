@@ -25,6 +25,12 @@ const reducer = ( state = initialState, { type, payload }) => {
         headerProps: payload,
       };
 
+    case 'LAYOUT_SIDEBAR_PROPS_SET':
+      return {
+        ...state,
+        sidebarProps: payload,
+      };
+
     case 'APP_NAME_SET':
       return {
         ...state,

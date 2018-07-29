@@ -65,6 +65,14 @@ class LayoutProvider extends Component {
     );
   }
 
+  setSidebarProps = props => {
+    this.setState({ sidebarProps: props || {} });
+
+    store.dispatch(
+      actions.setSidebarProps( props || {})
+    );
+  }
+
   setTitle = title => {
     this.setState({ title });
   }
@@ -97,9 +105,11 @@ class LayoutProvider extends Component {
     setSidebarVisibility: this.setSidebarVisibility,
     setHeaderVisibility: this.setHeaderVisibility,
     setHeaderProps: this.setHeaderProps,
+    setSidebarProps: this.setSidebarProps,
     hideSidebar: false,
     showHeader: false,
     headerProps: {},
+    sidebarProps: {},
   }
 
   render() {
