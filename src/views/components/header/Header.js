@@ -39,6 +39,7 @@ class Header extends Component {
     barStyle: string,
     backgroundColor: string,
     layout: object,
+    title: string,
     headerLeft: shape({
       showMenu: oneOfType(
         [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
@@ -79,7 +80,10 @@ class Header extends Component {
                   padding={props.padding}
                   boxShadow={props.boxShadow}
                 >
-                  <HeaderLeft {...props.headerLeft} />
+                  <HeaderLeft 
+                    {...props.headerLeft} 
+                    title={props.title}
+                  />
                   <HeaderRight {...props.headerRight} />
                 </Box>
               </StatusBar>

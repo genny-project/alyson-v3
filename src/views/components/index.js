@@ -50,6 +50,7 @@ export { default as alert } from './alert';
 export { default as ActivityIndicator } from './activity-indicator';
 export { default as Header } from './header';
 export { default as Sublayout } from './sublayout';
+export { default as EventTouchable } from './event-touchable';
 
 export * from './keycloak';
 export * from './vertx';
