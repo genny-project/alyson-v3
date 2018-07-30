@@ -259,6 +259,7 @@ class Input extends Component {
             {...this.props}
             ref={input => this.input = input}
           />
+        );
 
       case 'segmentedcontrol':
         return (
