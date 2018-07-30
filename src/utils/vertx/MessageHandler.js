@@ -59,6 +59,9 @@ class MessageHandler {
           ...output.payload.items,
           ...current.payload.items.map( item => ({
             ...item,
+            delete: current.payload.delete,
+            replace: current.payload.replace,
+            shouldDeleteLinkedBaseEntities: current.payload.shouldDeleteLinkedBaseEntities,
             parentCode: current.payload.parentCode,
           })),
         ],
