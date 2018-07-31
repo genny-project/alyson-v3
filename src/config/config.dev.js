@@ -4,7 +4,7 @@ export default {
   },
   genny: {
     host: 'https://bridge-channel40-staging.outcome-hub.com',
-    initUrl: 'http://app-staging.outcome-hub.com',
+    initUrl: 'https://app-staging.outcome-hub.com',
     bridge: {
       port: '80',
       endpoints: {
