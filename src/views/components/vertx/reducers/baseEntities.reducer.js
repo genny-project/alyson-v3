@@ -1,3 +1,5 @@
+import { isArray } from '../../../../utils';
+
 const initialState = {
   data: {},
   relationships: {},
@@ -76,10 +78,7 @@ const getDisplayValueField = ( item ) => {
 const handleReduceAttributeCodes = ( resultantAttributes, currentAttribute ) => {
   const displayValue = getDisplayValueField( currentAttribute );
 
-  if (
-    displayValue !== null &&
-    displayValue !== undefined
-  ) {
+  if ( displayValue != null ) {
     currentAttribute['value'] = displayValue;
   }
 
@@ -121,17 +120,16 @@ const handleReduceLinks = ( resultant, current ) => {
       };
     }
     else {
-      const existingLinks = (
-        resultant[current.parentCode] &&
-        resultant[current.parentCode].links &&
-        resultant[current.parentCode].links instanceof Array
-      );
-
       /* Group all the parent codes inside a links array. */
       resultant[current.parentCode] = {
         ...resultant[current.parentCode],
         links: [
-          ...existingLinks
+          ...(
+            resultant[current.parentCode] &&
+            isArray( resultant[current.parentCode].links ) &&
+            !current.replace &&
+            !current.shouldDeleteLinkedBaseEntities
+          )
             ? resultant[current.parentCode].links.filter(({ code }) => code !== current.code )
             : [],
           current.code,
@@ -144,10 +142,20 @@ const handleReduceLinks = ( resultant, current ) => {
 };
 
 const handleReduceDefinitionData = ( resultant, current ) => {
-  resultant[current.code] = {
-    ...current,
-    dataType: current.dataType.typeName,
-  };
+  if (
+    current.replace ||
+    current.delete
+  ) {
+    resultant[current.code] = {
+      dataType: current.dataType.typeName,
+    };
+  }
+  else {
+    resultant[current.code] = {
+      ...current,
+      dataType: current.dataType.typeName,
+    };
+  }
 
   return resultant;
 };
@@ -189,10 +197,12 @@ const handleReduceData = ( resultant, current ) => {
       const noExistingLinks = !resultant[current.parentCode].links;
 
       const newLinks = noExistingLinks ? [current] : [
-        fakeLink,
-        ...resultant[current.parentCode].links.filter( link => {
-          return link.code !== current.code;
-        }),
+        ...(
+          !current.replace &&
+          !current.shouldDeleteLinkedBaseEntities
+        )
+          ? resultant[current.parentCode].links.filter( link => link.targetCode !== current.code )
+          : [],
       ];
 
       resultant[current.parentCode] = {
@@ -219,11 +229,7 @@ const handleReduceAskQuestionData = ( resultant, current ) => {
 
   resultant[current.question.attributeCode] = wantedData;
 
-  if (
-    wantedData.childAsks != null &&
-    wantedData.childAsks instanceof Array &&
-    wantedData.childAsks.length > 0
-  ) {
+  if ( isArray( wantedData.childAsks, { ofMinLength: 1 })) {
     return wantedData.childAsks.reduce( handleReduceAskQuestionData, resultant );
   }
 
@@ -235,11 +241,7 @@ const handleReduceAskQuestionTypes = ( resultant, current ) => {
 
   resultant[dataType.typeName] = dataType;
 
-  if (
-    childAsks != null &&
-    childAsks instanceof Array &&
-    childAsks.length > 0
-  ) {
+  if ( isArray( childAsks, { ofMinLength: 1 })) {
     return childAsks.reduce( handleReduceAskQuestionTypes, resultant );
   }
 
