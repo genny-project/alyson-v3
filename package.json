@@ -44,6 +44,7 @@
     "lodash.range": "^3.2.0",
     "lodash.uppercase": "^4.3.0",
     "moment": "^2.22.2",
+    "npm": "^6.2.0",
     "prettier": "^1.13.7",
     "prettier-bytes": "^1.0.4",
     "prettier-eslint": "^8.8.2",
