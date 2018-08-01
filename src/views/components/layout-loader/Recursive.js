@@ -6,7 +6,6 @@ import { object, any, string } from 'prop-types';
 import { doesValueMatch } from '../../../utils/data-query/operators/find';
 import { store } from '../../../redux';
 import * as Components from '../index';
-import isObject from '../../../utils/types/object/isObject';
 
 class Recursive extends Component {
   static propTypes = {
