@@ -27,6 +27,7 @@ class InputAddress extends Component {
     prefixIcon: 'place',
     icon: 'expand-more',
     placeholder: 'Select an address...',
+    getShortNameForAddressComponents: ['country'],
   }
 
   static propTypes = {
@@ -41,6 +42,7 @@ class InputAddress extends Component {
     excludeAddressFields: array,
     mapAddressComponentToField: object,
     injectCustomAddressComponents: object,
+    getShortNameForAddressComponents: array,
   }
 
   constructor( props ) {
@@ -113,14 +115,22 @@ class InputAddress extends Component {
   }
 
   handleReduceAddressComponent = ( resultant, addressComponent ) => {
-    const { includeAddressFields, mapAddressComponentToField } = this.props;
-    const { long_name, types } = addressComponent;
+    const {
+      includeAddressFields,
+      mapAddressComponentToField,
+      getShortNameForAddressComponents,
+    } = this.props;
+
+    const { long_name, short_name, types } = addressComponent;
 
     types.forEach( type => {
       if ( includeAddressFields.includes( type )) {
         const key = mapAddressComponentToField[type] || type;
 
-        resultant[key] = long_name;
+        if ( getShortNameForAddressComponents.includes( key ))
+          resultant[key] = short_name;
+        else
+          resultant[key] = long_name;
       }
     });
 

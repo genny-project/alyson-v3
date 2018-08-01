@@ -11,7 +11,7 @@ class Tabs extends Component {
     width: '100%',
     labelProps: {},
     indicatorProps: {},
-    sceneProps: {},    
+    sceneProps: {},
   }
 
   static propTypes = {
@@ -69,7 +69,7 @@ class Tabs extends Component {
   }
 
   handleSceneHeight = ( route ) =>  ( event ) => {
-    var { height } = event.nativeEvent.layout;      
+    var { height } = event.nativeEvent.layout;
 
     this.setState( state => ({
       sceneHeights: {
@@ -218,6 +218,7 @@ class Tabs extends Component {
 
     return (
       <Box
+        flex={1}
         alignItems="center"
         justifyContent="center"
         {...sceneStyle}
