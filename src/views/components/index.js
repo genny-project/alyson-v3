@@ -4,6 +4,7 @@ export { default as Box } from './box';
 export { default as Card } from './card';
 export { default as List } from './list';
 export { default as BucketView } from './bucket-view';
+export { default as Chat } from '../pages/chat';
 export { default as Button } from './button';
 export { default as Collapsible } from './collapsible';
 export { default as Container } from './container';

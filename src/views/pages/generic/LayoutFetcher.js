@@ -10,11 +10,11 @@ class LayoutFetcher extends Component {
     currentUrl: string.isRequired,
     navigation: object,
     navigationReducer: object,
-  }
+  };
 
   state = {
     layout: null,
-  }
+  };
 
   componentDidMount() {
     this.getLayout();
@@ -37,29 +37,22 @@ class LayoutFetcher extends Component {
   }
 
   componentDidUpdate( prevProps ) {
-    if (
-      prevProps.currentUrl !== this.props.currentUrl ||
-      !this.state.layout
-    ) {
+    if ( prevProps.currentUrl !== this.props.currentUrl || !this.state.layout ) {
       /* --- ADDED FOR 4* DEV --- */
-      if ( !this.f ) {
-        this.f = true;
-        global.LayoutsDev.load( 'fourdegrees-new' );
-      }
+      // if ( !this.f ) {
+      this.f = true;
+      global.LayoutsDev.load( 'fourdegrees-new' );
+      // }
       /* ------------------------ */
 
       this.getLayout();
     }
   }
 
-  getAttributes(
-    attributes = this.props.baseEntities.attributes
-  ) {
-    const layoutAttributes =
-      Object
-        .keys( attributes )
-        .filter( this.handleFilterAttributes )
-        .sort( this.handleSortAttributes );
+  getAttributes( attributes = this.props.baseEntities.attributes ) {
+    const layoutAttributes = Object.keys( attributes )
+      .filter( this.handleFilterAttributes )
+      .sort( this.handleSortAttributes );
 
     return layoutAttributes;
   }
@@ -68,12 +61,11 @@ class LayoutFetcher extends Component {
     const { attributes } = this.props.baseEntities;
     const { layoutAttribute } = this.findLayoutAttribute();
 
-    const layout = (
+    const layout =
       layoutAttribute &&
       attributes[layoutAttribute] &&
       attributes[layoutAttribute].PRI_LAYOUT_DATA &&
-      attributes[layoutAttribute].PRI_LAYOUT_DATA.valueString
-    );
+      attributes[layoutAttribute].PRI_LAYOUT_DATA.valueString;
 
     let parsed = null;
 
@@ -81,26 +73,23 @@ class LayoutFetcher extends Component {
       if ( layout ) {
         parsed = JSON.parse( layout );
       }
-    }
-    catch ( error ) {
+    } catch ( error ) {
       console.warn( 'Unable to parse layout', layout );
     }
 
-    if ( parsed )
-      this.setState({ layout: parsed });
+    if ( parsed ) this.setState({ layout: parsed });
 
     // navigator.setParams({
-    //   params,
-    //   key: layoutAttribute,
+    // params,
+    // key: layoutAttribute,
     // });
   }
 
   handleFilterAttributes = attribute => {
-    if ( attribute.startsWith( 'LAY_' ))
-      return true;
+    if ( attribute.startsWith( 'LAY_' )) return true;
 
     return false;
-  }
+  };
 
   /**
    * Sort the attributes so that the routes which contain
@@ -123,41 +112,32 @@ class LayoutFetcher extends Component {
   handleSortAttributes = ( attributeA, attributeB ) => {
     const { attributes } = this.props.baseEntities;
 
-    const routeA = (
+    const routeA =
       attributes[attributeA] &&
       attributes[attributeA].PRI_LAYOUT_URI &&
-      attributes[attributeA].PRI_LAYOUT_URI.valueString
-    );
+      attributes[attributeA].PRI_LAYOUT_URI.valueString;
 
-    if ( !routeA )
-      return 0;
+    if ( !routeA ) return 0;
 
-    const routeB = (
+    const routeB =
       attributes[attributeB] &&
       attributes[attributeB].PRI_LAYOUT_URI &&
-      attributes[attributeB].PRI_LAYOUT_URI.valueString
-    );
+      attributes[attributeB].PRI_LAYOUT_URI.valueString;
 
-    if ( !routeB )
-      return 0;
+    if ( !routeB ) return 0;
 
-    if (
-      routeA.includes( ':' ) &&
-      routeB.includes( ':' )
-    ) {
+    if ( routeA.includes( ':' ) && routeB.includes( ':' )) {
       return 0;
     }
 
     /* Put routeA after layoutB. */
-    if ( routeA.includes( ':' ))
-      return 1;
+    if ( routeA.includes( ':' )) return 1;
 
     /* Put routeB after layoutA. */
-    if ( routeB.includes( ':' ))
-      return -1;
+    if ( routeB.includes( ':' )) return -1;
 
     return 0;
-  }
+  };
 
   handleMapUrlFragments = currentUrlFragments => ( fragment, index ) => {
     if ( fragment.startsWith( ':' )) {
@@ -165,24 +145,21 @@ class LayoutFetcher extends Component {
     }
 
     return fragment;
-  }
+  };
 
   findLayoutAttribute() {
     const { currentUrl, baseEntities, navigationReducer } = this.props;
     const attributes = this.getAttributes();
     const strippedCurrentUrl = removeStartingAndEndingSlashes( currentUrl );
     const params = {};
-    const currentRoute = (
-      navigationReducer.routes &&
-      navigationReducer.routes[navigationReducer.index]
-    );
+    const currentRoute =
+      navigationReducer.routes && navigationReducer.routes[navigationReducer.index];
 
     const layoutAttribute = attributes.find( attribute => {
-      const layoutUrl = (
+      const layoutUrl =
         baseEntities.attributes[attribute] &&
         baseEntities.attributes[attribute].PRI_LAYOUT_URI &&
-        baseEntities.attributes[attribute].PRI_LAYOUT_URI.valueString
-      );
+        baseEntities.attributes[attribute].PRI_LAYOUT_URI.valueString;
 
       if ( !layoutUrl ) {
         return false;
@@ -194,8 +171,7 @@ class LayoutFetcher extends Component {
         const layoutUrlFragments = strippedLayoutUrl.split( '/' );
         const currentUrlFragments = strippedCurrentUrl.split( '/' );
 
-        if ( layoutUrlFragments.length !== currentUrlFragments.length )
-          return false;
+        if ( layoutUrlFragments.length !== currentUrlFragments.length ) return false;
 
         /* Keep locally so we add the params. */
         const handleMapUrlFragments = ( fragment, index ) => {
@@ -210,8 +186,7 @@ class LayoutFetcher extends Component {
               currentRoute.params[param] !== currentUrlFragments[index]
             ) {
               params[param] = currentUrlFragments[index];
-            }
-            else {
+            } else {
               params[param] = currentUrlFragments[index];
             }
 
@@ -221,10 +196,7 @@ class LayoutFetcher extends Component {
           return fragment;
         };
 
-        strippedLayoutUrl =
-          layoutUrlFragments
-            .map( handleMapUrlFragments )
-            .join( '/' );
+        strippedLayoutUrl = layoutUrlFragments.map( handleMapUrlFragments ).join( '/' );
       }
 
       if ( strippedLayoutUrl === strippedCurrentUrl ) {
@@ -234,10 +206,7 @@ class LayoutFetcher extends Component {
       return false;
     });
 
-    if (
-      Object.keys( params ).length > 0 &&
-      this.props.navigation
-    ) {
+    if ( Object.keys( params ).length > 0 && this.props.navigation ) {
       this.props.navigation.setParams( params );
     }
 
@@ -248,7 +217,7 @@ class LayoutFetcher extends Component {
 
   render() {
     const { layout } = this.state;
-    
+
     return this.props.children( layout );
   }
 }
