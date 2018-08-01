@@ -28,6 +28,7 @@ export default ( data, options, allData ) => {
       }
 
       beg.linkValue = link.link.linkValue;
+      beg.weight = link.weight;
 
       if ( options.as ) {
         if ( options.multiple ) {
