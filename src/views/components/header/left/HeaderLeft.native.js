@@ -16,6 +16,7 @@ class HeaderLeft extends Component {
     showTitle: bool,
     showLogo: bool,
     showMenu: bool,
+    title: string,
   }
 
   handleToggleMenu = () => {
@@ -43,7 +44,7 @@ class HeaderLeft extends Component {
     } = this.props;
     const { index, routes } = navigationReducer;
     const { params } = routes[index];
-    const title = params && params.title;
+    const title = this.props.title || ( params && params.title );
 
     const strippedLayoutName = (
       params != null &&
@@ -88,10 +89,11 @@ class HeaderLeft extends Component {
             {showLogo ? (
               <Box
                 marginLeft={5}
-                marginRight={20}
+                marginRight={10}
               >
                 <Image
-                  height="100%"
+                  height={50}
+                  width={50}
                   source={logoSource}
                 />
               </Box>

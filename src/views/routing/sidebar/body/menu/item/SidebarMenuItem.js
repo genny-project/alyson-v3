@@ -27,7 +27,7 @@ class SidebarMenuItem extends Component {
     const element = (
       <LayoutConsumer>
         {layout => {
-          if ( sidebarItemLayout ) {
+          if ( sidebarItemLayout && path !== 'logout' ) {
             return (
               <Sublayout
                 {...layout}

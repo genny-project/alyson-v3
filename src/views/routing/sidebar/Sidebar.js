@@ -16,7 +16,7 @@ class Sidebar extends Component {
     baseEntities: object,
     aliases: object,
     sidebarRootCode: string,
-    sidebarItemProps: object,
+    sidebarProps: object,
     getItemDataFromStore: bool,
   }
 
@@ -63,8 +63,10 @@ class Sidebar extends Component {
         const icon = dlv( baseEntities, `attributes.${targetCode}.PRI_IMAGE_URL.valueString` );
 
         if ( isRecursive ) {
-          const linkedBaseEntities = this.getLinkedBaseEntities( targetCode );
-
+          let linkedBaseEntities = this.getLinkedBaseEntities( targetCode );
+          
+          linkedBaseEntities = linkedBaseEntities.filter( x => x.linkValue === 'LNK_CORE' );
+          
           if ( isArray( linkedBaseEntities, { ofMinLength: 1 })) {
             items.push({
               ...itemData,
@@ -84,7 +86,7 @@ class Sidebar extends Component {
           onPress: this.handlePress( link.link ),
         });
       }
-
+      
       return items;
     }, [] );
   }
@@ -118,15 +120,15 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { sidebarRootCode, sidebarItemProps } = this.props;
+    const { sidebarRootCode, sidebarProps } = this.props;
     const items = this.getLinkedBaseEntities( `${sidebarRootCode || 'GRP_ROOT'}`, true );
     const logo = this.getSidebarImage(); 
     
     return (
       <SidebarBody
+        {...sidebarProps}
         items={items}
         headerImage={logo}
-        sidebarItemProps={sidebarItemProps}
       />
     );
   }
