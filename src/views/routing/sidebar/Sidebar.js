@@ -16,7 +16,7 @@ class Sidebar extends Component {
     baseEntities: object,
     aliases: object,
     sidebarRootCode: string,
-    sidebarItemProps: object,
+    sidebarProps: object,
     getItemDataFromStore: bool,
   }
 
@@ -120,15 +120,15 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { sidebarRootCode, sidebarItemProps } = this.props;
+    const { sidebarRootCode, sidebarProps } = this.props;
     const items = this.getLinkedBaseEntities( `${sidebarRootCode || 'GRP_ROOT'}`, true );
     const logo = this.getSidebarImage(); 
     
     return (
       <SidebarBody
+        {...sidebarProps}
         items={items}
         headerImage={logo}
-        sidebarItemProps={sidebarItemProps}
       />
     );
   }

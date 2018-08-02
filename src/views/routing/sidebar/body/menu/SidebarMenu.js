@@ -55,15 +55,21 @@ class SidebarMenu extends Component {
             />
           )
         ))}
-
-        <SidebarMenuItem
-          path="logout"
-          key="logout"
-          iconLeft="exit-to-app"
-          name="Logout"
-          onPress={onPress}
-          {...sidebarItemProps}
-        />
+        {
+          sidebarItemProps &&
+          sidebarItemProps.hideLogout
+            ? null
+            : (
+              <SidebarMenuItem
+                path="logout"
+                key="logout"
+                iconLeft="exit-to-app"
+                name="Logout"
+                onPress={onPress}
+                {...sidebarItemProps}
+              />
+            )
+        }
       </Fragment>
     );
   }
