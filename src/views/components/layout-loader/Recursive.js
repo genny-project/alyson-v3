@@ -18,13 +18,10 @@ class Recursive extends Component {
     onlyShowIf: object,
     dontShowIf: object,
     conditional: object,
-  }
+  };
 
   handleMapCurlyTemplate = template => {
-    if (
-      !template ||
-      !template.includes( '}}' )
-    ) {
+    if ( !template || !template.includes( '}}' )) {
       return template;
     }
 
@@ -37,16 +34,14 @@ class Recursive extends Component {
     const resolved = dlv( context, path );
 
     return `${resolved}${textAfterTemplate}`;
-  }
+  };
 
   curlyBracketParse = string => {
-    return (
-      String( string )
-        .split( '{{' )
-        .map( this.handleMapCurlyTemplate )
-        .join( '' )
-    );
-  }
+    return String( string )
+      .split( '{{' )
+      .map( this.handleMapCurlyTemplate )
+      .join( '' );
+  };
 
   calculateConditionalProps = ( conditionalProps, context ) => {
     /* If no conditional props or no context is provided return an empty object */
@@ -69,7 +64,7 @@ class Recursive extends Component {
      * Check whether the condition passes. We'll reuse the should
      * render component function for this. If the condition passes return the
      * "then" props, otherwise return the "else" props.
-    */
+     */
     if ( this.ifConditionsPass( ifCondition )) {
       return thenProps;
     }
@@ -80,8 +75,7 @@ class Recursive extends Component {
   handleReducePropInjection = ( result, current, index ) => {
     const { context } = this.props;
 
-    if ( result[current] == null && result[index] == null )
-      return result;
+    if ( result[current] == null && result[index] == null ) return result;
 
     if ( typeof result[current] === 'string' ) {
       // console.warn( result[current] );
@@ -101,9 +95,7 @@ class Recursive extends Component {
     }
 
     if ( result[current] instanceof Array ) {
-      result[current] = result[current].reduce(
-        this.handleReducePropInjection, result[current]
-      );
+      result[current] = result[current].reduce( this.handleReducePropInjection, result[current] );
 
       return result;
     }
@@ -122,13 +114,10 @@ class Recursive extends Component {
     }
 
     return result;
-  }
+  };
 
   injectContextIntoChildren( context, children ) {
-    return (
-      typeof children === 'string' &&
-      children.indexOf( '{{' ) >= 0
-    )
+    return typeof children === 'string' && children.indexOf( '{{' ) >= 0
       ? this.curlyBracketParse( children )
       : children;
   }
@@ -140,15 +129,11 @@ class Recursive extends Component {
    * correctly.
    */
   injectContextIntoProps( props ) {
-    if ( !props )
-      return {};
+    if ( !props ) return {};
 
     const propsCopy = copy( props );
 
-    const afterProps =
-      Object
-        .keys( propsCopy )
-        .reduce( this.handleReducePropInjection, propsCopy );
+    const afterProps = Object.keys( propsCopy ).reduce( this.handleReducePropInjection, propsCopy );
 
     return afterProps;
   }
@@ -204,10 +189,7 @@ class Recursive extends Component {
       conditional,
     } = this.props;
 
-    if (
-      !component ||
-      !Components[component]
-    ) {
+    if ( !component || !Components[component] ) {
       return (
         <Text>
           Component '
@@ -233,45 +215,44 @@ class Recursive extends Component {
       }
     }
 
-    const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;    
+    const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;
 
     /**
      * TODO:
      *
      * Investigate performance optimisation
      */
-    const repeatedChildren = (
-      injectedRepeat &&
-      injectedRepeat instanceof Array
-    )
-      ? injectedRepeat.map( child => { 
-        component === 'Sublayout' && console.warn({
-          ...children,
-          props: {
-            ...children.props,
-            ...child,
-          },
-          context: {
-            ...context,
-            repeater: child,
-            parentRepeater: context.repeater,
-          },
-        });
+    const repeatedChildren =
+      injectedRepeat && injectedRepeat instanceof Array
+        ? injectedRepeat.map( child => {
+          component === 'Sublayout' &&
+              console.warn({
+                ...children,
+                props: {
+                  ...children.props,
+                  ...child,
+                },
+                context: {
+                  ...context,
+                  repeater: child,
+                  parentRepeater: context.repeater,
+                },
+              });
 
-        return {
-          ...children,
-          props: {
-            ...children.props,
-            ...child,
-          },
-          context: {
-            ...context,
-            repeater: child,
-            parentRepeater: context.repeater,
-          },
-        };
-      })
-      : this.injectContextIntoChildren( context, children );
+          return {
+            ...children,
+            props: {
+              ...children.props,
+              ...child,
+            },
+            context: {
+              ...context,
+              repeater: child,
+              parentRepeater: context.repeater,
+            },
+          };
+        })
+        : this.injectContextIntoChildren( context, children );
 
     const componentProps = this.injectContextIntoProps({
       ...props,
@@ -285,8 +266,8 @@ class Recursive extends Component {
     return createElement(
       Components[component],
       componentProps,
-      repeatedChildren instanceof Array
-        ? repeatedChildren.map(( child, index ) => (
+      repeatedChildren instanceof Array ? (
+        repeatedChildren.map(( child, index ) => (
           <Recursive
             context={context}
             // eslint-disable-next-line react/no-array-index-key
@@ -294,14 +275,14 @@ class Recursive extends Component {
             {...child}
           />
         ))
-        : typeof repeatedChildren === 'object'
-          ? (
-            <Recursive
-              context={context}
-              {...repeatedChildren}
-            />
-          )
-          : repeatedChildren
+      ) : typeof repeatedChildren === 'object' ? (
+        <Recursive
+          context={context}
+          {...repeatedChildren}
+        />
+      ) : (
+        repeatedChildren
+      )
     );
   }
 }

@@ -17,12 +17,11 @@ class LayoutLoader extends Component {
     navigation: object,
     sublayoutProps: object,
     sublayout: bool,
-  }
+  };
 
   handleRetry = () => {
-    if ( this.timeout )
-      this.timeout.startTimeout();
-  }
+    if ( this.timeout ) this.timeout.startTimeout();
+  };
 
   render() {
     const { layout, data, navigation, sublayoutProps, sublayout } = this.props;
@@ -37,7 +36,7 @@ class LayoutLoader extends Component {
         >
           <Timeout
             duration={60000}
-            ref={timeout => this.timeout = timeout}
+            ref={timeout => ( this.timeout = timeout )}
           >
             {({ isTimeUp, secondsElapsed }) => (
               <Box
@@ -50,13 +49,13 @@ class LayoutLoader extends Component {
                 {isTimeUp ? (
                   <Fragment>
                     <Text align="center">
-                      Sorry! We were unable to load this page.
+Sorry! We were unable to load this page.
                     </Text>
 
                     <Box height={10} />
 
                     <Text align="center">
-                      Please check your internet connection and try again.
+Please check your internet connection and try again.
                     </Text>
 
                     <Box height={20} />
@@ -75,17 +74,20 @@ class LayoutLoader extends Component {
                     <Box height={10} />
 
                     <Text align="center">
-                      Loading...
+Loading...
                     </Text>
 
                     <Box height={10} />
 
                     {secondsElapsed > 5 ? (
                       <Text align="center">
-                        {secondsElapsed > 30 ? 'Still loading - please wait a little longer...'
-                        : secondsElapsed > 20 ? 'Still loading - please wait...'
-                        : secondsElapsed > 10 ? 'Still loading...'
-                        : 'This is taking longer than usual...'}
+                        {secondsElapsed > 30
+                          ? 'Still loading - please wait a little longer...'
+                          : secondsElapsed > 20
+                            ? 'Still loading - please wait...'
+                            : secondsElapsed > 10
+                              ? 'Still loading...'
+                              : 'This is taking longer than usual...'}
                       </Text>
                     ) : null}
                   </Fragment>
@@ -109,12 +111,11 @@ class LayoutLoader extends Component {
 
     /* Calculate the data for the layout */
     const context = {
-      query: new DataQuery( data ).query(
-        layout.query || [],
-        { navigation: navigation && navigation.state ? navigation.state.params : {} }
-      ),
+      query: new DataQuery( data ).query( layout.query || [], {
+        navigation: navigation && navigation.state ? navigation.state.params : {},
+      }),
       navigation: {
-        ...( navigation && navigation.state && navigation.state.params ) || {},
+        ...(( navigation && navigation.state && navigation.state.params ) || {}),
         ...currentRouteParams,
       },
       props: sublayoutProps,
@@ -127,10 +128,7 @@ class LayoutLoader extends Component {
         {...layout.layout}
         context={context}
       >
-        {(
-          layout.children != null &&
-          layout.children instanceof Array
-        )
+        {layout.children != null && layout.children instanceof Array
           ? layout.children.map(( child, index ) => (
             <Recursive
               key={index} // eslint-disable-line react/no-array-index-key
@@ -138,10 +136,7 @@ class LayoutLoader extends Component {
               context={context}
             />
           ))
-          : (
-            layout.children ||
-            null
-          )}
+          : layout.children || null}
       </Holder>
     );
   }
