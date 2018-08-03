@@ -39,10 +39,10 @@ class LayoutFetcher extends Component {
   componentDidUpdate( prevProps ) {
     if ( prevProps.currentUrl !== this.props.currentUrl || !this.state.layout ) {
       /* --- ADDED FOR 4* DEV --- */
-      if ( !this.f ) {
-        this.f = true;
-        global.LayoutsDev.load( 'fourdegrees-new' );
-      }
+      // if ( !this.f ) {
+      //   this.f = true;
+      //   global.LayoutsDev.load( 'fourdegrees-new' );
+      // }
       /* ------------------------ */
 
       this.getLayout();
