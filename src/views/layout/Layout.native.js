@@ -19,6 +19,7 @@ class Layout extends Component {
     hideSidebar: bool,
     navigation: object,
     baseEntities: object,
+    backgroundColor: string,
   }
 
   state = {
@@ -35,6 +36,13 @@ class Layout extends Component {
       this.props.appColor != null
     ) {
       this.props.layout.setAppColor( this.props.appColor );
+    }
+
+    if (
+      this.props.backgroundColor !== prevProps.backgroundColor &&
+      this.props.backgroundColor != null
+    ) {
+      this.props.layout.setBackgroundColor( this.props.backgroundColor );
     }
 
     if (
@@ -80,8 +88,8 @@ class Layout extends Component {
   }
 
   setLayoutProperties() {
-    const { layout, title, appColor, hideSidebar, navigation } = this.props;
-    
+    const { layout, title, appColor, hideSidebar, navigation, backgroundColor } = this.props;
+
     if ( !layout )
       return;
 
@@ -103,6 +111,13 @@ class Layout extends Component {
       layout.setAppColor( appColor );
     }
 
+    if (
+      typeof backgroundColor === 'string' &&
+      backgroundColor.length > 0
+    ) {
+      layout.setBackgroundColor( backgroundColor );
+    }
+
     if ( hideSidebar !== layout.hideSidebar ) {
       layout.setSidebarVisibility( hideSidebar );
     }
@@ -113,7 +128,7 @@ class Layout extends Component {
 
   setHeaderProperties() {
     const { header, navigation } = this.props;
-    
+
     if ( header && header.variant ) {
       const { attributes } = this.props.baseEntities;
       const keys = Object.keys( this.props.baseEntities.attributes );
@@ -126,7 +141,7 @@ class Layout extends Component {
 
           const attribute = attributes[keys[i]];
           const layoutPath = removeStartingAndEndingSlashes( attribute.PRI_LAYOUT_URI.value );
-          
+
           if (
             layoutPath === `header/header.${header.variant}` ||
             layoutPath === `sublayouts/header-${header.variant}`
@@ -161,7 +176,7 @@ class Layout extends Component {
     }
     else {
       this.props.layout.setHeaderVisibility( false );
-      
+
       if ( navigation ) {
         navigation.setParams({
           showHeader: false,
@@ -172,7 +187,7 @@ class Layout extends Component {
 
   setSidebarProperties() {
     const { sidebar, navigation } = this.props;
-    
+
     if ( sidebar && sidebar.variant ) {
       const { attributes } = this.props.baseEntities;
       const keys = Object.keys( this.props.baseEntities.attributes );
@@ -185,7 +200,7 @@ class Layout extends Component {
 
           const attribute = attributes[keys[i]];
           const layoutPath = removeStartingAndEndingSlashes( attribute.PRI_LAYOUT_URI.value );
-          
+
           if (
             layoutPath === `sidebar/sidebar.${sidebar.variant}` ||
             layoutPath === `sublayouts/sidebar-${sidebar.variant}`
@@ -219,7 +234,7 @@ class Layout extends Component {
     }
     else {
       this.props.layout.setSidebarVisibility( false );
-      
+
       if ( navigation ) {
         navigation.setParams({
           showSidebar: false,

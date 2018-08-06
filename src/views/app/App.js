@@ -18,7 +18,9 @@ class App extends Component {
                   : 0
               ),
               backgroundColor: (
-                Platform.OS === 'ios' ? layout.appColor : 'transparent'
+                Platform.OS === 'ios'
+                  ? layout.backgroundColor
+                  : 'transparent'
               ),
             }}
           >

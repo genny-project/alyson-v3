@@ -32,7 +32,7 @@ class LayoutProvider extends Component {
   setBackgroundColor = color => {
     const backgroundColor = this.backgroundColors[color] || color;
 
-    if ( !backgroundColor )
+    if ( backgroundColor )
       this.setState({ backgroundColor });
     else {
       const colors = Object.keys( color ).join( '|' );
