@@ -5,12 +5,6 @@ import { Box, Text, Button, Heading } from '../../../components';
 import { store } from '../../../../redux';
 import { fetchKeycloakConfig } from '../../../../redux/actions';
 
-const handleRetry = () => {
-  store.dispatch(
-    fetchKeycloakConfig()
-  );
-};
-
 class AuthenticatedAppError extends Component {
   static propTypes = {
     error: any,
@@ -21,6 +15,12 @@ class AuthenticatedAppError extends Component {
   componentDidMount() {
     if ( this.props.onMount )
       this.props.onMount();
+  }
+
+  handleRetry = () => {
+    store.dispatch(
+      fetchKeycloakConfig()
+    );
   }
 
   render() {
@@ -56,7 +56,7 @@ class AuthenticatedAppError extends Component {
             <Button
               color="green"
               size="md"
-              onPress={handleRetry}
+              onPress={this.handleRetry}
             >
               Retry
             </Button>
