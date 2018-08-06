@@ -10,13 +10,14 @@ import InputScroll from './scroll';
 import InputRating from './rating';
 import InputText from './text';
 import Switch from './switch';
-// import InputDropdown from './dropdown';
+import InputDropdown from './dropdown';
 import Passcode from './passcode';
 import InputRead from './read';
 import InputCurrency from './currency';
 import InputCreditCard from './credit-card';
 import InputCheckbox from './checkbox-2';
 import InputPayment from './payment';
+import AudioRecord from './audio-record';
 import SegmentedControl from './segmented-control';
 
 class Input extends Component {
@@ -157,13 +158,13 @@ class Input extends Component {
           />
         );
 
-      // case 'dropdown':
-      //   return (
-      //     <InputDropdown
-      //       {...this.props}
-      //       ref={input => this.input = input}
-      //     />
-      //   );
+      case 'dropdown':
+        return (
+          <InputDropdown
+            {...this.props}
+            ref={input => this.input = input}
+          />
+        );
 
       case 'checkbox':
         return (
@@ -261,7 +262,14 @@ class Input extends Component {
           />
         );
 
-      case 'dropdown':
+      case 'audioRecord':
+        return (
+          <AudioRecord
+            {...this.props}
+            ref={input => this.input = input}
+          />
+        );
+
       case 'segmentedcontrol':
         return (
           <SegmentedControl
