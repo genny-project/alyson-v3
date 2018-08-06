@@ -3,7 +3,7 @@ import { object, func, bool, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { NavigationActions, withNavigation } from 'react-navigation';
 import { removeStartingAndEndingSlashes } from '../../../../utils';
-import { Button, Box, Heading, Image } from '../../index';
+import { Button, Box, Heading, Image, Touchable } from '../../index';
 import { LayoutConsumer } from '../../../layout';
 
 class HeaderLeft extends Component {
@@ -16,6 +16,7 @@ class HeaderLeft extends Component {
     showTitle: bool,
     showLogo: bool,
     showMenu: bool,
+    logoAsMenuButton: bool,
     title: string,
   }
 
@@ -41,6 +42,7 @@ class HeaderLeft extends Component {
       showTitle,
       showLogo,
       showMenu,
+      logoAsMenuButton,
     } = this.props;
     const { index, routes } = navigationReducer;
     const { params } = routes[index];
@@ -74,19 +76,35 @@ class HeaderLeft extends Component {
                   icon="arrow-back"
                   paddingX={15}
                 />
-              ) : showMenu ? (
-                <Button
-                  onPress={this.handleToggleMenu}
-                  size="md"
-                  color="transparent"
-                  textColor={layout.textColor}
-                  icon="menu"
-                  paddingX={15}
-                />
-              ) : null
+              ) : showMenu &&
+                !logoAsMenuButton ? (
+                  <Button
+                    onPress={this.handleToggleMenu}
+                    size="md"
+                    color="transparent"
+                    textColor={layout.textColor}
+                    icon="menu"
+                    paddingX={15}
+                  />
+                ) : null
             }
 
-            {showLogo ? (
+            {logoAsMenuButton ? (
+              <Touchable
+                onPress={this.handleToggleMenu}
+              >
+                <Box
+                  marginLeft={5}
+                  marginRight={10}
+                >
+                  <Image
+                    height={50}
+                    width={50}
+                    source={logoSource}
+                  />
+                </Box>
+              </Touchable>
+            ) : showLogo ? (
               <Box
                 marginLeft={5}
                 marginRight={10}
