@@ -128,6 +128,7 @@ class LayoutLoader extends Component {
       },
       props: sublayoutProps,
       time: timeUtils,
+      user: data.user,
     };
 
     const Holder = sublayout ? Box : Layout;
