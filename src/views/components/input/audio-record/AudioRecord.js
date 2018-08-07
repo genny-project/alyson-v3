@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { func } from 'prop-types';
 import { Box, Icon, Touchable } from '../../index';
 
 class AudioRecord extends Component {
@@ -6,6 +7,7 @@ class AudioRecord extends Component {
   }
 
   static propTypes = {
+    onChangeValue: func,
   }
 
   state = {
@@ -14,7 +16,9 @@ class AudioRecord extends Component {
   handlePlayback = () => {
     this.setState( state => ({
       playback: !state.playback,
-    }));
+    }), () => {
+      this.props.onChangeValue( this.state.playback );
+    });
   }
 
   handleRecord = () => {

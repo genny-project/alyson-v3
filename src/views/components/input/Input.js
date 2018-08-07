@@ -263,6 +263,7 @@ class Input extends Component {
         );
 
       case 'audioRecord':
+      case 'audiorecord':
         return (
           <AudioRecord
             {...this.props}
