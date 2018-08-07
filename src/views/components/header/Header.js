@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { string, object, number, oneOfType, shape, arrayOf, bool, oneOf } from 'prop-types';
+import { ifIphoneX, getStatusBarHeight } from 'react-native-iphone-x-helper';
 import { Box, StatusBar } from '../index';
 import HeaderLeft from './left';
 import HeaderRight from './right';
@@ -69,6 +70,17 @@ class Header extends Component {
                 barStyle={props.barStyle}
                 backgroundColor={props.backgroundColor || layout.appColor}
               >
+                {ifIphoneX ? (
+                  <Box
+                    position="absolute"
+                    top={-( props.height + getStatusBarHeight())}
+                    left={0}
+                    width="100%"
+                    height={props.height + getStatusBarHeight()}
+                    backgroundColor={props.backgroundColor || layout.appColor}
+                  />
+                ) : null}
+
                 <Box
                   height={props.height}
                   justifyContent="space-between"
@@ -80,8 +92,8 @@ class Header extends Component {
                   padding={props.padding}
                   boxShadow={props.boxShadow}
                 >
-                  <HeaderLeft 
-                    {...props.headerLeft} 
+                  <HeaderLeft
+                    {...props.headerLeft}
                     title={props.title}
                   />
                   <HeaderRight {...props.headerRight} />
