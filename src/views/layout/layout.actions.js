@@ -1,3 +1,5 @@
+import { FETCH_PUBLIC_LAYOUTS_SUCCESS, FETCH_PUBLIC_LAYOUTS_FAILURE } from '../../constants';
+
 export const setSidebarVisibility = visible => ({
   type: 'LAYOUT_SIDEBAR_VISIBILITY_SET',
   payload: visible,
@@ -21,4 +23,14 @@ export const setSidebarProps = props => ({
 export const setAppName = appName => ({
   type: 'APP_NAME_SET',
   payload: appName,
+});
+
+export const fetchPublicLayoutsSuccess = layouts => ({
+  type: FETCH_PUBLIC_LAYOUTS_SUCCESS,
+  payload: layouts,
+});
+
+export const fetchPublicLayoutsFailure = error => ({
+  type: FETCH_PUBLIC_LAYOUTS_FAILURE,
+  payload: error,
 });

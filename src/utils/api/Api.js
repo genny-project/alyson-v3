@@ -84,6 +84,16 @@ class Api {
       url: `init?url=${config.genny.initUrl}`,
     });
   }
+
+  getPublicLayouts = () => {
+    const query = queryString.stringify({
+      url: 'git@github.com/fourdegrees-new/null.git',
+    });
+
+    return this.observableCall({
+      url: `http://localhost:2224/?${query}`,
+    });
+  }
 }
 
 export default new Api();
