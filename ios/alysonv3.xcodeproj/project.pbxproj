@@ -40,6 +40,7 @@
 		31A06E0FA1204B919D3B92B7 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D284773B1914F02BE9447ED /* MaterialCommunityIcons.ttf */; };
 		38AB5B030EFB42B1AEA3F3BC /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C63DDD6042F0417B87B57707 /* Feather.ttf */; };
 		4059772394714E768A6D1844 /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 45A766C22A80414585DB5FFB /* libRNImagePicker.a */; };
+		48024EA521196B8C002C3D74 /* libRNAudioRecorderPlayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 48024E9F21196B7D002C3D74 /* libRNAudioRecorderPlayer.a */; };
 		50E00884D6214FDEA6D37BC9 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6119C574FB29498F8AE924C9 /* EvilIcons.ttf */; };
 		52DF58A1FC0A475EBE1898FF /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2F562D77D87147BDAF2ED055 /* Entypo.ttf */; };
 		5A2000CB9B664880A1D16132 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 175B75617CEB4F9BB5C3947A /* AppCenter-Config.plist */; };
@@ -300,6 +301,13 @@
 			remoteGlobalIDString = 3D3CD9181DE5FBD800167DC4;
 			remoteInfo = "jschelpers-tvOS";
 		};
+		48024E9E21196B7D002C3D74 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 48024E7021196B7C002C3D74 /* RNAudioRecorderPlayer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNAudioRecorderPlayer;
+		};
 		5E9157321DD0AC6500FF2AA8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */;
@@ -440,6 +448,7 @@
 		3762383D33CE4FB2809D3637 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		40D0769068D4787F33E27B15 /* Pods-alysonv3.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-alysonv3.debug.xcconfig"; path = "Pods/Target Support Files/Pods-alysonv3/Pods-alysonv3.debug.xcconfig"; sourceTree = "<group>"; };
 		45A766C22A80414585DB5FFB /* libRNImagePicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNImagePicker.a; sourceTree = "<group>"; };
+		48024E7021196B7C002C3D74 /* RNAudioRecorderPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNAudioRecorderPlayer.xcodeproj; path = "../node_modules/react-native-audio-recorder-player/ios/RNAudioRecorderPlayer.xcodeproj"; sourceTree = "<group>"; };
 		5BBE3572F32500D814486635 /* Pods-alysonv3.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-alysonv3.release.xcconfig"; path = "Pods/Target Support Files/Pods-alysonv3/Pods-alysonv3.release.xcconfig"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		6119C574FB29498F8AE924C9 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
@@ -482,6 +491,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48024EA521196B8C002C3D74 /* libRNAudioRecorderPlayer.a in Frameworks */,
 				B146B94020EC7E300012B2F9 /* libRCTPushNotification.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
@@ -669,6 +679,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		48024E7121196B7C002C3D74 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				48024E9F21196B7D002C3D74 /* libRNAudioRecorderPlayer.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		5E91572E1DD0AC6500FF2AA8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -690,6 +708,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				48024E7021196B7C002C3D74 /* RNAudioRecorderPlayer.xcodeproj */,
 				B146B93720EC7DF60012B2F9 /* RCTPushNotification.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
@@ -1042,6 +1061,10 @@
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 				},
 				{
+					ProductGroup = 48024E7121196B7C002C3D74 /* Products */;
+					ProjectRef = 48024E7021196B7C002C3D74 /* RNAudioRecorderPlayer.xcodeproj */;
+				},
+				{
 					ProductGroup = B146B97E20ECA5960012B2F9 /* Products */;
 					ProjectRef = 070E67D8F2CF45E4B5983696 /* RNBlur.xcodeproj */;
 				},
@@ -1291,6 +1314,13 @@
 			fileType = archive.ar;
 			path = libjschelpers.a;
 			remoteRef = 3DAD3EAE1DF850E9000B6D8A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		48024E9F21196B7D002C3D74 /* libRNAudioRecorderPlayer.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNAudioRecorderPlayer.a;
+			remoteRef = 48024E9E21196B7D002C3D74 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */ = {
@@ -1685,7 +1715,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.alysonv3;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.crowtech.exneer-english-test";
 				PRODUCT_NAME = alysonv3;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1717,7 +1747,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.alysonv3;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.crowtech.exneer-english-test";
 				PRODUCT_NAME = alysonv3;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";

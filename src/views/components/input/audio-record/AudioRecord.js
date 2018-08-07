@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { func } from 'prop-types';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import { Box, Icon, Touchable } from '../../index';
 
 class AudioRecord extends Component {
@@ -11,9 +12,57 @@ class AudioRecord extends Component {
   }
 
   state = {
+    playback: false,
+    recording: false,
   }
 
-  handlePlayback = () => {
+  componentDidMount() {
+    this.audioRecorderPlayer = new AudioRecorderPlayer();
+  }
+
+  onStartRecord = async () => {
+    const audioRecorderPlayer = this.audioRecorderPlayer;
+
+    await audioRecorderPlayer.startRecord();
+    this.setState( state => ({
+      recording: !state.recording,
+    }));
+  }
+  
+  onStopRecord = async () => {
+    const audioRecorderPlayer = this.audioRecorderPlayer;
+
+    await audioRecorderPlayer.stopRecord();
+
+    this.setState( state => ({
+      recordSecs: 0,
+      recording: !state.recording,
+    }));
+  }
+  
+  onStartPlay = async () => {
+    const audioRecorderPlayer = this.audioRecorderPlayer;
+
+    await audioRecorderPlayer.startPlay();
+    this.setState( state => ({
+      playback: !state.playback,
+    }), () => {
+      this.props.onChangeValue( this.state.playback );
+    });
+  }
+  
+  onPausePlay = async () => {
+    const audioRecorderPlayer = this.audioRecorderPlayer;
+
+    await audioRecorderPlayer.pausePlay();
+  }
+  
+  onStopPlay = async () => {
+    const audioRecorderPlayer = this.audioRecorderPlayer;
+
+    audioRecorderPlayer.stopPlay();
+    audioRecorderPlayer.removePlayBackListener();
+
     this.setState( state => ({
       playback: !state.playback,
     }), () => {
@@ -21,10 +70,26 @@ class AudioRecord extends Component {
     });
   }
 
+  handlePlayback = () => {
+    const { playback } = this.state;
+
+    if ( playback ) {
+      this.onStopPlay();
+    }
+    else {
+      this.onStartPlay();
+    }
+  }
+
   handleRecord = () => {
-    this.setState( state => ({
-      recording: !state.recording,
-    }));
+    const { recording } = this.state;
+
+    if ( recording ) {
+      this.onStopRecord();
+    }
+    else {
+      this.onStartRecord();
+    }
   }
 
   render() {
