@@ -59,3 +59,4 @@ export * from './vertx';
 export * from './google';
 export * from './input';
 export * from './toggle';
+export * from './login';
