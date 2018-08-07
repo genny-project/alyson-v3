@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { shape, object, any, bool } from 'prop-types';
+import { connect } from 'react-redux';
 import Layout from '../../layout';
 import DataQuery from '../../../utils/data-query';
 import { store } from '../../../redux';
@@ -152,4 +153,8 @@ class LayoutLoader extends Component {
   }
 }
 
-export default LayoutLoader;
+const mapStateToProps = state => ({
+  data: state.vertx,
+});
+
+export default connect( mapStateToProps )( LayoutLoader );
