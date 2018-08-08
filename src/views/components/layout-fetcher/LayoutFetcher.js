@@ -5,22 +5,25 @@ import { removeStartingAndEndingSlashes } from '../../../utils';
 
 class LayoutFetcher extends Component {
   static propTypes = {
-    baseEntities: object.isRequired,
+    layouts: object,
     children: func.isRequired,
     currentUrl: string.isRequired,
-    navigation: object,
+    // navigation: object,
     navigationReducer: object,
-  };
+  }
 
   state = {
     layout: null,
-  };
+  }
 
   componentDidMount() {
     this.getLayout();
   }
 
   shouldComponentUpdate( nextProps ) {
+    if ( !this.state.layout )
+      return true;
+
     if (
       nextProps.navigationReducer &&
       nextProps.navigationReducer.index != null &&
@@ -49,50 +52,18 @@ class LayoutFetcher extends Component {
     }
   }
 
-  getAttributes( attributes = this.props.baseEntities.attributes ) {
-    const layoutAttributes = Object.keys( attributes )
-      .filter( this.handleFilterAttributes )
-      .sort( this.handleSortAttributes );
-
-    return layoutAttributes;
-  }
-
   getLayout() {
-    const { attributes } = this.props.baseEntities;
-    const { layoutAttribute } = this.findLayoutAttribute();
+    const { pages } = this.props.layouts;
+    const { currentUrl } = this.props;
+    const strippedCurrentUrl = removeStartingAndEndingSlashes( currentUrl );
 
-    const layout =
-      layoutAttribute &&
-      attributes[layoutAttribute] &&
-      attributes[layoutAttribute].PRI_LAYOUT_DATA &&
-      attributes[layoutAttribute].PRI_LAYOUT_DATA.valueString;
-
-    let parsed = null;
-
-    try {
-      if ( layout ) {
-        parsed = JSON.parse( layout );
-      }
-    } catch ( error ) {
-      console.warn( 'Unable to parse layout', layout );
+    if ( pages[strippedCurrentUrl] ) {
+      this.setState({ layout: pages[strippedCurrentUrl] });
     }
-
-    if ( parsed ) this.setState({ layout: parsed });
-
-    // navigator.setParams({
-    // params,
-    // key: layoutAttribute,
-    // });
   }
-
-  handleFilterAttributes = attribute => {
-    if ( attribute.startsWith( 'LAY_' )) return true;
-
-    return false;
-  };
 
   /**
-   * Sort the attributes so that the routes which contain
+   * Sort the pages so that the routes which contain
    * a colon (`:`) or a splat / asterisk (`*`) always come
    * last in the list.
    *
@@ -109,110 +80,28 @@ class LayoutFetcher extends Component {
    *   1 - Put A after B
    *   -1 - Put B after A
    */
-  handleSortAttributes = ( attributeA, attributeB ) => {
-    const { attributes } = this.props.baseEntities;
-
-    const routeA =
-      attributes[attributeA] &&
-      attributes[attributeA].PRI_LAYOUT_URI &&
-      attributes[attributeA].PRI_LAYOUT_URI.valueString;
-
-    if ( !routeA ) return 0;
-
-    const routeB =
-      attributes[attributeB] &&
-      attributes[attributeB].PRI_LAYOUT_URI &&
-      attributes[attributeB].PRI_LAYOUT_URI.valueString;
-
-    if ( !routeB ) return 0;
-
-    if ( routeA.includes( ':' ) && routeB.includes( ':' )) {
+  handleSortPages = ( pageA, pageB ) => {
+    if ( pageA.includes( ':' ) && pageB.includes( ':' ))
       return 0;
-    }
 
-    /* Put routeA after layoutB. */
-    if ( routeA.includes( ':' )) return 1;
+    /* Put pageA after layoutB. */
+    if ( pageA.includes( ':' )) return 1;
 
     /* Put routeB after layoutA. */
-    if ( routeB.includes( ':' )) return -1;
+    if ( pageB.includes( ':' )) return -1;
 
     return 0;
-  };
+  }
 
+  /**
+   * Maps over a set of URL fragments and swaps out any fragment that starts with an ID, with
+   * the corresponding fragment in the current URL.
+   */
   handleMapUrlFragments = currentUrlFragments => ( fragment, index ) => {
-    if ( fragment.startsWith( ':' )) {
+    if ( fragment.startsWith( ':' ))
       return currentUrlFragments[index];
-    }
 
     return fragment;
-  };
-
-  findLayoutAttribute() {
-    const { currentUrl, baseEntities, navigationReducer } = this.props;
-    const attributes = this.getAttributes();
-    const strippedCurrentUrl = removeStartingAndEndingSlashes( currentUrl );
-    const params = {};
-    const currentRoute =
-      navigationReducer.routes && navigationReducer.routes[navigationReducer.index];
-
-    const layoutAttribute = attributes.find( attribute => {
-      const layoutUrl =
-        baseEntities.attributes[attribute] &&
-        baseEntities.attributes[attribute].PRI_LAYOUT_URI &&
-        baseEntities.attributes[attribute].PRI_LAYOUT_URI.valueString;
-
-      if ( !layoutUrl ) {
-        return false;
-      }
-
-      let strippedLayoutUrl = removeStartingAndEndingSlashes( layoutUrl );
-
-      if ( strippedLayoutUrl.includes( ':' )) {
-        const layoutUrlFragments = strippedLayoutUrl.split( '/' );
-        const currentUrlFragments = strippedCurrentUrl.split( '/' );
-
-        if ( layoutUrlFragments.length !== currentUrlFragments.length ) return false;
-
-        /* Keep locally so we add the params. */
-        const handleMapUrlFragments = ( fragment, index ) => {
-          if ( fragment.startsWith( ':' )) {
-            /* Remove the colon at the start. */
-            const param = fragment.substr( 1 );
-
-            if (
-              currentRoute &&
-              currentRoute.params &&
-              currentRoute.params[param] &&
-              currentRoute.params[param] !== currentUrlFragments[index]
-            ) {
-              params[param] = currentUrlFragments[index];
-            } else {
-              params[param] = currentUrlFragments[index];
-            }
-
-            return currentUrlFragments[index];
-          }
-
-          return fragment;
-        };
-
-        strippedLayoutUrl = layoutUrlFragments.map( handleMapUrlFragments ).join( '/' );
-      }
-
-      if ( strippedLayoutUrl === strippedCurrentUrl ) {
-        return true;
-      }
-
-      return false;
-    });
-
-    if ( Object.keys( params ).length > 0 && this.props.navigation ) {
-      this.props.navigation.setParams( params );
-    }
-
-    return {
-      layoutAttribute,
-    };
   }
 
   render() {
@@ -223,7 +112,7 @@ class LayoutFetcher extends Component {
 }
 
 const mapStateToProps = state => ({
-  baseEntities: state.vertx.baseEntities,
+  layouts: state.vertx.layouts,
   navigationReducer: state.navigation,
 });
 
