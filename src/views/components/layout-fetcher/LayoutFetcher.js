@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { object, func, string } from 'prop-types';
 import { removeStartingAndEndingSlashes } from '../../../utils';
+import { withKeycloak } from '../../components/keycloak';
 
 class LayoutFetcher extends Component {
   static propTypes = {
@@ -10,6 +11,7 @@ class LayoutFetcher extends Component {
     currentUrl: string.isRequired,
     // navigation: object,
     navigationReducer: object,
+    keycloak: object,
   }
 
   state = {
@@ -25,6 +27,7 @@ class LayoutFetcher extends Component {
       return true;
 
     if (
+      this.props.keycloak.isAuthenticated &&
       nextProps.navigationReducer &&
       nextProps.navigationReducer.index != null &&
       nextProps.navigationReducer.routes
@@ -116,4 +119,6 @@ const mapStateToProps = state => ({
   navigationReducer: state.navigation,
 });
 
-export default connect( mapStateToProps )( LayoutFetcher );
+export default connect( mapStateToProps )(
+  withKeycloak( LayoutFetcher )
+);

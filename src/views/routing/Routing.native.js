@@ -29,7 +29,7 @@ const AppStack = StackNavigator({
   },
   navigationOptions: props => {
     const { headerProps, showHeader } = store.getState().layout;
-    
+
     const shouldShowHeader = (
       showHeader &&
       headerProps != null &&
@@ -86,11 +86,12 @@ const AppDrawer = DrawerNavigator({
 });
 
 const AuthStack = SwitchNavigator({
-  splash: () => <Pages.Splash />,
-  login: () => <Pages.Login />,
-  register: () => <Pages.Register />,
+  public: () => <Pages.Public />,
 }, {
-  initialRouteName: 'splash',
+  initialRouteName: 'public',
+  initialRouteParams: {
+    layout: 'splash',
+  },
 });
 
 const Main = SwitchNavigator({
