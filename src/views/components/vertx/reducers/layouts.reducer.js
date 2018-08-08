@@ -1,4 +1,4 @@
-import { isArray, isString } from '../../../../utils';
+import { isArray, isString, removeStartingAndEndingSlashes } from '../../../../utils';
 import { FETCH_PUBLIC_LAYOUTS_FAILURE, FETCH_PUBLIC_LAYOUTS_SUCCESS } from '../../../../constants';
 
 const initialState = {
@@ -24,7 +24,13 @@ const injectLayoutIntoState = ({ uri, data, state }) => {
     const group = `${layoutGroup}/`;
 
     if ( uri.startsWith( group )) {
-      state[layoutGroup][uri.split( group )[1]] = data;
+      /* Remove the group from the start of the URI,
+       * and remove the starting and ending slashes. */
+      const newUri = removeStartingAndEndingSlashes(
+        uri.split( group )[1]
+      );
+
+      state[layoutGroup][newUri] = data;
 
       return true;
     }
@@ -39,33 +45,18 @@ const reducer = ( state = initialState, { type, payload }) => {
 
       /* Loop through all of the layouts and store them in their corresponding layout groups. */
       return payload.items.reduce(( newState, item ) => {
-        if (
-          !item ||
-          !item.code ||
-          !item.baseEntityAttributes
-        ) {
-          return newState;
-        }
-
-        const { code, baseEntityAttributes } = item;
-
-        if ( !isString( code, { startsWith: 'LAY_' }))
-          return newState;
-
-        const uri = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' ).value;
-        const data = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_DATA' ).value;
-
-        if (
-          !uri ||
-          !data
-        ) {
-          return newState;
-        }
-
         try {
-          const parsed = JSON.parse( data );
+          const { code, baseEntityAttributes } = item;
 
-          injectLayoutIntoState({ uri, data: parsed, state: newState });
+          if ( !isString( code, { startsWith: 'LAY_' }))
+            return newState;
+
+          const uri = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' ).value;
+          const data = JSON.parse(
+            baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_DATA' ).value
+          );
+
+          injectLayoutIntoState({ uri, data, state: newState });
         }
         catch ( error ) {
           console.warn( 'Unable to add layout to reducer state', error );
