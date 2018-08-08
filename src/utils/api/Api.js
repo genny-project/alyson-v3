@@ -91,7 +91,7 @@ class Api {
     });
 
     return this.observableCall({
-      url: `http://localhost:2224/?${query}`,
+      url: `http://localhost:2224/public?${query}`,
     });
   }
 }
