@@ -1,1 +1,5 @@
-export { default } from 'react-native-config';
+import Config from 'react-native-config';
+
+console.warn(Config.APP_NAME)
+
+export default Config;

@@ -102,9 +102,6 @@ module.exports = {
     // module implementations should be written in files using the extension
     // `.web.js`.
     extensions: ['.web.js', '.js'],
-    alias: {
-      'react-native-config': 'react-native-dotenv',
-    },
   },
   node: {
     fs: 'empty',
