@@ -10,7 +10,7 @@ import InputScroll from './scroll';
 import InputRating from './rating';
 import InputText from './text';
 import Switch from './switch';
-// import InputDropdown from './dropdown';
+import InputDropdown from './dropdown';
 import Passcode from './passcode';
 import InputRead from './read';
 import InputCurrency from './currency';
@@ -157,13 +157,13 @@ class Input extends Component {
           />
         );
 
-      // case 'dropdown':
-      //   return (
-      //     <InputDropdown
-      //       {...this.props}
-      //       ref={input => this.input = input}
-      //     />
-      //   );
+      case 'dropdown':
+        return (
+          <InputDropdown
+            {...this.props}
+            ref={input => this.input = input}
+          />
+        );
 
       case 'checkbox':
         return (
@@ -261,7 +261,6 @@ class Input extends Component {
           />
         );
 
-      case 'dropdown':
       case 'segmentedcontrol':
         return (
           <SegmentedControl
