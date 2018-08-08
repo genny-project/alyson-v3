@@ -98,7 +98,10 @@ const reducer = ( state = initialState, { type, payload }) => {
     }
 
     case FETCH_PUBLIC_LAYOUTS_FAILURE: {
-      return state;
+      return {
+        ...state,
+        error: payload,
+      };
     }
 
     case FETCH_PUBLIC_LAYOUTS_SUCCESS: {
