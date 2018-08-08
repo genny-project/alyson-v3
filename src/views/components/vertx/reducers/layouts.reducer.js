@@ -2,13 +2,34 @@ import { isArray, isString } from '../../../../utils';
 import { FETCH_PUBLIC_LAYOUTS_FAILURE, FETCH_PUBLIC_LAYOUTS_SUCCESS } from '../../../../constants';
 
 const initialState = {
-  public: {},
   pages: {},
   components: {},
   sublayouts: {},
+  error: null,
 };
 
-const layoutGroups = Object.keys( initialState );
+const layoutGroups = ['pages', 'components', 'sublayouts'];
+
+/* This function makes use of mutation for the `state` param. As we're passing through an
+ * object to this function, it is being passed through by reference (and not value), so we
+ * are able to modify the object inside this function and use the changes in the local variable
+ * (that is, whatever we passed into `state`) from the block this function was called from.
+ * See uses. */
+const injectLayoutIntoState = ({ uri, data, state }) => {
+  /* Use of `Array.some()` here is to counteract using `Array.forEach()`,
+  * but we only want to loop through `layoutGroups` until we find the corresponding
+  * group to the layout URI. `.some()` allows us to cancel out at any time by
+  * returning `true` when we are done. */
+  layoutGroups.some( layoutGroup => {
+    const group = `${layoutGroup}/`;
+
+    if ( uri.startsWith( group )) {
+      state[layoutGroup][uri.split( group )[1]] = data;
+
+      return true;
+    }
+  });
+};
 
 const reducer = ( state = initialState, { type, payload }) => {
   switch ( type ) {
@@ -42,21 +63,9 @@ const reducer = ( state = initialState, { type, payload }) => {
         }
 
         try {
-          const parsed = JSON.parse( data.value );
+          const parsed = JSON.parse( data );
 
-          /* Use of `Array.some()` here is to counteract using `Array.forEach()`,
-           * but we only want to loop through `layoutGroups` until we find the corresponding
-           * group to the layout URI. `.some()` allows us to cancel out at any time by
-           * returning `true` when we are done. */
-          layoutGroups.some( layoutGroup => {
-            const group = `${layoutGroup}/`;
-
-            if ( uri.value.startsWith( group )) {
-              newState[layoutGroup][uri.value.split( group )[1]] = parsed;
-
-              return true;
-            }
-          });
+          injectLayoutIntoState({ uri, data: parsed, state: newState });
         }
         catch ( error ) {
           console.warn( 'Unable to add layout to reducer state', error );
@@ -78,19 +87,7 @@ const reducer = ( state = initialState, { type, payload }) => {
         try {
           const parsed = JSON.parse( data );
 
-          /* Use of `Array.some()` here is to counteract using `Array.forEach()`,
-           * but we only want to loop through `layoutGroups` until we find the corresponding
-           * group to the layout URI. `.some()` allows us to cancel out at any time by
-           * returning `true` when we are done. */
-          layoutGroups.some( layoutGroup => {
-            const group = `${layoutGroup}/`;
-
-            if ( uri.startsWith( group )) {
-              newState[layoutGroup][uri.split( group )[1]] = parsed;
-
-              return true;
-            }
-          });
+          injectLayoutIntoState({ uri, data: parsed, state: newState });
         }
         catch ( error ) {
           console.warn( 'Unable to add layout to reducer state', error );
@@ -105,9 +102,18 @@ const reducer = ( state = initialState, { type, payload }) => {
     }
 
     case FETCH_PUBLIC_LAYOUTS_SUCCESS: {
-      console.warn( payload );
+      if ( !isArray( payload, { ofMinLength: 1 }))
+        return state;
 
-      return state;
+      const newState = { ...state };
+
+      payload.forEach( layout => {
+        const { uri, data } = layout;
+
+        injectLayoutIntoState({ uri, data, state: newState });
+      });
+
+      return newState;
     }
 
     case 'USER_LOGOUT':
