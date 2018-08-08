@@ -3,6 +3,7 @@ import { oneOf, node, object, string, bool } from 'prop-types';
 import { withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
 import { LayoutConsumer } from '../layout';
+import { Box } from '../components';
 import shallowCompare from '../../utils/shallow-compare';
 import removeStartingAndEndingSlashes from '../../utils/string/removeStartingAndEndingSlashes';
 
@@ -244,10 +245,22 @@ class Layout extends Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, layout } = this.props;
 
     return (
       <Fragment>
+        {/* This is here to fix a bug with React Navigation showing `cardStyle` styling
+         * from `StackNavigator` over the app's background color, but only for . */}
+        <Box
+          height="100%"
+          width="100%"
+          position="absolute"
+          top={0}
+          left={0}
+          zIndex={0}
+          backgroundColor={layout.backgroundColor}
+        />
+
         {children}
       </Fragment>
     );
