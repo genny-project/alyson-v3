@@ -16,89 +16,88 @@ const reducer = ( state = initialState, { type, payload }) => {
       if ( !isArray( payload.items, { ofMinLength: 1 }))
         return state;
 
-      const newState = { ...state };
-
-      for ( let i = 0; i++; i < payload.items.length ) {
-        const item = payload.items[i];
-
-        if ( isString( item.code, { startsWith: 'LAY_' })) {
-          const uri = item.baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' );
-
-          if ( !uri )
-            continue; // eslint-disable-line no-continue
-
-          const data = item.baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' );
-
-          if ( !data )
-            continue; // eslint-disable-line no-continue
-
-          let parsed = null;
-
-          try {
-            parsed = JSON.parse( data );
-          }
-          catch ( error ) {
-            console.warn( 'Unable to parse layout', data, error );
-
-            continue; // eslint-disable-line no-continue
-          }
-
-          if ( parsed == null )
-            continue; // eslint-disable-line no-continue
-
-          for ( let i = 0; i++; i < layoutGroups.length ) {
-            const group = `${layoutGroups[i]}/`;
-
-            if ( uri.startsWith ( group )) {
-              newState[group][uri.split( group )[1]] = parsed;
-              break;
-            }
-          }
+      /* Loop through all of the layouts and store them in their corresponding layout groups. */
+      return payload.items.reduce(( newState, item ) => {
+        if (
+          !item ||
+          !item.code ||
+          !item.baseEntityAttributes
+        ) {
+          return newState;
         }
-      }
 
-      return newState;
+        const { code, baseEntityAttributes } = item;
+
+        if ( !isString( code, { startsWith: 'LAY_' }))
+          return newState;
+
+        const uri = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' ).value;
+        const data = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_DATA' ).value;
+
+        if (
+          !uri ||
+          !data
+        ) {
+          return newState;
+        }
+
+        try {
+          const parsed = JSON.parse( data.value );
+
+          /* Use of `Array.some()` here is to counteract using `Array.forEach()`,
+           * but we only want to loop through `layoutGroups` until we find the corresponding
+           * group to the layout URI. `.some()` allows us to cancel out at any time by
+           * returning `true` when we are done. */
+          layoutGroups.some( layoutGroup => {
+            const group = `${layoutGroup}/`;
+
+            if ( uri.value.startsWith( group )) {
+              newState[layoutGroup][uri.value.split( group )[1]] = parsed;
+
+              return true;
+            }
+          });
+        }
+        catch ( error ) {
+          console.warn( 'Unable to add layout to reducer state', error );
+        }
+
+        return newState;
+      }, { ...state });
     }
 
-    case 'LOAD_DEV_LAYOUT1': {
+    case 'LOAD_DEV_LAYOUT': {
       const layouts = Object.keys( payload );
 
-      console.warn({ layouts }, layouts.length );
-
-      const newState = { ...state };
-
-      for ( let i = 0; i++; i < layouts.length ) {
-        console.warn({ i });
-      }
-
-      layouts.forEach( layout => {
+      /* Loop through all of the layouts and store them in their corresponding layout groups. */
+      return layouts.reduce(( newState, layoutCode ) => {
+        const layout = payload[layoutCode];
         const uri = layout.PRI_LAYOUT_URI.value;
         const data = layout.PRI_LAYOUT_DATA.value;
-
-        console.warn({ uri, data });
 
         try {
           const parsed = JSON.parse( data );
 
-          for ( let i = 0; i++; i < layoutGroups.length ) {
-            const group = `${layoutGroups[i]}/`;
-
-            console.warn({ group, parsed });
+          /* Use of `Array.some()` here is to counteract using `Array.forEach()`,
+           * but we only want to loop through `layoutGroups` until we find the corresponding
+           * group to the layout URI. `.some()` allows us to cancel out at any time by
+           * returning `true` when we are done. */
+          layoutGroups.some( layoutGroup => {
+            const group = `${layoutGroup}/`;
 
             if ( uri.startsWith( group )) {
-              newState[group][uri.split( group )[1]] = parsed;
+              newState[layoutGroup][uri.split( group )[1]] = parsed;
 
-              console.warn({ newState });
-              break;
+              return true;
             }
-          }
+          });
         }
         catch ( error ) {
-          console.warn( error );
+          console.warn( 'Unable to add layout to reducer state', error );
         }
-      });
 
-      return newState;
+        return newState;
+      }, { ...state });
     }
 
     case FETCH_PUBLIC_LAYOUTS_FAILURE: {
