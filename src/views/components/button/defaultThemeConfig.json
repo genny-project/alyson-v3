@@ -1,0 +1,49 @@
+{
+  "paddingSizes": {
+    "sm": {
+      "paddingX": 15,
+      "paddingY": 10
+    },
+    "md": {
+      "paddingX": 20,
+      "paddingY": 15
+    },
+    "lg": {
+      "paddingX": 25,
+      "paddingY": 20
+    }
+  },
+  "iconOnlySizes": {
+    "sm": 40,
+    "md": 50,
+    "lg": 60
+  },
+  "textSizes": {
+    "sm": "xs",
+    "md": "sm",
+    "lg": "md"
+  },
+  "activityIndicatorSizes": {
+    "sm": "small",
+    "md": "small",
+    "lg": "large"
+  },
+  "buttonColors": {
+    "red": "red",
+    "green": "green",
+    "blue": "blue",
+    "white": "white",
+    "transparent": "transparent",
+    "disabled": "lightgrey",
+    "black": "black"
+  },
+  "textColors": {
+    "red": "white",
+    "green": "white",
+    "blue": "white",
+    "white": "black",
+    "transparent": "black",
+    "disabled": "white",
+    "black": "white"
+  }
+}

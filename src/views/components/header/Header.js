@@ -63,40 +63,55 @@ class Header extends Component {
   render() {
     return (
       <PropInjection {...this.props}>
-        {props => (
+        {({
+          barStyle,
+          backgroundColor,
+          height,
+          paddingX,
+          paddingY,
+          padding,
+          boxShadow,
+          headerLeft,
+          headerRight,
+          title,
+          navigation,
+          ...restProps
+        }) => (
           <LayoutConsumer>
             {layout => (
               <StatusBar
-                barStyle={props.barStyle}
-                backgroundColor={props.backgroundColor || layout.appColor}
+                barStyle={barStyle}
+                backgroundColor={backgroundColor || layout.appColor}
               >
                 {ifIphoneX ? (
                   <Box
                     position="absolute"
-                    top={-( props.height + getStatusBarHeight())}
+                    top={-( height + getStatusBarHeight())}
                     left={0}
                     width="100%"
-                    height={props.height + getStatusBarHeight()}
-                    backgroundColor={props.backgroundColor || layout.appColor}
+                    height={height + getStatusBarHeight()}
+                    backgroundColor={backgroundColor || layout.appColor}
                   />
                 ) : null}
 
                 <Box
-                  height={props.height}
+                  {...restProps}
+                  height={height}
                   justifyContent="space-between"
                   alignItems="center"
                   width="100%"
-                  backgroundColor={props.backgroundColor || layout.appColor}
-                  paddingX={props.paddingX}
-                  paddingY={props.paddingY}
-                  padding={props.padding}
-                  boxShadow={props.boxShadow}
+                  backgroundColor={backgroundColor || layout.appColor}
+                  paddingX={paddingX}
+                  paddingY={paddingY}
+                  padding={padding}
+                  boxShadow={boxShadow}
                 >
                   <HeaderLeft
-                    {...props.headerLeft}
-                    title={props.title}
+                    {...headerLeft}
+                    navigation={navigation}
+                    title={title}
                   />
-                  <HeaderRight {...props.headerRight} />
+                  <HeaderRight {...headerRight} />
                 </Box>
               </StatusBar>
             )}

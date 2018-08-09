@@ -21,10 +21,7 @@ class Layout extends Component {
     navigation: object,
     baseEntities: object,
     backgroundColor: string,
-  }
-
-  state = {
-    hasLoadedLayouts: false,
+    layouts: object,
   }
 
   componentDidMount() {
@@ -63,28 +60,6 @@ class Layout extends Component {
 
     if ( !shallowCompare( this.props.sidebar, prevProps.sidebar )) {
       this.setSidebarProperties();
-    }
-
-    if ( !this.state.hasLoadedLayouts ) {
-      const hasNowLoadedLayouts = (
-        Object
-          .keys( this.props.baseEntities.attributes )
-          .find( attribute => attribute.startsWith( 'LAY_' ))
-      );
-
-      if (
-        hasNowLoadedLayouts &&
-        this.props.header != null
-      ) {
-        this.setHeaderProperties();
-      }
-
-      if (
-        hasNowLoadedLayouts &&
-        this.props.sidebar != null
-      ) {
-        this.setSidebarProperties();
-      }
     }
   }
 
@@ -128,60 +103,31 @@ class Layout extends Component {
   }
 
   setHeaderProperties() {
-    const { header, navigation } = this.props;
+    const { header, navigation, layouts } = this.props;
 
     if ( header && header.variant ) {
-      const { attributes } = this.props.baseEntities;
-      const keys = Object.keys( this.props.baseEntities.attributes );
+      const variant = `header-${header.variant}`;
+      const headerProps = layouts.sublayouts[variant];
 
-      for ( let i = 0; i < keys.length; i++ ) {
-        if ( keys[i].startsWith( 'LAY_' )) {
-          if ( !this.state.hasLoadedLayouts ) {
-            this.setState({ hasLoadedLayouts: true });
-          }
+      if ( headerProps ) {
+        this.props.layout.setHeaderProps( headerProps );
+        this.props.layout.setHeaderVisibility( true );
 
-          const attribute = attributes[keys[i]];
-          const layoutPath = removeStartingAndEndingSlashes( attribute.PRI_LAYOUT_URI.value );
-
-          if (
-            layoutPath === `header/header.${header.variant}` ||
-            layoutPath === `sublayouts/header-${header.variant}`
-          ) {
-            const layout = attribute.PRI_LAYOUT_DATA.valueString;
-
-            let parsed = null;
-
-            try {
-              parsed = JSON.parse( layout );
-            }
-            catch ( e ) {
-              console.warn( 'Unable to parse header layout data', layout );
-            }
-
-            if ( parsed ) {
-              this.props.layout.setHeaderProps( parsed );
-              this.props.layout.setHeaderVisibility( true );
-
-              if ( navigation ) {
-                navigation.setParams({
-                  headerProps: parsed,
-                  showHeader: true,
-                });
-              }
-            }
-
-            break;
-          }
+        if ( navigation ) {
+          navigation.setParams({
+            headerProps,
+            showHeader: true,
+          });
         }
       }
-    }
-    else {
-      this.props.layout.setHeaderVisibility( false );
+      else {
+        this.props.layout.setHeaderVisibility( false );
 
-      if ( navigation ) {
-        navigation.setParams({
-          showHeader: false,
-        });
+        if ( navigation ) {
+          navigation.setParams({
+            showHeader: false,
+          });
+        }
       }
     }
   }
@@ -269,6 +215,7 @@ class Layout extends Component {
 
 const mapStateToProps = state => ({
   baseEntities: state.vertx.baseEntities,
+  layouts: state.vertx.layouts,
 });
 
 export default (
