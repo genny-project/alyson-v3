@@ -24,8 +24,13 @@ class Layout extends Component {
     layouts: object,
   }
 
+  state = {
+    unableToFindHeader: false,
+  }
+
   componentDidMount() {
     this.setLayoutProperties();
+    this.setHeaderProperties();
   }
 
   componentDidUpdate( prevProps ) {
@@ -60,6 +65,13 @@ class Layout extends Component {
 
     if ( !shallowCompare( this.props.sidebar, prevProps.sidebar )) {
       this.setSidebarProperties();
+    }
+
+    if ( this.state.unableToFindHeader ) {
+      const variant = `header-${this.props.header.variant}`;
+
+      if ( this.props.layouts.sublayouts[variant] )
+        this.setHeaderProperties();
     }
   }
 
@@ -113,6 +125,9 @@ class Layout extends Component {
         this.props.layout.setHeaderProps( headerProps );
         this.props.layout.setHeaderVisibility( true );
 
+        if ( this.state.unableToFindHeader )
+          this.setState({ unableToFindHeader: false });
+
         if ( navigation ) {
           navigation.setParams({
             headerProps,
@@ -121,13 +136,16 @@ class Layout extends Component {
         }
       }
       else {
-        this.props.layout.setHeaderVisibility( false );
+        this.setState({ unableToFindHeader: true });
+      }
+    }
+    else {
+      this.props.layout.setHeaderVisibility( false );
 
-        if ( navigation ) {
-          navigation.setParams({
-            showHeader: false,
-          });
-        }
+      if ( navigation ) {
+        navigation.setParams({
+          showHeader: false,
+        });
       }
     }
   }

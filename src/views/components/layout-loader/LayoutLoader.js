@@ -39,6 +39,14 @@ class LayoutLoader extends Component {
     const { layout, data, navigation, sublayoutProps, sublayout } = this.props;
 
     if ( !layout ) {
+      if ( sublayout ) {
+        return (
+          <Box padding={10}>
+            <ActivityIndicator size="large" />
+          </Box>
+        );
+      }
+
       return (
         <Layout
           title="Loading..."
@@ -81,15 +89,15 @@ class LayoutLoader extends Component {
                   </Fragment>
                 ) : (
                   <Fragment>
-                    <ActivityIndicator size="large" />
+                    <Box padding={10}>
+                      <ActivityIndicator size="large" />
+                    </Box>
 
-                    <Box height={10} />
-
-                    <Text align="center">
-                      Loading...
-                    </Text>
-
-                    <Box height={10} />
+                    <Box marginBottom={10}>
+                      <Text align="center">
+                        Loading...
+                      </Text>
+                    </Box>
 
                     {secondsElapsed > 5 ? (
                       <Text align="center">

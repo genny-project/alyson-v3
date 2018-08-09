@@ -54,6 +54,7 @@ export { default as Sublayout } from './sublayout';
 export { default as EventTouchable } from './event-touchable';
 export { default as RetryTimer } from './retry-timer';
 export { default as LayoutFetcher } from './layout-fetcher';
+export { default as SafeAreaView } from './safe-area-view';
 
 export * from './keycloak';
 export * from './vertx';

@@ -63,6 +63,7 @@ class Button extends Component {
     marginBottom: number,
     marginLeft: number,
     marginRight: number,
+    marginX: number,
     borderWidth: number,
     borderColor: string,
     inverted: bool,
@@ -157,8 +158,6 @@ class Button extends Component {
   renderTextChild() {
     const { textColor, color, children, size, text, fontWeight, inverted } = this.props;
     const themeConfig = this.getThemeConfig();
-
-    console.warn({ themeConfig });
 
     const actualColor = textColor || (
       inverted ? color : (
@@ -314,18 +313,16 @@ class Button extends Component {
         alignItems="center"
         boxShadow={boxShadow}
         backgroundColor={actualBackgroundColor || color}
-        width={(
+        width={width || (
           isIconOnly &&
-          shape === 'circle'
-        )
-          ? iconOnlySize
-          : width}
-        height={(
+          shape === 'circle' &&
+          iconOnlySize
+        ) || null}
+        height={height || (
           isIconOnly &&
-          shape === 'circle'
-        )
-          ? iconOnlySize
-          : height}
+          shape === 'circle' &&
+          iconOnlySize
+        ) || null}
         {...inverted && {
           borderStyle: themeConfig.invertedBorderStyle || 'solid',
           borderWidth: themeConfig.invertedBorderWidth || 2,
@@ -377,6 +374,7 @@ class Button extends Component {
       marginBottom,
       marginLeft,
       marginRight,
+      marginX,
       borderWidth,
       borderColor,
     } = this.props;
@@ -396,6 +394,7 @@ class Button extends Component {
       marginBottom,
       marginLeft,
       marginRight,
+      marginX,
       borderWidth,
       borderColor,
     };

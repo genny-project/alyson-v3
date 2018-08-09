@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { object, func, bool, string } from 'prop-types';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions, withNavigation } from 'react-navigation';
 import { removeStartingAndEndingSlashes } from '../../../../utils';
-import { Button, Box, Heading, Image } from '../../index';
+import { Button, Box, Heading, Image, Touchable } from '../../index';
 import { withKeycloak } from '../../keycloak';
 import { LayoutConsumer } from '../../../layout';
 
@@ -16,6 +16,7 @@ class HeaderLeft extends Component {
   static propTypes = {
     navigationReducer: object,
     navigation: object,
+    stackNavigation: object,
     dispatch: func,
     logoSource: string,
     showBack: bool,
@@ -28,6 +29,8 @@ class HeaderLeft extends Component {
     backIconSize: string,
     backIconColor: string,
     keycloak: object,
+    replaceLogoWithBack: bool,
+    logoOpensMenu: bool,
   }
 
   handleToggleMenu = () => {
@@ -37,7 +40,7 @@ class HeaderLeft extends Component {
   }
 
   handleBack = () => {
-    const { dispatch, keycloak, navigation } = this.props;
+    const { dispatch, keycloak, stackNavigation } = this.props;
 
     if ( keycloak.isAuthenticated ) {
       dispatch(
@@ -45,7 +48,7 @@ class HeaderLeft extends Component {
       );
     }
     else {
-      navigation.goBack();
+      stackNavigation.goBack();
     }
   }
 
@@ -61,6 +64,8 @@ class HeaderLeft extends Component {
       backIcon,
       backIconColor,
       backIconSize,
+      replaceLogoWithBack,
+      logoOpensMenu,
     } = this.props;
     const { index, routes } = navigationReducer;
     const { params } = routes[index];
@@ -92,7 +97,9 @@ class HeaderLeft extends Component {
                   color="transparent"
                   textColor={backIconColor || layout.textColor}
                   icon={backIcon}
-                  paddingX={15}
+                  width={50}
+                  marginLeft={5}
+                  marginRight={5}
                 />
               ) : showMenu ? (
                 <Button
@@ -101,23 +108,36 @@ class HeaderLeft extends Component {
                   color="transparent"
                   textColor={layout.textColor}
                   icon="menu"
-                  paddingX={15}
+                  width={50}
+                  marginLeft={5}
+                  marginRight={5}
                 />
               ) : null
             }
 
-            {showLogo ? (
-              <Box
-                marginLeft={5}
-                marginRight={10}
+            {(
+              showLogo &&
+              !(
+                replaceLogoWithBack &&
+                showBack &&
+                canShowBack
+              )
+            ) ? (
+              <Touchable
+                {...logoOpensMenu && {
+                  withFeedback: true,
+                  onPress: this.handleToggleMenu,
+                }}
               >
-                <Image
-                  height={50}
-                  width={50}
-                  source={logoSource}
-                />
-              </Box>
-            ) : null}
+                <Box paddingX={5}>
+                  <Image
+                    height={50}
+                    width={50}
+                    source={logoSource}
+                  />
+                </Box>
+              </Touchable>
+              ) : null}
 
             {showTitle ? (
               <Box marginLeft={5}>
@@ -144,6 +164,8 @@ const mapStateToProps = state => ({
 
 export default (
   connect( mapStateToProps )(
-    withKeycloak( HeaderLeft )
+    withNavigation(
+      withKeycloak( HeaderLeft )
+    )
   )
 );

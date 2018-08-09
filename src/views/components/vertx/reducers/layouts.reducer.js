@@ -6,6 +6,7 @@ const initialState = {
   components: {},
   sublayouts: {},
   error: null,
+  hasLoadedDevLayouts: false,
 };
 
 const layoutGroups = ['pages', 'components', 'sublayouts'];
@@ -40,6 +41,9 @@ const injectLayoutIntoState = ({ uri, data, state }) => {
 const reducer = ( state = initialState, { type, payload }) => {
   switch ( type ) {
     case 'BASE_ENTITY_MESSAGE': {
+      if ( state.hasLoadedDevLayouts )
+        return state;
+
       if ( !isArray( payload.items, { ofMinLength: 1 }))
         return state;
 
@@ -85,7 +89,10 @@ const reducer = ( state = initialState, { type, payload }) => {
         }
 
         return newState;
-      }, { ...state });
+      }, {
+        ...state,
+        hasLoadedDevLayouts: true,
+      });
     }
 
     case FETCH_PUBLIC_LAYOUTS_FAILURE: {
@@ -108,6 +115,10 @@ const reducer = ( state = initialState, { type, payload }) => {
       });
 
       return newState;
+    }
+
+    case 'CLEAR_ALL_LAYOUTS': {
+      return { ...initialState };
     }
 
     case 'USER_LOGOUT':

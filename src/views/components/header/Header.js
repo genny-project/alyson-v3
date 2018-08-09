@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { string, object, number, oneOfType, shape, arrayOf, bool, oneOf } from 'prop-types';
 import { ifIphoneX, getStatusBarHeight } from 'react-native-iphone-x-helper';
-import { Box, StatusBar } from '../index';
+import { Box, StatusBar, SafeAreaView } from '../index';
 import HeaderLeft from './left';
 import HeaderRight from './right';
 import { LayoutConsumer } from '../../layout';
@@ -86,33 +86,35 @@ class Header extends Component {
                 {ifIphoneX ? (
                   <Box
                     position="absolute"
-                    top={-( height + getStatusBarHeight())}
+                    top={0}
                     left={0}
                     width="100%"
-                    height={height + getStatusBarHeight()}
+                    height={getStatusBarHeight( true )}
                     backgroundColor={backgroundColor || layout.appColor}
                   />
                 ) : null}
 
-                <Box
-                  {...restProps}
-                  height={height}
-                  justifyContent="space-between"
-                  alignItems="center"
-                  width="100%"
-                  backgroundColor={backgroundColor || layout.appColor}
-                  paddingX={paddingX}
-                  paddingY={paddingY}
-                  padding={padding}
-                  boxShadow={boxShadow}
-                >
-                  <HeaderLeft
-                    {...headerLeft}
-                    navigation={navigation}
-                    title={title}
-                  />
-                  <HeaderRight {...headerRight} />
-                </Box>
+                <SafeAreaView>
+                  <Box
+                    {...restProps}
+                    height={height}
+                    justifyContent="space-between"
+                    alignItems="center"
+                    width="100%"
+                    backgroundColor={backgroundColor || layout.appColor}
+                    paddingX={paddingX}
+                    paddingY={paddingY}
+                    padding={padding}
+                    boxShadow={boxShadow}
+                  >
+                    <HeaderLeft
+                      {...headerLeft}
+                      stackNavigation={navigation}
+                      title={title}
+                    />
+                    <HeaderRight {...headerRight} />
+                  </Box>
+                </SafeAreaView>
               </StatusBar>
             )}
           </LayoutConsumer>
