@@ -116,6 +116,7 @@ class Button extends Component {
     marginRight: number,
     borderWidth: number,
     borderColor: string,
+    inverted: bool,
   }
 
   static getDerivedStateFromProps( props, state ) {
@@ -184,11 +185,16 @@ class Button extends Component {
   }
 
   renderTextChild() {
-    const { textColor, color, children, size, text, fontWeight } = this.props;
+    const { textColor, color, children, size, text, fontWeight, inverted } = this.props;
 
     return (
       <Text
-        color={textColor || textColors[color]}
+        color={(
+          textColor || (
+            inverted ? color
+            : textColors[color]
+          )
+        )}
         decoration="none"
         size={textSizes[size]}
         align="center"
@@ -252,6 +258,7 @@ class Button extends Component {
       text,
       boxShadow,
       submitting,
+      inverted,
     } = this.props;
 
     const { isSpinning } = this.state;
@@ -277,11 +284,10 @@ class Button extends Component {
         alignItems="center"
         boxShadow={boxShadow}
         backgroundColor={(
-          disabled
-            ? buttonColors.disabled
-            : buttonColors[color]
+          inverted ? 'transparent'
+          : disabled ? buttonColors.disabled
+          : buttonColors[color] || color
         )}
-
         width={(
           isIconOnly &&
           shape === 'circle'
@@ -294,6 +300,14 @@ class Button extends Component {
         )
           ? iconOnlyButtonSizes[size]
           : height}
+        {...inverted && {
+          borderStyle: 'solid',
+          borderWidth: 2,
+          borderColor: (
+            disabled ? buttonColors.disabled
+            : buttonColors[color] || color
+          ),
+        }}
       >
         <Box
           padding={padding}

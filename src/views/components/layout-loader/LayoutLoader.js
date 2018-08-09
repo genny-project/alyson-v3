@@ -1,10 +1,22 @@
 import React, { Component, Fragment } from 'react';
 import { shape, object, any, bool } from 'prop-types';
+import { connect } from 'react-redux';
 import Layout from '../../layout';
 import DataQuery from '../../../utils/data-query';
 import { store } from '../../../redux';
 import { Box, Text, Timeout, Button, ActivityIndicator } from '../../components';
 import Recursive from './Recursive';
+
+const currentHourOfDay = new Date().getHours();
+
+const timeUtils = {
+  timeOfDay: (
+    currentHourOfDay < 6 ? 'evening'
+    : currentHourOfDay < 12 ? 'morning'
+    : currentHourOfDay < 18 ? 'afternoon'
+    : 'evening'
+  ),
+};
 
 class LayoutLoader extends Component {
   static propTypes = {
@@ -49,13 +61,13 @@ class LayoutLoader extends Component {
                 {isTimeUp ? (
                   <Fragment>
                     <Text align="center">
-Sorry! We were unable to load this page.
+                      Sorry! We were unable to load this page.
                     </Text>
 
                     <Box height={10} />
 
                     <Text align="center">
-Please check your internet connection and try again.
+                      Please check your internet connection and try again.
                     </Text>
 
                     <Box height={20} />
@@ -74,20 +86,17 @@ Please check your internet connection and try again.
                     <Box height={10} />
 
                     <Text align="center">
-Loading...
+                      Loading...
                     </Text>
 
                     <Box height={10} />
 
                     {secondsElapsed > 5 ? (
                       <Text align="center">
-                        {secondsElapsed > 30
-                          ? 'Still loading - please wait a little longer...'
-                          : secondsElapsed > 20
-                            ? 'Still loading - please wait...'
-                            : secondsElapsed > 10
-                              ? 'Still loading...'
-                              : 'This is taking longer than usual...'}
+                        {secondsElapsed < 10 ? 'This is taking longer than usual...'
+                        : secondsElapsed < 20 ? 'Still loading - please wait...'
+                        : secondsElapsed < 30 ? 'Still loading...'
+                        : 'Still loading - please wait a little longer...'}
                       </Text>
                     ) : null}
                   </Fragment>
@@ -119,6 +128,8 @@ Loading...
         ...currentRouteParams,
       },
       props: sublayoutProps,
+      time: timeUtils,
+      user: data.user,
     };
 
     const Holder = sublayout ? Box : Layout;
@@ -142,4 +153,8 @@ Loading...
   }
 }
 
-export default LayoutLoader;
+const mapStateToProps = state => ({
+  data: state.vertx,
+});
+
+export default connect( mapStateToProps )( LayoutLoader );

@@ -1,0 +1,57 @@
+<!doctype html>
+
+<html>
+  <head>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body,
+      html {
+        background: #202532;
+        margin: 0;
+      }
+
+      label {
+        color: white;
+      }
+
+      input {
+        border: 0;
+        border-bottom: 0.5px solid #6A6A6A;
+        transition: 300ms ease border;
+        color: #FFF;
+        padding: 10px 3px;
+        border-radius: 0;
+        background-color: transparent;
+        width: 100%;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+      }
+
+      input:focus::placeholder {
+        color: #FFF;
+      }
+
+      input:focus {
+        border-bottom-width: 2.5px;
+        border-bottom-color: #FFF;
+      }
+
+      input::placeholder {
+        color: #6A6A6A;
+        transition: 300ms ease color;
+      }
+    </style>
+  </head>
+
+  <body>
+    <form>
+      <input type="email" placeholder="Email address" />
+      <input type="text" placeholder="First name" />
+      <input type="text" placeholder="Last name" />
+      <input type="password" placeholder="Password" />
+    </form>
+  </body>
+</html>
