@@ -99,7 +99,7 @@ class Recursive extends Component {
       return result;
     }
 
-    if ( typeof result[current] === 'object' || isObject( current )) {
+    if ( typeof result[current] === 'object' ) {
       const targetObject = result[current] || current;
       const keys = Object.keys( targetObject );
 
