@@ -29,7 +29,7 @@ const AppStack = StackNavigator({
   },
   navigationOptions: props => {
     const { headerProps, showHeader } = store.getState().layout;
-    
+
     const shouldShowHeader = (
       showHeader &&
       headerProps != null &&
@@ -85,18 +85,46 @@ const AppDrawer = DrawerNavigator({
   ),
 });
 
-const AuthStack = SwitchNavigator({
-  splash: () => <Pages.Splash />,
-  login: () => <Pages.Login />,
-  register: () => <Pages.Register />,
+const AuthStack = StackNavigator({
+  public: () => <Pages.Public />,
 }, {
-  initialRouteName: 'splash',
+  initialRouteName: 'public',
+  initialRouteParams: {
+    layout: 'splash',
+  },
+  cardStyle: {
+    backgroundColor: 'transparent',
+    shadowColor: 'transparent',
+  },
+  navigationOptions: props => {
+    const { headerProps, showHeader } = store.getState().layout;
+
+    const shouldShowHeader = (
+      showHeader &&
+      headerProps != null &&
+      Object.keys( headerProps ).length > 0
+    );
+
+    return {
+      header: shouldShowHeader ? (
+        <Header
+          {...props}
+          {...headerProps}
+        />
+      ) : null,
+    };
+  },
+  transitionConfig: () => ({
+    screenInterpolator: sceneProps => {
+      return CardStackStyleInterpolator.forHorizontal( sceneProps );
+    },
+  }),
 });
 
 const Main = SwitchNavigator({
   loading: () => <Pages.Loading />,
   app: () => <AppDrawer />,
-  auth: AuthStack,
+  auth: () => <AuthStack />,
 }, {
   initialRouteName: 'loading',
 });

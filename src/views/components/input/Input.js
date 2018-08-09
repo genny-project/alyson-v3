@@ -57,6 +57,16 @@ class Input extends Component {
           />
         );
 
+      case 'password':
+        return (
+          <InputText
+            {...this.props}
+            type="text"
+            secureTextEntry
+            ref={input => this.input = input}
+          />
+        );
+
       case 'email':
         return (
           <InputText

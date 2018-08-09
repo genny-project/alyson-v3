@@ -10,3 +10,4 @@ export { default as Profile } from './profile';
 export { default as Settings } from './settings';
 export { default as Generic } from './generic';
 export { default as Commons } from './commons';
+export { default as Public } from './public';

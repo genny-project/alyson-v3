@@ -1,68 +1,17 @@
 import React, { Component, createElement } from 'react';
 import { Platform, ActivityIndicator, TouchableNativeFeedback } from 'react-native';
-import { string, bool, func, oneOf, number, oneOfType, shape, arrayOf } from 'prop-types';
+import { string, bool, func, oneOf, number, oneOfType, shape, arrayOf, object } from 'prop-types';
 import { Text, Icon, Box, Touchable, alert } from '../index';
-
-const buttonColors = {
-  red: 'red',
-  green: 'green',
-  blue: 'blue',
-  white: 'white',
-  transparent: 'transparent',
-  disabled: 'lightgrey',
-  black: 'black',
-};
-
-const textColors = {
-  red: 'white',
-  green: 'white',
-  blue: 'white',
-  white: 'black',
-  transparent: 'black',
-  disabled: 'white',
-  black: 'white',
-};
-
-const textSizes = {
-  sm: 'xs',
-  md: 'sm',
-  lg: 'md',
-};
-
-const sizeMapping = {
-  sm: 'small',
-  md: 'small',
-  lg: 'large',
-};
-
-const iconOnlyButtonSizes = {
-  sm: 40,
-  md: 50,
-  lg: 60,
-};
-
-const paddingSizes = {
-  sm: {
-    paddingX: 15,
-    paddingY: 10,
-  },
-  md: {
-    paddingX: 20,
-    paddingY: 15,
-  },
-  lg: {
-    paddingX: 25,
-    paddingY: 20,
-  },
-};
+import { withTheme } from '../theme';
+import defaultThemeConfig from './defaultThemeConfig.json';
+import defaultThemes from './defaultThemes.json';
 
 class Button extends Component {
   static defaultProps = {
-    color: 'black',
-    size: 'lg',
     accessible: true,
-    withFeedback: true,
     isSpinning: false,
+    size: 'md',
+    withFeedback: true,
   }
 
   static propTypes = {
@@ -117,6 +66,9 @@ class Button extends Component {
     borderWidth: number,
     borderColor: string,
     inverted: bool,
+    theme: shape({
+      components: object,
+    }),
   }
 
   static getDerivedStateFromProps( props, state ) {
@@ -132,6 +84,18 @@ class Button extends Component {
 
   state = {
     isSpinning: this.props.isSpinning,
+  }
+
+  getThemes() {
+    const { button } = this.props.theme.components;
+
+    return button || defaultThemes;
+  }
+
+  getThemeConfig() {
+    const { config } = this.getThemes();
+
+    return config || defaultThemeConfig;
   }
 
   setSpinning = isSpinning => {
@@ -174,10 +138,16 @@ class Button extends Component {
 
   renderIconChild() {
     const { textColor, color, icon, size } = this.props;
+    const themeConfig = this.getThemeConfig();
+
+    const actualColor = textColor || (
+      themeConfig.textColors &&
+      themeConfig.textColors[color]
+    );
 
     return (
       <Icon
-        color={textColor || textColors[color]}
+        color={actualColor}
         name={icon}
         size={size}
       />
@@ -186,17 +156,27 @@ class Button extends Component {
 
   renderTextChild() {
     const { textColor, color, children, size, text, fontWeight, inverted } = this.props;
+    const themeConfig = this.getThemeConfig();
+
+    console.warn({ themeConfig });
+
+    const actualColor = textColor || (
+      inverted ? color : (
+        themeConfig.textColors &&
+        themeConfig.textColors[color]
+      )
+    );
+
+    const actualSize = (
+      themeConfig.textSizes &&
+      themeConfig.textSizes[size]
+    );
 
     return (
       <Text
-        color={(
-          textColor || (
-            inverted ? color
-            : textColors[color]
-          )
-        )}
+        color={actualColor}
         decoration="none"
-        size={textSizes[size]}
+        size={actualSize}
         align="center"
         width="100%"
         bold={!fontWeight}
@@ -209,6 +189,22 @@ class Button extends Component {
 
   renderSpinnerChild() {
     const { size, color, children, text, icon } = this.props;
+    const themeConfig = this.getThemeConfig();
+
+    const actualBackgroundColor = (
+      themeConfig.buttonColors &&
+      themeConfig.buttonColors[color]
+    );
+
+    const activityIndicatorSize = (
+      themeConfig.activityIndicatorSizes &&
+      themeConfig.activityIndicatorSizes[size]
+    );
+
+    const activityIndicatorColor = (
+      themeConfig.textColors &&
+      themeConfig.textColors[color]
+    );
 
     const isIconOnly = (
       typeof icon === 'string' &&
@@ -229,14 +225,14 @@ class Button extends Component {
           position="absolute"
           width="100%"
           height="100%"
-          backgroundColor={buttonColors[color] || color}
+          backgroundColor={actualBackgroundColor || color}
           opacity={0.8}
           shape={isIconOnly && 'circle'}
         />
 
         <ActivityIndicator
-          size={sizeMapping[size]}
-          color={textColors[color]}
+          size={activityIndicatorSize}
+          color={activityIndicatorColor}
         />
       </Box>
     );
@@ -262,11 +258,45 @@ class Button extends Component {
     } = this.props;
 
     const { isSpinning } = this.state;
+    const themeConfig = this.getThemeConfig();
+
+    const actualBackgroundColor = (
+      inverted ? 'transparent'
+      : themeConfig.buttonColors && (
+        (
+          disabled &&
+          themeConfig.buttonColors.disabled
+        )
+          ? themeConfig.buttonColors.disabled
+          : themeConfig.buttonColors[color]
+      )
+    );
+
+    const actualBorderColor = (
+      themeConfig.buttonColors && (
+        (
+          disabled &&
+          themeConfig.buttonColors.disabled
+        )
+          ? themeConfig.buttonColors.disabled
+          : themeConfig.buttonColors[color]
+      )
+    );
 
     const isIconOnly = (
       typeof icon === 'string' &&
       children == null &&
       text == null
+    );
+
+    const iconOnlySize = (
+      themeConfig.iconOnlySizes &&
+      themeConfig.iconOnlySizes[size]
+    );
+
+    const paddingSize = (
+      themeConfig.paddingSizes &&
+      themeConfig.paddingSizes[size]
     );
 
     /* TODO: mixed icon and text children */
@@ -283,45 +313,40 @@ class Button extends Component {
         justifyContent="center"
         alignItems="center"
         boxShadow={boxShadow}
-        backgroundColor={(
-          inverted ? 'transparent'
-          : disabled ? buttonColors.disabled
-          : buttonColors[color] || color
-        )}
+        backgroundColor={actualBackgroundColor || color}
         width={(
           isIconOnly &&
           shape === 'circle'
         )
-          ? iconOnlyButtonSizes[size]
+          ? iconOnlySize
           : width}
         height={(
           isIconOnly &&
           shape === 'circle'
         )
-          ? iconOnlyButtonSizes[size]
+          ? iconOnlySize
           : height}
         {...inverted && {
-          borderStyle: 'solid',
-          borderWidth: 2,
-          borderColor: (
-            disabled ? buttonColors.disabled
-            : buttonColors[color] || color
-          ),
+          borderStyle: themeConfig.invertedBorderStyle || 'solid',
+          borderWidth: themeConfig.invertedBorderWidth || 2,
+          borderColor: actualBorderColor || color,
         }}
       >
         <Box
           padding={padding}
           paddingX={(
             paddingX == null &&
-            !isIconOnly
+            !isIconOnly &&
+            paddingSize
           )
-            ? paddingSizes[size].paddingX
+            ? paddingSize.paddingX
             : paddingX}
           paddingY={(
             paddingY == null &&
-            !isIconOnly
+            !isIconOnly &&
+            paddingSize
           )
-            ? paddingSizes[size].paddingY
+            ? paddingSize.paddingY
             : paddingY}
         >
           {child}
@@ -357,6 +382,12 @@ class Button extends Component {
     } = this.props;
 
     const { isSpinning } = this.state;
+    const themeConfig = this.getThemeConfig();
+
+    const androidTouchColor = (
+      themeConfig.textColors &&
+      themeConfig.textColors[color]
+    );
 
     const style = {
       height,
@@ -384,7 +415,7 @@ class Button extends Component {
         accessibilityRole,
         background: (
           Platform.OS === 'android'
-            ? TouchableNativeFeedback.Ripple( textColors[color], false )
+            ? TouchableNativeFeedback.Ripple( androidTouchColor || '#FFF', false )
             : undefined
         ),
         withFeedback,
@@ -394,4 +425,4 @@ class Button extends Component {
   }
 }
 
-export default Button;
+export default withTheme( Button );

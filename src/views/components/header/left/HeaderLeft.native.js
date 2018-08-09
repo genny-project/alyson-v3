@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
 import { object, func, bool, string } from 'prop-types';
 import { connect } from 'react-redux';
-import { NavigationActions, withNavigation } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 import { removeStartingAndEndingSlashes } from '../../../../utils';
 import { Button, Box, Heading, Image } from '../../index';
+import { withKeycloak } from '../../keycloak';
 import { LayoutConsumer } from '../../../layout';
 
 class HeaderLeft extends Component {
+  static defaultProps = {
+    backIcon: 'arrow-back',
+    backIconSize: 'md',
+  }
+
   static propTypes = {
     navigationReducer: object,
     navigation: object,
@@ -16,7 +22,12 @@ class HeaderLeft extends Component {
     showTitle: bool,
     showLogo: bool,
     showMenu: bool,
+    forceShowBack: bool,
     title: string,
+    backIcon: string,
+    backIconSize: string,
+    backIconColor: string,
+    keycloak: object,
   }
 
   handleToggleMenu = () => {
@@ -26,11 +37,16 @@ class HeaderLeft extends Component {
   }
 
   handleBack = () => {
-    const { dispatch } = this.props;
+    const { dispatch, keycloak, navigation } = this.props;
 
-    dispatch(
-      NavigationActions.back()
-    );
+    if ( keycloak.isAuthenticated ) {
+      dispatch(
+        NavigationActions.back()
+      );
+    }
+    else {
+      navigation.goBack();
+    }
   }
 
   render() {
@@ -41,6 +57,10 @@ class HeaderLeft extends Component {
       showTitle,
       showLogo,
       showMenu,
+      forceShowBack,
+      backIcon,
+      backIconColor,
+      backIconSize,
     } = this.props;
     const { index, routes } = navigationReducer;
     const { params } = routes[index];
@@ -51,7 +71,7 @@ class HeaderLeft extends Component {
       removeStartingAndEndingSlashes( params.layout )
     );
 
-    const canShowBack = (
+    const canShowBack = forceShowBack || (
       index > 0 &&
       strippedLayoutName &&
       strippedLayoutName !== 'home'
@@ -68,10 +88,10 @@ class HeaderLeft extends Component {
               ? (
                 <Button
                   onPress={this.handleBack}
-                  size="md"
+                  size={backIconSize}
                   color="transparent"
-                  textColor={layout.textColor}
-                  icon="arrow-back"
+                  textColor={backIconColor || layout.textColor}
+                  icon={backIcon}
                   paddingX={15}
                 />
               ) : showMenu ? (
@@ -123,5 +143,7 @@ const mapStateToProps = state => ({
 });
 
 export default (
-  connect( mapStateToProps )( withNavigation( HeaderLeft ))
+  connect( mapStateToProps )(
+    withKeycloak( HeaderLeft )
+  )
 );
