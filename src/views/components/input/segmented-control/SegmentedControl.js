@@ -26,24 +26,22 @@ class Checkbox extends Component {
       nextProps.value != null &&
       nextProps.value !== nextState.selected
     ) {
-      nextProps.onChangeValue( nextProps.value );
-
-      return { selected: nextProps.value };
+      return {
+        selected: nextProps.value,
+      };
     }
 
     if (
       nextProps.value == null &&
       ( nextState.selected === null ||
         nextState.selected === undefined ) &&
-      nextProps.items != null
+        Array.isArray( nextProps.items ) &&
+        nextProps.items.length > 0 &&
+        nextProps.items[0].value !== null
     ) {
-      const item = nextProps.items && nextProps.items[0];
-
-      if ( item && item.value ) {
-        nextProps.onChangeValue( item.value );
-
-        return { selected: item.value };
-      }
+      return { 
+        selected: nextProps.items[0].value,
+      };
     }
 
     return null;
@@ -53,7 +51,40 @@ class Checkbox extends Component {
     selected: this.props.value,
   }
 
+  componentDidMount() {
+    const { value, items, onChangeValue } = this.props;
+
+    if (
+      value != null
+    ) {
+      this.setState({
+        selected: value,
+      }, () => {
+        if ( onChangeValue ) {
+          onChangeValue( value );
+        }
+      });
+    }
+    else if (
+      value == null &&
+      items !== null &&
+      Array.isArray( items ) &&
+      items.length > 0 &&
+      items[0].value !== null
+    ) {
+      this.setState({
+        selected: items[0].value,
+      }, () => {
+        if ( onChangeValue ) {
+          onChangeValue( items[0].value );
+        }
+      });
+    }
+  }
+
   handlePress = value => () => {
+    const { onChangeValue } = this.props;
+
     this.setState( state => {
       if ( state.selected === value ) {
         return;
@@ -63,8 +94,8 @@ class Checkbox extends Component {
         selected: value,
       };
     }, () => {
-      if ( this.props.onChangeValue ) {
-        this.props.onChangeValue( this.state.selected );
+      if ( onChangeValue ) {
+        onChangeValue( this.state.selected );
       }
     });
   }
@@ -85,49 +116,50 @@ class Checkbox extends Component {
         width="100%"
       >
         {
-          isArray( items, { ofMinLength: 1 }) ? (
-            items.map(( item, index ) => {
-              const borderCorners = {
-                borderTopLeftRadius: index === 0 ? 10 : 0,
-                borderTopRightRadius: index === items.length - 1 ? 10 : 0,
-                borderBottomRightRadius: index === items.length - 1 ? 10 : 0,
-                borderBottomLeftRadius: index === 0 ? 10 : 0,
-              };
+          selected &&
+            isArray( items, { ofMinLength: 1 }) ? (
+              items.map(( item, index ) => {
+                const borderCorners = {
+                  borderTopLeftRadius: index === 0 ? 10 : 0,
+                  borderTopRightRadius: index === items.length - 1 ? 10 : 0,
+                  borderBottomRightRadius: index === items.length - 1 ? 10 : 0,
+                  borderBottomLeftRadius: index === 0 ? 10 : 0,
+                };
 
-              return (
-                <Touchable
-                  key={item.value}
-                  onPress={selected !== item.value ? this.handlePress( item.value ) : null}
-                >
-                  <Box
-                    alignItems="center"
-                    justifyContent="center"
-                    flex={1}
-                    padding={15}
-                    backgroundColor={selected === item.value
-                      ? selectedBackgroundColor
-                      : backgroundColor
-                    }
-                    {...borderCorners}
+                return (
+                  <Touchable
+                    key={item.value}
+                    onPress={selected !== item.value ? this.handlePress( item.value ) : null}
                   >
-                    <Text
-                      size="xs"
-                      color={selected === item.value
-                        ? selectedTextColor
-                        : textColor
+                    <Box
+                      alignItems="center"
+                      justifyContent="center"
+                      flex={1}
+                      padding={15}
+                      backgroundColor={selected === item.value
+                        ? selectedBackgroundColor
+                        : backgroundColor
                       }
+                      {...borderCorners}
                     >
-                      {item.label}
-                    </Text>
-                  </Box>
-                </Touchable>
-              );
-            })
-          ) : (
-            <Text>
-              No items to show
-            </Text>
-          )}
+                      <Text
+                        size="xs"
+                        color={selected === item.value
+                          ? selectedTextColor
+                          : textColor
+                        }
+                      >
+                        {item.label}
+                      </Text>
+                    </Box>
+                  </Touchable>
+                );
+              })
+            ) : (
+              <Text>
+                No items to show
+              </Text>
+            )}
       </Box>
     );
   }
