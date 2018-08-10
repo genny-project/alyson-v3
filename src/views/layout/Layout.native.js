@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { Dimensions } from 'react-native';
 import { oneOf, node, object, string, bool } from 'prop-types';
 import { withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -210,14 +211,15 @@ class Layout extends Component {
 
   render() {
     const { children, layout } = this.props;
+    const { width, height } = Dimensions.get( 'window' );
 
     return (
       <Fragment>
         {/* This is here to fix a bug with React Navigation showing `cardStyle` styling
          * from `StackNavigator` over the app's background color, but only for . */}
         <Box
-          height="100%"
-          width="100%"
+          height={height}
+          width={width}
           position="absolute"
           top={0}
           left={0}
