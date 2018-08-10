@@ -5,6 +5,7 @@ import keycloak from '../views/components/keycloak/keycloak.reducer';
 import vertx from '../views/components/vertx/vertx.reducer';
 import layout from '../views/layout/layout.reducer';
 import navigation from '../views/routing/navigation.reducer';
+import theme from '../views/components/theme/theme.reducer';
 
 const reducers = combineReducers({
   keycloak,
@@ -12,7 +13,8 @@ const reducers = combineReducers({
   vertx,
   router,
   layout,
-  navigation: navigation,
+  navigation,
+  theme,
 });
 
 export default reducers;

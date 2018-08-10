@@ -2,6 +2,7 @@ import React, { createElement, Component } from 'react';
 import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
+import { connect } from 'react-redux';
 import { object, any, string } from 'prop-types';
 import { doesValueMatch } from '../../../utils/data-query/operators/find';
 import { store } from '../../../redux';
@@ -18,6 +19,8 @@ class Recursive extends Component {
     onlyShowIf: object,
     dontShowIf: object,
     conditional: object,
+    variant: string,
+    theme: object,
   };
 
   handleMapCurlyTemplate = template => {
@@ -78,7 +81,6 @@ class Recursive extends Component {
     if ( result[current] == null && result[index] == null ) return result;
 
     if ( typeof result[current] === 'string' ) {
-      // console.warn( result[current] );
       if ( result[current].startsWith( '_' )) {
         result[current] = dlv( context, result[current].substring( 1 ));
 
@@ -181,12 +183,14 @@ class Recursive extends Component {
     const {
       component,
       props,
+      variant,
       children,
       context,
       repeat,
       onlyShowIf,
       dontShowIf,
       conditional,
+      theme,
     } = this.props;
 
     if ( !component || !Components[component] ) {
@@ -225,20 +229,6 @@ class Recursive extends Component {
     const repeatedChildren =
       injectedRepeat && injectedRepeat instanceof Array
         ? injectedRepeat.map( child => {
-          component === 'Sublayout' &&
-              console.warn({
-                ...children,
-                props: {
-                  ...children.props,
-                  ...child,
-                },
-                context: {
-                  ...context,
-                  repeater: child,
-                  parentRepeater: context.repeater,
-                },
-              });
-
           return {
             ...children,
             props: {
@@ -255,13 +245,14 @@ class Recursive extends Component {
         : this.injectContextIntoChildren( context, children );
 
     const componentProps = this.injectContextIntoProps({
+      ...(
+        variant &&
+        theme.components[component] &&
+        theme.components[component][variant]
+      ),
       ...props,
       ...this.calculateConditionalProps( conditional, context ),
     });
-
-    // component == 'Sublayout' && console.warn( component, { context });
-
-    // console.log( repeatedChildren );
 
     return createElement(
       Components[component],
@@ -272,12 +263,14 @@ class Recursive extends Component {
             context={context}
             // eslint-disable-next-line react/no-array-index-key
             key={index}
+            theme={theme}
             {...child}
           />
         ))
       ) : typeof repeatedChildren === 'object' ? (
         <Recursive
           context={context}
+          theme={theme}
           {...repeatedChildren}
         />
       ) : (
@@ -287,4 +280,8 @@ class Recursive extends Component {
   }
 }
 
-export default Recursive;
+const mapStateToProps = state => ({
+  theme: state.theme,
+});
+
+export default connect( mapStateToProps )( Recursive );
