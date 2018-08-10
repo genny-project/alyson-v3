@@ -8,7 +8,7 @@
 
     <application
       android:name=".MainApplication"
-      android:label="@string/APP_NAME"
+      android:label="@string/GENERATED_APP_NAME"
       android:icon="@mipmap/ic_launcher"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
@@ -17,7 +17,7 @@
         android:value="@string/GOOGLE_MAPS_APIKEY"/>
       <activity
         android:name=".MainActivity"
-        android:label="@string/APP_NAME"
+        android:label="@string/GENERATED_APP_NAME"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
         android:windowSoftInputMode="adjustResize">
         <intent-filter>

@@ -100,11 +100,16 @@ android {
     compileSdkVersion 25
 
     defaultConfig {
-        applicationId "com.alysonv3"
+        applicationId "com.alysonv3." + project.env.get("APP_ID")
         minSdkVersion 16
+
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        resValue 'string', 'GENERATED_APP_NAME', project.env.get("APP_NAME")
+        resValue 'string', 'GENERATED_APP_ID', "com.alysonv3." + project.env.get("APP_ID")
+        resValue "string", "build_config_package", "com.alysonv3"
+
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -120,6 +125,9 @@ android {
     buildTypes {
         debug {
             buildConfigField "String", "CODEPUSH_KEY", '""'
+            applicationIdSuffix = ".debug"
+            resValue 'string', 'GENERATED_APP_ID', "com.alysonv3." + project.env.get("APP_ID") + " debug"
+
         }
         releaseStaging {
             buildConfigField "String", "CODEPUSH_KEY", '""'
@@ -127,6 +135,7 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             matchingFallbacks = ['release']
             applicationIdSuffix = ".staging"
+            resValue 'string', 'GENERATED_APP_ID', "com.alysonv3." + project.env.get("APP_ID") + " staging"
         }
         release {
             buildConfigField "String", "CODEPUSH_KEY", '""'
