@@ -17,7 +17,6 @@ import InputCurrency from './currency';
 import InputCreditCard from './credit-card';
 import InputCheckbox from './checkbox-2';
 import InputPayment from './payment';
-import AudioRecord from './audio-record';
 import SegmentedControl from './segmented-control';
 
 class Input extends Component {
@@ -257,14 +256,6 @@ class Input extends Component {
       case 'payment':
         return (
           <InputPayment
-            {...this.props}
-            ref={input => this.input = input}
-          />
-        );
-
-      case 'audioRecord':
-        return (
-          <AudioRecord
             {...this.props}
             ref={input => this.input = input}
           />
