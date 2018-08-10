@@ -68,7 +68,11 @@ class Layout extends Component {
       this.setSidebarProperties();
     }
 
-    if ( this.state.unableToFindHeader ) {
+    if (
+      this.state.unableToFindHeader &&
+      this.props.header &&
+      this.props.header.variant
+    ) {
       const variant = `header-${this.props.header.variant}`;
 
       if ( this.props.layouts.sublayouts[variant] )
