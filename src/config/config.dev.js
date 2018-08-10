@@ -3,8 +3,8 @@ export default {
     name: 'Genny',
   },
   genny: {
-    host: 'https://bridge-eet-dev.outcome-hub.com', 
-    initUrl: 'https://eet-dev.outcome-hub.com',
+    host: 'https://bridge-fourdegrees-dev.outcome-hub.com/', 
+    initUrl: 'https://fourdegrees-dev.outcome-hub.com/',
     bridge: {
       port: '80',
       endpoints: {
@@ -21,7 +21,7 @@ export default {
     },
   },
   uppy: {
-    url: 'https://uppy-eet-dev.outcome-hub.com/s3/',
+    url: 'https://uppych40.channel40.com.au/s3/',
   },
   keycloak: {
     redirectUri: 'https://d2oki2ya5fhih0.cloudfront.net',
