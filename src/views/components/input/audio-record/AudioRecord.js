@@ -49,8 +49,8 @@ class AudioRecord extends Component {
     const path = `${RNFS.TemporaryDirectoryPath}sound.m4a`;
 
     if ( path && this.props.onChangeValue ) {
-      // this.props.onChangeValue('record.mp4');
-      this.uploadFile( path, 'record' );
+      this.props.onChangeValue( 'record.mp4' );
+    //  this.uploadFile( path, 'record' );
     }
   }
 

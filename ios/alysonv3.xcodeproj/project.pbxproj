@@ -1799,7 +1799,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.crowtech.exneer-english-test";
+				PRODUCT_BUNDLE_IDENTIFIER = com.crowtech.eet;
 				PRODUCT_NAME = alysonv3;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1832,7 +1832,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.crowtech.exneer-english-test";
+				PRODUCT_BUNDLE_IDENTIFIER = com.crowtech.eet;
 				PRODUCT_NAME = alysonv3;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
