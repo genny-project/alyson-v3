@@ -24,6 +24,7 @@ class HeaderLeft extends Component {
     showLogo: bool,
     showMenu: bool,
     forceShowBack: bool,
+    logoAsMenuButton: bool,
     title: string,
     backIcon: string,
     backIconSize: string,
@@ -66,6 +67,7 @@ class HeaderLeft extends Component {
       backIconSize,
       replaceLogoWithBack,
       logoOpensMenu,
+      logoAsMenuButton,
     } = this.props;
     const { index, routes } = navigationReducer;
     const { params } = routes[index];
@@ -128,6 +130,38 @@ class HeaderLeft extends Component {
                   withFeedback: true,
                   onPress: this.handleToggleMenu,
                 }}
+              ) : showMenu &&
+                !logoAsMenuButton ? (
+                  <Button
+                    onPress={this.handleToggleMenu}
+                    size="md"
+                    color="transparent"
+                    textColor={layout.textColor}
+                    icon="menu"
+                    paddingX={15}
+                  />
+                ) : null
+            }
+
+            {logoAsMenuButton ? (
+              <Touchable
+                onPress={this.handleToggleMenu}
+              >
+                <Box
+                  marginLeft={5}
+                  marginRight={10}
+                >
+                  <Image
+                    height={50}
+                    width={50}
+                    source={logoSource}
+                  />
+                </Box>
+              </Touchable>
+            ) : showLogo ? (
+              <Box
+                marginLeft={5}
+                marginRight={10}
               >
                 <Box paddingX={5}>
                   <Image
