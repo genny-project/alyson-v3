@@ -12,7 +12,7 @@ const reducers = combineReducers({
   vertx,
   router,
   layout,
-  navigation,
+  navigation: navigation,
 });
 
 export default reducers;

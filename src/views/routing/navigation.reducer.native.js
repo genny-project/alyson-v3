@@ -1,15 +1,15 @@
-import { AppStack } from './Routing';
+import { AppStackNavigator } from './AppStack';
 
-const initialState = AppStack.router.getStateForAction(
-  AppStack.router.getActionForPathAndParams( 'generic', { layout: 'home' })
+const initialState = AppStackNavigator.router.getStateForAction(
+  AppStackNavigator.router.getActionForPathAndParams( 'generic', { layout: 'home' })
 );
 
-const reducer = ( state = initialState, action ) => {
+export const reducer = ( state = initialState, action ) => {
   if ( action.type === 'USER_LOGOUT' ) {
     return { ...initialState };
   }
 
-  const nextState = AppStack.router.getStateForAction( action, state );
+  const nextState = AppStackNavigator.router.getStateForAction( action, state );
 
   // Simply return the original `state` if `nextState` is null or undefined.
   return nextState || state;
