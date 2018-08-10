@@ -60,6 +60,8 @@ class FormInput extends Component {
       case 'switch':
       case 'java.lang.boolean':
       case 'payment':
+      case 'audioRecord':
+      case 'audiorecord':
         return (
           <Input
             {...this.props}

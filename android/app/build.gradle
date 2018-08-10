@@ -148,6 +148,8 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-audio-transcoder')
+    compile project(':react-native-fs')
     compile project(':react-native-code-push')
     compile project(':appcenter-crashes')
     compile project(':appcenter-analytics')
