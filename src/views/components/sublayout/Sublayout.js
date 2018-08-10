@@ -1,36 +1,42 @@
 import React, { Component } from 'react';
-import { string, func } from 'prop-types';
+import { string, object } from 'prop-types';
 import { connect } from 'react-redux';
 import { LayoutLoader } from '../';
 
 class Sublayout extends Component {
   static propTypes = {
     layoutName: string,
-    baseEntities: func,
+    layouts: object,
   };
 
-  getLayout( layoutName ) {
-    const { attributes } = this.props.baseEntities;
+  state = {
+    layout: null,
+  }
 
-    /* Find the attribute with the matching URL */
-    const layout = Object.keys( attributes )
-      .filter( key => key.startsWith( 'LAY_' ))
-      .map( key => attributes[key] )
-      .find( l => l.PRI_LAYOUT_URI.valueString === layoutName );
+  componentDidMount() {
+    this.getLayout();
+  }
 
-    return layout 
-    && layout.PRI_LAYOUT_DATA
-    && layout.PRI_LAYOUT_DATA.valueString
-    && JSON.parse( layout.PRI_LAYOUT_DATA.valueString );
+  componentDidUpdate() {
+    if ( !this.state.layout )
+      this.getLayout();
+  }
+
+  getLayout() {
+    const { layouts, layoutName } = this.props;
+    const layout = layouts.sublayouts[layoutName];
+
+    if ( layout )
+      this.setState({ layout });
   }
 
   render() {
-    const { layoutName, ...props } = this.props;
+    const { layout } = this.state;
 
     return (
       <LayoutLoader
-        layout={this.getLayout( layoutName )}
-        sublayoutProps={props}
+        layout={layout}
+        sublayoutProps={this.props}
         sublayout
       />
     );
@@ -38,7 +44,7 @@ class Sublayout extends Component {
 }
 
 const mapStateToProps = state => ({
-  baseEntities: state.vertx.baseEntities,
+  layouts: state.vertx.layouts,
 });
 
 export default connect( mapStateToProps )( Sublayout );

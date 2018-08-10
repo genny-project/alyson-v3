@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { object } from 'prop-types';
 import { connect } from 'react-redux';
 import { location } from '../../../utils';
-import { LayoutLoader, Redirect, KeycloakConsumer } from '../../components';
-import LayoutFetcher from './LayoutFetcher';
+import { LayoutLoader, LayoutFetcher, Redirect, KeycloakConsumer } from '../../components';
 
 class Generic extends Component {
   static propTypes = {

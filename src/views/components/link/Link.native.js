@@ -4,6 +4,7 @@ import { any, bool, func, string, object } from 'prop-types';
 import { routes } from '../../../config';
 import { store } from '../../../redux';
 import { Touchable } from '../index';
+import { withKeycloak } from '../keycloak';
 
 class Link extends Component {
   static defaultProps = {
@@ -21,15 +22,17 @@ class Link extends Component {
     pure: bool,
     withoutFeedback: bool,
     params: object,
+    keycloak: object,
   }
 
   handlePress = event => {
-    const { disabled, useAppNavigator, to, navigation, onPress, params } = this.props;
+    const { disabled, useAppNavigator, to, navigation, onPress, params, keycloak } = this.props;
 
     if ( disabled )
       return;
 
     if (
+      keycloak.isAuthenticated &&
       useAppNavigator
     ) {
       store.dispatch(
@@ -44,7 +47,11 @@ class Link extends Component {
     }
     else {
       navigation.navigate({
-        routeName: routes[to] ? to : 'generic',
+        routeName: routes[to]
+          ? to
+          : keycloak.isAuthenticated
+            ? 'generic'
+            : 'public',
         params: {
           ...params,
           layout: to,
@@ -100,4 +107,4 @@ class Link extends Component {
   }
 }
 
-export default withNavigation( Link );
+export default withNavigation( withKeycloak( Link ));

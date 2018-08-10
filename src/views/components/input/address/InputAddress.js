@@ -24,7 +24,6 @@ class InputAddress extends Component {
     injectCustomAddressComponents: {
       street_address: '{{street_number}} {{street_name}}',
     },
-    prefixIcon: 'place',
     icon: 'expand-more',
     placeholder: 'Select an address...',
     getShortNameForAddressComponents: ['country'],

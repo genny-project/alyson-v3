@@ -148,7 +148,6 @@ class DatePicker extends Component {
             value={displayValue}
             placeholder="Select a date..."
             editable={false}
-            prefixIcon="event"
             icon="expand-more"
           />
 

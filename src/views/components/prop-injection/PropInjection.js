@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import copy from 'fast-copy';
 import dlv from 'dlv';
-import { node } from 'prop-types';
+import { func } from 'prop-types';
 import { store } from '../../../redux';
 
 const handleMapCurlyTemplate = data => ( template ) => {
@@ -89,21 +89,18 @@ const injectProps = props => {
 };
 
 class PropInjection extends Component {
-  static defaultProps = {
-  }
-
   static propTypes = {
-    children: node,
+    children: func,
   }
 
   static getDerivedStateFromProps( props ) {
     return injectProps( props );
   }
 
+  state = {}
+
   render() {
-    return ( this.props.children(
-      this.state
-    ));
+    return this.props.children( this.state );
   }
 }
 

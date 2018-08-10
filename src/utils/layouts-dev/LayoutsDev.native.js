@@ -9,30 +9,39 @@ class LayoutsDev {
     this.realm = null;
   }
 
-  load( realm ) {
+  async load( realm ) {
     this.realm = realm;
 
-    /* Read the dev routes from the layout cache for this realm */
-    axios({
-      method: 'get',
-      url: `http://localhost:2223/${realm}/routing.dev.json`,
-    }).then( success => {
+    try {
+      /* Read the dev routes from the layout cache for this realm */
+      const success = await axios({
+        method: 'get',
+        url: `http://localhost:2223/${realm}/routing.dev.json`,
+      });
+
       this.processRoutes( realm, success.data );
-    }).catch( error => {
+    }
+    catch ( error ) {
       console.error( 'ERROR', `http://localhost:2223/${realm}/routing.dev.json`, error );
-    });
-    store.dispatch( loadDevLayouts( realm ));
+    }
+
+    store.dispatch(
+      loadDevLayouts( realm )
+    );
   }
 
-  getLayoutData( realm, path, callback ) {
-    axios({
-      method: 'get',
-      url: `http://localhost:2223/${realm}/${path}`,
-    }).then( success => {
+  async getLayoutData( realm, path, callback ) {
+    try {
+      const success = await axios({
+        method: 'get',
+        url: `http://localhost:2223/${realm}/${path}`,
+      });
+
       callback( success.data );
-    }).catch( error => {
+    }
+    catch ( error ) {
       console.error( 'ERROR', `http://localhost:2223/${realm}/routing.dev.json`, error );
-    });
+    }
   }
 
   navigate( path ) {
@@ -49,6 +58,7 @@ class LayoutsDev {
   reload( path ) {
     this.load( this.realm );
     this.navigate( '/tmp' );
+
     setTimeout(() => {
       this.navigate( path );
     }, 500 );
@@ -103,7 +113,9 @@ class LayoutsDev {
           },
         };
 
-        store.dispatch( loadDevLayout( attribute ));
+        store.dispatch(
+          loadDevLayout( attribute )
+        );
       });
     });
   }

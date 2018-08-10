@@ -14,7 +14,19 @@ const patchPostMessageJsCode = `(${String(() => {
     return String( Object.hasOwnProperty ).replace( 'hasOwnProperty', 'postMessage' );
   };
 
+  var htmlHeight = Math.max(
+    document.body.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.clientHeight,
+    document.documentElement.scrollHeight,
+    document.documentElement.offsetHeight
+  );
+
   window.postMessage = patchedPostMessage;
+
+  window.postMessage(
+    JSON.stringify({ htmlHeight })
+  );
 })})();`;
 
 class WebView extends Component {
