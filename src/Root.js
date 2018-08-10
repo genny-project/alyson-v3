@@ -10,11 +10,11 @@ import './utils/layouts-dev';
 
 console.disableYellowBox = true; // eslint-disable-line no-console
 
-/* --- ADDED FOR 4* DEV --- */
-if ( !this.f ) {
-  this.f = true;
-  global.LayoutsDev.load( 'fourdegrees-new' );
-}
+/* --- ADDED FOR LOCAL LAYOUT DEV --- */
+// if ( !this.f ) {
+//   this.f = true;
+//   global.LayoutsDev.load( 'PROJECT_HERE' );
+// }
 /* ------------------------ */
 
 const Root = () => (
