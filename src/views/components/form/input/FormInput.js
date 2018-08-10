@@ -42,6 +42,7 @@ class FormInput extends Component {
         return (
           <FormInputDropdown
             {...this.props}
+            onChangeValue={this.handleChangeValueWithSend}
             ref={input => this.input = input}
           />
         );
