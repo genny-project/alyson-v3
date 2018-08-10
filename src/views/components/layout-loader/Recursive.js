@@ -21,6 +21,7 @@ class Recursive extends Component {
     conditional: object,
     variant: string,
     theme: object,
+    useThemeFrom: string,
   };
 
   handleMapCurlyTemplate = template => {
@@ -184,6 +185,7 @@ class Recursive extends Component {
       component,
       props,
       variant,
+      useThemeFrom,
       children,
       context,
       repeat,
@@ -247,8 +249,8 @@ class Recursive extends Component {
     const componentProps = this.injectContextIntoProps({
       ...(
         variant &&
-        theme.components[component] &&
-        theme.components[component][variant]
+        theme.components[useThemeFrom || component] &&
+        theme.components[useThemeFrom || component][variant]
       ),
       ...props,
       ...this.calculateConditionalProps( conditional, context ),
