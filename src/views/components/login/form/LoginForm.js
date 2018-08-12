@@ -9,12 +9,8 @@ class LoginForm extends Component {
     children: node,
   }
 
-  state = {
-    // error: null,
-  }
-
   handleSubmit = async ( values, form ) => {
-    const { setSubmitting } = form;
+    const { setSubmitting, setStatus } = form;
     const { keycloak } = this.props;
 
     setSubmitting( true );
@@ -26,7 +22,7 @@ class LoginForm extends Component {
       });
     }
     catch ( error ) {
-      // this.setState({ error });
+      setStatus( error.message || error );
     }
     finally {
       setSubmitting( false );
