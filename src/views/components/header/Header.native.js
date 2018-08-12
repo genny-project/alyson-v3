@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { string, object, number, oneOfType, shape, arrayOf, bool, oneOf } from 'prop-types';
-import { Box } from '../index';
-import HeaderLeft from './left';
-import HeaderRight from './right';
+import { ifIphoneX, getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { Box, StatusBar } from '../index';
 import { LayoutConsumer } from '../../layout';
-import { PropInjection } from '../prop-injection';
+import Header from './Header.js';
 
 const headerItemPropTypes = shape({
   icon: string,
@@ -14,8 +13,9 @@ const headerItemPropTypes = shape({
   items: arrayOf( headerItemPropTypes ),
 });
 
-class Header extends Component {
+class HeaderNative extends Component {
   static defaultProps = {
+    barStyle: 'light-content',
     boxShadow: 'light',
     paddingX: 5,
     height: 60,
@@ -59,48 +59,35 @@ class Header extends Component {
   }
 
   render() {
+    const { barStyle, backgroundColor } = this.props;
+
     return (
-      <PropInjection {...this.props}>
-        {({
-          backgroundColor,
-          height,
-          paddingX,
-          paddingY,
-          padding,
-          boxShadow,
-          headerLeft,
-          headerRight,
-          title,
-          navigation,
-          ...restProps
-        }) => (
-          <LayoutConsumer>
-            {layout => (
+      <LayoutConsumer>
+        {layout => (
+          <StatusBar
+            barStyle={barStyle}
+            backgroundColor={backgroundColor || layout.appColor}
+          >
+            {ifIphoneX ? (
               <Box
-                {...restProps}
-                height={height}
-                justifyContent="space-between"
-                alignItems="center"
+                position="absolute"
+                top={0}
+                left={0}
                 width="100%"
+                height={getStatusBarHeight( true )}
                 backgroundColor={backgroundColor || layout.appColor}
-                paddingX={paddingX}
-                paddingY={paddingY}
-                padding={padding}
-                boxShadow={boxShadow}
-              >
-                <HeaderLeft
-                  {...headerLeft}
-                  stackNavigation={navigation}
-                  title={title}
-                />
-                <HeaderRight {...headerRight} />
-              </Box>
-            )}
-          </LayoutConsumer>
+              />
+            ) : null}
+
+            <Header
+              {...this.props}
+              marginTop={getStatusBarHeight( true )}
+            />
+          </StatusBar>
         )}
-      </PropInjection>
+      </LayoutConsumer>
     );
   }
 }
 
-export default Header;
+export default HeaderNative;
