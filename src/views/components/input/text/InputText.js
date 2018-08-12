@@ -200,7 +200,6 @@ class Input extends Component {
   }
 
   handleFocus = event => {
-    console.warn( this.state.isFocused );
     this.setState({
       isFocused: true,
     });
@@ -210,7 +209,6 @@ class Input extends Component {
   }
 
   handleBlur = event => {
-    console.warn( this.state.isFocused );
     this.setState({
       isFocused: false,
     });
