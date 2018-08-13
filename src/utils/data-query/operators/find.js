@@ -51,6 +51,10 @@ const doesValueMatch = ( actualValue, expectedValue, context ) => {
 };
 
 const arrayMatch = ( data, query, context ) => {
+  if ( !Array.isArray( data )) {
+    return [];
+  }
+
   /* Filter the output */
   const output = data.filter( item => {
     return objectMatch( item, query, context );

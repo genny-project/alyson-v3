@@ -9,6 +9,7 @@ import { Box } from '../../../components';
 import InputFileItem from './file-item';
 import InputFileTouchable from './file-touchable';
 import config from '../../../../config';
+import { isArray } from '../../../../utils';
 
 class InputFile extends Component {
   static defaultProps = {
@@ -16,6 +17,7 @@ class InputFile extends Component {
     autoProceed: true,
     defaultValue: [],
     imageOnly: false,
+    multiple: false,
   }
 
   static propTypes = {
@@ -25,6 +27,7 @@ class InputFile extends Component {
     defaultValue: object,
     value: array,
     imageOnly: bool,
+    multiple: bool,
   }
 
   state = {
@@ -49,12 +52,6 @@ class InputFile extends Component {
 
     const { autoProceed } = this.props;
 
-    /** const hosturlattr = BaseEntityQuery.getBaseEntityAttribute(
-    * GennyBridge.getProject(), 'PRI_UPPY_URL'
-    * );
-    */
-    // if (hosturlattr != null && hosturlattr.value != null) {
-
     this.uppy = new Uppy({
       autoProceed,
       debug: false,
@@ -76,13 +73,12 @@ class InputFile extends Component {
       .run();
 
     this.uppy.on( 'complete', this.handleComplete );
-    // }
   }
 
   componentWillUnmount() {
-    if ( this.uppy ) {
+    if ( this.uppy )
       this.uppy.close();
-    }
+
     removeEventListener( 'hashchange', this.handleHashChange, false );
   }
 
@@ -95,21 +91,22 @@ class InputFile extends Component {
 
     if (
       !this.props.imageOnly ||
-      ( this.props.imageOnly &&
-        imageTypes.includes( currentFile.type ))
+      (
+        this.props.imageOnly &&
+        imageTypes.includes( currentFile.type )
+      )
     ) {
       this.uppy.info( 'Upload successful', 'success', 3000 );
 
       return true;
     }
+
     this.uppy.info( 'Invalid file type', 'error', 3000 );
 
     return false;
   }
 
   handleComplete = result => {
-    // console.log( this.state, result );
-
     this.setState( state => ({
       files: [
         ...state.files,
@@ -127,12 +124,7 @@ class InputFile extends Component {
 
     this.setState({ error: null });
 
-    // console.log('Upload', files);
-
-    setTimeout(() => {
-      // console.log('closing');
-      this.close();
-    }, 2000 );
+    setTimeout( this.close, 2000 );
 
     if ( this.props.onChange ) {
       this.props.onChange({ target: { value: files } });
@@ -186,7 +178,6 @@ class InputFile extends Component {
 
   close = () => {
     this.uppy.getPlugin( 'Dashboard' ).closeModal();
-    // console.log('closed');
   }
 
   isValidFile = file => {
@@ -217,24 +208,8 @@ class InputFile extends Component {
     return true;
   }
 
-  componentDidReceiveProps( nextProps ) {
-    let files = [];
-
-    try {
-      files = ( nextProps.value && nextProps.value !== 'null' ) ? JSON.parse( nextProps.value ) : nextProps.defaultValue;
-    } catch ( e ) {
-      //
-    }
-
-    this.setState({
-      files,
-    }, () => {
-      // console.log( this.state );
-    });
-  }
-
   render() {
-    const { imageOnly } = this.props;
+    const { imageOnly, multiple } = this.props;
     const { files, error } = this.state;
     const validFiles = files && files.length ? files.filter( file => this.isValidFile( file )) : [];
 
@@ -243,32 +218,36 @@ class InputFile extends Component {
         width="100%"
         flexDirection="column"
       >
-        {
-          validFiles && validFiles.length > 0 && (
-            validFiles.map( file => {
-              return (
-                <InputFileItem
-                  key={file.id}
-                  id={file.id}
-                  size={file.size}
-                  name={file.name}
-                  uploaded={file.uploaded}
-                  type={file.type}
-                  preview={file.preview}
-                  uploadURL={file.uploadURL}
-                  error={error}
-                  onRemove={this.handleRemoveFile}
-                />
-              );
-            })
-          )
-        }
-        <InputFileTouchable
-          onPress={this.handleOpenModal}
-          text={
-            `Click to Upload a${validFiles.length > 0 ? 'nother' : imageOnly ? 'n' : ''} ${imageOnly ? 'image' : 'file'} `
-          }
-        />
+        {isArray( validFiles, { ofMinLength: 1 }) && (
+          validFiles.map( file => {
+            return (
+              <InputFileItem
+                key={file.id}
+                id={file.id}
+                size={file.size}
+                name={file.name}
+                uploaded={file.uploaded}
+                type={file.type}
+                preview={file.preview}
+                uploadURL={file.uploadURL}
+                error={error}
+                onRemove={this.handleRemoveFile}
+              />
+            );
+          })
+        )}
+
+        {(
+          isArray( validFiles, { ofExactLength: 0 }) ||
+          multiple
+        ) && (
+          <InputFileTouchable
+            onPress={this.handleOpenModal}
+            text={(
+              `Click to Upload a${validFiles.length > 0 ? 'nother' : imageOnly ? 'n' : ''} ${imageOnly ? 'image' : 'file'} `
+            )}
+          />
+        )}
       </Box>
     );
   }

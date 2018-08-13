@@ -88,6 +88,9 @@ const reducer = ( state = initialState, { type, payload }) => {
       return state;
     }
 
+    case 'USER_LOGOUT':
+      return { ...initialState };
+
     default:
       return state;
   }

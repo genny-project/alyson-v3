@@ -2,10 +2,12 @@ import React, { createElement, Component } from 'react';
 import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
+import { connect } from 'react-redux';
 import { object, any, string } from 'prop-types';
 import { doesValueMatch } from '../../../utils/data-query/operators/find';
 import { store } from '../../../redux';
 import * as Components from '../index';
+import isObject from '../../../utils/types/object/isObject';
 
 class Recursive extends Component {
   static propTypes = {
@@ -17,13 +19,13 @@ class Recursive extends Component {
     onlyShowIf: object,
     dontShowIf: object,
     conditional: object,
-  }
+    variant: string,
+    theme: object,
+    useThemeFrom: string,
+  };
 
   handleMapCurlyTemplate = template => {
-    if (
-      !template ||
-      !template.includes( '}}' )
-    ) {
+    if ( !template || !template.includes( '}}' )) {
       return template;
     }
 
@@ -36,16 +38,14 @@ class Recursive extends Component {
     const resolved = dlv( context, path );
 
     return `${resolved}${textAfterTemplate}`;
-  }
+  };
 
   curlyBracketParse = string => {
-    return (
-      String( string )
-        .split( '{{' )
-        .map( this.handleMapCurlyTemplate )
-        .join( '' )
-    );
-  }
+    return String( string )
+      .split( '{{' )
+      .map( this.handleMapCurlyTemplate )
+      .join( '' );
+  };
 
   calculateConditionalProps = ( conditionalProps, context ) => {
     /* If no conditional props or no context is provided return an empty object */
@@ -68,7 +68,7 @@ class Recursive extends Component {
      * Check whether the condition passes. We'll reuse the should
      * render component function for this. If the condition passes return the
      * "then" props, otherwise return the "else" props.
-    */
+     */
     if ( this.ifConditionsPass( ifCondition )) {
       return thenProps;
     }
@@ -76,11 +76,10 @@ class Recursive extends Component {
     return elseProps;
   };
 
-  handleReducePropInjection = ( result, current ) => {
+  handleReducePropInjection = ( result, current, index ) => {
     const { context } = this.props;
 
-    if ( result[current] == null )
-      return result;
+    if ( result[current] == null && result[index] == null ) return result;
 
     if ( typeof result[current] === 'string' ) {
       if ( result[current].startsWith( '_' )) {
@@ -98,52 +97,30 @@ class Recursive extends Component {
       return result;
     }
 
-    /* TODO: Make this call the current function recursively.
-     * Issue is that `context` suddenly becomes undefined. Look into. */
     if ( result[current] instanceof Array ) {
-      for ( let i = 0; i < result[current].length; i++ ) {
-        const element = result[current][i];
-
-        if ( typeof element === 'string' ) {
-          if ( element.startsWith( '_' )) {
-            result[current][i] = dlv( context, element.substring( 1 ));
-          }
-
-          if ( element.includes( '{{' )) {
-            result[current][i] = this.curlyBracketParse( element );
-          }
-        }
-
-        if ( typeof element === 'object' ) {
-          const keys = Object.keys( element );
-
-          result[current][i] = keys.reduce( this.handleReducePropInjection, element );
-        }
-      }
-
-      result[current] = result[current].reduce(
-        this.handleReducePropInjection, result[current]
-      );
+      result[current] = result[current].reduce( this.handleReducePropInjection, result[current] );
 
       return result;
     }
 
-    if ( typeof result[current] === 'object' ) {
-      const keys = Object.keys( result[current] );
+    if ( typeof result[current] === 'object' || isObject( current )) {
+      const targetObject = result[current] || current;
+      const keys = Object.keys( targetObject );
 
-      result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
+      if ( result[current] ) {
+        result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
+      } else {
+        result[index] = keys.reduce( this.handleReducePropInjection, result[index] );
+      }
 
       return result;
     }
 
     return result;
-  }
+  };
 
   injectContextIntoChildren( context, children ) {
-    return (
-      typeof children === 'string' &&
-      children.indexOf( '{{' ) >= 0
-    )
+    return typeof children === 'string' && children.indexOf( '{{' ) >= 0
       ? this.curlyBracketParse( children )
       : children;
   }
@@ -155,15 +132,11 @@ class Recursive extends Component {
    * correctly.
    */
   injectContextIntoProps( props ) {
-    if ( !props )
-      return {};
+    if ( !props ) return {};
 
     const propsCopy = copy( props );
 
-    const afterProps =
-      Object
-        .keys( props )
-        .reduce( this.handleReducePropInjection, propsCopy );
+    const afterProps = Object.keys( propsCopy ).reduce( this.handleReducePropInjection, propsCopy );
 
     return afterProps;
   }
@@ -211,18 +184,18 @@ class Recursive extends Component {
     const {
       component,
       props,
+      variant,
+      useThemeFrom,
       children,
       context,
       repeat,
       onlyShowIf,
       dontShowIf,
       conditional,
+      theme,
     } = this.props;
 
-    if (
-      !component ||
-      !Components[component]
-    ) {
+    if ( !component || !Components[component] ) {
       return (
         <Text>
           Component '
@@ -250,24 +223,35 @@ class Recursive extends Component {
 
     const injectedRepeat = repeat ? dlv( context, repeat.substring( 1 )) : null;
 
-    const repeatedChildren = (
-      injectedRepeat &&
-      injectedRepeat instanceof Array
-    )
-      ? injectedRepeat.map( child => ({
-        ...children,
-        props: {
-          ...children.props, ...child,
-        },
-        context: {
-          ...context,
-          repeater: child,
-          parentRepeater: context.repeater,
-        },
-      }))
-      : this.injectContextIntoChildren( context, children );
+    /**
+     * TODO:
+     *
+     * Investigate performance optimisation
+     */
+    const repeatedChildren =
+      injectedRepeat && injectedRepeat instanceof Array
+        ? injectedRepeat.map( child => {
+          return {
+            ...children,
+            props: {
+              ...children.props,
+              ...child,
+            },
+            context: {
+              ...context,
+              repeater: child,
+              parentRepeater: context.repeater,
+            },
+          };
+        })
+        : this.injectContextIntoChildren( context, children );
 
     const componentProps = this.injectContextIntoProps({
+      ...(
+        variant &&
+        theme.components[useThemeFrom || component] &&
+        theme.components[useThemeFrom || component][variant]
+      ),
       ...props,
       ...this.calculateConditionalProps( conditional, context ),
     });
@@ -275,25 +259,31 @@ class Recursive extends Component {
     return createElement(
       Components[component],
       componentProps,
-      repeatedChildren instanceof Array
-        ? repeatedChildren.map(( child, index ) => (
+      repeatedChildren instanceof Array ? (
+        repeatedChildren.map(( child, index ) => (
           <Recursive
             context={context}
             // eslint-disable-next-line react/no-array-index-key
             key={index}
+            theme={theme}
             {...child}
           />
         ))
-        : typeof repeatedChildren === 'object'
-          ? (
-            <Recursive
-              context={context}
-              {...repeatedChildren}
-            />
-          )
-          : repeatedChildren
+      ) : typeof repeatedChildren === 'object' ? (
+        <Recursive
+          context={context}
+          theme={theme}
+          {...repeatedChildren}
+        />
+      ) : (
+        repeatedChildren
+      )
     );
   }
 }
 
-export default Recursive;
+const mapStateToProps = state => ({
+  theme: state.theme,
+});
+
+export default connect( mapStateToProps )( Recursive );

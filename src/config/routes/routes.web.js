@@ -4,19 +4,9 @@ import * as Pages from '../../views/pages';
 
 const routes = [
   {
-    path: '/login',
-    exact: true,
-    component: Pages.Login,
-  },
-  {
     path: '/logout',
     exact: true,
     component: Pages.Logout,
-  },
-  {
-    path: '/register',
-    exact: true,
-    component: Pages.Register,
   },
   {
     path: '/',

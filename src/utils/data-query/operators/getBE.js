@@ -11,6 +11,10 @@ export default ( data, options, allData ) => {
 };
 
 const lookupBE = ( data, options, allData ) => {
+  if ( typeof data !== 'object' ) {
+    return;
+  }
+
   /* Create the path to the base entity */
   const be = copy( allData.baseEntities.data[injectContext( options.id, data )] );
 

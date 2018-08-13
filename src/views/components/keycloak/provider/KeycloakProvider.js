@@ -8,7 +8,7 @@ import config from '../../../../config';
 import * as actions from '../../../../redux/actions';
 import store from '../../../../redux/store';
 import KeycloakContext from '../context';
-import { Url, Storage } from '../../../../utils';
+import { Url, Storage, Api } from '../../../../utils';
 import * as keycloakUtils from '../../../../utils/keycloak';
 
 const TOKEN_REFRESH_TIMER = 30000;
@@ -111,6 +111,10 @@ class KeycloakProvider extends Component {
     if ( this.state.refreshTimer )
       clearInterval( this.state.refreshTimer );
 
+    store.dispatch(
+      actions.userLogout()
+    );
+
     /* Make sure to wait for each of these functions to finish. */
     const promises = [
       Storage.remove( 'kcSessionState' ),
@@ -167,6 +171,45 @@ class KeycloakProvider extends Component {
     const url = `${realmUrl}/protocol/openid-connect/logout?${query}`;
 
     return new Url( url );
+  }
+
+  doLoginWithApi = async ( options = {}) => {
+    const realmUrl = this.createRealmUrl();
+    const endpoint = `${realmUrl}/protocol/openid-connect/token`;
+
+    const {
+      grant_type = 'password',
+      client_id = this.props.clientId,
+      client_secret = this.props.clientSecret,
+    } = options;
+
+    const data = queryString.stringify({
+      client_id,
+      client_secret,
+      grant_type,
+      username: options.username,
+      password: options.password,
+    });
+
+    // return new Promise(( resolve, reject ) => {
+    try {
+      const response = await Api.promiseCall({
+        method: 'post',
+        url: endpoint,
+        data,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+
+      this.handleTokenRefreshSuccess( response.data );
+
+      return true;
+    }
+    catch ( error ) {
+      console.warn( error );
+      throw new Error( error );
+    }
   }
 
   handleAuthSuccess = async code => {
@@ -227,6 +270,7 @@ class KeycloakProvider extends Component {
     attemptLogout: this.attemptLogout,
     createLoginUrl: this.createLoginUrl,
     createLogoutUrl: this.createLogoutUrl,
+    doLoginWithApi: this.doLoginWithApi,
     handleUrlDecoding: this.handleUrlDecoding,
   }
 
@@ -503,6 +547,7 @@ class KeycloakProvider extends Component {
 
     const setTokens = new Promise( resolve => {
       this.setState({
+        isAuthenticated: true,
         refreshToken: refresh_token,
         refreshTokenExpiresOn: currentTime + refreshExpiresInSeconds,
         accessToken: access_token,

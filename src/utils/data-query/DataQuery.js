@@ -19,6 +19,8 @@ class DataQuery {
 
     /* Apply each of the operators to the data */
     query.forEach( q => {
+      // console.log( q.operator, { output });
+
       if ( q.operator === 'navigate' ) {
         this.path = q.path;
 
@@ -26,12 +28,17 @@ class DataQuery {
       }
 
       const queryData = this.injectQueryContext( q, queryContext );
+
+      // console.log( queryData );
+
       const result = Operators[q.operator](
         this.path ? dlv( output, this.path ) : output,
         queryData,
         this.data.length ? [...this.data] : { ...this.data },
         queryContext
       );
+
+      // console.log( result );
 
       if ( this.path ) {
         dset( output, this.path, result );

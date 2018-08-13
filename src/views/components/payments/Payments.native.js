@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Formik } from 'formik';
 import capitalize from 'lodash.capitalize';
 import dlv from 'dlv';
-import { Bridge } from '../../../utils';
+import { Bridge, assemblyHtmlBridge } from '../../../utils';
 import { Box, Button, Heading, KeyboardAwareScrollView, WebView, Text, Icon, alert, BlurView } from '../../components';
 
 class Payments extends Component {
@@ -504,7 +504,7 @@ class Payments extends Component {
                       values,
                     })}
                     ref={webview => this.webview = webview}
-                    source={require( './payments.html' )}
+                    source={assemblyHtmlBridge}
                   />
                 </Box>
               )}

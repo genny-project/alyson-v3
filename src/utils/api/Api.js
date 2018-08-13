@@ -70,8 +70,7 @@ class Api {
     });
   }
 
-  getGeocodedAddress = ( components, options = {}) => {
-    const {} = options; // eslint-disable-line no-empty-pattern
+  getGeocodedAddress = ( components ) => {
     const query = queryString.stringify( components );
 
     return this.googleMapsCall({
@@ -83,6 +82,16 @@ class Api {
   getKeycloakConfig = () => {
     return this.eventCall({
       url: `init?url=${config.genny.initUrl}`,
+    });
+  }
+
+  getPublicLayouts = () => {
+    const query = queryString.stringify({
+      url: 'git@github.com/fourdegrees-new/null.git',
+    });
+
+    return this.observableCall({
+      url: `http://localhost:2224/public?${query}`,
     });
   }
 }

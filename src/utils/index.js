@@ -7,6 +7,7 @@ export { default as prefixedLog } from './prefixed-log';
 export { default as location } from './location';
 export { default as storeQuery } from './store-query';
 export { default as navigator } from './navigator';
+export { default as shallowCompare } from './shallow-compare';
 
 export * from './vertx';
 export * from './format';
@@ -14,3 +15,5 @@ export * from './page';
 export * from './object';
 export * from './string';
 export * from './types';
+export * from './payments';
+export * from './color';

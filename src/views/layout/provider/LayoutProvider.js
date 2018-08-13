@@ -32,7 +32,7 @@ class LayoutProvider extends Component {
   setBackgroundColor = color => {
     const backgroundColor = this.backgroundColors[color] || color;
 
-    if ( !backgroundColor )
+    if ( backgroundColor )
       this.setState({ backgroundColor });
     else {
       const colors = Object.keys( color ).join( '|' );
@@ -50,10 +50,26 @@ class LayoutProvider extends Component {
   }
 
   setHeaderVisibility = visible => {
-    this.setState({ hideHeader: visible });
+    this.setState({ showHeader: visible });
 
     store.dispatch(
       actions.setHeaderVisibility( visible )
+    );
+  }
+
+  setHeaderProps = props => {
+    this.setState({ headerProps: props || {} });
+
+    store.dispatch(
+      actions.setHeaderProps( props || {})
+    );
+  }
+
+  setSidebarProps = props => {
+    this.setState({ sidebarProps: props || {} });
+
+    store.dispatch(
+      actions.setSidebarProps( props || {})
     );
   }
 
@@ -88,8 +104,12 @@ class LayoutProvider extends Component {
     setTitle: this.setTitle,
     setSidebarVisibility: this.setSidebarVisibility,
     setHeaderVisibility: this.setHeaderVisibility,
+    setHeaderProps: this.setHeaderProps,
+    setSidebarProps: this.setSidebarProps,
     hideSidebar: false,
-    hideNavbar: false,
+    showHeader: false,
+    headerProps: {},
+    sidebarProps: {},
   }
 
   render() {

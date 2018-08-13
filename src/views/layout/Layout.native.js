@@ -1,7 +1,12 @@
 import React, { Component, Fragment } from 'react';
+import { Dimensions } from 'react-native';
 import { oneOf, node, object, string, bool } from 'prop-types';
 import { withNavigation } from 'react-navigation';
+import { connect } from 'react-redux';
 import { LayoutConsumer } from '../layout';
+import { Box } from '../components';
+import shallowCompare from '../../utils/shallow-compare';
+import removeStartingAndEndingSlashes from '../../utils/string/removeStartingAndEndingSlashes';
 
 class Layout extends Component {
   static propTypes = {
@@ -9,18 +14,24 @@ class Layout extends Component {
     appColor: oneOf(
       ['light', 'dark']
     ),
-    // backgroundColor: oneOf(
-    // ['white', 'grey']
-    // ),
     title: string,
     layout: object,
-    hideHeader: bool,
+    header: object,
+    sidebar: object,
     hideSidebar: bool,
     navigation: object,
+    baseEntities: object,
+    backgroundColor: string,
+    layouts: object,
+  }
+
+  state = {
+    unableToFindHeader: false,
   }
 
   componentDidMount() {
     this.setLayoutProperties();
+    this.setHeaderProperties();
   }
 
   componentDidUpdate( prevProps ) {
@@ -29,6 +40,13 @@ class Layout extends Component {
       this.props.appColor != null
     ) {
       this.props.layout.setAppColor( this.props.appColor );
+    }
+
+    if (
+      this.props.backgroundColor !== prevProps.backgroundColor &&
+      this.props.backgroundColor != null
+    ) {
+      this.props.layout.setBackgroundColor( this.props.backgroundColor );
     }
 
     if (
@@ -42,21 +60,28 @@ class Layout extends Component {
       });
     }
 
-    if (
-      prevProps.hideHeader === true &&
-      this.props.hideHeader == null &&
-      this.props.navigation != null
-    ) {
-      this.props.navigation.setParams({
-        hideHeader: false,
-      });
+    if ( !shallowCompare( this.props.header, prevProps.header )) {
+      this.setHeaderProperties();
+    }
 
-      this.props.layout.setHeaderVisibility( false );
+    if ( !shallowCompare( this.props.sidebar, prevProps.sidebar )) {
+      this.setSidebarProperties();
+    }
+
+    if (
+      this.state.unableToFindHeader &&
+      this.props.header &&
+      this.props.header.variant
+    ) {
+      const variant = `header-${this.props.header.variant}`;
+
+      if ( this.props.layouts.sublayouts[variant] )
+        this.setHeaderProperties();
     }
   }
 
   setLayoutProperties() {
-    const { layout, title, appColor, hideHeader, hideSidebar, navigation } = this.props;
+    const { layout, title, appColor, hideSidebar, navigation, backgroundColor } = this.props;
 
     if ( !layout )
       return;
@@ -67,11 +92,8 @@ class Layout extends Component {
     ) {
       layout.setTitle( title );
 
-      if ( this.props.navigation ) {
-        this.props.navigation.setParams({
-          hideHeader: true,
-          title,
-        });
+      if ( navigation ) {
+        navigation.setParams({ title });
       }
     }
 
@@ -82,53 +104,157 @@ class Layout extends Component {
       layout.setAppColor( appColor );
     }
 
+    if (
+      typeof backgroundColor === 'string' &&
+      backgroundColor.length > 0
+    ) {
+      layout.setBackgroundColor( backgroundColor );
+    }
+
     if ( hideSidebar !== layout.hideSidebar ) {
       layout.setSidebarVisibility( hideSidebar );
     }
     else if ( hideSidebar == null ) {
       layout.setSidebarVisibility( true );
     }
+  }
 
-    if ( hideHeader !== layout.hideHeader ) {
-      layout.setHeaderVisibility( hideHeader );
+  setHeaderProperties() {
+    const { header, navigation, layouts } = this.props;
+
+    if ( header && header.variant ) {
+      const variant = `header-${header.variant}`;
+      const headerProps = layouts.sublayouts[variant];
+
+      if ( headerProps ) {
+        this.props.layout.setHeaderProps( headerProps );
+        this.props.layout.setHeaderVisibility( true );
+
+        if ( this.state.unableToFindHeader )
+          this.setState({ unableToFindHeader: false });
+
+        if ( navigation ) {
+          navigation.setParams({
+            headerProps,
+            showHeader: true,
+          });
+        }
+      }
+      else {
+        this.setState({ unableToFindHeader: true });
+      }
+    }
+    else {
+      this.props.layout.setHeaderVisibility( false );
 
       if ( navigation ) {
-        this.props.navigation.setParams({
-          hideHeader: hideHeader,
+        navigation.setParams({
+          showHeader: false,
         });
       }
     }
-    else if ( hideHeader == null ) {
-      layout.setHeaderVisibility( true );
+  }
+
+  setSidebarProperties() {
+    const { sidebar, navigation } = this.props;
+
+    if ( sidebar && sidebar.variant ) {
+      const { attributes } = this.props.baseEntities;
+      const keys = Object.keys( this.props.baseEntities.attributes );
+
+      for ( let i = 0; i < keys.length; i++ ) {
+        if ( keys[i].startsWith( 'LAY_' )) {
+          if ( !this.state.hasLoadedLayouts ) {
+            this.setState({ hasLoadedLayouts: true });
+          }
+
+          const attribute = attributes[keys[i]];
+          const layoutPath = removeStartingAndEndingSlashes( attribute.PRI_LAYOUT_URI.value );
+
+          if (
+            layoutPath === `sidebar/sidebar.${sidebar.variant}` ||
+            layoutPath === `sublayouts/sidebar-${sidebar.variant}`
+          ) {
+            const layout = attribute.PRI_LAYOUT_DATA.valueString;
+            let parsed = null;
+
+            try {
+              parsed = JSON.parse( layout );
+            }
+            catch ( e ) {
+              console.warn( 'Unable to parse sidebar layout data', layout );
+            }
+
+            if ( parsed ) {
+              this.props.layout.setSidebarProps( parsed );
+              this.props.layout.setSidebarVisibility( true );
+
+              if ( navigation ) {
+                navigation.setParams({
+                  sidebarProps: parsed,
+                  showSidebar: true,
+                });
+              }
+            }
+
+            break;
+          }
+        }
+      }
+    }
+    else {
+      this.props.layout.setSidebarVisibility( false );
 
       if ( navigation ) {
-        this.props.navigation.setParams({
-          hideHeader: false,
+        navigation.setParams({
+          showSidebar: false,
         });
       }
     }
   }
 
   render() {
-    const { children } = this.props;
+    const { children, layout } = this.props;
+    const { width, height } = Dimensions.get( 'window' );
 
     return (
       <Fragment>
+        {/* This is here to fix a bug with React Navigation showing `cardStyle` styling
+         * from `StackNavigator` over the app's background color, but only for . */}
+        <Box
+          height={height}
+          width={width}
+          position="absolute"
+          top={0}
+          left={0}
+          zIndex={0}
+          backgroundColor={layout.backgroundColor}
+        />
+
         {children}
       </Fragment>
     );
   }
 }
 
-export default withNavigation(
-  props => (
-    <LayoutConsumer>
-      {layout => (
-        <Layout
-          {...props}
-          layout={layout}
-        />
-      )}
-    </LayoutConsumer>
+const mapStateToProps = state => ({
+  baseEntities: state.vertx.baseEntities,
+  layouts: state.vertx.layouts,
+});
+
+export default (
+  connect( mapStateToProps )(
+    withNavigation(
+      props => (
+        <LayoutConsumer>
+          {layout => (
+            <Layout
+              {...props}
+              layout={layout}
+            />
+          )}
+        </LayoutConsumer>
+      )
+    )
   )
 );

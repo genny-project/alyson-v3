@@ -17,8 +17,13 @@ class Timeout extends Component {
   startTimeout = () => {
     const { duration } = this.props;
 
-    this.timeout = setTimeout( this.finishTimeout, duration );
-    this.secondsTimer = setInterval( this.incrementSecondsTimer, 1000 );
+    this.setState({
+      secondsElapsed: 0,
+      isTimeUp: false,
+    }, () => {
+      this.timeout = setTimeout( this.finishTimeout, duration );
+      this.secondsTimer = setInterval( this.incrementSecondsTimer, 1000 );
+    });
   }
 
   finishTimeout = () => {

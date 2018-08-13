@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { WebView as NativeWebView } from 'react-native';
-import { any, func } from 'prop-types';
+import { WebView as NativeWebView, Platform } from 'react-native';
+import { any, func, bool } from 'prop-types';
 
 // fix https://github.com/facebook/react-native/issues/10865
 const patchPostMessageJsCode = `(${String(() => {
@@ -14,13 +14,30 @@ const patchPostMessageJsCode = `(${String(() => {
     return String( Object.hasOwnProperty ).replace( 'hasOwnProperty', 'postMessage' );
   };
 
+  var htmlHeight = Math.max(
+    document.body.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.clientHeight,
+    document.documentElement.scrollHeight,
+    document.documentElement.offsetHeight
+  );
+
   window.postMessage = patchedPostMessage;
+
+  window.postMessage(
+    JSON.stringify({ htmlHeight })
+  );
 })})();`;
 
 class WebView extends Component {
+  static defaultProps = {
+    scalesPageToFit: Platform.OS === 'android',
+  }
+
   static propTypes = {
     source: any,
     onMessage: func,
+    scalesPageToFit: bool,
   }
 
   postMessage = action => {
@@ -29,8 +46,26 @@ class WebView extends Component {
     );
   }
 
+  handleMessage = event => {
+    const { data } = event.nativeEvent;
+
+    try {
+      const parsed = JSON.parse( data );
+
+      if ( this.props.onMessage )
+        this.props.onMessage( parsed );
+    }
+    catch ( error ) {
+      console.warn( 'Unable to parse WebView message', { error, data });
+    }
+  }
+
+  handleRef = ref => {
+    this.webview = ref;
+  }
+
   render() {
-    const { source, onMessage, ...props } = this.props;
+    const { source, scalesPageToFit, ...props } = this.props;
 
     return (
       <NativeWebView
@@ -38,10 +73,9 @@ class WebView extends Component {
         javaScriptEnabled
         injectedJavaScript={patchPostMessageJsCode}
         source={source}
-        ref={webview => this.webview = webview}
-        onMessage={e => onMessage(
-          JSON.parse( e.nativeEvent.data )
-        )}
+        ref={this.handleRef}
+        onMessage={this.handleMessage}
+        scalesPageToFit={scalesPageToFit}
       />
     );
   }

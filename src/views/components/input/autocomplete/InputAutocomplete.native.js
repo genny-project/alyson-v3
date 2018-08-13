@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Modal, SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { func, string, number, oneOfType, array, bool, object } from 'prop-types';
 import Downshift from 'downshift';
-import { Text, Box, Input, Icon, Touchable } from '../../index';
+import { Text, Box, Input, Icon, Touchable, Modal } from '../../index';
 
 class InputAutocomplete extends Component {
   static defaultProps = {
@@ -175,7 +175,6 @@ class InputAutocomplete extends Component {
                         />
                       </Touchable>
                     </Box>
-
                     <Input
                       {...getInputProps()}
                       type={inputType}
@@ -193,26 +192,28 @@ class InputAutocomplete extends Component {
                       borderTopWidth={0}
                     />
 
-                    {inputValue && (
-                      <Box
-                        position="absolute"
-                        height="100%"
-                        alignItems="center"
-                        right={10}
-                        zIndex={5}
-                      >
-                        <Touchable
-                          withFeedback
-                          onPress={this.handleClearInputValue( setState )}
+                    {
+                      inputValue ? (
+                        <Box
+                          position="absolute"
+                          height="100%"
+                          alignItems="center"
+                          right={10}
+                          zIndex={5}
                         >
-                          <Icon
-                            name="close"
-                            color="black"
-                            size="md"
-                          />
-                        </Touchable>
-                      </Box>
-                    )}
+                          <Touchable
+                            withFeedback
+                            onPress={this.handleClearInputValue( setState )}
+                          >
+                            <Icon
+                              name="close"
+                              color="black"
+                              size="md"
+                            />
+                          </Touchable>
+                        </Box>
+                      ) : null
+                    }
                   </Box>
 
                   {(

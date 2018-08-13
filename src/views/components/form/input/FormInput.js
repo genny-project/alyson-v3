@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { string, object, func } from 'prop-types';
 import { Input } from '../../index';
 import FormInputDropdown from './dropdown';
+import FormInputCheckbox from './checkbox';
 
 class FormInput extends Component {
   static propTypes = {
@@ -41,13 +42,26 @@ class FormInput extends Component {
         return (
           <FormInputDropdown
             {...this.props}
+            onChangeValue={this.handleChangeValueWithSend}
             ref={input => this.input = input}
+          />
+        );
+
+      case 'checkboxmultiple':
+        return (
+          <FormInputCheckbox
+            {...this.props}
+            ref={input => this.input = input}
+            onChangeValue={this.handleChangeValueWithSend}
           />
         );
 
       case 'upload':
       case 'switch':
       case 'java.lang.boolean':
+      case 'payment':
+      case 'audioRecord':
+      case 'audiorecord':
         return (
           <Input
             {...this.props}

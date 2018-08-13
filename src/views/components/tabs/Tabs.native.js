@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { ActivityIndicator, Dimensions } from 'react-native';
-import { any, array, bool, string, number, oneOfType, func } from 'prop-types';
+import { any, array, bool, string, number, oneOfType, func, object } from 'prop-types';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { Box, Text, Icon, Timeout } from '../../components';
 
@@ -9,12 +9,9 @@ class Tabs extends Component {
     tabs: [],
     height: '100%',
     width: '100%',
-    tabBarSize: 'md',
-    tabBarBackground: '#3f3f3f',
-    activeTabBackground: '#232323',
-    iconColor: 'white',
-    textColor: 'white',
-    bottomTabs: false,
+    labelProps: {},
+    indicatorProps: {},
+    sceneProps: {},
   }
 
   static propTypes = {
@@ -31,10 +28,19 @@ class Tabs extends Component {
     activeTabBackground: string,
     tabBarSize: string,
     iconColor: string,
-    textColor: string,
+    labelColor: string,
     bottomTabs: bool,
     onPress: func,
     scrollEnabled: bool,
+    iconSize: string,
+    iconProps: object,
+    labelProps: object,
+    indicatorProps: object,
+    sceneProps: object,
+    activeLabelColor: string,
+    activeIconColor: string,
+    restrictSceneHeights: bool,
+    paddingBottom: number,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -51,7 +57,8 @@ class Tabs extends Component {
   state = {
     index: 0,
     routes: [],
-  };
+    sceneHeights: {},
+  }
 
   handleIndexChange = index => {
     this.setState({ index });
@@ -62,38 +69,102 @@ class Tabs extends Component {
       this.props.onPress();
   }
 
+  handleSceneHeight = ( route ) =>  ( event ) => {
+    var { height } = event.nativeEvent.layout;
+
+    this.setState( state => ({
+      sceneHeights: {
+        ...state.sceneHeights,
+        [route && route.key]: height,
+      },
+    }));
+  }
+
   renderIcon = ({ route }) => {
+    const { iconColor, iconSize, iconProps, activeIconColor } = this.props;
+
     return route.icon
       ? (
         <Icon
+          {...iconProps}
           name={route.icon}
-          size="sm"
-          color={this.props.iconColor}
+          size={iconSize}
+          color={(
+            activeIconColor &&
+            route.key === this.state.index
+          )
+            ? activeIconColor
+            : iconColor}
         />
       )
       : null;
+  }
+
+  renderLabel = ({ route }) => {
+    const { labelColor, labelProps, activeLabelColor } = this.props;
+    const {
+      paddingX = 5,
+      paddingY = 5,
+      padding,
+      paddingTop,
+      paddingLeft,
+      paddingBottom,
+      paddingRight,
+      minHeight = 40,
+      height,
+      maxHeight,
+      justifyContent = 'center',
+      alignItems = 'center',
+      ...textProps
+    } = labelProps;
+
+    return (
+      <Box
+        padding={padding}
+        paddingY={paddingY}
+        paddingX={paddingX}
+        paddingTop={paddingTop}
+        paddingLeft={paddingLeft}
+        paddingBottom={paddingBottom}
+        paddingRight={paddingRight}
+        height={height}
+        minHeight={minHeight}
+        maxHeight={maxHeight}
+        alignItems={alignItems}
+        justifyContent={justifyContent}
+      >
+        <Text
+          align="center"
+          {...textProps}
+          color={(
+            activeLabelColor &&
+            route.key === this.state.index
+          )
+            ? activeLabelColor
+            : labelColor}
+        >
+          {route.title}
+        </Text>
+      </Box>
+    );
   }
 
   renderTabBar = props => {
     const {
       tabBarBackground,
       activeTabBackground,
-      textColor,
       scrollEnabled,
+      indicatorProps,
     } = this.props;
 
     const style = {
       backgroundColor: tabBarBackground,
     };
 
-    const labelStyle = {
-      color: textColor,
-      textAlign: 'center',
-    };
-
     const indicatorStyle = {
       height: '100%',
       backgroundColor: activeTabBackground,
+      ...indicatorProps,
     };
 
     return (
@@ -101,22 +172,57 @@ class Tabs extends Component {
         {...props}
         onTabPress={this.handlePress}
         scrollEnabled={scrollEnabled}
+        renderLabel={this.renderLabel}
         renderIcon={this.renderIcon}
         style={style}
-        labelStyle={labelStyle}
         indicatorStyle={indicatorStyle}
       />
     );
   };
 
   renderScene = ({ route }) => {
-    const { children } = this.props;
+    const { sceneProps, restrictSceneHeights } = this.props;
+    const { sceneHeights, index, routes } = this.state;
+    let { children } = this.props;
+
+    /* Only render the scene if it's within 2 routes either side of the current route. */
+    if ( Math.abs( index - routes.indexOf( route )) > 2 ) {
+      return <Box />;
+    }
+
+    const currentSceneHeight = sceneHeights[index] || 'auto';
+
+    const height = (
+      restrictSceneHeights
+        ? index === route.key
+          ? { flexBasis: currentSceneHeight, flexShrink: 1 }
+          : { maxHeight: currentSceneHeight, flex: 0, flexGrow: 0 }
+        : {}
+    );
+
+    const onLayout = restrictSceneHeights ? { onLayout: this.handleSceneHeight( route ) } : {};
+
+    children = React.Children.map( children, child => (
+      React.cloneElement( child, {
+        ...child.props,
+        props: child.props.props && {
+          ...child.props.props,
+          ...onLayout,
+        },
+      })
+    ));
+
+    const sceneStyle = {
+      ...height,
+      ...sceneProps,
+    };
 
     return (
       <Box
         flex={1}
         alignItems="center"
         justifyContent="center"
+        {...sceneStyle}
       >
         {(
           children &&
@@ -160,9 +266,8 @@ class Tabs extends Component {
   }
 
   render() {
-    const { bottomTabs, height, width } = this.props;
+    const { bottomTabs, height, width, paddingBottom } = this.props;
     const { index, routes } = this.state;
-
     const initialLayout = {
       height: 20,
       width: Dimensions.get( 'window' ).width,
@@ -171,6 +276,7 @@ class Tabs extends Component {
     const style = {
       height,
       width,
+      paddingBottom: Number( paddingBottom ),
     };
 
     const navigationState = {

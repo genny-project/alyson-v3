@@ -1,37 +1,50 @@
 /* eslint-disable new-cap */
 import React from 'react';
-import { object, func } from 'prop-types';
-import { DrawerNavigator, StackNavigator, SwitchNavigator, addNavigationHelpers } from 'react-navigation';
+import { DrawerNavigator, StackNavigator, SwitchNavigator } from 'react-navigation';
 import CardStackStyleInterpolator from 'react-navigation/src/views/CardStack/CardStackStyleInterpolator';
-import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
-import { connect } from 'react-redux';
 import * as Pages from '../../views/pages';
-import { routes } from '../../config';
+import { store } from '../../redux';
 import { navigator } from '../../utils';
+import { Header } from '../components';
 import Sidebar from './sidebar';
-import Header from './header';
+import AppStack from './AppStack';
 
-const addListener = createReduxBoundAddListener( 'root' );
-
-const AppStack = StackNavigator({
-  ...routes,
-  logout: () => <Pages.Logout />,
-  generic: () => <Pages.Generic />,
+const AppDrawer = DrawerNavigator({
+  authenticated: () => <AppStack />,
 }, {
+  initialRouteName: 'authenticated',
+  contentComponent: props => (
+    <Sidebar {...props} />
+  ),
+});
+
+const AuthStack = StackNavigator({
+  public: () => <Pages.Public />,
+}, {
+  initialRouteName: 'public',
+  initialRouteParams: {
+    layout: 'splash',
+  },
   cardStyle: {
-    backgroundColor: '#FFF',
+    backgroundColor: 'transparent',
     shadowColor: 'transparent',
   },
   navigationOptions: props => {
-    const hideHeader = (
-      props.navigation.state.params &&
-      props.navigation.state.params.hideHeader
+    const { headerProps, showHeader } = store.getState().layout;
+
+    const shouldShowHeader = (
+      showHeader &&
+      headerProps != null &&
+      Object.keys( headerProps ).length > 0
     );
 
     return {
-      header: hideHeader
-        ? null
-        : <Header {...props} />,
+      header: shouldShowHeader ? (
+        <Header
+          {...props}
+          {...headerProps}
+        />
+      ) : null,
     };
   },
   transitionConfig: () => ({
@@ -41,56 +54,13 @@ const AppStack = StackNavigator({
   }),
 });
 
-const App = ({ navigation, dispatch }) => (
-  <AppStack
-    ref={ref => (
-      navigator.setTopLevelAppNavigator( ref )
-    )}
-    navigation={addNavigationHelpers({
-      dispatch: dispatch,
-      state: navigation,
-      addListener,
-    })}
-  />
-);
-
-App.propTypes = {
-  navigation: object,
-  dispatch: func,
-};
-
-const mapStateToProps = state => ({
-  navigation: state.navigation,
-});
-
-const ConnectedAppStack = connect( mapStateToProps )( App );
-
-const AppDrawer = DrawerNavigator({
-  authenticated: () => <ConnectedAppStack />,
-}, {
-  initialRouteName: 'authenticated',
-  contentComponent: props => (
-    <Sidebar {...props} />
-  ),
-});
-
-const AuthStack = SwitchNavigator({
-  splash: () => <Pages.Splash />,
-  login: () => <Pages.Login />,
-  register: () => <Pages.Register />,
-}, {
-  initialRouteName: 'splash',
-});
-
 const Main = SwitchNavigator({
   loading: () => <Pages.Loading />,
-  app: AppDrawer,
-  auth: AuthStack,
+  app: () => <AppDrawer />,
+  auth: () => <AuthStack />,
 }, {
   initialRouteName: 'loading',
 });
-
-export { AppStack };
 
 export default (
   props => (
