@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import LayoutConsumer from './consumer';
 import { Header } from '../components';
-import { removeStartingAndEndingSlashes, shallowCompare } from '../../utils';
+import { shallowCompare } from '../../utils';
 import { Sidebar } from '../routing';
 
 class Layout extends Component {
@@ -18,14 +18,17 @@ class Layout extends Component {
     appName: string,
     baseEntities: object,
     headerProps: object,
+    backgroundColor: string,
+    layouts: object,
   }
 
   state = {
-    hasLoadedLayouts: false,
+    unableToFindHeader: false,
   }
 
   componentDidMount() {
     this.setLayoutProperties();
+    this.setHeaderProperties();
   }
 
   componentDidUpdate( prevProps ) {
@@ -34,6 +37,13 @@ class Layout extends Component {
       this.props.appColor != null
     ) {
       this.props.layout.setAppColor( this.props.appColor );
+    }
+
+    if (
+      this.props.backgroundColor !== prevProps.backgroundColor &&
+      this.props.backgroundColor != null
+    ) {
+      this.props.layout.setBackgroundColor( this.props.backgroundColor );
     }
 
     if (
@@ -47,24 +57,20 @@ class Layout extends Component {
       this.setHeaderProperties();
     }
 
-    if ( !this.state.hasLoadedLayouts ) {
-      const hasNowLoadedLayouts = (
-        Object
-          .keys( this.props.baseEntities.attributes )
-          .find( attribute => attribute.startsWith( 'LAY_' ))
-      );
+    if (
+      this.state.unableToFindHeader &&
+      this.props.header &&
+      this.props.header.variant
+    ) {
+      const variant = `header-${this.props.header.variant}`;
 
-      if (
-        hasNowLoadedLayouts &&
-        this.props.header != null
-      ) {
+      if ( this.props.layouts.sublayouts[variant] )
         this.setHeaderProperties();
-      }
     }
   }
 
   setLayoutProperties() {
-    const { layout, title, appColor, hideSidebar } = this.props;
+    const { layout, title, appColor, hideSidebar, backgroundColor } = this.props;
 
     if (
       typeof title === 'string' &&
@@ -80,6 +86,13 @@ class Layout extends Component {
       layout.setAppColor( appColor );
     }
 
+    if (
+      typeof backgroundColor === 'string' &&
+      backgroundColor.length > 0
+    ) {
+      layout.setBackgroundColor( backgroundColor );
+    }
+
     if ( hideSidebar !== layout.hideSidebar ) {
       layout.setSidebarVisibility( hideSidebar );
     }
@@ -91,44 +104,21 @@ class Layout extends Component {
   }
 
   setHeaderProperties() {
-    const { header } = this.props;
+    const { header, layouts } = this.props;
 
     if ( header && header.variant ) {
-      const { attributes } = this.props.baseEntities;
-      const keys = Object.keys( this.props.baseEntities.attributes );
+      const variant = `header-${header.variant}`;
+      const headerProps = layouts.sublayouts[variant];
 
-      for ( let i = 0; i < keys.length; i++ ) {
-        if ( keys[i].startsWith( 'LAY_' )) {
-          if ( !this.state.hasLoadedLayouts ) {
-            this.setState({ hasLoadedLayouts: true });
-          }
+      if ( headerProps ) {
+        this.props.layout.setHeaderProps( headerProps );
+        this.props.layout.setHeaderVisibility( true );
 
-          const attribute = attributes[keys[i]];
-          const layoutPath = removeStartingAndEndingSlashes( attribute.PRI_LAYOUT_URI.value );
-
-          if (
-            layoutPath === `header/header.${header.variant}` ||
-            layoutPath === `sublayouts/header-${header.variant}`
-          ) {
-            const layout = attribute.PRI_LAYOUT_DATA.valueString;
-
-            let parsed = null;
-
-            try {
-              parsed = JSON.parse( layout );
-            }
-            catch ( e ) {
-              console.warn( 'Unable to parse header layout data', layout );
-            }
-
-            if ( parsed ) {
-              this.props.layout.setHeaderProps( parsed );
-              this.props.layout.setHeaderVisibility( true );
-            }
-
-            break;
-          }
-        }
+        if ( this.state.unableToFindHeader )
+          this.setState({ unableToFindHeader: false });
+      }
+      else {
+        this.setState({ unableToFindHeader: true });
       }
     }
     else {
@@ -138,7 +128,7 @@ class Layout extends Component {
 
   render() {
     const { children, title, layout, hideSidebar, appName } = this.props;
-    const { headerProps } = layout;
+    const { headerProps, showHeader } = layout;
 
     return (
       <Fragment>
@@ -151,9 +141,19 @@ class Layout extends Component {
               ? title
               : `${title} | ${appName}`}
           </title>
+
+          <style>
+            {`
+              html,
+              body {
+                background: ${layout.backgroundColor} !important
+              }
+            `}
+          </style>
         </Helmet>
 
         {(
+          showHeader &&
           headerProps != null &&
           Object.keys( headerProps ).length > 0
         ) && (
@@ -174,6 +174,7 @@ export { Layout };
 
 const mapStateToProps = state => ({
   appName: state.layout.appName,
+  layouts: state.vertx.layouts,
   baseEntities: state.vertx.baseEntities,
 });
 
