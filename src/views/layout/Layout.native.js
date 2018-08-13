@@ -182,6 +182,7 @@ class Layout extends Component {
               parsed = JSON.parse( layout );
             }
             catch ( e ) {
+              // eslint-disable-next-line no-console
               console.warn( 'Unable to parse sidebar layout data', layout );
             }
 

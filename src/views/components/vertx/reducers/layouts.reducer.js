@@ -3,13 +3,12 @@ import { FETCH_PUBLIC_LAYOUTS_FAILURE, FETCH_PUBLIC_LAYOUTS_SUCCESS } from '../.
 
 const initialState = {
   pages: {},
-  components: {},
   sublayouts: {},
   error: null,
   hasLoadedDevLayouts: false,
 };
 
-const layoutGroups = ['pages', 'components', 'sublayouts'];
+const layoutGroups = ['pages', 'sublayouts'];
 
 /* This function makes use of mutation for the `state` param. As we're passing through an
  * object to this function, it is being passed through by reference (and not value), so we
@@ -63,6 +62,7 @@ const reducer = ( state = initialState, { type, payload }) => {
           injectLayoutIntoState({ uri, data, state: newState });
         }
         catch ( error ) {
+          // eslint-disable-next-line no-console
           console.warn( 'Unable to add layout to reducer state', error );
         }
 
@@ -85,6 +85,7 @@ const reducer = ( state = initialState, { type, payload }) => {
           injectLayoutIntoState({ uri, data: parsed, state: newState });
         }
         catch ( error ) {
+          // eslint-disable-next-line no-console
           console.warn( 'Unable to add layout to reducer state', error );
         }
 
