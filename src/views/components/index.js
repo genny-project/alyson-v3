@@ -63,3 +63,4 @@ export * from './input';
 export * from './toggle';
 export * from './login';
 export * from './theme';
+export * from './form-generic';
