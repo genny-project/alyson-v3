@@ -73,7 +73,7 @@ class Layout extends Component {
       this.props.header &&
       this.props.header.variant
     ) {
-      const variant = `header-${this.props.header.variant}`;
+      const variant = `header/header.${this.props.header.variant}`;
 
       if ( this.props.layouts.sublayouts[variant] )
         this.setHeaderProperties();
@@ -123,7 +123,7 @@ class Layout extends Component {
     const { header, navigation, layouts } = this.props;
 
     if ( header && header.variant ) {
-      const variant = `header-${header.variant}`;
+      const variant = `header/header.${header.variant}`;
       const headerProps = layouts.sublayouts[variant];
 
       if ( headerProps ) {
