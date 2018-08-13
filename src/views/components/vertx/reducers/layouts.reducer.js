@@ -21,7 +21,7 @@ const injectLayoutIntoState = ({ uri, data, state }) => {
   * but we only want to loop through `layoutGroups` until we find the corresponding
   * group to the layout URI. `.some()` allows us to cancel out at any time by
   * returning `true` when we are done. */
-  layoutGroups.some( layoutGroup => {
+  const didFindAGroup = layoutGroups.some( layoutGroup => {
     const group = `${layoutGroup}/`;
 
     if ( uri.startsWith( group )) {
@@ -36,13 +36,20 @@ const injectLayoutIntoState = ({ uri, data, state }) => {
       return true;
     }
   });
+
+  /* Default to saving it in `sublayouts`. */
+  if ( !didFindAGroup ) {
+    const newUri = removeStartingAndEndingSlashes( uri );
+
+    state.sublayouts[newUri] = data;
+  }
 };
 
 const reducer = ( state = initialState, { type, payload }) => {
   switch ( type ) {
     case 'BASE_ENTITY_MESSAGE': {
-      if ( state.hasLoadedDevLayouts )
-        return state;
+      // if ( state.hasLoadedDevLayouts )
+        // return state;
 
       if ( !isArray( payload.items, { ofMinLength: 1 }))
         return state;
