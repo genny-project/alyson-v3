@@ -1,0 +1,4 @@
+alysonv3:
+  image: genny-project/alyson-v3
+  ports:
+    - "8080:8080"
