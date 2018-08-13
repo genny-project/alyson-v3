@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { LayoutConsumer } from '../layout';
 import { Box } from '../components';
 import shallowCompare from '../../utils/shallow-compare';
-import removeStartingAndEndingSlashes from '../../utils/string/removeStartingAndEndingSlashes';
 
 class Layout extends Component {
   static propTypes = {
@@ -20,7 +19,6 @@ class Layout extends Component {
     sidebar: object,
     hideSidebar: bool,
     navigation: object,
-    baseEntities: object,
     backgroundColor: string,
     layouts: object,
   }
@@ -32,6 +30,7 @@ class Layout extends Component {
   componentDidMount() {
     this.setLayoutProperties();
     this.setHeaderProperties();
+    this.setSidebarProperties();
   }
 
   componentDidUpdate( prevProps ) {
@@ -73,10 +72,21 @@ class Layout extends Component {
       this.props.header &&
       this.props.header.variant
     ) {
-      const variant = `header/header.${this.props.header.variant}`;
+      const variant = `header-${this.props.header.variant}`;
 
       if ( this.props.layouts.sublayouts[variant] )
         this.setHeaderProperties();
+    }
+
+    if (
+      this.state.unableToFindSidebar &&
+      this.props.sidebar &&
+      this.props.sidebar.variant
+    ) {
+      const variant = `sidebar-${this.props.sidebar.variant}`;
+
+      if ( this.props.layouts.sublayouts[variant] )
+        this.setSidebarProperties();
     }
   }
 
@@ -123,7 +133,7 @@ class Layout extends Component {
     const { header, navigation, layouts } = this.props;
 
     if ( header && header.variant ) {
-      const variant = `header/header.${header.variant}`;
+      const variant = `header-${header.variant}`;
       const headerProps = layouts.sublayouts[variant];
 
       if ( headerProps ) {
@@ -156,50 +166,28 @@ class Layout extends Component {
   }
 
   setSidebarProperties() {
-    const { sidebar, navigation } = this.props;
+    const { sidebar, navigation, layouts } = this.props;
 
     if ( sidebar && sidebar.variant ) {
-      const { attributes } = this.props.baseEntities;
-      const keys = Object.keys( this.props.baseEntities.attributes );
+      const variant = `sidebar-${sidebar.variant}`;
+      const sidebarProps = layouts.sublayouts[variant];
 
-      for ( let i = 0; i < keys.length; i++ ) {
-        if ( keys[i].startsWith( 'LAY_' )) {
-          if ( !this.state.hasLoadedLayouts ) {
-            this.setState({ hasLoadedLayouts: true });
-          }
+      if ( sidebarProps ) {
+        this.props.layout.setSidebarProps( sidebarProps );
+        this.props.layout.setSidebarVisibility( true );
 
-          const attribute = attributes[keys[i]];
-          const layoutPath = removeStartingAndEndingSlashes( attribute.PRI_LAYOUT_URI.value );
+        if ( this.state.unableToFindSidebar )
+          this.setState({ unableToFindSidebar: false });
 
-          if (
-            layoutPath === `sidebar/sidebar.${sidebar.variant}` ||
-            layoutPath === `sublayouts/sidebar-${sidebar.variant}`
-          ) {
-            const layout = attribute.PRI_LAYOUT_DATA.valueString;
-            let parsed = null;
-
-            try {
-              parsed = JSON.parse( layout );
-            }
-            catch ( e ) {
-              console.warn( 'Unable to parse sidebar layout data', layout );
-            }
-
-            if ( parsed ) {
-              this.props.layout.setSidebarProps( parsed );
-              this.props.layout.setSidebarVisibility( true );
-
-              if ( navigation ) {
-                navigation.setParams({
-                  sidebarProps: parsed,
-                  showSidebar: true,
-                });
-              }
-            }
-
-            break;
-          }
+        if ( navigation ) {
+          navigation.setParams({
+            sidebarProps,
+            showSidebar: true,
+          });
         }
+      }
+      else {
+        this.setState({ unableToFindSidebar: true });
       }
     }
     else {
