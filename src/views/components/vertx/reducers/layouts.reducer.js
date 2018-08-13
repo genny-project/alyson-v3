@@ -16,7 +16,7 @@ const layoutGroups = ['pages', 'components', 'sublayouts'];
  * are able to modify the object inside this function and use the changes in the local variable
  * (that is, whatever we passed into `state`) from the block this function was called from.
  * See uses. */
-const injectLayoutIntoState = ({ uri, data, state }) => {
+const injectLayoutIntoState = ({ uri, data, state, isDevLayout }) => {
   /* Use of `Array.some()` here is to counteract using `Array.forEach()`,
   * but we only want to loop through `layoutGroups` until we find the corresponding
   * group to the layout URI. `.some()` allows us to cancel out at any time by
@@ -31,7 +31,18 @@ const injectLayoutIntoState = ({ uri, data, state }) => {
         uri.split( group )[1]
       );
 
+      /* If it's already in the reducer and it's a dev layout, no not overwrite it. */
+      if (
+        state[layoutGroup][newUri] &&
+        state[layoutGroup][newUri].isDevLayout
+      ) {
+        return true;
+      }
+
       state[layoutGroup][newUri] = data;
+
+      if ( isDevLayout )
+        state[layoutGroup][newUri].isDevLayout = true;
 
       return true;
     }
@@ -41,7 +52,18 @@ const injectLayoutIntoState = ({ uri, data, state }) => {
   if ( !didFindAGroup ) {
     const newUri = removeStartingAndEndingSlashes( uri );
 
+    /* If it's already in the reducer and it's a dev layout, no not overwrite it. */
+    if (
+      state.sublayouts[newUri] &&
+      state.sublayouts[newUri].isDevLayout
+    ) {
+      return;
+    }
+
     state.sublayouts[newUri] = data;
+
+    if ( isDevLayout )
+      state.sublayouts[newUri].isDevLayout = true;
   }
 };
 
@@ -89,7 +111,7 @@ const reducer = ( state = initialState, { type, payload }) => {
         try {
           const parsed = JSON.parse( data );
 
-          injectLayoutIntoState({ uri, data: parsed, state: newState });
+          injectLayoutIntoState({ uri, data: parsed, state: newState, isDevLayout: true });
         }
         catch ( error ) {
           console.warn( 'Unable to add layout to reducer state', error );
