@@ -72,7 +72,7 @@ class Layout extends Component {
       this.props.header &&
       this.props.header.variant
     ) {
-      const variant = `header-${this.props.header.variant}`;
+      const variant = `header/header.-${this.props.header.variant}`;
 
       if ( this.props.layouts.sublayouts[variant] )
         this.setHeaderProperties();
@@ -83,7 +83,7 @@ class Layout extends Component {
       this.props.sidebar &&
       this.props.sidebar.variant
     ) {
-      const variant = `sidebar-${this.props.sidebar.variant}`;
+      const variant = `sidebar/sidebar.${this.props.sidebar.variant}`;
 
       if ( this.props.layouts.sublayouts[variant] )
         this.setSidebarProperties();
@@ -133,7 +133,7 @@ class Layout extends Component {
     const { header, navigation, layouts } = this.props;
 
     if ( header && header.variant ) {
-      const variant = `header-${header.variant}`;
+      const variant = `header/header.${header.variant}`;
       const headerProps = layouts.sublayouts[variant];
 
       if ( headerProps ) {
@@ -169,7 +169,7 @@ class Layout extends Component {
     const { sidebar, navigation, layouts } = this.props;
 
     if ( sidebar && sidebar.variant ) {
-      const variant = `sidebar-${sidebar.variant}`;
+      const variant = `sidebar/sidebar.${sidebar.variant}`;
       const sidebarProps = layouts.sublayouts[variant];
 
       if ( sidebarProps ) {
