@@ -75,7 +75,7 @@ module.exports = {
     'new-cap': 'off',
     'react/display-name': 0,
     'no-multiple-empty-lines': ['error', { max: 1 }],
-    'no-console': ["error", { allow: ['warn', 'error', 'info'] }],
+    'no-console': ["warn", { allow: ['error'] }],
     "indent": ["error", 2, {
       SwitchCase: 1,
       VariableDeclarator: 1,

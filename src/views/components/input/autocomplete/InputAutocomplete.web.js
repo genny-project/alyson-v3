@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { TouchableOpacity } from 'react-native';
 import { func, string, number, oneOfType, array, bool } from 'prop-types';
 import Downshift from 'downshift';
-import { Text, Box, Input } from '../../index';
+import { Text, Box, Input, Touchable } from '../../index';
 
 class InputAutocomplete extends Component {
   static defaultProps = {
@@ -146,10 +145,11 @@ class InputAutocomplete extends Component {
                             : item[itemStringKey];
 
                           return (
-                            <TouchableOpacity
+                            <Touchable
                               {...getItemProps({ item: idom })}
                               key={idom}
                               onPress={() => selectItem( item )}
+                              withFeedback
                             >
                               <Box
                                 {...( highlightedIndex === index ) && {
@@ -174,7 +174,7 @@ class InputAutocomplete extends Component {
                                   {idom}
                                 </Text>
                               </Box>
-                            </TouchableOpacity>
+                            </Touchable>
                           );
                         })
                     ) : (

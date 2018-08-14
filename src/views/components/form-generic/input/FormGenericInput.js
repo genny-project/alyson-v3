@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { bool, string, node } from 'prop-types';
 import { Field } from 'formik';
-import { Input } from '../../../../components';
+import { Input } from '../../index';
 
-class LoginFormInput extends Component {
+class FormGenericInput extends Component {
   static propTypes = {
     children: node,
     disabled: bool,
@@ -20,11 +20,11 @@ class LoginFormInput extends Component {
             {...restProps}
             name={name}
             disabled={disabled || form.isSubmitting}
+            value={form.values[name]}
             onChangeValue={value => {
               form.setFieldTouched( name, true );
               form.setFieldValue( name, value );
             }}
-            value={form.values[name]}
           />
         )}
       </Field>
@@ -32,4 +32,4 @@ class LoginFormInput extends Component {
   }
 }
 
-export default LoginFormInput;
+export default FormGenericInput;

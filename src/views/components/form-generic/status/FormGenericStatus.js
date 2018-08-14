@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { object } from 'prop-types';
 import { Field } from 'formik';
-import { Box, Text } from '../../../../components';
+import { Box, Text } from '../../index';
 
-class LoginFormError extends Component {
+class FormGenericStatus extends Component {
   static propTypes = {
     wrapperProps: object,
     textProps: object,
@@ -28,4 +28,4 @@ class LoginFormError extends Component {
   }
 }
 
-export default LoginFormError;
+export default FormGenericStatus;
