@@ -114,7 +114,12 @@ class Layout extends Component {
       layout.setAppColor( appColor );
     }
 
-    layout.setBackgroundColor( backgroundColor || '#FFF' );
+    if (
+      typeof backgroundColor === 'string' &&
+      backgroundColor.length > 0
+    ) {
+      layout.setBackgroundColor( backgroundColor );
+    }
 
     if ( hideSidebar !== layout.hideSidebar ) {
       layout.setSidebarVisibility( hideSidebar );
