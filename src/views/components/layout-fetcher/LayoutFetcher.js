@@ -1,7 +1,10 @@
 import { Component } from 'react';
+import { Platform } from 'react-native';
 import { connect } from 'react-redux';
+import { replace } from 'react-router-redux';
 import { object, func, string } from 'prop-types';
-import { removeStartingAndEndingSlashes } from '../../../utils';
+import { removeStartingAndEndingSlashes, NavigationActions } from '../../../utils';
+import { store } from '../../../redux';
 import { withKeycloak } from '../../components/keycloak';
 
 class LayoutFetcher extends Component {
@@ -9,7 +12,6 @@ class LayoutFetcher extends Component {
     layouts: object,
     children: func.isRequired,
     currentUrl: string.isRequired,
-    // navigation: object,
     navigationReducer: object,
     keycloak: object,
   }
@@ -50,11 +52,55 @@ class LayoutFetcher extends Component {
 
   getLayout() {
     const { pages } = this.props.layouts;
-    const { currentUrl } = this.props;
+    const { currentUrl, navigationReducer } = this.props;
+
     const strippedCurrentUrl = removeStartingAndEndingSlashes( currentUrl );
 
     if ( pages[strippedCurrentUrl] ) {
       this.setState({ layout: pages[strippedCurrentUrl] });
+    }
+    else {
+      const keys = Object.keys( pages ).sort( this.handleSortPages );
+      const fragments = strippedCurrentUrl.split( '/' );
+
+      keys.some( key => {
+        const params = {};
+
+        const splitKey = key.split( '/' ).map(( split, index ) => {
+          if ( split.startsWith( ':' )) {
+            params[split.slice( 1 )] = fragments[index];
+
+            return fragments[index];
+          }
+
+          return split;
+        });
+
+        if ( splitKey.join( '/' ) === strippedCurrentUrl ) {
+          if ( Platform.OS === 'web' ) {
+            store.dispatch(
+              replace({
+                pathname: location.pathname,
+                state: {
+                  ...location.state,
+                  ...params,
+                },
+              })
+            );
+          }
+          else {
+            const { key } = navigationReducer.routes[navigationReducer.index];
+
+            store.dispatch(
+              NavigationActions.setParams({ key, params })
+            );
+          }
+
+          this.setState({ layout: pages[key] });
+
+          return true;
+        }
+      });
     }
   }
 
@@ -87,17 +133,6 @@ class LayoutFetcher extends Component {
     if ( pageB.includes( ':' )) return -1;
 
     return 0;
-  }
-
-  /**
-   * Maps over a set of URL fragments and swaps out any fragment that starts with an ID, with
-   * the corresponding fragment in the current URL.
-   */
-  handleMapUrlFragments = currentUrlFragments => ( fragment, index ) => {
-    if ( fragment.startsWith( ':' ))
-      return currentUrlFragments[index];
-
-    return fragment;
   }
 
   render() {

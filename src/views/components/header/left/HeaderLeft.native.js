@@ -31,6 +31,8 @@ class HeaderLeft extends Component {
     keycloak: object,
     replaceLogoWithBack: bool,
     logoOpensMenu: bool,
+    titleProps: object,
+    logoProps: object,
   }
 
   handleToggleMenu = () => {
@@ -66,6 +68,8 @@ class HeaderLeft extends Component {
       backIconSize,
       replaceLogoWithBack,
       logoOpensMenu,
+      titleProps,
+      logoProps,
     } = this.props;
 
     const { index, routes } = navigationReducer;
@@ -88,35 +92,6 @@ class HeaderLeft extends Component {
         {layout => (
           <Box alignItems="center">
             {(
-              showBack &&
-              canShowBack
-            )
-              ? (
-                <Button
-                  onPress={this.handleBack}
-                  size={backIconSize}
-                  color="transparent"
-                  textColor={backIconColor || layout.textColor}
-                  icon={backIcon}
-                  width={50}
-                  marginLeft={5}
-                  marginRight={5}
-                />
-              ) : showMenu ? (
-                <Button
-                  onPress={this.handleToggleMenu}
-                  size="md"
-                  color="transparent"
-                  textColor={layout.textColor}
-                  icon="menu"
-                  width={50}
-                  marginLeft={5}
-                  marginRight={5}
-                />
-              ) : null
-            }
-
-            {(
               showLogo &&
               !(
                 replaceLogoWithBack &&
@@ -130,30 +105,51 @@ class HeaderLeft extends Component {
                   onPress: this.handleToggleMenu,
                 }}
               >
-                <Box paddingX={5}>
+                <Box paddingX={10}>
                   <Image
                     height={50}
                     width={50}
+                    {...logoProps}
                     source={logoSource}
                   />
                 </Box>
               </Touchable>
-              ) : showMenu ? (
+              ) : (
+                showBack &&
+                canShowBack
+              ) ? (
                 <Button
-                  onPress={this.handleToggleMenu}
-                  size="md"
+                  onPress={this.handleBack}
+                  size={backIconSize}
                   color="transparent"
-                  textColor={layout.textColor}
-                  icon="menu"
-                  paddingX={15}
+                  textColor={backIconColor || layout.textColor}
+                  icon={backIcon}
+                  width={(
+                    logoProps &&
+                    logoProps.width
+                  ) || 50}
+                  marginLeft={10}
+                  marginRight={10}
                 />
-              ) : null}
+                ) : showMenu ? (
+                  <Button
+                    onPress={this.handleToggleMenu}
+                    size="md"
+                    color="transparent"
+                    textColor={layout.textColor}
+                    icon="menu"
+                    width={50}
+                    marginLeft={5}
+                    marginRight={5}
+                  />
+                ) : null}
 
             {showTitle ? (
               <Box marginLeft={5}>
                 <Heading
                   size="lg"
                   color={layout.textColor}
+                  {...titleProps}
                 >
                   {title}
                 </Heading>
