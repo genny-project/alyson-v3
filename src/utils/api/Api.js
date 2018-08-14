@@ -87,11 +87,11 @@ class Api {
 
   getPublicLayouts = () => {
     const query = queryString.stringify(
-      config.query,
+      config.layouts.query,
     );
 
     return this.observableCall({
-      url: `${config.publicURL}public?${query}`,
+      url: `${config.layouts.publicURL}public?${query}`,
     });
   }
 }
