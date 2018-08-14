@@ -3,7 +3,7 @@ export default {
     name: 'Genny',
   },
   genny: {
-    host: 'https://bridge-fourdegrees-dev.outcome-hub.com/', 
+    host: 'https://bridge-fourdegrees-dev.outcome-hub.com/',
     initUrl: 'https://fourdegrees-dev.outcome-hub.com/',
     bridge: {
       port: '80',
@@ -25,5 +25,11 @@ export default {
   },
   keycloak: {
     redirectUri: 'https://d2oki2ya5fhih0.cloudfront.net',
+  },
+  layouts: {
+    publicURL: 'http://localhost:2224/',
+    query: {
+      url: 'git@github.com/fourdegrees-new/null.git',
+    },
   },
 };

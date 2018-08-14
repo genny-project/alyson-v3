@@ -26,4 +26,10 @@ export default {
   keycloak: {
     redirectUri: 'https://d2oki2ya5fhih0.cloudfront.net',
   },
+  layouts: {
+    publicURL: 'https://layout-fourdegrees-dev.outcome-hub.com/',
+    query: {
+      directory: 'layouts/fourdegrees-new',
+    },
+  },
 };
