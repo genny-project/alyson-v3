@@ -3,8 +3,8 @@ export default {
     name: 'Genny',
   },
   genny: {
-    host: 'http://10.123.123.123:8088/',
-    initUrl: 'http://alyson.genny.life',
+    host: 'https://bridge-v3.channel40.com.au',
+    initUrl: 'https://v2.channel40.com.au',
     bridge: {
       port: '80',
       endpoints: {
@@ -25,5 +25,11 @@ export default {
   },
   keycloak: {
     redirectUri: 'https://d2oki2ya5fhih0.cloudfront.net',
+  },
+  layouts: {
+    publicURL: 'https://layout-fourdegrees-dev.outcome-hub.com/',
+    query: {
+      directory: 'layouts/fourdegrees-new',
+    },
   },
 };

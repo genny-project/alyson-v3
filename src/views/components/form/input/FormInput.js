@@ -42,6 +42,7 @@ class FormInput extends Component {
         return (
           <FormInputDropdown
             {...this.props}
+            onChangeValue={this.handleChangeValueWithSend}
             ref={input => this.input = input}
           />
         );
@@ -59,6 +60,8 @@ class FormInput extends Component {
       case 'switch':
       case 'java.lang.boolean':
       case 'payment':
+      case 'audioRecord':
+      case 'audiorecord':
         return (
           <Input
             {...this.props}

@@ -40,6 +40,7 @@ class Tabs extends Component {
     activeLabelColor: string,
     activeIconColor: string,
     restrictSceneHeights: bool,
+    paddingBottom: number,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -219,17 +220,17 @@ class Tabs extends Component {
     return (
       <Box
         flex={1}
-        alignItems="center"
         justifyContent="center"
+        position="relative"
         {...sceneStyle}
       >
         {(
           children &&
           children.length > 0 &&
           children[route.key]
-        ) ? (
-            children[route.key]
-          ) : (
+        )
+          ? children[route.key]
+          : (
             <Timeout duration={20000}>
               {({ isTimeUp }) => (
                 <Box
@@ -265,7 +266,7 @@ class Tabs extends Component {
   }
 
   render() {
-    const { bottomTabs, height, width } = this.props;
+    const { bottomTabs, height, width, paddingBottom } = this.props;
     const { index, routes } = this.state;
     const initialLayout = {
       height: 20,
@@ -275,6 +276,7 @@ class Tabs extends Component {
     const style = {
       height,
       width,
+      paddingBottom: Number( paddingBottom ),
     };
 
     const navigationState = {

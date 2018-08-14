@@ -67,10 +67,6 @@ class Input extends Component {
     textAlign: 'left',
     prefixColor: 'grey',
     editable: true,
-    backgroundColor: '#fafafa',
-    borderColor: '#DDD',
-    borderWidth: 2,
-    borderRadius: 10,
   }
 
   static propTypes = {
@@ -168,6 +164,15 @@ class Input extends Component {
     ),
     prefixIconType: string,
     iconType: string,
+    activeStyling: object,
+    placeholderColor: string,
+    activeProps: string,
+    color: string,
+  }
+
+  state = {
+    isFocused: false,
+    // isHovering: false,
   }
 
   getStatusColor() {
@@ -192,6 +197,24 @@ class Input extends Component {
     if ( this.props.onChangeValue ) {
       this.props.onChangeValue( event );
     }
+  }
+
+  handleFocus = event => {
+    this.setState({
+      isFocused: true,
+    });
+
+    if ( this.props.onFocus )
+      this.props.onFocus( event );
+  }
+
+  handleBlur = event => {
+    this.setState({
+      isFocused: false,
+    });
+
+    if ( this.props.onBlur )
+      this.props.onBlur( event );
   }
 
   focus() {
@@ -275,10 +298,7 @@ class Input extends Component {
       keyboardType,
       maxLength,
       multiline,
-      onBlur,
       onChange,
-      // onChangeValue,
-      onFocus,
       onKeyPress,
       onLayout,
       onSelectionChange,
@@ -331,7 +351,13 @@ class Input extends Component {
       borderBottomRightRadius,
       borderTopLeftRadius,
       borderTopRightRadius,
+      activeStyling,
+      placeholderColor,
+      activeProps,
+      color,
     } = this.props;
+
+    const { isFocused } = this.state;
 
     const statusStyle =
       error ? errorStyle
@@ -351,26 +377,10 @@ class Input extends Component {
       padding,
       paddingHorizontal: paddingX,
       paddingVertical: paddingY,
-      paddingTop: paddingTop || 15,
-      paddingRight: (
-        paddingRight ||
-        (
-          icon ||
-          suffix
-        )
-          ? 45
-          : 15
-      ),
-      paddingBottom: paddingBottom || 15,
-      paddingLeft: (
-        paddingLeft ||
-        (
-          prefixIcon ||
-          prefix
-        )
-          ? 45
-          : 15
-      ),
+      paddingTop: paddingTop,
+      paddingRight: paddingRight,
+      paddingBottom,
+      paddingLeft,
       fontSize: textSizes[textSize],
       textAlign: textAlign,
       height,
@@ -388,6 +398,8 @@ class Input extends Component {
       borderBottomRightRadius,
       borderTopLeftRadius,
       borderTopRightRadius,
+      color,
+      ...isFocused ? activeStyling : {},
     });
 
     const nativeProps = {
@@ -419,21 +431,17 @@ class Input extends Component {
           keyboardType={keyboardType}
           maxLength={maxLength}
           multiline={multiline}
-          onBlur={onBlur}
           onChange={onChange}
           onChangeText={this.handleChangeText}
-          onFocus={onFocus}
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
           onKeyPress={onKeyPress}
           onSelectionChange={onSelectionChange}
           onSubmitEditing={onSubmitEditing}
           placeholder={placeholder}
-          placeholderTextColor={this.getStatusColor()}
-          returnKeyLabel={
-            !multiline ? returnKeyLabel : null
-            }
-          returnKeyType={
-            !multiline ? returnKeyType : null
-            }
+          placeholderTextColor={placeholderColor || this.getStatusColor()}
+          returnKeyLabel={!multiline ? returnKeyLabel : null}
+          returnKeyType={!multiline ? returnKeyType : null}
           secureTextEntry={secureTextEntry}
           selection={selection}
           selectTextOnFocus={selectTextOnFocus}
@@ -450,6 +458,7 @@ class Input extends Component {
             web: webProps,
           })}
           ref={this.handleRef}
+          {...isFocused ? activeProps : {}}
         />
 
         {(

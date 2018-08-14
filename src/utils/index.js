@@ -8,6 +8,7 @@ export { default as location } from './location';
 export { default as storeQuery } from './store-query';
 export { default as navigator } from './navigator';
 export { default as shallowCompare } from './shallow-compare';
+export { default as NavigationActions } from './navigation-actions';
 
 export * from './vertx';
 export * from './format';

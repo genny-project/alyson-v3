@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
 import { string, bool } from 'prop-types';
 import { Field } from 'formik';
-import { Button } from '../../../../components';
+import { Button } from '../../index';
 
-class LoginFormSubmit extends Component {
+class FormGenericSubmit extends Component {
   static defaultProps = {
     text: 'Submit',
+    submittingText: 'Working...',
   }
 
   static propTypes = {
     name: string,
     text: string,
     disabled: bool,
+    submittingText: string,
   }
 
   render() {
-    const { text, ...restProps } = this.props;
+    const { text, submittingText, ...restProps } = this.props;
 
     return (
       <Field>
@@ -25,7 +27,7 @@ class LoginFormSubmit extends Component {
             onPress={form.submitForm} // eslint-disable-line react/jsx-handler-names
             text={(
               form.isSubmitting
-                ? 'Working...'
+                ? submittingText
                 : text
             )}
           />
@@ -35,4 +37,4 @@ class LoginFormSubmit extends Component {
   }
 }
 
-export default LoginFormSubmit;
+export default FormGenericSubmit;

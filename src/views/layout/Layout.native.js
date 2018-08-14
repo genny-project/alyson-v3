@@ -1,11 +1,11 @@
 import React, { Component, Fragment } from 'react';
+import { Dimensions } from 'react-native';
 import { oneOf, node, object, string, bool } from 'prop-types';
 import { withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
 import { LayoutConsumer } from '../layout';
 import { Box } from '../components';
 import shallowCompare from '../../utils/shallow-compare';
-import removeStartingAndEndingSlashes from '../../utils/string/removeStartingAndEndingSlashes';
 
 class Layout extends Component {
   static propTypes = {
@@ -19,13 +19,18 @@ class Layout extends Component {
     sidebar: object,
     hideSidebar: bool,
     navigation: object,
-    baseEntities: object,
     backgroundColor: string,
     layouts: object,
   }
 
+  state = {
+    unableToFindHeader: false,
+  }
+
   componentDidMount() {
     this.setLayoutProperties();
+    this.setHeaderProperties();
+    this.setSidebarProperties();
   }
 
   componentDidUpdate( prevProps ) {
@@ -61,6 +66,28 @@ class Layout extends Component {
     if ( !shallowCompare( this.props.sidebar, prevProps.sidebar )) {
       this.setSidebarProperties();
     }
+
+    if (
+      this.state.unableToFindHeader &&
+      this.props.header &&
+      this.props.header.variant
+    ) {
+      const variant = `header/header.${this.props.header.variant}`;
+
+      if ( this.props.layouts.sublayouts[variant] )
+        this.setHeaderProperties();
+    }
+
+    if (
+      this.state.unableToFindSidebar &&
+      this.props.sidebar &&
+      this.props.sidebar.variant
+    ) {
+      const variant = `sidebar/sidebar.${this.props.sidebar.variant}`;
+
+      if ( this.props.layouts.sublayouts[variant] )
+        this.setSidebarProperties();
+    }
   }
 
   setLayoutProperties() {
@@ -87,12 +114,7 @@ class Layout extends Component {
       layout.setAppColor( appColor );
     }
 
-    if (
-      typeof backgroundColor === 'string' &&
-      backgroundColor.length > 0
-    ) {
-      layout.setBackgroundColor( backgroundColor );
-    }
+    layout.setBackgroundColor( backgroundColor || '#FFF' );
 
     if ( hideSidebar !== layout.hideSidebar ) {
       layout.setSidebarVisibility( hideSidebar );
@@ -106,12 +128,15 @@ class Layout extends Component {
     const { header, navigation, layouts } = this.props;
 
     if ( header && header.variant ) {
-      const variant = `header-${header.variant}`;
+      const variant = `header/header.${header.variant}`;
       const headerProps = layouts.sublayouts[variant];
 
       if ( headerProps ) {
         this.props.layout.setHeaderProps( headerProps );
         this.props.layout.setHeaderVisibility( true );
+
+        if ( this.state.unableToFindHeader )
+          this.setState({ unableToFindHeader: false });
 
         if ( navigation ) {
           navigation.setParams({
@@ -121,62 +146,43 @@ class Layout extends Component {
         }
       }
       else {
-        this.props.layout.setHeaderVisibility( false );
+        this.setState({ unableToFindHeader: true });
+      }
+    }
+    else {
+      this.props.layout.setHeaderVisibility( false );
 
-        if ( navigation ) {
-          navigation.setParams({
-            showHeader: false,
-          });
-        }
+      if ( navigation ) {
+        navigation.setParams({
+          showHeader: false,
+        });
       }
     }
   }
 
   setSidebarProperties() {
-    const { sidebar, navigation } = this.props;
+    const { sidebar, navigation, layouts } = this.props;
 
     if ( sidebar && sidebar.variant ) {
-      const { attributes } = this.props.baseEntities;
-      const keys = Object.keys( this.props.baseEntities.attributes );
+      const variant = `sidebar/sidebar.${sidebar.variant}`;
+      const sidebarProps = layouts.sublayouts[variant];
 
-      for ( let i = 0; i < keys.length; i++ ) {
-        if ( keys[i].startsWith( 'LAY_' )) {
-          if ( !this.state.hasLoadedLayouts ) {
-            this.setState({ hasLoadedLayouts: true });
-          }
+      if ( sidebarProps ) {
+        this.props.layout.setSidebarProps( sidebarProps );
+        this.props.layout.setSidebarVisibility( true );
 
-          const attribute = attributes[keys[i]];
-          const layoutPath = removeStartingAndEndingSlashes( attribute.PRI_LAYOUT_URI.value );
+        if ( this.state.unableToFindSidebar )
+          this.setState({ unableToFindSidebar: false });
 
-          if (
-            layoutPath === `sidebar/sidebar.${sidebar.variant}` ||
-            layoutPath === `sublayouts/sidebar-${sidebar.variant}`
-          ) {
-            const layout = attribute.PRI_LAYOUT_DATA.valueString;
-            let parsed = null;
-
-            try {
-              parsed = JSON.parse( layout );
-            }
-            catch ( e ) {
-              console.warn( 'Unable to parse sidebar layout data', layout );
-            }
-
-            if ( parsed ) {
-              this.props.layout.setSidebarProps( parsed );
-              this.props.layout.setSidebarVisibility( true );
-
-              if ( navigation ) {
-                navigation.setParams({
-                  sidebarProps: parsed,
-                  showSidebar: true,
-                });
-              }
-            }
-
-            break;
-          }
+        if ( navigation ) {
+          navigation.setParams({
+            sidebarProps,
+            showSidebar: true,
+          });
         }
+      }
+      else {
+        this.setState({ unableToFindSidebar: true });
       }
     }
     else {
@@ -192,14 +198,15 @@ class Layout extends Component {
 
   render() {
     const { children, layout } = this.props;
+    const { width, height } = Dimensions.get( 'window' );
 
     return (
       <Fragment>
         {/* This is here to fix a bug with React Navigation showing `cardStyle` styling
          * from `StackNavigator` over the app's background color, but only for . */}
         <Box
-          height="100%"
-          width="100%"
+          height={height}
+          width={width}
           position="absolute"
           top={0}
           left={0}

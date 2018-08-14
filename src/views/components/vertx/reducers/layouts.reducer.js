@@ -3,24 +3,24 @@ import { FETCH_PUBLIC_LAYOUTS_FAILURE, FETCH_PUBLIC_LAYOUTS_SUCCESS } from '../.
 
 const initialState = {
   pages: {},
-  components: {},
   sublayouts: {},
   error: null,
+  hasLoadedDevLayouts: false,
 };
 
-const layoutGroups = ['pages', 'components', 'sublayouts'];
+const layoutGroups = ['pages', 'sublayouts'];
 
 /* This function makes use of mutation for the `state` param. As we're passing through an
  * object to this function, it is being passed through by reference (and not value), so we
  * are able to modify the object inside this function and use the changes in the local variable
  * (that is, whatever we passed into `state`) from the block this function was called from.
  * See uses. */
-const injectLayoutIntoState = ({ uri, data, state }) => {
+const injectLayoutIntoState = ({ uri, data, state, isDevLayout }) => {
   /* Use of `Array.some()` here is to counteract using `Array.forEach()`,
   * but we only want to loop through `layoutGroups` until we find the corresponding
   * group to the layout URI. `.some()` allows us to cancel out at any time by
   * returning `true` when we are done. */
-  layoutGroups.some( layoutGroup => {
+  const didFindAGroup = layoutGroups.some( layoutGroup => {
     const group = `${layoutGroup}/`;
 
     if ( uri.startsWith( group )) {
@@ -30,16 +30,48 @@ const injectLayoutIntoState = ({ uri, data, state }) => {
         uri.split( group )[1]
       );
 
+      /* If it's already in the reducer and it's a dev layout, no not overwrite it. */
+      if (
+        state[layoutGroup][newUri] &&
+        state[layoutGroup][newUri].isDevLayout
+      ) {
+        return true;
+      }
+
       state[layoutGroup][newUri] = data;
+
+      if ( isDevLayout )
+        state[layoutGroup][newUri].isDevLayout = true;
 
       return true;
     }
   });
+
+  /* Default to saving it in `sublayouts`. */
+  if ( !didFindAGroup ) {
+    const newUri = removeStartingAndEndingSlashes( uri );
+
+    /* If it's already in the reducer and it's a dev layout, no not overwrite it. */
+    if (
+      state.sublayouts[newUri] &&
+      state.sublayouts[newUri].isDevLayout
+    ) {
+      return;
+    }
+
+    state.sublayouts[newUri] = data;
+
+    if ( isDevLayout )
+      state.sublayouts[newUri].isDevLayout = true;
+  }
 };
 
 const reducer = ( state = initialState, { type, payload }) => {
   switch ( type ) {
     case 'BASE_ENTITY_MESSAGE': {
+      // if ( state.hasLoadedDevLayouts )
+        // return state;
+
       if ( !isArray( payload.items, { ofMinLength: 1 }))
         return state;
 
@@ -59,6 +91,7 @@ const reducer = ( state = initialState, { type, payload }) => {
           injectLayoutIntoState({ uri, data, state: newState });
         }
         catch ( error ) {
+          // eslint-disable-next-line no-console
           console.warn( 'Unable to add layout to reducer state', error );
         }
 
@@ -78,14 +111,18 @@ const reducer = ( state = initialState, { type, payload }) => {
         try {
           const parsed = JSON.parse( data );
 
-          injectLayoutIntoState({ uri, data: parsed, state: newState });
+          injectLayoutIntoState({ uri, data: parsed, state: newState, isDevLayout: true });
         }
         catch ( error ) {
+          // eslint-disable-next-line no-console
           console.warn( 'Unable to add layout to reducer state', error );
         }
 
         return newState;
-      }, { ...state });
+      }, {
+        ...state,
+        hasLoadedDevLayouts: true,
+      });
     }
 
     case FETCH_PUBLIC_LAYOUTS_FAILURE: {
@@ -108,6 +145,10 @@ const reducer = ( state = initialState, { type, payload }) => {
       });
 
       return newState;
+    }
+
+    case 'CLEAR_ALL_LAYOUTS': {
+      return { ...initialState };
     }
 
     case 'USER_LOGOUT':

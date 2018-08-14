@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { object, func } from 'prop-types';
-import { connect } from 'react-redux';
-import { isArray, assemblyHtmlBridge } from '../../../../utils';
+import { connect, assemblyHtmlBridge } from 'react-redux';
+import { isArray } from '../../../../utils';
 import { Box, Touchable, Text, WebView, LinkButton } from '../../../components';
 
 class InputPayment extends Component {

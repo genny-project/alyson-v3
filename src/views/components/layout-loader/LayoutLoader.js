@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { shape, object, any, bool } from 'prop-types';
 import { connect } from 'react-redux';
 import Layout from '../../layout';
+import { isArray } from '../../../utils';
 import DataQuery from '../../../utils/data-query';
 import { store } from '../../../redux';
 import { Box, Text, Timeout, Button, ActivityIndicator } from '../../components';
@@ -29,6 +30,7 @@ class LayoutLoader extends Component {
     navigation: object,
     sublayoutProps: object,
     sublayout: bool,
+    router: object,
   };
 
   handleRetry = () => {
@@ -36,9 +38,17 @@ class LayoutLoader extends Component {
   };
 
   render() {
-    const { layout, data, navigation, sublayoutProps, sublayout } = this.props;
+    const { layout, data, navigation, router, sublayoutProps, sublayout } = this.props;
 
     if ( !layout ) {
+      if ( sublayout ) {
+        return (
+          <Box padding={10}>
+            <ActivityIndicator size="large" />
+          </Box>
+        );
+      }
+
       return (
         <Layout
           title="Loading..."
@@ -81,15 +91,15 @@ class LayoutLoader extends Component {
                   </Fragment>
                 ) : (
                   <Fragment>
-                    <ActivityIndicator size="large" />
+                    <Box padding={10}>
+                      <ActivityIndicator size="large" />
+                    </Box>
 
-                    <Box height={10} />
-
-                    <Text align="center">
-                      Loading...
-                    </Text>
-
-                    <Box height={10} />
+                    <Box marginBottom={10}>
+                      <Text align="center">
+                        Loading...
+                      </Text>
+                    </Box>
 
                     {secondsElapsed > 5 ? (
                       <Text align="center">
@@ -125,6 +135,7 @@ class LayoutLoader extends Component {
       }),
       navigation: {
         ...(( navigation && navigation.state && navigation.state.params ) || {}),
+        ...(( router && router.location && router.location.state ) || {}),
         ...currentRouteParams,
       },
       props: sublayoutProps,
@@ -139,15 +150,15 @@ class LayoutLoader extends Component {
         {...layout.layout}
         context={context}
       >
-        {layout.children != null && layout.children instanceof Array
-          ? layout.children.map(( child, index ) => (
+        {isArray( layout.children ) ? (
+          layout.children.map(( child, index ) => (
             <Recursive
               key={index} // eslint-disable-line react/no-array-index-key
               {...child}
               context={context}
             />
           ))
-          : layout.children || null}
+        ) : layout.children || null}
       </Holder>
     );
   }
@@ -155,6 +166,7 @@ class LayoutLoader extends Component {
 
 const mapStateToProps = state => ({
   data: state.vertx,
+  router: state.router,
 });
 
 export default connect( mapStateToProps )( LayoutLoader );

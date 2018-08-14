@@ -1,18 +1,23 @@
 import React from 'react';
-import { Image as NativeImage, ImageBackground as NativeImageBackground, Dimensions } from 'react-native';
+import { ImageBackground as NativeImage } from 'react-native';
 import { string, oneOf, oneOfType, number, array, bool } from 'prop-types';
 import { Box, Icon } from '../';
+import { isString } from '../../../utils';
 
 const Image = ({
   width,
   height,
+  minWidth,
+  minHeight,
+  maxWidth,
+  maxHeight,
+  flex,
   source,
   shape,
-  fullscreen = false,
-  children,
   fallbackIcon = 'photo',
   fallbackIconSize = 'lg',
   fallbackColor = 'gray',
+  ...restProps
 }) => {
   const borderRadius = {
     square: 0,
@@ -20,49 +25,38 @@ const Image = ({
     circle: width / 2,
   };
 
-  const imageWidth = fullscreen ? Dimensions.get( 'window' ).width : width;
-  const imageHeight = fullscreen ? Dimensions.get( 'window' ).height : height;
-
   if (
-    source &&
-    typeof source === 'string' &&
-    source.length > 0 &&
+    isString( source, { ofMinLength: 1 }) &&
     source !== 'undefined'
   ) {
-    if (
-      children &&
-      children.length > 0
-    ) {
-      return (
-        <NativeImageBackground 
-          source={{ uri: source }}
-          style={{ width: imageWidth, height: imageHeight, borderRadius: borderRadius[shape] }}
-        >
-          <Box 
-            position="absolute" 
-            top={0}
-            left={0}
-            width={imageWidth}
-            height={imageHeight}
-          >
-            {children}
-          </Box>
-        </NativeImageBackground>
-      );
-    }
-    
     return (
       <NativeImage
+        {...restProps}
         source={{ uri: source }}
-        style={{ width: imageWidth, height: imageHeight, borderRadius: borderRadius[shape] }}
+        style={{
+          height,
+          width,
+          minHeight,
+          minWidth,
+          maxHeight,
+          maxWidth,
+          flex,
+          borderRadius: borderRadius[shape] || Number( borderRadius ),
+        }}
       />
     );
   }
 
   return (
     <Box
-      width={imageWidth}
-      height={imageHeight}
+      {...restProps}
+      flex={flex}
+      width={width}
+      height={height}
+      minWidth={minWidth}
+      minHeight={minHeight}
+      maxWidth={maxWidth}
+      maxHeight={maxHeight}
       backgroundColor={fallbackColor}
       justifyContent="center"
       alignItems="center"
@@ -84,6 +78,18 @@ Image.propTypes = {
   height: oneOfType(
     [string, number]
   ),
+  minWidth: oneOfType(
+    [string, number]
+  ),
+  minHeight: oneOfType(
+    [string, number]
+  ),
+  maxWidth: oneOfType(
+    [string, number]
+  ),
+  maxHeight: oneOfType(
+    [string, number]
+  ),
   source: string,
   fullscreen: bool,
   children: array,
@@ -93,6 +99,7 @@ Image.propTypes = {
   fallbackIcon: string,
   fallbackIconSize: string,
   fallbackColor: string,
+  flex: number,
 };
 
 export default Image;

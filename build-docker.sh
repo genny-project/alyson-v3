@@ -1,0 +1,1 @@
+docker build -t genny-project/alyson-v3 .

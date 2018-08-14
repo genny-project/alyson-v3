@@ -131,7 +131,9 @@ const handleReduceLinks = ( resultant, current ) => {
             !current.shouldDeleteLinkedBaseEntities
           )
             ? resultant[current.parentCode].links.filter(({ code }) => code !== current.code )
-            : [],
+            : [
+              ...resultant[current.parentCode].links,
+            ],
           current.code,
         ],
       };
@@ -165,7 +167,6 @@ const handleReduceData = ( resultant, current ) => {
   const { baseEntityAttributes, ...wantedData } = current; // eslint-disable-line no-unused-vars
 
   resultant[current.code] = wantedData;
-
   /* If the current has a parentCode, ensure there is an accompanying base entity. */
   if ( current.parentCode ) {
     const fakeLink = {
@@ -195,14 +196,21 @@ const handleReduceData = ( resultant, current ) => {
      * from the list of existing links. */
     else {
       const noExistingLinks = !resultant[current.parentCode].links;
-
       const newLinks = noExistingLinks ? [current] : [
         ...(
           !current.replace &&
           !current.shouldDeleteLinkedBaseEntities
         )
-          ? resultant[current.parentCode].links.filter( link => link.targetCode !== current.code )
-          : [],
+          ? [
+            ...resultant[current.parentCode].links.filter(
+              link => link.targetCode !== current.code
+            ),
+            fakeLink,
+          ]
+          : [
+            ...resultant[current.parentCode].links,
+            fakeLink,
+          ],
       ];
 
       resultant[current.parentCode] = {

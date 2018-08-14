@@ -1,32 +1,39 @@
 import React, { Component } from 'react';
-import { object, node } from 'prop-types';
+import { object, node, oneOf } from 'prop-types';
 import { Formik } from 'formik';
 import { withKeycloak, Redirect } from '../../index';
 
-class LoginForm extends Component {
+class AuthenticationForm extends Component {
   static propTypes = {
     keycloak: object,
     children: node,
-  }
-
-  state = {
-    // error: null,
+    type: oneOf(
+      ['register', 'login']
+    ),
   }
 
   handleSubmit = async ( values, form ) => {
-    const { setSubmitting } = form;
-    const { keycloak } = this.props;
+    const { setSubmitting, setStatus } = form;
+    const { keycloak, type } = this.props;
 
     setSubmitting( true );
+    setStatus( null );
 
     try {
-      await keycloak.doLoginWithApi({
-        username: values.email,
-        password: values.password,
-      });
+      if ( type === 'login' ) {
+        await keycloak.doLoginWithApi( values );
+      }
+      else if ( type === 'register' ) {
+        await keycloak.doRegisterWithApi( values );
+      }
+      else {
+        console.error( 'Unable to submit authentication form - invalid type set', { type });
+
+        setStatus( 'Invalid form type set' );
+      }
     }
     catch ( error ) {
-      // this.setState({ error });
+      setStatus( error.message || error );
     }
     finally {
       setSubmitting( false );
@@ -60,4 +67,4 @@ class LoginForm extends Component {
   }
 }
 
-export default withKeycloak( LoginForm );
+export default withKeycloak( AuthenticationForm );

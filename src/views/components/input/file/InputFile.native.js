@@ -68,10 +68,6 @@ class InputFile extends Component {
     files: [],
   }
 
-  componentDidMount() {
-    console.warn( this.props );
-  }
-
   handleComplete = result => {
     this.setState( state => {
       if ( this.props.multiple ) {

@@ -4,17 +4,14 @@ import { Input } from '../../index';
 
 class InputCurrency extends Component {
   static defaultProps = {
-    prefixIcon: 'attach-money',
     defaultCurrency: 'AUD',
     placeholder: 'Enter an amount...',
   }
 
   static propTypes = {
-    icon: string,
     placeholder: string,
     onChange: func,
     onChangeValue: func,
-    prefixIcon: string,
     defaultCurrency: string,
   }
 
@@ -37,7 +34,7 @@ class InputCurrency extends Component {
   }
 
   render() {
-    const { icon, placeholder, prefixIcon, ...restProps } = this.props;
+    const { placeholder, ...restProps } = this.props;
     const { value } = this.state;
 
     return (
@@ -48,8 +45,6 @@ class InputCurrency extends Component {
         placeholder={placeholder}
         value={value}
         onChangeValue={this.handleChangeValue}
-        prefixIcon={prefixIcon}
-        icon={icon}
       />
     );
   }

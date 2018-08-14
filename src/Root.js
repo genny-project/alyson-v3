@@ -10,6 +10,13 @@ import './utils/layouts-dev';
 
 console.disableYellowBox = true; // eslint-disable-line no-console
 
+/* --- ADDED FOR LOCAL LAYOUT DEV --- */
+// if ( !this.f ) {
+//   this.f = true;
+//   global.LayoutsDev.load( 'PROJECT_HERE' );
+// }
+/* ------------------------ */
+
 const Root = () => (
   <ErrorBoundary>
     <ReduxProvider store={store}>

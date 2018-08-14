@@ -47,8 +47,7 @@ target 'alysonv3' do
   pod 'Google-Maps-iOS-Utils' # Remove this line if you don't want to support GoogleMaps on iOS
   pod 'CodePush', :path => '../node_modules/react-native-code-push'
 
-
-
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
 
 end
 

@@ -68,3 +68,5 @@ android/app/src/main/assets/appcenter-config.json
 *.jks
 ios/alysonv3/AppCenter-Config.plist
 *-logo*
+dist
+.env.*
