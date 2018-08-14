@@ -92,35 +92,6 @@ class HeaderLeft extends Component {
         {layout => (
           <Box alignItems="center">
             {(
-              showBack &&
-              canShowBack
-            )
-              ? (
-                <Button
-                  onPress={this.handleBack}
-                  size={backIconSize}
-                  color="transparent"
-                  textColor={backIconColor || layout.textColor}
-                  icon={backIcon}
-                  width={50}
-                  marginLeft={5}
-                  marginRight={5}
-                />
-              ) : showMenu ? (
-                <Button
-                  onPress={this.handleToggleMenu}
-                  size="md"
-                  color="transparent"
-                  textColor={layout.textColor}
-                  icon="menu"
-                  width={50}
-                  marginLeft={5}
-                  marginRight={5}
-                />
-              ) : null
-            }
-
-            {(
               showLogo &&
               !(
                 replaceLogoWithBack &&
@@ -143,16 +114,35 @@ class HeaderLeft extends Component {
                   />
                 </Box>
               </Touchable>
-              ) : showMenu ? (
+              ) : (
+                showBack &&
+                canShowBack
+              ) ? (
                 <Button
-                  onPress={this.handleToggleMenu}
-                  size="md"
+                  onPress={this.handleBack}
+                  size={backIconSize}
                   color="transparent"
-                  textColor={layout.textColor}
-                  icon="menu"
-                  paddingX={15}
+                  textColor={backIconColor || layout.textColor}
+                  icon={backIcon}
+                  width={(
+                    logoProps &&
+                    logoProps.width
+                  ) || 50}
+                  marginLeft={10}
+                  marginRight={10}
                 />
-              ) : null}
+                ) : showMenu ? (
+                  <Button
+                    onPress={this.handleToggleMenu}
+                    size="md"
+                    color="transparent"
+                    textColor={layout.textColor}
+                    icon="menu"
+                    width={50}
+                    marginLeft={5}
+                    marginRight={5}
+                  />
+                ) : null}
 
             {showTitle ? (
               <Box marginLeft={5}>
