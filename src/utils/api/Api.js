@@ -86,12 +86,12 @@ class Api {
   }
 
   getPublicLayouts = () => {
-    const query = queryString.stringify({
-      url: 'git@github.com/fourdegrees-new/null.git',
-    });
+    const query = queryString.stringify(
+      config.layouts.query,
+    );
 
     return this.observableCall({
-      url: `http://localhost:2224/public?${query}`,
+      url: `${config.layouts.publicURL}public?${query}`,
     });
   }
 }
