@@ -35,6 +35,7 @@ class KeycloakProvider extends Component {
     const isValidUrl = Linking.canOpenURL( LoginUrl.getUrl());
 
     if ( !isValidUrl ) {
+      // eslint-disable-next-line no-console
       console.warn( `Attempted to open invalid login URL: ${LoginUrl.getUrl()}` );
 
       return;
@@ -68,6 +69,7 @@ class KeycloakProvider extends Component {
     const isValidUrl = Linking.canOpenURL( RegisterUrl.getUrl());
 
     if ( !isValidUrl ) {
+      // eslint-disable-next-line no-console
       console.warn( `Attempted to open invalid register URL: ${RegisterUrl.getUrl()}` );
 
       return;
@@ -207,7 +209,41 @@ class KeycloakProvider extends Component {
       return true;
     }
     catch ( error ) {
+      // eslint-disable-next-line no-console
       console.warn( error );
+
+      throw new Error( error );
+    }
+  }
+
+  doRegisterWithApi = async data => {
+    const { baseUrl, realm } = this.props;
+    const apiUrl = store.getState().keycloak.data.api_url;
+    const endpoint = `${apiUrl}/keycloak/register`;
+
+    const body = {
+      ...data,
+      keycloakUrl: baseUrl,
+      realm,
+    };
+
+    // return new Promise(( resolve, reject ) => {
+    try {
+      await Api.promiseCall({
+        method: 'post',
+        url: endpoint,
+        data: body,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      return this.doLoginWithApi( data );
+    }
+    catch ( error ) {
+      // eslint-disable-next-line no-console
+      console.warn( error );
+
       throw new Error( error );
     }
   }
@@ -234,8 +270,6 @@ class KeycloakProvider extends Component {
     if ( !query ) return;
     if ( typeof query !== 'object' ) return;
     if ( Object.keys( query ).length === 0 ) return;
-
-    console.warn({ query });
 
     if (
       query.state &&
@@ -271,17 +305,11 @@ class KeycloakProvider extends Component {
     createLoginUrl: this.createLoginUrl,
     createLogoutUrl: this.createLogoutUrl,
     doLoginWithApi: this.doLoginWithApi,
+    doRegisterWithApi: this.doRegisterWithApi,
     handleUrlDecoding: this.handleUrlDecoding,
   }
 
   componentDidMount = () => {
-    /**
-     * TODO:
-     *
-     * Fix casting bug on Android
-     *
-     * Issue seems to be with the tokens being used from storage
-     */
     this.checkStorage();
 
     if ( Platform.OS === 'web' )
@@ -338,8 +366,8 @@ class KeycloakProvider extends Component {
         await this.asyncSetState({
           sessionState: state,
           sessionNonce: nonce,
-          accessToken: accessTokenHasExpired ? null : accessToken, // <-- HERE FIXME:
-          refreshToken, // <-- AND HERE IS WHERE IT BREAKS ANDROID FIXME:
+          accessToken: accessTokenHasExpired ? null : accessToken,
+          refreshToken,
           isAuthenticated: true,
         });
 
@@ -534,6 +562,8 @@ class KeycloakProvider extends Component {
     }
   }
 
+  handleApiRegistrationSuccess = () => {}
+
   handleTokenRefreshSuccess = async ({
     access_token,
     refresh_token,
@@ -573,8 +603,14 @@ class KeycloakProvider extends Component {
             },
           }, resolve );
         }
+        else {
+          resolve();
+        }
       }
       catch ( error ) {
+        // eslint-disable-next-line no-console
+        console.warn({ error });
+
         reject( error );
       }
     });
