@@ -31,6 +31,8 @@ class HeaderLeft extends Component {
     keycloak: object,
     replaceLogoWithBack: bool,
     logoOpensMenu: bool,
+    titleProps: object,
+    logoProps: object,
   }
 
   handleToggleMenu = () => {
@@ -66,6 +68,8 @@ class HeaderLeft extends Component {
       backIconSize,
       replaceLogoWithBack,
       logoOpensMenu,
+      titleProps,
+      logoProps,
     } = this.props;
 
     const { index, routes } = navigationReducer;
@@ -130,10 +134,11 @@ class HeaderLeft extends Component {
                   onPress: this.handleToggleMenu,
                 }}
               >
-                <Box paddingX={5}>
+                <Box paddingX={10}>
                   <Image
                     height={50}
                     width={50}
+                    {...logoProps}
                     source={logoSource}
                   />
                 </Box>
@@ -154,6 +159,7 @@ class HeaderLeft extends Component {
                 <Heading
                   size="lg"
                   color={layout.textColor}
+                  {...titleProps}
                 >
                   {title}
                 </Heading>

@@ -220,17 +220,17 @@ class Tabs extends Component {
     return (
       <Box
         flex={1}
-        alignItems="center"
         justifyContent="center"
+        position="relative"
         {...sceneStyle}
       >
         {(
           children &&
           children.length > 0 &&
           children[route.key]
-        ) ? (
-            children[route.key]
-          ) : (
+        )
+          ? children[route.key]
+          : (
             <Timeout duration={20000}>
               {({ isTimeUp }) => (
                 <Box
