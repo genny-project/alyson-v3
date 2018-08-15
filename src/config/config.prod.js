@@ -3,8 +3,8 @@ export default {
     name: 'Genny',
   },
   genny: {
-    host: 'https://bridge-v3.channel40.com.au',
-    initUrl: 'https://v2.channel40.com.au',
+    host: 'https://bridge-fourdegrees-dev.outcome-hub.com/',
+    initUrl: 'https://fourdegrees-dev.outcome-hub.com/',
     bridge: {
       port: '80',
       endpoints: {
