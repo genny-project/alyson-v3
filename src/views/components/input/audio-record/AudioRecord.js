@@ -5,7 +5,8 @@ import mime from 'react-native-mime-types';
 import fastXmlParser from 'fast-xml-parser';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import dlv from 'dlv';
-import { Box, Icon, Touchable } from '../../index';
+import uuid from 'uuid/v4';
+import { Box, Icon, Touchable, Text } from '../../index';
 import config from '../../../../config';
 
 var RNFS = require( 'react-native-fs' );
@@ -22,42 +23,51 @@ class AudioRecord extends Component {
     playback: false,
     recording: false,
     audioRecorderPlayer: new AudioRecorderPlayer(),
+    fileName: '',
   }
 
   onStartRecord = async () => {
     const { audioRecorderPlayer } = this.state;
+    const fileName = `${RNFS.TemporaryDirectoryPath}${uuid()}.m4a`;
+    this.setState({ fileName });
 
     audioRecorderPlayer.id = 123;
-    const path = `${RNFS.TemporaryDirectoryPath}sound.m4a`;
+    const path = fileName;
 
-    await audioRecorderPlayer.startRecord( path );
+    console.warn( path )
+
+    await audioRecorderPlayer.startRecord();
+
     this.setState( state => ({
       recording: !state.recording,
     }));
   }
-  
+
   onStopRecord = async () => {
-    const { audioRecorderPlayer } = this.state;
+    const { audioRecorderPlayer, fileName } = this.state;
 
     this.setState( state => ({
       recordSecs: 0,
       recording: !state.recording,
     }));
 
-    await audioRecorderPlayer.stopRecord();
 
-    const path = `${RNFS.TemporaryDirectoryPath}sound.m4a`;
+    const path = await audioRecorderPlayer.stopRecord();
+
+    this.setState({
+      fileName: path
+    })
 
     if ( path && this.props.onChangeValue ) {
       this.props.onChangeValue( 'record.mp4' );
-    //  this.uploadFile( path, 'record' );
+      this.uploadFile( path, 'record' );
     }
   }
 
   onStartPlay = async () => {
-    const { audioRecorderPlayer } = this.state;
+    const { audioRecorderPlayer, fileName } = this.state;
 
-    const path = `${RNFS.TemporaryDirectoryPath}sound.m4a`;
+    const path = fileName;
 
     await audioRecorderPlayer.startPlay( path );
 
@@ -65,13 +75,13 @@ class AudioRecord extends Component {
       playback: !state.playback,
     }));
   }
-  
+
   onPausePlay = async () => {
     const { audioRecorderPlayer } = this.state;
 
     await audioRecorderPlayer.pausePlay();
   }
-  
+
   onStopPlay = async () => {
     const { audioRecorderPlayer } = this.state;
 
@@ -88,6 +98,7 @@ class AudioRecord extends Component {
     const mimeType = fileParts ? mime.contentType( fileParts[1] ).split( ';' )[0] : 'file';
     const formData = new FormData();
     const url = config.uppy.url;
+    const localFileName = this.state.fileName;
 
     const responseGet = await axios({
       method: 'get',
@@ -110,8 +121,8 @@ class AudioRecord extends Component {
     });
 
     formData.append( 'file', {
-      uri,
-      name: fileName,
+      uri: localFileName,
+      name: uri,
       fileType: mimeType,
     });
 
@@ -126,40 +137,76 @@ class AudioRecord extends Component {
     const text = await responsePost.text();
 
     const jsonObj = fastXmlParser.parse( text );
-    const { name, fileType } = formData._parts.filter( field => field[0] === 'file' )[0][1];
 
-    const formattedFile = {
+    const { Location } = jsonObj.PostResponse;
+    const resp = await axios({
+      url: 'https://transcoder-eet-dev.outcome-hub.com/transcode',
+      method: 'POST',
+      data: { Location }
+    })
+
+    const newURL = resp.data.Location;
+
+    const transcodeResp = await axios({
+      url: 'https://scoring-eet-dev.outcome-hub.com/score',
+      method: 'POST',
       data: {
-        name: name,
-        type: fileType,
-      },
-      extension: fileType.split( '/' )[1],
-      id: dlv( jsonObj, 'PostResponse.Key' ),
-      meta: {
-        ...fields,
-        name: name,
-        type: fileType,
-      },
-      name: name,
-      response: {
-        body: jsonObj.PostResponse,
-        status: fields.success_action_status,
-        uploadURL: dlv( jsonObj, 'PostResponse.Location' ),
-      },
-      type: fileType,
-      uploadURL: dlv( jsonObj, 'PostResponse.Location' ),
-      uploaded: true,
-      xhrUpload: {
-        endpoint: data.url,
-        formData: true,
-        metaFields: Object.keys( fields ),
-        method: data.method,
-      },
-    };
+        url: newURL,
+        text
+      }
+    })
 
-    if ( formattedFile && formattedFile.uploadURL && this.props.onChangeValue ) {
-      this.props.onChangeValue( formattedFile.uploadURL );
-    }
+    const polling = setInterval(
+      () => {
+        axios({url: `https://scoring-eet-dev.outcome-hub.com/score/${transcodeResp.data.jobID}`})
+          .then( resp => {
+            console.log(resp);
+            if (resp.data.status === "COMPLETE") {
+              clearInterval(polling);
+              console.log(resp.data);
+              this.setState({score: resp.data.score})
+            }
+          })
+      }, 1000
+    )
+
+
+    // const { name, fileType } = jsonObj._parts.filter( field => field[0] === 'file' )[0][1];
+
+    // const formattedFile = {
+    //   data: {
+    //     name: name,
+    //     type: fileType,
+    //   },
+    //   extension: fileType.split( '/' )[1],
+    //   id: dlv( jsonObj, 'PostResponse.Key' ),
+    //   meta: {
+    //     ...fields,
+    //     name: name,
+    //     type: fileType,
+    //   },
+    //   name: name,
+    //   response: {
+    //     body: jsonObj.PostResponse,
+    //     status: fields.success_action_status,
+    //     uploadURL: dlv( jsonObj, 'PostResponse.Location' ),
+    //   },
+    //   type: fileType,
+    //   uploadURL: dlv( jsonObj, 'PostResponse.Location' ),
+    //   uploaded: true,
+    //   xhrUpload: {
+    //     endpoint: data.url,
+    //     formData: true,
+    //     metaFields: Object.keys( fields ),
+    //     method: data.method,
+    //   },
+    // };
+
+    // if ( formattedFile && formattedFile.uploadURL && this.props.onChangeValue ) {
+    //   console.warn(formattedFile)
+
+    //   // this.props.onChangeValue( formattedFile.uploadURL );
+    // }
   }
 
   handlePlayback = () => {
@@ -213,6 +260,9 @@ class AudioRecord extends Component {
             />
           </Box>
         </Touchable>
+        {
+          this.state.score && <Text> {this.state.score} out of 10 </Text>
+        }
         <Touchable
           withFeedback
           onPress={this.handlePlayback}
