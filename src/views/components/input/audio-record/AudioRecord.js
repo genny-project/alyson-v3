@@ -69,7 +69,7 @@ class AudioRecord extends Component {
 
     const path = fileName;
 
-    await audioRecorderPlayer.startPlay( path );
+    await audioRecorderPlayer.startPlay;
 
     this.setState( state => ({
       playback: !state.playback,
@@ -121,7 +121,7 @@ class AudioRecord extends Component {
     });
 
     formData.append( 'file', {
-      uri: localFileName,
+      uri,
       name: uri,
       fileType: mimeType,
     });
@@ -152,7 +152,7 @@ class AudioRecord extends Component {
       method: 'POST',
       data: {
         url: newURL,
-        text
+        text: "Peter Piper picked a peck of pickled peppers."
       }
     })
 
@@ -261,7 +261,7 @@ class AudioRecord extends Component {
           </Box>
         </Touchable>
         {
-          this.state.score && <Text> {this.state.score} out of 10 </Text>
+          this.state.score && <Text> {this.state.score} out of 100 </Text>
         }
         <Touchable
           withFeedback
