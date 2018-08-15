@@ -1,3 +1,3 @@
-const KeyboardAwareScrollView = ({ children }) => children;
+import { View } from 'react-native';
 
-export default KeyboardAwareScrollView;
+export default View;
