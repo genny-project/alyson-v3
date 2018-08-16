@@ -16,11 +16,11 @@ class MultiDownshift extends React.Component {
 
   state = { selectedItems: [] }
 
-  getRemoveButtonProps = ({ onClick, item, ...props } = {}) => {
+  getRemoveButtonProps = ({ onPress, item, ...props } = {}) => {
     return {
-      onClick: e => {
+      onPress: e => {
         // TODO: use something like downshift's composeEventHandlers utility instead
-        onClick && onClick( e );
+        onPress && onPress( e );
         e.stopPropagation();
         this.removeItem( item );
       },
