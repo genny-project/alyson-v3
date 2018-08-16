@@ -55,6 +55,7 @@ export { default as EventTouchable } from './event-touchable';
 export { default as RetryTimer } from './retry-timer';
 export { default as LayoutFetcher } from './layout-fetcher';
 export { default as SafeAreaView } from './safe-area-view';
+export { default as MultiDownshift } from './multi-downshift';
 
 export * from './keycloak';
 export * from './vertx';
