@@ -79,6 +79,10 @@ const valueCompare = ( actual, expected ) => {
 };
 
 const isOperatorObject = object => {
+  if ( !object ) {
+    return false;
+  }
+
   return Object.keys( object ).filter( key => !['then', 'else'].includes( key )).find( operator => VALID_OPERATORS.includes( operator ));
 };
 
