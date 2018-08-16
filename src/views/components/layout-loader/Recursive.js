@@ -52,6 +52,10 @@ class Recursive extends Component {
       return {};
     }
 
+    if ( Array.isArray( conditionalProps )) {
+      return this.calculateConditionalPropsArray( conditionalProps, context );
+    }
+
     /* Check to make sure an if condition was provided */
     const ifCondition = conditionalProps.if;
 
@@ -72,8 +76,24 @@ class Recursive extends Component {
       return thenProps;
     }
 
-    return elseProps;
+    return elseProps || {};
   };
+
+  calculateConditionalPropsArray = ( conditionalProps, context ) => {
+    /* If no conditional props or no context is provided return an empty object */
+    if ( !conditionalProps || !context ) {
+      return {};
+    }
+
+    return conditionalProps.reduce(( result, current ) => {
+      const data = {
+        ...result,
+        ...this.calculateConditionalProps( current, context ),
+      };
+
+      return data;
+    }, {});
+  }
 
   handleReducePropInjection = ( result, current, index ) => {
     const { context } = this.props;
@@ -82,6 +102,10 @@ class Recursive extends Component {
 
     if ( typeof result[current] === 'string' ) {
       if ( result[current].startsWith( '_' )) {
+        if ( result[current].includes( '{{' )) {
+          result[current] = this.curlyBracketParse( result[current] );
+        }
+
         result[current] = dlv( context, result[current].substring( 1 ));
 
         return result;
@@ -147,6 +171,7 @@ class Recursive extends Component {
 
     const dataPool = {
       user,
+      props: this.props,
       ...context,
     };
 
@@ -158,11 +183,20 @@ class Recursive extends Component {
 
     for ( let i = 0; i < fields.length; i++ ) {
       const field = fields[i];
+      let contextedField = field;
+
+      if ( field.includes( '{{' )) {
+        contextedField = this.curlyBracketParse( field );
+      }
 
       /**
        * Each key is actually a path to a field in the context, so use dlv to
        * get the actual value */
-      const actualValue = dlv( dataPool, field );
+      const actualValue = dlv( dataPool, contextedField );
+
+      if ( !actualValue ) {
+        return false;
+      }
 
       /**
        * Use the doesValueMatch function from the find data query operator to ensure

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Platform } from 'react-native';
-import { any, oneOf, oneOfType, string, number, array, func, bool } from 'prop-types';
+import { any, oneOf, oneOfType, string, number, array, func, bool, object } from 'prop-types';
 import { objectClean } from '../../../utils';
 
 const shapeStyles = {
@@ -78,9 +78,14 @@ const Box = ({
   shape,
   boxShadow,
   fullHeightOnWeb,
+  __dangerouslySetStyle,
+  overflow,
+  overflowX,
+  overflowY,
+  display = 'flex',
   ...restProps
 }) => {
-  const style = {
+  const boxStyle = {
     justifyContent,
     alignItems,
     height: Platform.OS === 'web' && fullHeightOnWeb ? '100vh' : height,
@@ -132,6 +137,11 @@ const Box = ({
     ...boxShadow && (
       boxShadows[boxShadow]
     ),
+    overflow,
+    overflowX,
+    overflowY,
+    display,
+    __dangerouslySetStyle,
   };
 
   const webStyle = Platform.OS !== 'web' ? {} : {
@@ -149,8 +159,8 @@ const Box = ({
       accessibilityLabel={accessibilityLabel}
       style={[
         cleanStyleObject
-          ? objectClean( style )
-          : style,
+          ? objectClean( boxStyle )
+          : boxStyle,
         webStyle,
       ]}
     >
@@ -249,6 +259,11 @@ Box.propTypes = {
     ['light', 'medium', 'dark']
   ),
   fullHeightOnWeb: bool,
+  __dangerouslySetStyle: object,
+  overflow: string,
+  overflowX: string,
+  overflowY: string,
+  display: string,
 };
 
 export default Box;

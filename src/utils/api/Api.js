@@ -7,7 +7,7 @@ import config from '../../config';
 class Api {
   observableCall = ( options = {}) => {
     return Observable.ajax({
-      timeout: 3000,
+      timeout: 30000,
       responseType: 'json',
       headers: {
         'Content-Type': 'application/json',
@@ -19,7 +19,7 @@ class Api {
 
   promiseCall = ( options = {}) => {
     return axios({
-      timeout: 3000,
+      timeout: 30000,
       responseType: 'json',
       headers: {
         'Content-Type': 'application/json',

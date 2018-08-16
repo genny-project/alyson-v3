@@ -38,7 +38,9 @@ class FormInput extends Component {
           />
         );
 
+      case 'segmentedcontrol':
       case 'dropdown':
+      case 'tag':
         return (
           <FormInputDropdown
             {...this.props}
