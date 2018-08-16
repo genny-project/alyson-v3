@@ -132,6 +132,8 @@ class LayoutLoader extends Component {
     const context = {
       query: new DataQuery( data ).query( layout.query || [], {
         navigation: navigation && navigation.state ? navigation.state.params : {},
+        props: sublayoutProps,
+        user: data.user,
       }),
       navigation: {
         ...(( navigation && navigation.state && navigation.state.params ) || {}),
