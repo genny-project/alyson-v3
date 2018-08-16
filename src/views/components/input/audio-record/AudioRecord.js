@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { func } from 'prop-types';
 import axios from 'axios';
 import mime from 'react-native-mime-types';
@@ -6,7 +6,7 @@ import fastXmlParser from 'fast-xml-parser';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import dlv from 'dlv';
 import uuid from 'uuid/v4';
-import { Box, Icon, Touchable, Text } from '../../index';
+import { Box, Icon, Touchable, Text, ActivityIndicator } from '../../index';
 import config from '../../../../config';
 
 var RNFS = require( 'react-native-fs' );
@@ -22,6 +22,9 @@ class AudioRecord extends Component {
   state = {
     playback: false,
     recording: false,
+    processing: false,
+    calculating: false,
+    done: false,
     audioRecorderPlayer: new AudioRecorderPlayer(),
     fileName: '',
   }
@@ -59,7 +62,7 @@ class AudioRecord extends Component {
     })
 
     if ( path && this.props.onChangeValue ) {
-      this.props.onChangeValue( 'record.mp4' );
+      // this.props.onChangeValue( 'record.mp4' );
       this.uploadFile( path, 'record' );
     }
   }
@@ -99,6 +102,8 @@ class AudioRecord extends Component {
     const formData = new FormData();
     const url = config.uppy.url;
     const localFileName = this.state.fileName;
+
+    this.setState({ processing: true })
 
     const responseGet = await axios({
       method: 'get',
@@ -146,15 +151,20 @@ class AudioRecord extends Component {
     })
 
     const newURL = resp.data.Location;
+    console.warn({text: this.props.question.name})
 
     const transcodeResp = await axios({
       url: 'https://scoring-eet-dev.outcome-hub.com/score',
       method: 'POST',
       data: {
         url: newURL,
-        text: "Peter Piper picked a peck of pickled peppers."
+        text: this.props.question.name
       }
     })
+
+
+
+    this.setState({ processing: false, calculating: true })
 
     const polling = setInterval(
       () => {
@@ -164,7 +174,8 @@ class AudioRecord extends Component {
             if (resp.data.status === "COMPLETE") {
               clearInterval(polling);
               console.log(resp.data);
-              this.setState({score: resp.data.score})
+              this.setState({score: resp.data.score, processing: false, calculating: false, done: true})
+              this.props.onChangeValue( newURL );
             }
           })
       }, 1000
@@ -205,7 +216,6 @@ class AudioRecord extends Component {
     // if ( formattedFile && formattedFile.uploadURL && this.props.onChangeValue ) {
     //   console.warn(formattedFile)
 
-    //   // this.props.onChangeValue( formattedFile.uploadURL );
     // }
   }
 
@@ -233,7 +243,7 @@ class AudioRecord extends Component {
 
   render() {
     // const { items } = this.props;
-    const { playback, recording } = this.state;
+    const { playback, recording, processing, calculating, score, done } = this.state;
 
     return (
       <Box
@@ -242,46 +252,68 @@ class AudioRecord extends Component {
         alignItems="center"
         justifyContent="space-around"
       >
-        <Touchable
-          withFeedback
-          onPress={this.handleRecord}
-        >
-          <Box
-            padding={10}
-            backgroundColor="red"
-            shape="circle"
-            alignItems="center"
-            justifyContent="center"
+      {
+        ( !done && processing || calculating)
+        ? <Box
+          flexDirection="column"
+          alignItems="center"
           >
-            <Icon
-              name={recording ? 'stop' : 'mic'}
-              color="white"
-              size="lg"
-            />
+            <ActivityIndicator size="large" />
+            {
+               <Box
+                  flexDirection="column"
+                  alignItems="center"
+                  >
+                  { processing && <Text> processing... </Text> }
+                  { calculating && <Text> calculating score... </Text> }
+                  </Box>
+            }
           </Box>
-        </Touchable>
-        {
-          this.state.score && <Text> {this.state.score} out of 100 </Text>
-        }
-        <Touchable
-          withFeedback
-          onPress={this.handlePlayback}
-        >
-          <Box
-            marginLeft={10}
-            padding={10}
-            backgroundColor="green"
-            shape="circle"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Icon
-              name={playback ? 'pause' : 'play-arrow'}
-              color="white"
-              size="lg"
-            />
-          </Box>
-        </Touchable>
+        : (
+          <Fragment>
+            <Touchable
+              withFeedback
+              onPress={this.handleRecord}
+            >
+              <Box
+                padding={10}
+                backgroundColor="red"
+                shape="circle"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Icon
+                  name={recording ? 'stop' : 'mic'}
+                  color="white"
+                  size="lg"
+                />
+              </Box>
+            </Touchable>
+
+              {score && <Text> {score} out of 100 </Text> }
+
+            <Touchable
+              withFeedback
+              onPress={this.handlePlayback}
+            >
+              <Box
+                marginLeft={10}
+                padding={10}
+                backgroundColor="green"
+                shape="circle"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Icon
+                  name={playback ? 'pause' : 'play-arrow'}
+                  color="white"
+                  size="lg"
+                />
+              </Box>
+            </Touchable>
+          </Fragment>
+        )
+      }
       </Box>
     );
   }
