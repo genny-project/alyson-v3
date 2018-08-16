@@ -13,7 +13,7 @@ console.disableYellowBox = true; // eslint-disable-line no-console
 /* --- ADDED FOR LOCAL LAYOUT DEV --- */
 // if ( !this.f ) {
 //   this.f = true;
-//   global.LayoutsDev.load( 'fourdegrees-new' );
+//   global.LayoutsDev.load( 'PROJECT_HERE' );
 // }
 /* ------------------------ */
 
