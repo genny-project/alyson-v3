@@ -128,7 +128,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "app-icon generate -i genny-logo.png && node generate-configs.js && git add **/*.png && lint-staged"
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
