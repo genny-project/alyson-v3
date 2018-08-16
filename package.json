@@ -60,7 +60,6 @@
     "react-modal": "^3.4.5",
     "react-native": "0.55.4",
     "react-native-audio-recorder-player": "^1.2.2",
-    "react-native-audio-transcoder": "0.1.0",
     "react-native-blur": "^3.2.2",
     "react-native-code-push": "^5.4.0",
     "react-native-credit-card-input": "^0.4.1",
