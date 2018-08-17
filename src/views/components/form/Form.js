@@ -503,11 +503,21 @@ class Form extends Component {
         : 'default',
     };
 
+    const context = {
+      label: name,
+      question,
+      required: mandatory,
+      touched: touched[questionCode],
+      error: errors[questionCode],
+      disabled: isSubmitting,
+    };
+
     if ( renderFormInputWrapper ) {
       return (
         <Recursive
           key={questionCode}
           {...renderFormInputWrapper}
+          context={context}
           children={( // eslint-disable-line react/no-children-prop
             renderFormInput
               ? {
@@ -531,6 +541,7 @@ class Form extends Component {
         {renderFormInput ? (
           <Recursive
             {...renderFormInput}
+            context={context}
             props={{
               ...renderFormInput.props,
               ...inputProps,
