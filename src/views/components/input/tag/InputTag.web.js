@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { object, func, array } from 'prop-types';
+import { string, func, array } from 'prop-types';
 import { isString, isArray } from '../../../../utils';
 import { Box, MultiDownshift, Input, Text, Touchable, Icon } from '../../index';
 
@@ -9,16 +9,14 @@ import { Box, MultiDownshift, Input, Text, Touchable, Icon } from '../../index';
 
 class InputTag extends Component {
   static defaultProps = {
-    inputProps: {
-      placeholder: 'Add a tag...',
-    },
+    placeholder: 'Add a tag...',
     items: [],
   }
 
   static propTypes = {
-    inputProps: object,
     onChangeValue: func,
     items: array,
+    placeholder: string,
   }
 
   handleChange = selectedItems => {
@@ -44,7 +42,7 @@ class InputTag extends Component {
   }
 
   render() {
-    const { inputProps, items } = this.props;
+    const { items, ...restProps } = this.props;
 
     return (
       <MultiDownshift
@@ -82,11 +80,12 @@ class InputTag extends Component {
               >
                 <Input
                   {...getInputProps({
-                    ...inputProps,
+                    ...restProps,
                     type: 'text',
                     width: '100%',
                     ref: input => this.input = input,
                     onChangeValue: onInputValueChange,
+                    value: inputValue,
                   })}
                 />
               </Box>
