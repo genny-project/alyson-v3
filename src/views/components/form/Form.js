@@ -5,7 +5,8 @@ import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import { isArray, isObject, isString } from '../../../utils';
 import { Bridge } from '../../../utils/vertx';
-import { Box, Text, Button, Heading, Icon, KeyboardAwareScrollView } from '../index';
+import { Box, Text, Button, KeyboardAwareScrollView } from '../index';
+import Recursive from '../layout-loader/Recursive';
 import FormInput from './input';
 
 class Form extends Component {
@@ -17,6 +18,13 @@ class Form extends Component {
     ),
     asks: object, // eslint-disable-line react/no-unused-prop-types
     baseEntities: object,
+    renderHeading: object,
+    renderSubheading: object,
+    renderFormInput: object,
+    renderFormInputWrapper: object,
+    renderLoading: object,
+    renderSubmitButtonWrapper: object,
+    renderSubmitButton: object,
   }
 
   state = {
@@ -383,6 +391,49 @@ class Form extends Component {
     }
   }
 
+  renderButton( buttonProps ) {
+    const { renderSubmitButton, renderSubmitButtonWrapper } = this.props;
+
+    if ( renderSubmitButtonWrapper ) {
+      return (
+        <Recursive
+          key={buttonProps.key}
+          {...renderSubmitButtonWrapper}
+          children={( // eslint-disable-line react/no-children-prop
+            renderSubmitButton
+              ? {
+                ...renderSubmitButton,
+                props: {
+                  ...renderSubmitButton.props,
+                  ...buttonProps,
+                },
+              }
+              : {
+                component: 'Button',
+                props: buttonProps,
+              }
+          )}
+        />
+      );
+    }
+
+    return (
+      <Box key={buttonProps.key}>
+        {renderSubmitButton ? (
+          <Recursive
+            {...renderSubmitButton}
+            props={{
+              ...renderSubmitButton.props,
+              ...buttonProps,
+            }}
+          />
+        ) : (
+          <Button {...buttonProps} />
+        )}
+      </Box>
+    );
+  }
+
   renderInput = (
     values,
     errors,
@@ -392,24 +443,24 @@ class Form extends Component {
     isSubmitting,
     questionGroupCode
   ) => ( ask, index ) => {
-    const { definitions } = this.props.baseEntities;
+    const { renderFormInput, renderFormInputWrapper, renderSubheading, baseEntities } = this.props;
     const { questionCode, attributeCode, name, mandatory, question, childAsks } = ask;
-    const { dataType } = definitions.data[attributeCode];
+    const { dataType } = baseEntities.definitions.data[attributeCode];
 
     if ( isArray( childAsks, { ofMinLength: 1 })) {
       return (
-        <Box
-          flexDirection="column"
-        >
-          <Heading>
-            {name}
-          </Heading>
+        <Box flexDirection="column">
+          {renderSubheading ? (
+            <Recursive
+              {...renderSubheading}
+              key={name}
+              context={{
+                subheading: name,
+              }}
+            />
+          ) : null}
 
-          <Box
-            marginTop={20}
-            marginBottom={20}
-            flexDirection="column"
-          >
+          <Box flexDirection="column">
             {childAsks.map(
               this.renderInput(
                 values,
@@ -426,100 +477,74 @@ class Form extends Component {
       );
     }
 
-    return (
-      <Box
-        key={questionCode}
-        flexDirection="column"
-        marginBottom={20}
-      >
-        <Box
+    const inputProps = {
+      onChangeValue: this.handleChange( questionCode, setFieldValue, setTouched, ask ),
+      value: values && values[questionCode],
+      type: isString( dataType ) ? dataType.toLowerCase() : dataType,
+      error: touched[questionCode] && errors[questionCode],
+      onBlur: this.handleBlur( ask, values, errors ),
+      required: mandatory,
+      question,
+      disabled: isSubmitting,
+      onSubmitEditing: this.handleFocusNextInput( questionGroupCode, index ),
+      blurOnSubmit: (
+        !this.inputRefs[questionGroupCode] ||
+        !this.inputRefs[questionGroupCode][index + 1]
+      ),
+      ref: input => this.inputRefs[questionGroupCode] = {
+        ...this.inputRefs[questionGroupCode],
+        [index]: input,
+      },
+      returnKeyType: (
+        this.inputRefs[questionGroupCode] &&
+        this.inputRefs[questionGroupCode][index + 1]
+      )
+        ? 'next'
+        : 'default',
+    };
+
+    if ( renderFormInputWrapper ) {
+      return (
+        <Recursive
           key={questionCode}
-          flexDirection="row"
-          justifyContent="flex-start"
-        >
-          <Box
-            marginBottom={5}
-            justifyContent="space-between"
-            width="100%"
-          >
-            <Box>
-              <Text
-                bold
-                size="xs"
-                color="grey"
-              >
-                {name}
-              </Text>
-            </Box>
-
-            <Box
-              alignItems="center"
-            >
-              {mandatory ? (
-                <Text
-                  size="xs"
-                  color="grey"
-                >
-                  required
-                  &nbsp;
-                </Text>
-              ) : null}
-
-              {touched[questionCode]
-                ? (
-                  errors[questionCode]
-                    ? (
-                      <Icon
-                        color="red"
-                        name="clear"
-                      />
-                    ) : (
-                      <Icon
-                        color="green"
-                        name="check"
-                      />
-                    )
-                ) : (
-                  <Icon
-                    color="lightgrey"
-                    name="check"
-                  />
-                )}
-            </Box>
-          </Box>
-        </Box>
-
-        <FormInput
-          onChangeValue={this.handleChange( questionCode, setFieldValue, setTouched, ask )}
-          value={values && values[questionCode]}
-          type={typeof dataType === 'string' ? dataType.toLowerCase() : dataType}
-          error={touched[questionCode] && errors[questionCode]}
-          onBlur={this.handleBlur( ask, values, errors )}
-          required={mandatory}
-          question={question}
-          disabled={isSubmitting}
-          onSubmitEditing={this.handleFocusNextInput( questionGroupCode, index )}
-          blurOnSubmit={(
-            !this.inputRefs[questionGroupCode] ||
-            !this.inputRefs[questionGroupCode][index + 1]
+          {...renderFormInputWrapper}
+          children={( // eslint-disable-line react/no-children-prop
+            renderFormInput
+              ? {
+                ...renderFormInput,
+                props: {
+                  ...renderFormInput.props,
+                  ...inputProps,
+                },
+              }
+              : {
+                component: 'FormInput',
+                props: inputProps,
+              }
           )}
-          ref={input => this.inputRefs[questionGroupCode] = {
-            ...this.inputRefs[questionGroupCode],
-            [index]: input,
-          }}
-          returnKeyType={(
-            this.inputRefs[questionGroupCode] &&
-            this.inputRefs[questionGroupCode][index + 1]
-          )
-            ? 'next'
-            : 'default'}
         />
+      );
+    }
+
+    return (
+      <Box key={questionCode}>
+        {renderFormInput ? (
+          <Recursive
+            {...renderFormInput}
+            props={{
+              ...renderFormInput.props,
+              ...inputProps,
+            }}
+          />
+        ) : (
+          <FormInput {...inputProps} />
+        )}
       </Box>
     );
   }
 
   render() {
-    const { questionGroupCode } = this.props;
+    const { questionGroupCode, renderHeading, renderLoading } = this.props;
     const { questionGroups } = this.state;
 
     if (
@@ -529,6 +554,10 @@ class Form extends Component {
         questionGroupCode.length !== questionGroups.length
       )
     ) {
+      if ( renderLoading ) {
+        return <Recursive {...renderLoading} />;
+      }
+
       return (
         <Box
           flexDirection="column"
@@ -539,13 +568,12 @@ class Form extends Component {
         >
           <ActivityIndicator size="large" />
 
-          <Box height={10} />
+          <Box marginTop={10}>
+            <Text align="center">
+              Loading form...
+            </Text>
+          </Box>
 
-          <Text
-            align="center"
-          >
-            Loading form...
-          </Text>
         </Box>
       );
     }
@@ -569,129 +597,112 @@ class Form extends Component {
           isValid,
           setFieldValue,
           setFieldTouched,
-        }) => {
-          return (
-            <KeyboardAwareScrollView>
-              <Box
-                flexDirection="column"
-                flex={1}
-                height="100%"
-                width="100%"
-                padding={20}
-              >
-                {questionGroups.map( questionGroup => (
-                  <Fragment key={questionGroup.name}>
-                    <Box
-                      marginY={20}
-                      width="100%"
-                    >
-                      <Heading
-                        align="center"
-                        width="100%"
-                        size="lg"
-                      >
-                        {questionGroup.name}
-                      </Heading>
-                    </Box>
+        }) => (
+          <KeyboardAwareScrollView
+            style={{
+              width: '100%',
+            }}
+          >
+            <Box
+              flexDirection="column"
+              flex={1}
+              height="100%"
+              width="100%"
+              padding={20}
+            >
+              {questionGroups.map( questionGroup => (
+                <Fragment key={questionGroup.name}>
+                  {renderHeading ? (
+                    <Recursive
+                      {...renderHeading}
+                      key={name}
+                      context={{
+                        heading: questionGroup.name,
+                      }}
+                    />
+                  ) : null}
 
-                    {(
-                      /* If there is only one child ask and it's a Boolean question,
-                       * don't show it - the 'YES'/'NO' buttons underneath this will suffice. */
-                      questionGroup.childAsks.length === 1 &&
-                      questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
-                    )
-                      ? null
-                      : (
-                        questionGroup.childAsks.map(
-                          this.renderInput(
-                            values,
-                            errors,
-                            touched,
-                            setFieldValue,
-                            setFieldTouched,
-                            isSubmitting,
-                            questionGroup.questionCode,
-                            questionGroup.childAsks.length - 1
-                          )
+                  {(
+                    /* If there is only one child ask and it's a Boolean question,
+                      * don't show it - the 'YES'/'NO' buttons underneath this will suffice. */
+                    questionGroup.childAsks.length === 1 &&
+                    questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                  )
+                    ? null
+                    : (
+                      questionGroup.childAsks.map(
+                        this.renderInput(
+                          values,
+                          errors,
+                          touched,
+                          setFieldValue,
+                          setFieldTouched,
+                          isSubmitting,
+                          questionGroup.questionCode,
+                          questionGroup.childAsks.length - 1
                         )
                       )
-                    }
-                  </Fragment>
-                ))}
-
-                {questionGroups.reduce(( buttons, { attributeCode }, index ) => {
-                  if ( attributeCode.includes( 'YES' )) {
-                    buttons.push(
-                      <Box marginTop={10}>
-                        <Button
-                          color="green"
-                          onPress={this.handlePressYes}
-                          showSpinnerOnClick
-                          key="YES"
-                        >
-                          Yes
-                        </Button>
-                      </Box>
-                    );
+                    )
                   }
+                </Fragment>
+              ))}
 
-                  if ( attributeCode.includes( 'NO' )) {
-                    buttons.push(
-                      <Box marginTop={10}>
-                        <Button
-                          color="green"
-                          onPress={this.handlePressNo}
-                          showSpinnerOnClick
-                          key="NO"
-                        >
-                          No
-                        </Button>
-                      </Box>
-                    );
-                  }
+              {questionGroups.reduce(( buttons, { attributeCode }, index ) => {
+                if ( attributeCode.includes( 'YES' )) {
+                  buttons.push(
+                    this.renderButton({
+                      onPress: this.handlePressYes,
+                      key: 'YES',
+                      text: 'Yes',
+                      showSpinnerOnClick: true,
+                    })
+                  );
+                }
 
-                  if ( attributeCode.includes( 'SUBMIT' )) {
-                    buttons.push(
-                      <Box marginTop={10}>
-                        <Button
-                          disabled={!isValid || isSubmitting}
-                          color="green"
-                          onPress={handleSubmit}
-                          showSpinnerOnClick
-                          key="YES"
-                        >
-                          Submit
-                        </Button>
-                      </Box>
-                    );
-                  }
+                if ( attributeCode.includes( 'NO' )) {
+                  buttons.push(
+                    this.renderButton({
+                      onPress: this.handlePressNo,
+                      key: 'NO',
+                      text: 'No',
+                      showSpinnerOnClick: true,
+                    })
+                  );
+                }
 
-                  /* If there are no buttons to show, render the submit button. */
-                  if (
-                    index === questionGroups.length - 1
-                    && buttons.length === 0
-                  ) {
-                    buttons.push(
-                      <Box marginTop={10}>
-                        <Button
-                          disabled={!isValid || isSubmitting}
-                          color="green"
-                          onPress={handleSubmit}
-                          showSpinnerOnClick
-                          key="YES"
-                        >
-                          Submit
-                        </Button>
-                      </Box>
-                    );
-                  }
+                if ( attributeCode.includes( 'SUBMIT' )) {
+                  buttons.push(
+                    this.renderButton({
+                      disabled: !isValid || isSubmitting,
+                      onPress: handleSubmit,
+                      key: 'YES',
+                      text: 'Submit',
+                      showSpinnerOnClick: true,
+                    })
+                  );
+                }
 
-                  return buttons;
-                }, [] )}
-              </Box>
-            </KeyboardAwareScrollView>
-          );
-        }}
+                /* If there are no buttons to show, render the submit button. */
+                if (
+                  index === questionGroups.length - 1 &&
+                  buttons.length === 0
+                ) {
+                  buttons.push(
+                    this.renderButton({
+                      disabled: !isValid || isSubmitting,
+                      onPress: handleSubmit,
+                      key: 'YES',
+                      text: 'Submit',
+                      showSpinnerOnClick: true,
+                    })
+                  );
+                }
+
+                return buttons;
+              }, [] )}
+            </Box>
+          </KeyboardAwareScrollView>
+        )}
       </Formik>
     );
   }
