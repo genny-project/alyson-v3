@@ -32,18 +32,12 @@ const Heading = ({
 Heading.propTypes = {
   children: string,
   color: string,
-  decoration: oneOf(
-    ['none']
-  ),
+  decoration: oneOf( ['none'] ),
   bold: bool,
-  size: oneOf(
-    ['xs', 'sm', 'md', 'lg', 'xl']
-  ),
+  size: oneOf( ['xs', 'sm', 'md', 'lg', 'xl'] ),
   onPress: func,
   align: string,
-  width: oneOfType(
-    [string, number]
-  ),
+  width: oneOfType( [string, number] ),
 };
 
 export default Heading;
