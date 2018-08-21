@@ -153,7 +153,6 @@ class InputDatePicker extends Component {
                         zIndex={20}
                         top="100%"
                         onPress={event => {
-                          console.warn( 'hi' );
                           event.stopPropagation();
                         }}
                       >
@@ -164,7 +163,6 @@ class InputDatePicker extends Component {
                           paddingY={15}
                           backgroundColor={calendarHeaderColor}
                           onPress={event => {
-                            console.warn( 'hi' );
                             event.stopPropagation();
                           }}
                         >
