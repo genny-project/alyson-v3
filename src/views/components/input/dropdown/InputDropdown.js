@@ -56,7 +56,7 @@ class InputDropdown extends Component {
   }
 
   render() {
-    const { items, itemStringKey, itemValueKey, itemIdKey, disabled } = this.props;
+    const { items, itemStringKey, itemValueKey, itemIdKey, disabled, ...restProps } = this.props;
     const { value } = this.state;
 
     const validItems = (
@@ -67,10 +67,10 @@ class InputDropdown extends Component {
 
     return (
       <Picker
+        {...restProps}
         enabled={!disabled && validItems}
         onValueChange={this.handleChange}
         selectedValue={value}
-        style={{ width: 200, height: 50 }}
       >
         {validItems ? (
           items.map( item => {
