@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import { string, bool, func } from 'prop-types';
-import { DatePickerAndroid, TimePickerAndroid  } from 'react-native';
+import { DatePickerAndroid, TimePickerAndroid } from 'react-native';
 import moment from 'moment';
-import Touchable from '../../touchable/Touchable';
-
-import { Box, Text } from '../../../components';
-// import Map from '../../map/Map.native';
+import { Box, Text, Touchable } from '../../../components';
 
 class DatePicker extends Component {
   static defaultProps = {
@@ -70,9 +67,9 @@ class DatePicker extends Component {
     const { time, date } = this.props;
 
     if (
-      date && year && month && day && time && hour && minute ||
-      date && year && month && day && !time ||
-      time && hour && minute && !date
+      ( date && year && month && day && time && hour && minute ) ||
+      ( date && year && month && day && !time ) ||
+      ( time && hour && minute && !date )
     ) {
       const momentValue = moment( this.state );
 
@@ -114,7 +111,6 @@ class DatePicker extends Component {
       <Box
         paddingX={10}
       >
-
         {(
           date ? (
             <Touchable

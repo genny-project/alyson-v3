@@ -66,3 +66,4 @@ export * from './login';
 export * from './theme';
 export * from './form-generic';
 export * from './authentication';
+export * from './form';
