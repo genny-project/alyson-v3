@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
 import { Modal } from 'react-native';
-import { object, func, array } from 'prop-types';
+import { string, func, array } from 'prop-types';
 import { isString, isArray } from '../../../../utils';
 import { Box, MultiDownshift, Input, Text, SafeAreaView, Touchable, Icon } from '../../index';
 
 class InputTag extends Component {
   static defaultProps = {
-    inputProps: {
-      placeholder: 'Add a tag...',
-    },
+    placeholder: 'Add a tag...',
     items: [],
   }
 
   static propTypes = {
-    inputProps: object,
+    placeholder: string,
     onChangeValue: func,
     items: array,
   }
@@ -41,7 +39,7 @@ class InputTag extends Component {
   }
 
   render() {
-    const { items, inputProps } = this.props;
+    const { items, ...restProps } = this.props;
 
     return (
       <MultiDownshift
@@ -76,7 +74,7 @@ class InputTag extends Component {
               }}
             >
               <Input
-                {...inputProps}
+                {...restProps}
                 type="text"
                 editable={false}
                 width="100%"

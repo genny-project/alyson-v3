@@ -71,11 +71,6 @@ class DatePicker extends Component {
     }
   }
 
-  handleDismiss = () => {
-    if ( this.props.onBlur )
-      this.props.onBlur();
-  }
-
   handleOpen = () => {
     this.setState({
       isOpen: true,
@@ -164,7 +159,6 @@ class DatePicker extends Component {
           visible={isOpen}
           animationType="slide"
           transparent
-          onDismiss={this.handleDismiss}
         >
           <SafeAreaView
             style={{

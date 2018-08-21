@@ -5,6 +5,7 @@ import copy from 'fast-copy';
 import { connect } from 'react-redux';
 import { object, any, string } from 'prop-types';
 import { doesValueMatch } from '../../../utils/data-query/operators/find';
+import { isObject, isArray, isString } from '../../../utils';
 import { store } from '../../../redux';
 import * as Components from '../index';
 
@@ -52,7 +53,7 @@ class Recursive extends Component {
       return {};
     }
 
-    if ( Array.isArray( conditionalProps )) {
+    if ( isArray( conditionalProps )) {
       return this.calculateConditionalPropsArray( conditionalProps, context );
     }
 
@@ -98,9 +99,18 @@ class Recursive extends Component {
   handleReducePropInjection = ( result, current, index ) => {
     const { context } = this.props;
 
-    if ( result[current] == null && result[index] == null ) return result;
+    if (
+      result[current] == null &&
+      result[index] == null
+    ) {
+      return result;
+    }
 
-    if ( typeof result[current] === 'string' ) {
+    if ( isString( current, { startsWith: 'render' })) {
+      return result;
+    }
+
+    if ( isString( result[current] )) {
       if ( result[current].startsWith( '_' )) {
         if ( result[current].includes( '{{' )) {
           result[current] = this.curlyBracketParse( result[current] );
@@ -120,13 +130,13 @@ class Recursive extends Component {
       return result;
     }
 
-    if ( result[current] instanceof Array ) {
+    if ( isArray( result[current] )) {
       result[current] = result[current].reduce( this.handleReducePropInjection, result[current] );
 
       return result;
     }
 
-    if ( typeof result[current] === 'object' ) {
+    if ( isObject( result[current] ) || isObject( current )) {
       const targetObject = result[current] || current;
       const keys = Object.keys( targetObject );
 
@@ -143,7 +153,10 @@ class Recursive extends Component {
   };
 
   injectContextIntoChildren( context, children ) {
-    return typeof children === 'string' && children.indexOf( '{{' ) >= 0
+    return (
+      isString( children ) &&
+      children.indexOf( '{{' ) >= 0
+    )
       ? this.curlyBracketParse( children )
       : children;
   }
@@ -292,7 +305,7 @@ class Recursive extends Component {
     return createElement(
       Components[component],
       componentProps,
-      repeatedChildren instanceof Array ? (
+      isArray( repeatedChildren ) ? (
         repeatedChildren.map(( child, index ) => (
           <Recursive
             context={context}
@@ -302,7 +315,7 @@ class Recursive extends Component {
             {...child}
           />
         ))
-      ) : typeof repeatedChildren === 'object' ? (
+      ) : isObject( repeatedChildren ) ? (
         <Recursive
           context={context}
           theme={theme}
