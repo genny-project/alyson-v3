@@ -78,7 +78,7 @@ const Box = ({
   shape,
   boxShadow,
   fullHeightOnWeb,
-  __dangerouslySetStyle,
+  __dangerouslySetStyle = {},
   overflow,
   overflowX,
   overflowY,
@@ -141,7 +141,7 @@ const Box = ({
     overflowX,
     overflowY,
     display,
-    __dangerouslySetStyle,
+    ...__dangerouslySetStyle,
   };
 
   const webStyle = Platform.OS !== 'web' ? {} : {
