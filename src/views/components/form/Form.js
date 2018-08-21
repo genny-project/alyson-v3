@@ -626,7 +626,7 @@ class Form extends Component {
                   {renderHeading ? (
                     <Recursive
                       {...renderHeading}
-                      key={name}
+                      key={questionGroup.name}
                       context={{
                         heading: questionGroup.name,
                       }}
