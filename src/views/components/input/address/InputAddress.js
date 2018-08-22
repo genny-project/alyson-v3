@@ -24,7 +24,6 @@ class InputAddress extends Component {
     injectCustomAddressComponents: {
       street_address: '{{street_number}} {{street_name}}',
     },
-    prefixIcon: 'place',
     icon: 'expand-more',
     placeholder: 'Select an address...',
     getShortNameForAddressComponents: ['country'],
@@ -67,6 +66,7 @@ class InputAddress extends Component {
       this.setState({ items });
     }
     catch ( error ) {
+      // eslint-disable-next-line no-console
       console.warn( error );
     }
   }
@@ -78,6 +78,7 @@ class InputAddress extends Component {
       await google.geocodeAddress( address );
     }
     catch ( error ) {
+      // eslint-disable-next-line no-console
       console.warn( error );
     }
   }
@@ -166,6 +167,7 @@ class InputAddress extends Component {
         this.props.onChangeValue( formattedPlace );
     }
     catch ( error ) {
+      // eslint-disable-next-line no-console
       console.warn( error );
     }
   }

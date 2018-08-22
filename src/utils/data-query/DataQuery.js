@@ -38,8 +38,6 @@ class DataQuery {
         queryContext
       );
 
-      // console.log( result );
-
       if ( this.path ) {
         dset( output, this.path, result );
       } else {

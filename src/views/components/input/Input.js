@@ -4,7 +4,7 @@ import { Text } from '../index';
 import InputAddress from './address';
 import InputAutocomplete from './autocomplete';
 import CheckBox from './checkbox';
-import DatePicker from './datepicker';
+import InputDatePicker from './date-picker';
 import InputFile from './file';
 import InputScroll from './scroll';
 import InputRating from './rating';
@@ -19,6 +19,7 @@ import InputCheckbox from './checkbox-2';
 import InputPayment from './payment';
 import AudioRecord from './audio-record';
 import SegmentedControl from './segmented-control';
+import InputTag from './tag';
 
 class Input extends Component {
   static propTypes = {
@@ -58,10 +59,19 @@ class Input extends Component {
           />
         );
 
+      case 'password':
+        return (
+          <InputText
+            {...this.props}
+            type="text"
+            secureTextEntry
+            ref={input => this.input = input}
+          />
+        );
+
       case 'email':
         return (
           <InputText
-            prefixIcon="mail"
             keyboardType="email-address"
             {...this.props}
             ref={input => this.input = input}
@@ -82,7 +92,6 @@ class Input extends Component {
       case 'mobile':
         return (
           <InputText
-            prefixIcon="phone-iphone"
             keyboardType="phone-pad"
             {...this.props}
             ref={input => this.input = input}
@@ -92,7 +101,6 @@ class Input extends Component {
       case 'landline':
         return (
           <InputText
-            prefixIcon="call"
             keyboardType="phone-pad"
             {...this.props}
             ref={input => this.input = input}
@@ -212,7 +220,7 @@ class Input extends Component {
       case 'date':
       case 'java.time.localdate':
         return (
-          <DatePicker
+          <InputDatePicker
             {...this.props}
             date
             ref={input => this.input = input}
@@ -222,7 +230,7 @@ class Input extends Component {
       case 'datetime':
       case 'java.time.localdatetime':
         return (
-          <DatePicker
+          <InputDatePicker
             {...this.props}
             date
             time
@@ -274,6 +282,14 @@ class Input extends Component {
       case 'segmentedcontrol':
         return (
           <SegmentedControl
+            {...this.props}
+            ref={input => this.input = input}
+          />
+        );
+
+      case 'tag':
+        return (
+          <InputTag
             {...this.props}
             ref={input => this.input = input}
           />

@@ -3,6 +3,9 @@ const isString = ( string, options = {}) => {
     ofMaxLength,
     ofMinLength,
     ofExactLength,
+    startsWith,
+    endsWith,
+    includes,
   } = options;
 
   /* Ensure a valid string is given. */
@@ -32,6 +35,15 @@ const isString = ( string, options = {}) => {
   /* Test the max length the array can be. */
   if ( ofMaxLength != null )
     return string.length <= ofMaxLength;
+
+  if ( startsWith != null )
+    return string.startsWith( startsWith );
+
+  if ( endsWith != null )
+    return string.endsWith( endsWith );
+
+  if ( includes != null )
+    return string.includes( includes );
 
   /* If the array is valid and no options were passed, return as valid. */
   return true;

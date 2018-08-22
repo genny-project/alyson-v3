@@ -5,17 +5,20 @@ import { Input, Box, Touchable } from '../../../../components';
 class InputFileTouchable extends Component {
   static defaultProps = {
     text: 'Upload a file',
+    icon: 'camera-alt',
   }
 
   static propTypes = {
     text: string,
     onPress: func,
+    icon: string,
   }
 
   render() {
     const {
       text,
       onPress,
+      icon,
     } = this.props;
 
     return (
@@ -29,8 +32,7 @@ class InputFileTouchable extends Component {
       >
         <Input
           type="text"
-          icon="add"
-          prefixIcon="camera-alt"
+          icon={icon}
           editable={false}
           placeholder={text}
         />

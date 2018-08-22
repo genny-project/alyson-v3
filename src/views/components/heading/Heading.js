@@ -1,16 +1,16 @@
 import React from 'react';
-import { string, oneOf, oneOfType, number, func } from 'prop-types';
+import { string, oneOf, oneOfType, number, func, bool } from 'prop-types';
 import Text from '../text';
 
 const Heading = ({
   children,
   color = 'black',
   decoration = 'none',
-  fontWeight = 'bold',
   size = 'md',
   onPress,
   align,
   width,
+  bold = true,
   ...restProps
 }) => {
   return (
@@ -18,7 +18,7 @@ const Heading = ({
       {...restProps}
       color={color}
       decoration={decoration}
-      fontWeight={fontWeight}
+      bold={bold}
       size={size}
       onPress={onPress}
       align={align}
@@ -35,7 +35,7 @@ Heading.propTypes = {
   decoration: oneOf(
     ['none']
   ),
-  fontWeight: string,
+  bold: bool,
   size: oneOf(
     ['xs', 'sm', 'md', 'lg', 'xl']
   ),

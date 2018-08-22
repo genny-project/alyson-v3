@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link as ReactRouterLink, withRouter } from 'react-router-dom';
 import { string, bool, any, func, oneOf, object } from 'prop-types';
+import { withKeycloak } from '../keycloak';
 
 const Link = ({
   children = 'Link',
@@ -68,4 +69,4 @@ Link.propTypes = {
   history: object,
 };
 
-export default withRouter( Link );
+export default withKeycloak( withRouter( Link ));

@@ -7,7 +7,7 @@ import config from '../../config';
 class Api {
   observableCall = ( options = {}) => {
     return Observable.ajax({
-      timeout: 3000,
+      timeout: 30000,
       responseType: 'json',
       headers: {
         'Content-Type': 'application/json',
@@ -19,7 +19,7 @@ class Api {
 
   promiseCall = ( options = {}) => {
     return axios({
-      timeout: 3000,
+      timeout: 30000,
       responseType: 'json',
       headers: {
         'Content-Type': 'application/json',
@@ -82,6 +82,16 @@ class Api {
   getKeycloakConfig = () => {
     return this.eventCall({
       url: `init?url=${config.genny.initUrl}`,
+    });
+  }
+
+  getPublicLayouts = () => {
+    const query = queryString.stringify(
+      config.layouts.query,
+    );
+
+    return this.observableCall({
+      url: `${config.layouts.publicURL}public?${query}`,
     });
   }
 }

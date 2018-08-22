@@ -38,7 +38,9 @@ class FormInput extends Component {
           />
         );
 
+      case 'segmentedcontrol':
       case 'dropdown':
+      case 'tag':
         return (
           <FormInputDropdown
             {...this.props}
@@ -62,6 +64,10 @@ class FormInput extends Component {
       case 'payment':
       case 'audioRecord':
       case 'audiorecord':
+      case 'date':
+      case 'java.time.localdate':
+      case 'datetime':
+      case 'java.time.localdatetime':
         return (
           <Input
             {...this.props}

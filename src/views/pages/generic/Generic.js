@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { object } from 'prop-types';
 import { connect } from 'react-redux';
 import { location } from '../../../utils';
-import { LayoutLoader, Redirect, KeycloakConsumer } from '../../components';
-import LayoutFetcher from './LayoutFetcher';
+import { LayoutLoader, LayoutFetcher, KeycloakConsumer } from '../../components';
+import Public from '../public';
 
 class Generic extends Component {
   static propTypes = {
@@ -11,10 +11,10 @@ class Generic extends Component {
   }
 
   render() {
-    const currentUrl = location.getBasePath();
-
     if ( !this.props.keycloak.isAuthenticated )
-      return <Redirect to={`auth?redirectURL=${currentUrl}`} />;
+      return <Public {...this.props} />;
+
+    const currentUrl = location.getBasePath();
 
     return (
       <LayoutFetcher currentUrl={currentUrl}>

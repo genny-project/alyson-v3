@@ -2,11 +2,12 @@ import React, { createElement, Component } from 'react';
 import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
+import { connect } from 'react-redux';
 import { object, any, string } from 'prop-types';
 import { doesValueMatch } from '../../../utils/data-query/operators/find';
+import { isObject, isArray, isString } from '../../../utils';
 import { store } from '../../../redux';
 import * as Components from '../index';
-import isObject from '../../../utils/types/object/isObject';
 
 class Recursive extends Component {
   static propTypes = {
@@ -18,6 +19,9 @@ class Recursive extends Component {
     onlyShowIf: object,
     dontShowIf: object,
     conditional: object,
+    variant: string,
+    theme: object,
+    useThemeFrom: string,
   };
 
   handleMapCurlyTemplate = template => {
@@ -49,6 +53,10 @@ class Recursive extends Component {
       return {};
     }
 
+    if ( isArray( conditionalProps )) {
+      return this.calculateConditionalPropsArray( conditionalProps, context );
+    }
+
     /* Check to make sure an if condition was provided */
     const ifCondition = conditionalProps.if;
 
@@ -69,17 +77,45 @@ class Recursive extends Component {
       return thenProps;
     }
 
-    return elseProps;
+    return elseProps || {};
   };
+
+  calculateConditionalPropsArray = ( conditionalProps, context ) => {
+    /* If no conditional props or no context is provided return an empty object */
+    if ( !conditionalProps || !context ) {
+      return {};
+    }
+
+    return conditionalProps.reduce(( result, current ) => {
+      const data = {
+        ...result,
+        ...this.calculateConditionalProps( current, context ),
+      };
+
+      return data;
+    }, {});
+  }
 
   handleReducePropInjection = ( result, current, index ) => {
     const { context } = this.props;
 
-    if ( result[current] == null && result[index] == null ) return result;
+    if (
+      result[current] == null &&
+      result[index] == null
+    ) {
+      return result;
+    }
 
-    if ( typeof result[current] === 'string' ) {
-      // console.warn( result[current] );
+    if ( isString( current, { startsWith: 'render' })) {
+      return result;
+    }
+
+    if ( isString( result[current] )) {
       if ( result[current].startsWith( '_' )) {
+        if ( result[current].includes( '{{' )) {
+          result[current] = this.curlyBracketParse( result[current] );
+        }
+
         result[current] = dlv( context, result[current].substring( 1 ));
 
         return result;
@@ -94,13 +130,13 @@ class Recursive extends Component {
       return result;
     }
 
-    if ( result[current] instanceof Array ) {
+    if ( isArray( result[current] )) {
       result[current] = result[current].reduce( this.handleReducePropInjection, result[current] );
 
       return result;
     }
 
-    if ( typeof result[current] === 'object' || isObject( current )) {
+    if ( isObject( result[current] ) || isObject( current )) {
       const targetObject = result[current] || current;
       const keys = Object.keys( targetObject );
 
@@ -117,7 +153,10 @@ class Recursive extends Component {
   };
 
   injectContextIntoChildren( context, children ) {
-    return typeof children === 'string' && children.indexOf( '{{' ) >= 0
+    return (
+      isString( children ) &&
+      children.indexOf( '{{' ) >= 0
+    )
       ? this.curlyBracketParse( children )
       : children;
   }
@@ -145,6 +184,7 @@ class Recursive extends Component {
 
     const dataPool = {
       user,
+      props: this.props,
       ...context,
     };
 
@@ -156,11 +196,20 @@ class Recursive extends Component {
 
     for ( let i = 0; i < fields.length; i++ ) {
       const field = fields[i];
+      let contextedField = field;
+
+      if ( field.includes( '{{' )) {
+        contextedField = this.curlyBracketParse( field );
+      }
 
       /**
        * Each key is actually a path to a field in the context, so use dlv to
        * get the actual value */
-      const actualValue = dlv( dataPool, field );
+      const actualValue = dlv( dataPool, contextedField );
+
+      if ( !actualValue ) {
+        return false;
+      }
 
       /**
        * Use the doesValueMatch function from the find data query operator to ensure
@@ -181,12 +230,15 @@ class Recursive extends Component {
     const {
       component,
       props,
+      variant,
+      useThemeFrom,
       children,
       context,
       repeat,
       onlyShowIf,
       dontShowIf,
       conditional,
+      theme,
     } = this.props;
 
     if ( !component || !Components[component] ) {
@@ -225,20 +277,6 @@ class Recursive extends Component {
     const repeatedChildren =
       injectedRepeat && injectedRepeat instanceof Array
         ? injectedRepeat.map( child => {
-          component === 'Sublayout' &&
-              console.warn({
-                ...children,
-                props: {
-                  ...children.props,
-                  ...child,
-                },
-                context: {
-                  ...context,
-                  repeater: child,
-                  parentRepeater: context.repeater,
-                },
-              });
-
           return {
             ...children,
             props: {
@@ -255,29 +293,32 @@ class Recursive extends Component {
         : this.injectContextIntoChildren( context, children );
 
     const componentProps = this.injectContextIntoProps({
+      ...(
+        variant &&
+        theme.components[useThemeFrom || component] &&
+        theme.components[useThemeFrom || component][variant]
+      ),
       ...props,
       ...this.calculateConditionalProps( conditional, context ),
     });
 
-    // component == 'Sublayout' && console.warn( component, { context });
-
-    // console.log( repeatedChildren );
-
     return createElement(
       Components[component],
       componentProps,
-      repeatedChildren instanceof Array ? (
+      isArray( repeatedChildren ) ? (
         repeatedChildren.map(( child, index ) => (
           <Recursive
             context={context}
             // eslint-disable-next-line react/no-array-index-key
             key={index}
+            theme={theme}
             {...child}
           />
         ))
-      ) : typeof repeatedChildren === 'object' ? (
+      ) : isObject( repeatedChildren ) ? (
         <Recursive
           context={context}
+          theme={theme}
           {...repeatedChildren}
         />
       ) : (
@@ -287,4 +328,8 @@ class Recursive extends Component {
   }
 }
 
-export default Recursive;
+const mapStateToProps = state => ({
+  theme: state.theme,
+});
+
+export default connect( mapStateToProps )( Recursive );
