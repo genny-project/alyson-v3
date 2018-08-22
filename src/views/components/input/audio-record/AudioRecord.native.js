@@ -47,7 +47,7 @@ class AudioRecord extends Component {
   }
 
   onStopRecord = async () => {
-    const { audioRecorderPlayer, fileName } = this.state;
+    const { audioRecorderPlayer } = this.state;
 
     this.setState( state => ({
       recordSecs: 0,

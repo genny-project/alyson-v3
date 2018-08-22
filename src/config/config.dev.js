@@ -3,8 +3,8 @@ export default {
     name: 'Genny',
   },
   genny: {
-    host: 'https://bridge-fourdegrees-dev.outcome-hub.com/',
-    initUrl: 'https://fourdegrees-dev.outcome-hub.com/',
+    host: 'https://bridge-eet-dev.outcome-hub.com',
+    initUrl: 'https://eet-dev.outcome-hub.com',
     bridge: {
       port: '80',
       endpoints: {
@@ -27,9 +27,9 @@ export default {
     redirectUri: 'https://d2oki2ya5fhih0.cloudfront.net',
   },
   layouts: {
-    publicURL: 'http://localhost:2224/',
+    publicURL: 'http://10.1.120.225:2224/',
     query: {
-      url: 'git@github.com/fourdegrees-new/null.git',
+      url: 'layouts/eet-new',
     },
   },
 };
