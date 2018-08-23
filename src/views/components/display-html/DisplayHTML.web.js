@@ -1,22 +1,18 @@
 import React  from 'react';
 import { string } from 'prop-types';
 
-const DisplayHTML = ({ Html }) =>  { 
+const Html = ({ html }) =>  { 
   return (
     <div
       dangerouslySetInnerHTML={{ // eslint-disable-line react/no-danger
-        __html: Html,
+        __html: html,
       }}
     />
   );
 };
 
-DisplayHTML.propTypes = { 
-  Html: string,
+Html.propTypes = { 
+  html: string,
 };
 
-DisplayHTML.defaultProps = { 
-  Html: string,
-};
-
-export default DisplayHTML;
+export default Html;

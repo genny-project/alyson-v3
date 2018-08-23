@@ -2,20 +2,16 @@ import React from 'react';
 import HtmlPkg from 'react-native-render-html';
 import { string } from 'prop-types';
 
-const DisplayHTML = ({ Html }) =>  { 
+const Html = ({ html }) =>  { 
   return (
     <HtmlPkg
-      html={Html}
+      html={html}
     />
   );
 };
 
-DisplayHTML.propTypes = { 
-  Html: string,
+Html.propTypes = { 
+  html: string,
 };
 
-DisplayHTML.defaultProps = { 
-  Html: string,
-};
-
-export default DisplayHTML;
+export default Html;
