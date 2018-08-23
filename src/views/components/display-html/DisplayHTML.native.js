@@ -1,28 +1,21 @@
-import React, { Component } from 'react';
-import Html from 'react-native-render-html';
+import React from 'react';
+import HtmlPkg from 'react-native-render-html';
 import { string } from 'prop-types';
-import { Box } from '../../components';
 
-class DisplayHTML extends Component {
-  static defaultProps = {
-    content: '',
-  }
+const DisplayHTML = ({ Html }) =>  { 
+  return (
+    <HtmlPkg
+      html={Html}
+    />
+  );
+};
 
-  static propTypes = { 
-    content: string,
-  };
+DisplayHTML.propTypes = { 
+  Html: string,
+};
 
-  render() { 
-    const { content } = this.props;
-
-    return (
-      <Box>
-        <Html
-          html={content}
-        />
-      </Box>
-    );
-  }
-}
+DisplayHTML.defaultProps = { 
+  Html: string,
+};
 
 export default DisplayHTML;

@@ -1,29 +1,22 @@
-import React, { Component } from 'react';
+import React  from 'react';
 import { string } from 'prop-types';
-import { Box } from '../../components';
 
-class DisplayHTML extends Component {
-  static defaultProps = {
-    content: '',
-  }
+const DisplayHTML = ({ Html }) =>  { 
+  return (
+    <div
+      dangerouslySetInnerHTML={{ // eslint-disable-line react/no-danger
+        __html: Html,
+      }}
+    />
+  );
+};
 
-  static propTypes = { 
-    content: string,
-  };
+DisplayHTML.propTypes = { 
+  Html: string,
+};
 
-  render() { 
-    const { content } = this.props;
-
-    return (
-      <Box>
-        <div
-          dangerouslySetInnerHTML={{ // eslint-disable-line react/no-danger
-            __html: content,
-          }}
-        />
-      </Box>
-    );
-  }
-}
+DisplayHTML.defaultProps = { 
+  Html: string,
+};
 
 export default DisplayHTML;
