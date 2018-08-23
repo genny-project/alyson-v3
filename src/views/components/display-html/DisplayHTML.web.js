@@ -3,6 +3,10 @@ import { string } from 'prop-types';
 import { Box } from '../../components';
 
 class DisplayHTML extends Component {
+  static defaultProps = {
+    content: '',
+  }
+
   static propTypes = { 
     content: string,
   };
