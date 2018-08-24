@@ -1,9 +1,40 @@
-import devConfig from './config.dev';
-import prodConfig from './config.prod';
+import Config from './config';
 
 export { default as routes } from './routes';
 export { default as sidebar } from './sidebar';
 
-export default process.env.NODE_ENV === 'production'
-  ? prodConfig
-  : devConfig;
+export default {
+  app: {
+    name: Config.APP_NAME,
+  },
+  genny: {
+    host: Config.GENNY_HOST,
+    initUrl: Config.GENNY_INITURL,
+    bridge: {
+      port: Config.GENNY_BRIDGE_PORT,
+      endpoints: {
+        vertex: Config.GENNY_BRIDGE_VERTEX,
+        service: Config.GENNY_BRIDGE_SERVICE,
+        events: Config.GENNY_BRIDGE_EVENTS,
+      },
+    },
+  },
+  google: {
+    apiKey: Config.GOOGLE_MAPS_APIKEY,
+    maps: {
+      apiUrl: Config.GOOGLE_MAPS_APIURL,
+    },
+  },
+  uppy: {
+    url: Config.UPPY_URL,
+  },
+  keycloak: {
+    redirectUri: Config.KEYCLOAK_REDIRECTURI,
+  },
+  layouts: {
+    publicURL: Config.LAYOUT_PUBLICURL,
+    query: {
+      directory: Config.LAYOUT_QUERY_DIRECTORY,
+    },
+  },
+};

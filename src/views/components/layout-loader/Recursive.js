@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
 import { connect } from 'react-redux';
-import { object, any, string } from 'prop-types';
+import { object, any, string, array, oneOfType } from 'prop-types';
 import { doesValueMatch } from '../../../utils/data-query/operators/find';
 import { isObject, isArray, isString } from '../../../utils';
 import { store } from '../../../redux';
@@ -18,7 +18,7 @@ class Recursive extends Component {
     repeat: any,
     onlyShowIf: object,
     dontShowIf: object,
-    conditional: object,
+    conditional: oneOfType( [object, array] ),
     variant: string,
     theme: object,
     useThemeFrom: string,
@@ -137,7 +137,7 @@ class Recursive extends Component {
     }
 
     if ( isObject( result[current] ) || isObject( current )) {
-      const targetObject = result[current] || current;
+      const targetObject = isObject( result[current] )  ? result[current] : current;
       const keys = Object.keys( targetObject );
 
       if ( result[current] ) {
@@ -168,11 +168,16 @@ class Recursive extends Component {
    * correctly.
    */
   injectContextIntoProps( props ) {
-    if ( !props ) return {};
+    if ( !isObject( props )) return {};
 
     const propsCopy = copy( props );
+    let afterProps;
 
-    const afterProps = Object.keys( propsCopy ).reduce( this.handleReducePropInjection, propsCopy );
+    try {
+      afterProps = Object.keys( propsCopy ).reduce( this.handleReducePropInjection, propsCopy );
+    } catch ( e ) {
+      console.error( 'FOUND IT' );
+    }
 
     return afterProps;
   }
@@ -192,6 +197,10 @@ class Recursive extends Component {
      * Loop through all of the keys in the condition query and see whether
      * any of them don't match
      */
+    if ( !isObject( condition ) && !isArray( condition )) {
+      console.error( condition );
+    }
+
     const fields = Object.keys( condition );
 
     for ( let i = 0; i < fields.length; i++ ) {

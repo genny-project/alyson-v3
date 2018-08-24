@@ -3,7 +3,7 @@ package com.alysonv3;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.rnaudiotranscoder.RNAudioTranscoderPackage;
+import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.rnfs.RNFSPackage;
 import com.microsoft.codepush.react.CodePush;
 import com.microsoft.appcenter.reactnative.crashes.AppCenterReactNativeCrashesPackage;
@@ -40,8 +40,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNAudioTranscoderPackage(),
-            new RNFSPackage(),
+          new ReactNativeConfigPackage(),
+          new RNFSPackage(),
           new CodePush(BuildConfig.CODEPUSH_KEY, MainApplication.this, BuildConfig.DEBUG),
           new AppCenterReactNativeCrashesPackage(MainApplication.this, getResources().getString(R.string.appCenterCrashes_whenToSendCrashes)),
           new AppCenterReactNativeAnalyticsPackage(MainApplication.this, getResources().getString(R.string.appCenterAnalytics_whenToEnableAnalytics)),

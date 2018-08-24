@@ -27,6 +27,10 @@ export default ( data, options, allData ) => {
         if ( single ) {
           result['attributes'] = result.code ? allData.baseEntities.attributes[result.code] : {};
         } else {
+          if ( typeof pathData !== 'object' ) {
+            return item;
+          }
+
           Object.keys( pathData ).forEach( field => {
             const begCode = field && pathData[field] ? pathData[field].code : null;
 
@@ -61,7 +65,7 @@ export default ( data, options, allData ) => {
       })),
     ];
   }
-                            
+
   return [
     ...data.map( item => {
       const result = { ...item };
@@ -70,5 +74,5 @@ export default ( data, options, allData ) => {
 
       return result;
     }),
-  ];                      
+  ];
 };
