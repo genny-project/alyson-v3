@@ -1,4 +1,3 @@
-
 import Config from './config';
 
 export { default as routes } from './routes';
@@ -31,5 +30,11 @@ export default {
   },
   keycloak: {
     redirectUri: Config.KEYCLOAK_REDIRECTURI,
+  },
+  layouts: {
+    publicURL: Config.LAYOUT_PUBLICURL,
+    query: {
+      directory: Config.LAYOUT_QUERY_DIRECTORY,
+    },
   },
 };

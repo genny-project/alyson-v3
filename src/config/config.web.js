@@ -10,6 +10,8 @@ import {
   GOOGLE_MAPS_APIURL,
   UPPY_URL,
   KEYCLOAK_REDIRECTURI,
+  LAYOUT_PUBLICURL,
+  LAYOUT_QUERY_DIRECTORY,
 } from 'react-native-dotenv';
 
 export default {
@@ -24,4 +26,6 @@ export default {
   GOOGLE_MAPS_APIURL,
   UPPY_URL,
   KEYCLOAK_REDIRECTURI,
+  LAYOUT_PUBLICURL,
+  LAYOUT_QUERY_DIRECTORY,
 };
