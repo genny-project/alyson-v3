@@ -19,6 +19,7 @@ import InputCheckbox from './checkbox-2';
 import InputPayment from './payment';
 import AudioRecord from './audio-record';
 import SegmentedControl from './segmented-control';
+import InputTag from './tag';
 
 class Input extends Component {
   static propTypes = {
@@ -281,6 +282,14 @@ class Input extends Component {
       case 'segmentedcontrol':
         return (
           <SegmentedControl
+            {...this.props}
+            ref={input => this.input = input}
+          />
+        );
+
+      case 'tag':
+        return (
+          <InputTag
             {...this.props}
             ref={input => this.input = input}
           />
