@@ -10,7 +10,8 @@
     "test": "jest",
     "setup-files": "node generate-configs.js $ENVFILE",
     "setup-images": "app-icon generate -i $IMAGE",
-    "serve:web": "node server.js"
+    "serve:web": "node server.js",
+    "clear-cache:web": "rm -rf ./node_modules/.cache/babel-loader/*"
   },
   "dependencies": {
     "appcenter": "^1.6.0",
