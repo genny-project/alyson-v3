@@ -68,7 +68,7 @@ module.exports = {
 
   // configures where the build ends up
   output: {
-    filename: 'bundle.web.js',
+    filename: 'bundle.[hash].js',
     path: path.resolve( __dirname, 'dist' ),
     publicPath: '/',
   },
