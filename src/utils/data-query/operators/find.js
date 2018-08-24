@@ -22,6 +22,10 @@ export default ( data, options ) => {
 
   /* Apply the projection if it is applied */
   if ( projection ) {
+    if ( typeof projection !== 'object' ) {
+      return data;
+    }
+
     return output.map( item => {
       const output = {};
 
@@ -64,6 +68,9 @@ const arrayMatch = ( data, query, context ) => {
 };
 
 const objectMatch = ( item, query, context ) => {
+  if ( !query || typeof query !== 'object' ) {
+    return false;
+  }
   /* Get all of the keys for the query, excluding then and else */
   const queryKeys = Object.keys( query ).filter( key => !['then', 'else'].includes( key ));
 
@@ -79,7 +86,7 @@ const valueCompare = ( actual, expected ) => {
 };
 
 const isOperatorObject = object => {
-  if ( !object ) {
+  if ( !object || typeof object !== 'object' ) {
     return false;
   }
 
@@ -87,6 +94,9 @@ const isOperatorObject = object => {
 };
 
 const matchesOperators = ( value, operators, context ) => {
+  if ( !operators || typeof operators !== 'object' ) {
+    return false;
+  }
   /* Get all of the operators that are used */
   const keys = Object.keys( operators );
 
