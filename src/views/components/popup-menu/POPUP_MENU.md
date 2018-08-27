@@ -1,4 +1,4 @@
-# Activity Indicator
+# Popup Menu
 
 ## Description
 

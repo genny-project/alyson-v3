@@ -1,4 +1,4 @@
-# Activity Indicator
+# Payments
 
 ## Description
 

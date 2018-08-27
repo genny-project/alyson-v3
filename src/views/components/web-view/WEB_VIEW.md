@@ -1,4 +1,4 @@
-# Activity Indicator
+# Web View
 
 ## Description
 

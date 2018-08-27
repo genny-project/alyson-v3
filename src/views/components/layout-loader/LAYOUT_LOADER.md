@@ -1,4 +1,4 @@
-# Activity Indicator
+# Layout Loader
 
 ## Description
 

@@ -1,7 +1,5 @@
-# alysonv3 -
+# Documentation -
 
-## Documentation
+### [List of Components](COMPONENTS.md)
 
-aasd
-
-### [List of Components](COMPONENTS)
+A list of all display components in v3.

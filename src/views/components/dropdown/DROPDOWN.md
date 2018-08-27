@@ -1,4 +1,4 @@
-# Activity Indicator
+# Dropdown
 
 ## Description
 

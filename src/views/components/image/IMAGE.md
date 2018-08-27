@@ -1,4 +1,4 @@
-# Activity Indicator
+# Image
 
 ## Description
 
