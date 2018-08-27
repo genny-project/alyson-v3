@@ -1,0 +1,56 @@
+{
+  "config": {
+    "title": "Alysonv3",
+    "description": "My awesome app using docz",
+    "themeConfig": {},
+    "ordering": "descending",
+    "version": "0.0.1",
+    "repository": null
+  },
+  "entries": {
+    "src/index.mdx": {
+      "id": "6576455a124f9aaefd860597f03a8fe4",
+      "filepath": "src/index.mdx",
+      "link": null,
+      "slug": "src-index",
+      "route": "/src-index",
+      "name": "Index",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 2,
+          "slug": "name-home",
+          "value": "Name home"
+        },
+        {
+          "depth": 1,
+          "slug": "testing-123",
+          "value": "Testing 123"
+        }
+      ]
+    },
+    "src/views/components/box/Box.mdx": {
+      "name": "Button",
+      "id": "ff4b840fe1e367a8ed7a90b2fb5f9743",
+      "filepath": "src/views/components/box/Box.mdx",
+      "link": null,
+      "slug": "src-views-components-box-box",
+      "route": "/src-views-components-box-box",
+      "order": 0,
+      "menu": null,
+      "headings": [
+        {
+          "depth": 1,
+          "slug": "button",
+          "value": "Button"
+        },
+        {
+          "depth": 2,
+          "slug": "basic-usage",
+          "value": "Basic usage"
+        }
+      ]
+    }
+  }
+}
