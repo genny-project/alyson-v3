@@ -1,14 +1,13 @@
 {
   "presets": [
     "react-native",
-    "react",
-    "react-native-dotenv"
+    "@babel/preset-react",
+    "module:react-native-dotenv"
   ],
   "plugins": [
     "react-native-web",
-    "transform-async-to-generator",
-    ["transform-runtime", {
-      "polyfill": false,
+    "@babel/plugin-transform-async-to-generator",
+    ["@babel/plugin-transform-runtime", {
       "regenerator": true
     }]
   ]
