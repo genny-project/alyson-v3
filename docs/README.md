@@ -1,4 +1,4 @@
-# Documentation -
+# Documentation
 
 ### [List of Components](COMPONENTS.md)
 

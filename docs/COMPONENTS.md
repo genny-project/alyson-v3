@@ -1,6 +1,4 @@
-# alysonv3 -
-
-## List of Components
+# Components
 
 All display components in V3.
 
