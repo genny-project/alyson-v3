@@ -23,9 +23,9 @@ This is a list of all the components that can be used when creating [Layouts](LA
 
 ### [Display HTML](../src/views/components/display-html/DISPLAY_HTML.md)
 
-### [Display Markdown](../src/views/components/display-markdown/DISPLAY_MARKDOWN.md)
+### [~~Display Markdown~~](../src/views/components/display-markdown/DISPLAY_MARKDOWN.md)
 
-### [Display PDF](../src/views/components/display-pdf/DISPLAY_PDF.md)
+### [~~Display PDF~~](../src/views/components/display-pdf/DISPLAY_PDF.md)
 
 ### [Dropdown](../src/views/components/dropdown/DROPDOWN.md)
 
@@ -61,7 +61,7 @@ This is a list of all the components that can be used when creating [Layouts](LA
 
 ### [Sublayout](../src/views/components/sublayout/SUBLAYOUT.md)
 
-### [Table](../src/views/components/table/TABLE.md)
+### [~~Table~~](../src/views/components/table/TABLE.md)
 
 ### [Tabs](../src/views/components/tabs/TABS.md)
 

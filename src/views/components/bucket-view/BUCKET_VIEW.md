@@ -2,10 +2,11 @@
 
 ## Description
 
-No Props
+Component used to display the Bucket View. On web renders buckets in the same window, on Native renders the buckets as separate views.
 
 ## Props
 
-| Prop Name | Prop Type | Description |
-| :-------- | :-------: | :---------- |
-|       |  |  |
+```
+children: any,
+tabs: array,
+```
