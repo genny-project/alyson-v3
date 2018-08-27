@@ -25,17 +25,18 @@ const babelLoaderConfiguration = {
       // the modules needed by the app.
       plugins: [
         'react-native-web',
-        'transform-async-to-generator',
-        ['transform-runtime', {
-          polyfill: false,
+        '@babel/transform-async-to-generator',
+        '@babel/plugin-proposal-class-properties',
+        ['@babel/transform-runtime', {
           regenerator: true,
         }],
       ],
       // The 'react-native' preset is recommended to match React Native's packager
       presets: [
         'react-native',
-        'react',
-        'react-native-dotenv',
+        '@babel/preset-react',
+        '@babel/preset-env',
+        'module:react-native-dotenv',
       ],
     },
   },
