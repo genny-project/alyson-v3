@@ -1,4 +1,16 @@
+import { css } from 'docz-plugin-css';
+
 export default {
+  plugins: [
+    css({
+      preprocessor: 'postcss',
+      cssmodules: true,
+      loaderOpts: {
+        /* whatever your preprocessor loader accept */
+      },
+    }),
+  ],
+
   modifyBabelRc: config => {
     config.plugins = [
       'react-native-web',
@@ -7,6 +19,7 @@ export default {
       ['@babel/transform-runtime', {
         regenerator: true,
       }],
+      '@babel/plugin-syntax-dynamic-import',
     ];
 
     config.presets = [

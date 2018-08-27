@@ -5,7 +5,10 @@
     "themeConfig": {},
     "ordering": "descending",
     "version": "0.0.1",
-    "repository": null
+    "repository": null,
+    "plugins": [
+      {}
+    ]
   },
   "entries": {
     "src/index.mdx": {
