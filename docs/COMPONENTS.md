@@ -1,6 +1,7 @@
 # Components
 
-All display components in V3.
+This is a list of all the components that can be used when creating [Layouts](LAYOUTS.md).
+
 
 ### [Activity Indicator](../src/views/components/activity-indicator/ACTIVITY_INDICATOR.md)
 
