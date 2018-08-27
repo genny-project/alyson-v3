@@ -88,9 +88,13 @@ class Button extends Component {
   }
 
   getThemes() {
-    const { button } = this.props.theme.components;
+    const { theme } = this.props;
 
-    return button || defaultThemes;
+    return (
+      theme &&
+      theme.components &&
+      theme.components.button
+    ) || defaultThemes;
   }
 
   getThemeConfig() {

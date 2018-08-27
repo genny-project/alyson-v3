@@ -11,7 +11,9 @@
     "setup-files": "node generate-configs.js $ENVFILE",
     "setup-images": "app-icon generate -i $IMAGE",
     "serve:web": "node server.js",
-    "clear-cache:web": "rm -rf ./node_modules/.cache/babel-loader/*"
+    "clear-cache:web": "rm -rf ./node_modules/.cache/babel-loader/*",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "appcenter": "^1.6.0",
@@ -108,10 +110,17 @@
     "webpack-dev-server": "^3.1.4"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^4.0.0-alpha.18",
+    "@storybook/addon-links": "^4.0.0-alpha.18",
+    "@storybook/addon-options": "^3.4.10",
+    "@storybook/addons": "^4.0.0-alpha.18",
+    "@storybook/react": "^4.0.0-alpha.18",
     "app-icon": "^0.6.3",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "23.2.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-preset-react-native": "4.0.0",
+    "babel-runtime": "^7.0.0-beta.3",
     "enzyme": "^3.3.0",
     "fs-extra": "^7.0.0",
     "handlebars": "^4.0.11",

@@ -1,0 +1,15 @@
+{
+  "presets": [
+    "react-native",
+    "react",
+    "react-native-dotenv"
+  ],
+  "plugins": [
+    "react-native-web",
+    "transform-async-to-generator",
+    ["transform-runtime", {
+      "polyfill": false,
+      "regenerator": true
+    }]
+  ]
+}
