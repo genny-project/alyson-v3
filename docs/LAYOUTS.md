@@ -158,6 +158,25 @@ Let's take a look at an example of this.
 
 This will pass the raw `user.attributes` object straight through as the `data` prop on `Table` as an object instead of a string.
 
+## Repeater
+
+Sometimes you'll want to repeat a component based on your data. This is handy for doing things like showing lists. To repeat a component based on specific data we set the `repeat` field.
+
+For example, let's say we want to list a users payment methods inside a `Box`. 
+
+```json
+{
+  "component": "Box",
+  "repeat": "_user.attributes.PRI_PAYMENT_METHODS.value",
+  "children": {
+    "component": "Text",
+    "children": "{{repeater.accountName}}"
+  }
+}
+```
+
+You'll see how we set `repeat` to equal `_user.attributes.PRI_PAYMENT_METHODS.value`. This means that it'll render the single child component for every single payment method that the user has. In this case we are rendering the account name for each account.
+
 ## Conditional Display
 
 Sometime it is important to show different content based on your data. For example if a user is logged out then you may want to hide or show different components on the page. We've got a number of different ways to handle this:
