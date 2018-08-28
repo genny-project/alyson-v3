@@ -143,7 +143,7 @@ Lets say we wanted to hide this piece of text if a user had no payment methods f
 }
 ```
 
-If you don't understand what we are doing with the `user.attributes.PRI_USER_PAYMENT_METHODS.value` section of the above then go have a read of the `Query` documentation (linked above). 
+If you don't understand what we are doing with the `user.attributes.PRI_USER_PAYMENT_METHODS.value` section of the above then go have a read of the `Query` documentation (linked above).
 
 The `$size` and `$gt` (greater than) section of the `onlyShowIf` query are what we call "query operators". In the above example we are using two of them. The first is `$size` which returns the number of elements (in our case number of payment methods) and then we are checking whether that size is greater than 0 by using `$gt`.
 
@@ -170,5 +170,63 @@ A list of "query operators" use can use is below. All of these query operators a
 - `$and`
   - Performs a logical AND operation on an array of two or more expressions. Allows you to specify multiple conditions that must be true.
   - `{ $and: [ { <expression1> }, { <expression2> } , ... , { <expressionN> } ] }`
-  
 
+- `$eq`
+  - a
+  - `{ }`
+
+- `$exists`
+  - a
+  - `{ }`
+
+- `$gt`
+  - a
+  - `{ }`
+
+- `$gte`
+  - a
+  - `{ }`
+
+- `$in`
+  - a
+  - `{ }`
+
+- `$lt`
+  - a
+  - `{ }`
+
+- `$lte`
+  - a
+  - `{ }`
+
+- `$mod`
+  - a
+  - `{ }`
+
+- `$ne`
+  - a
+  - `{ }`
+
+- `$nin`
+  - a
+  - `{ }`
+
+- `$nor`
+  - a
+  - `{ }`
+
+- `$not`
+  - a
+  - `{ }`
+
+- `$or`
+  - a
+  - `{ }`
+
+- `$regex`
+  - a
+  - `{ }`
+
+- `$size`
+  - a
+  - `{ }`
