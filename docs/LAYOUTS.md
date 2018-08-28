@@ -230,3 +230,88 @@ A list of "query operators" use can use is below. All of these query operators a
 - `$size`
   - Compares the size of the array located at a particular field
   - `{ field: { $size: 2 } }`
+
+
+### dontShowIf
+
+`dontShowIf` works in exactly the same way as onlyShowIf, however instead of showing a component based on particular criteria it hides components based on particular criteria. It is the same as using onlyShowIf and negating the condition/s.
+
+### conditional
+
+The `conditional` functionality allows you to set conditional props based on particular conditions. This allows you to easily do things like make text a different colour based on your data without having to duplicate the component and use the `onlyShowIf/dontShowIf` functionality.
+
+A standard conditional object structure is as follows:
+
+```json
+{
+  "if": {
+
+  },
+  "then": {
+
+  },
+  "else": {
+
+  }
+}
+```
+
+An full example of the above is as follows:
+
+```json
+{
+  "component": "Text",
+  "children": "You are great!",
+  "conditional": {
+    "if": {
+      "user.attributes.PRI_AGE.value": {
+        "$gt": 18,
+        "$lt": 50
+      }
+    },
+    "then": {
+      "color": "green"
+    },
+    "else": {
+      "color": "red"
+    }
+  }
+}
+```
+
+If the value of `user.attributes.PRI_AGE.value` (the users age) is greater than 18 and less than 50 then the text will be green, otherwise it will be red. Nice and simple!
+
+The full range of query operators as documented in the `onlyShowIf` section is available inside the `if` section of the conditional which allows for more complex conditional props.
+
+Additionally there is also support for using an array of conditionals as follows:
+
+```json
+  "conditional": [
+    {
+      "if": {
+
+      },
+      "then": {
+        
+      }
+    },
+    {
+      "if": {
+
+      },
+      "then": {
+        
+      }
+    },
+    {
+      "if": {
+
+      },
+      "then": {
+        
+      }
+    }
+  ]
+```
+
+This allows individual props to have their own conditions.
