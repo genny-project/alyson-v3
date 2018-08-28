@@ -161,7 +161,7 @@ This will pass the raw `user.attributes` object straight through as the `data` p
 
 ## Repeater
 
-Sometimes you'll want to repeat a component based on your data. This is handy for doing things like showing lists. To repeat a component based on specific data we set the `repeat` field as well as setting the child component that we need repeater. You'll notice that the children object has been set to a single object instead of an array. This required whenever using the repeater functionality.
+Sometimes you'll want to repeat a component based on your data. This is handy for doing things like showing lists. To repeat a component based on specific data we set the `repeat` field as well as setting the child component that we need repeater. You'll notice that the **children object has been set to a single object instead of an array**. This required whenever using the repeater functionality.
 
 For example, let's say we want to list a users payment methods inside a `Box`. 
 
