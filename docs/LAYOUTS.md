@@ -172,61 +172,61 @@ A list of "query operators" use can use is below. All of these query operators a
   - `{ $and: [ { <expression1> }, { <expression2> } , ... , { <expressionN> } ] }`
 
 - `$eq`
-  - a
-  - `{ }`
+  - Matches values that are equal to a specific value.
+  - `{ <field>: { $eq: <value> } }`
 
 - `$exists`
-  - a
-  - `{ }`
+  - Matches documents that have the specified field.
+  - `{ field: { $exists: <boolean> } }`
 
 - `$gt`
-  - a
-  - `{ }`
+  - Matches values that are greater than a specified value.
+  - `{field: {$gt: value} }`
 
 - `$gte`
-  - a
-  - `{ }`
+  - Matches values that are greater than or equal to a specified value.
+  - `{field: {$gte: value} }`
 
 - `$in`
-  - a
-  - `{ }`
+  - Matches any of the values specified in an array.
+  - `{ field: { $in: [<value1>, <value2>, ... <valueN> ] } }`
 
 - `$lt`
-  - a
-  - `{ }`
+  - Matches values that are less than a specified value.
+  - `{field: {$lt: value} }`
 
 - `$lte`
-  - a
-  - `{ }`
+  - Matches values that are less than or equal to a specified value.
+  - `{ field: { $lte: value} }`
 
 - `$mod`
-  - a
-  - `{ }`
+  - Performs a modulo operation on the value of a field
+  - `{ field: { $mod: [ divisor, remainder ] } }`
 
 - `$ne`
-  - a
-  - `{ }`
+  - Matches all values that are not equal to a specified value.
+  - `{field: {$ne: value} }`
 
 - `$nin`
-  - a
-  - `{ }`
+  - Matches none of the values specified in an array.
+  - `{ field: { $nin: [ <value1>, <value2> ... <valueN> ]} }`
 
 - `$nor`
-  - a
-  - `{ }`
+  - Performs a logicial NOR operator on an array of two or more expressions.
+  - `{ $nor: [ { <expression1> }, { <expression2> }, ...  { <expressionN> } ] }`
 
 - `$not`
-  - a
-  - `{ }`
+  - Inverts the effect of a query expression.
+  - `{ field: { $not: { <operator-expression> } } }`
 
 - `$or`
-  - a
-  - `{ }`
+  - Joins query clauses with a logical OR operation.
+  - `{ $or: [ { <expression1> }, { <expression2> }, ... , { <expressionN> } ] }`
 
 - `$regex`
-  - a
-  - `{ }`
+  - Performs a regex match on a particular field
+  - `{ <field>: { $regex: '/pattern/' } }`
 
 - `$size`
-  - a
-  - `{ }`
+  - Compares the size of the array located at a particular field
+  - `{ field: { $size: 2 } }`
