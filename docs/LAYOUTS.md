@@ -4,6 +4,7 @@
 - [Example - Nested Components](#example---nested-components)
 - [Query](#query)
 - [The Context and Dynamic Data Display](#the-context-and-dynamic-data-display)
+- [Repeater](#repeater)
 - [Conditional Display](#conditional-display)
   - [Query operators](#query-operators)
   - [onlyShowIf](#onlyshowif)
@@ -160,7 +161,7 @@ This will pass the raw `user.attributes` object straight through as the `data` p
 
 ## Repeater
 
-Sometimes you'll want to repeat a component based on your data. This is handy for doing things like showing lists. To repeat a component based on specific data we set the `repeat` field.
+Sometimes you'll want to repeat a component based on your data. This is handy for doing things like showing lists. To repeat a component based on specific data we set the `repeat` field as well as setting the child component that we need repeater. You'll notice that the children object has been set to a single object instead of an array. This required whenever using the repeater functionality.
 
 For example, let's say we want to list a users payment methods inside a `Box`. 
 
@@ -175,7 +176,7 @@ For example, let's say we want to list a users payment methods inside a `Box`.
 }
 ```
 
-You'll see how we set `repeat` to equal `_user.attributes.PRI_PAYMENT_METHODS.value`. This means that it'll render the single child component for every single payment method that the user has. In this case we are rendering the account name for each account.
+You'll see how we set `repeat` to equal `_user.attributes.PRI_PAYMENT_METHODS.value`. This means that it'll render the single child component for every single payment method that the user has. In this case we are rendering the account name for each account. The context for this component now includes a `repeater` object which contains the data for each single payment method. We can use this and the handlebars syntax to display the account name for each account.
 
 ## Conditional Display
 
