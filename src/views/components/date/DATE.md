@@ -2,10 +2,15 @@
 
 ## Description
 
-No Props
+This component formats a datetime object using moment.js.
 
 ## Props
 
-| Prop Name | Prop Type | Description |
-| :-------- | :-------: | :---------- |
-|       |  |  |
+```
+children: oneOfType(
+  [number, string, object]
+),
+format: string,
+options: object,
+date: string,
+  ```

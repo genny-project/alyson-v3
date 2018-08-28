@@ -2,10 +2,17 @@
 
 ## Description
 
-No Props
+This component renders a Button that sends an Vertex message to the backend when it is clicked.
 
 ## Props
 
-| Prop Name | Prop Type | Description |
-| :-------- | :-------: | :---------- |
-|       |  |  |
+```
+children: any,
+buttonCode: string.isRequired,
+value: string.isRequired (''),
+onPress: func,
+disabled: bool ( false ),
+eventType: string ( 'BTN_CLICK' ),
+messageType: string ( 'BTN' ),
+showSpinnerOnClick: bool ( true ),
+```

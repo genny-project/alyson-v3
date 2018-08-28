@@ -2,10 +2,13 @@
 
 ## Description
 
-No Props
+This component formats and displays a phone number.
 
 ## Props
 
-| Prop Name | Prop Type | Description |
-| :-------- | :-------: | :---------- |
-|       |  |  |
+```
+mobile: bool,
+landline: bool,
+children: string,
+number: string,
+```
