@@ -97,10 +97,55 @@ Each "child" in the `children` array has the following basic structure.
 
 ## Query
 
-You may have asked yourself "how do you handle data?". For that we use an array of query operators.
+You may have asked yourself "how do you handle the fetching / querying of data?". For that we use an array of query operators.
 As this is a slight bit more detailed you can view the documentation below:
 
 [Query Documentation](./DATA-QUERY.md)
+
+## The Context and Dynamic Data Display
+
+For displaying dynamic data inside our layouts we use a Handlebars inspired syntax. This allows us to include data from the "context" (details to follow) inside our layouts.
+
+The context is a data object can contains a pool of data that you can use. The current context object contains the following information.
+
+```json
+{
+  "query": "The results of any data query operations specified in this layout",
+  "navigation": "Navigation / URL / Route parameters",
+  "props": "If this layout is a sublayout (layout loaded from a layout) any props passed in are accessible here",
+  "time": "An object which returns information about the current time, for example time of day (morning, evening etc)",
+  "user": "An object containing information about the currently logged in user (if they exist)",
+  "repeater": "If you are using the repeater functionality than this object will exist and include the data of the current item that is being repeated"
+}
+```
+
+All of the data inside the context can be included anywhere in the layout using the handlebars syntax. For example `{{user.attributes.PRI_FIRSTNAME.value}}` would be replaced with `Bob`. A real life example layout with this in use is as follows:
+
+```
+{
+  "component": "Text",
+  "children": "{{user.attributes.PRI_FIRSTNAME.value}} {{user.attributes.PRI_LASTNAME.value}}",
+}
+```
+
+This would display the users first name and last name.
+
+You may have noticed that the `{{value}}` syntax will always return a string. Whilst this is okay in most cases, in some cases you may need to pass an object, number, boolean etc from the context. The way we do that is by the use of a underscore `_` syntax which passes the value directly.
+
+Let's say that we've built a new component that displays a key value style object in a table and we want to use this new component to display all of the attributes for the user. If we used the handlebars syntax `{{user.attributes}}` we'd get a result of `[Object]` (this is what you get when you try and convert an object to a string). Using our underscore syntax we'd simply do the following `_user.attributes` which would pass the full value.
+
+Let's take a look at an example of this.
+
+```jsx
+{
+  "component": "Table",
+  "props": {
+    "data": "_user.attributes"
+  }
+}
+```
+
+This will pass the raw `user.attributes` object straight through as the `data` prop on `Table` as an object instead of a string.
 
 ## Conditional Display
 
