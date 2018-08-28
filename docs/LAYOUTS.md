@@ -63,7 +63,7 @@ Each "child" in the `children` array has the following basic structure.
 }
 ```
 
-- `component` - Sets the component that should be rendered. ([View a list of all the components](../COMPONENTS.md))
+- `component` - Sets the component that should be rendered. ([View a list of all the components](COMPONENTS.md))
 - `children` - The child components of this component. Simply include an array of objects similar to above. You can nest as many times as you like! Alternatively you can also pass a string as the `children`.
 - `props` - The properties or "props" for this component. The available options for this section are under the documentation for each component.
 

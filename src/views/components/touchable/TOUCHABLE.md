@@ -2,10 +2,11 @@
 
 ## Description
 
-No Props
+This component wraps around content, and makes it interactable. It renders either a TouchableWithoutFeedback or TouchableOpacity component.
 
 ## Props
 
-| Prop Name | Prop Type | Description |
-| :-------- | :-------: | :---------- |
-|       |  |  |
+```
+children: node,
+withFeedback: bool,
+```

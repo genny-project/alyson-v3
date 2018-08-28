@@ -2,10 +2,31 @@
 
 ## Description
 
-No Props
+This component renders an array of items as a list that is viewable as a dropdown.
 
 ## Props
 
-| Prop Name | Prop Type | Description |
-| :-------- | :-------: | :---------- |
-|       |  |  |
+### All Platforms
+
+```
+items: array.isRequired,
+text: node.isRequired,
+padding: number,
+paddingX: number,
+paddingY: number,
+textColor: string,
+disabled: bool,
+```
+
+### Web Only
+
+```
+facingRight: bool,
+backgroundColor: string,
+```
+
+### Android Only
+
+```
+onSelect: func,
+```

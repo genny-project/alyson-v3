@@ -2,10 +2,13 @@
 
 ## Description
 
-No Props
+This component is used as a 'slide out' for child content.
 
 ## Props
 
-| Prop Name | Prop Type | Description |
-| :-------- | :-------: | :---------- |
-|       |  |  |
+```
+children: any,
+showHeader: bool,
+header: any,
+onToggle: func,
+```

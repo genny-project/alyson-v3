@@ -2,10 +2,10 @@
 
 ## Description
 
-No Props
+This component displays HTML data.
 
 ## Props
 
-| Prop Name | Prop Type | Description |
-| :-------- | :-------: | :---------- |
-|       |  |  |
+```
+html: string,
+```

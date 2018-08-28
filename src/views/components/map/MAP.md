@@ -2,10 +2,20 @@
 
 ## Description
 
-No Props
+This component renders a Google Map with markers and directions.
+
+Currently not implemented for Web.
 
 ## Props
 
-| Prop Name | Prop Type | Description |
-| :-------- | :-------: | :---------- |
-|       |  |  |
+### Native Only
+
+```
+markers: arrayOf(
+  shape({
+    latitude: oneOfType( [number, string] ),
+    longitude: oneOfType( [number, string] ),
+  })
+),
+showDirections: bool,
+```
