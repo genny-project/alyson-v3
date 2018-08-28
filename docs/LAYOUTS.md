@@ -5,7 +5,7 @@
 - [Query](#query)
 - [The Context and Dynamic Data Display](#the-context-and-dynamic-data-display)
 - [Conditional Display](#conditional-display)
-  - [Query operators](#queryoperators)
+  - [Query operators](#query-operators)
   - [onlyShowIf](#onlyshowif)
   - [dontShowIf](#dontshowif)
   - [conditional](#conditional)
