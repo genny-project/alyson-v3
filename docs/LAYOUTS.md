@@ -1,4 +1,15 @@
 # Layouts
+- [Overview](#overview)
+- [Core Structure](#core-structure)
+- [Example - Nested Components](#example---nested-components)
+- [Query](#query)
+- [The Context and Dynamic Data Display](#the-context-and-dynamic-data-display)
+- [Conditional Display](#conditional-display)
+  - [Query operators](#queryoperators)
+  - [onlyShowIf](#onlyshowif)
+  - [dontShowIf](#dontshowif)
+  - [conditional](#conditional)
+
 ## Overview
 
 In the Genny Project architecture we define our views as "Layouts".
@@ -209,6 +220,8 @@ Let's try a more simple example. Where we show "Hello John" if the users first n
 ```
 
 `onlyShowIf` allows us to use a key:value syntax to specify the conditions on which this component will be displayed. Additionally you can use more advanced query operators to use more advanced conditions.
+
+## Query operators
 
 A list of "query operators" use can use is below. All of these query operators are directly based on the MongoDB way of querying (so if you get a bit stuck take a look at the documentation for each one there.)
 
