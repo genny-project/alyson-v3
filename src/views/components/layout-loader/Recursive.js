@@ -206,9 +206,14 @@ class Recursive extends Component {
     for ( let i = 0; i < fields.length; i++ ) {
       const field = fields[i];
       let contextedField = field;
+      let contextedValue = condition[field];
 
       if ( field.includes( '{{' )) {
         contextedField = this.curlyBracketParse( field );
+      }
+
+      if ( typeof contextedValue === 'string' && contextedValue.includes( '{{' )) {
+        contextedValue = this.curlyBracketParse( contextedValue );
       }
 
       /**
@@ -227,7 +232,7 @@ class Recursive extends Component {
        * - An explict value, like another string, or alternatively against a condition
        * - Or an object based on the MongoDB query syntax.
        */
-      if ( !doesValueMatch( actualValue, condition[field], dataPool )) {
+      if ( !doesValueMatch( actualValue, contextedValue, dataPool )) {
         return false;
       }
     }
