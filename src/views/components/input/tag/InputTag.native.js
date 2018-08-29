@@ -213,8 +213,11 @@ class InputTag extends Component {
                   ) : null}
                 </Box>
 
-                {isArray( items ) ? (
-                  items
+                {(
+                  isArray( items ) ||
+                  inputValue.length > 0
+                ) ? (
+                    items
                     .concat( [inputValue] )
                     .filter( this.handleFilter( inputValue ))
                     .map(( item, index ) => {
@@ -250,25 +253,25 @@ class InputTag extends Component {
                         </Touchable>
                       );
                     })
-                ) : (
-                  <Box
-                    paddingX={15}
-                    paddingY={10}
-                    width="100%"
-                    justifyContent="center"
-                  >
-                    <Text
-                      align="center"
-                      color="grey"
-                      size="xs"
+                  ) : (
+                    <Box
+                      paddingX={15}
+                      paddingY={10}
+                      width="100%"
+                      justifyContent="center"
                     >
-                      {inputValue.length > 0
-                        ? 'No results'
-                        : 'Please type...'
+                      <Text
+                        align="center"
+                        color="grey"
+                        size="xs"
+                      >
+                        {inputValue.length > 0
+                          ? 'No results'
+                          : 'Please type...'
                       }
-                    </Text>
-                  </Box>
-                )}
+                      </Text>
+                    </Box>
+                  )}
               </SafeAreaView>
             </Modal>
           </Box>
