@@ -4,11 +4,19 @@ import Pdf from 'react-native-pdf';
 
 const PdfViewer = ({ file,style }) => { 
   return (
-    <Pdf
-      source={file}
-      style={{ ...style }} 
-    />
+    file ? (
+      <Pdf
+        source={{ uri: file }}
+        style={{ ...defaultStyle, ...style }}
+      />
+    ) : 
+      'File Not Found'
   );
+};
+
+const defaultStyle = { 
+  height: 400, 
+  width: '100%',
 };
 
 PdfViewer.propTypes = { 

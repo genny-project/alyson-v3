@@ -4,11 +4,18 @@ import { string, object } from 'prop-types';
 
 const PdfViewer = ({ file,style }) => { 
   return (
-    <PDF
-      style={{ ...style }}
-      file={file}
-    />
+    file ? (
+      <PDF
+        style={{ ...defaultStyle, ...style }}
+        file={file}
+      />
+    ) : 'File Not Found'
   );
+};
+
+const defaultStyle = { 
+  height: 400, 
+  width: 400,
 };
 
 PdfViewer.propTypes = { 
