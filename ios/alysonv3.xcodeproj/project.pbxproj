@@ -282,17 +282,6 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNAudioRecorderPlayer;
 		};
-<<<<<<< Updated upstream
-		48220AD121358611003284AC /* PBXContainerItemProxy */ = {
-=======
-		48220A842135860C003284AC /* PBXContainerItemProxy */ = {
->>>>>>> Stashed changes
-			isa = PBXContainerItemProxy;
-			containerPortal = CD8A020B50E644AD9298A1C5 /* ReactNativeConfig.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EB2648DF1C7BE17A00B8F155;
-			remoteInfo = ReactNativeConfig;
-		};
 		48F02701211AC1A000182492 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 48F026FC211AC1A000182492 /* RNFS.xcodeproj */;
@@ -439,6 +428,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 5419C2701D824AA700DDF3A1;
 			remoteInfo = AppCenterReactNativeCrashes;
+		};
+		FD67640C213617F000BC56B8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD8A020B50E644AD9298A1C5 /* ReactNativeConfig.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EB2648DF1C7BE17A00B8F155;
+			remoteInfo = ReactNativeConfig;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -721,21 +717,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-<<<<<<< Updated upstream
-		48220AA421358611003284AC /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				48220AD221358611003284AC /* libReactNativeConfig.a */,
-=======
-		48220A572135860B003284AC /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				48220A852135860C003284AC /* libReactNativeConfig.a */,
->>>>>>> Stashed changes
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		48F026FD211AC1A000182492 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -940,6 +921,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		FD6763DF213617F000BC56B8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FD67640D213617F000BC56B8 /* libReactNativeConfig.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1122,11 +1111,7 @@
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 				},
 				{
-<<<<<<< Updated upstream
-					ProductGroup = 48220AA421358611003284AC /* Products */;
-=======
-					ProductGroup = 48220A572135860B003284AC /* Products */;
->>>>>>> Stashed changes
+					ProductGroup = FD6763DF213617F000BC56B8 /* Products */;
 					ProjectRef = CD8A020B50E644AD9298A1C5 /* ReactNativeConfig.xcodeproj */;
 				},
 				{
@@ -1368,21 +1353,6 @@
 			remoteRef = 48024E9E21196B7D002C3D74 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-<<<<<<< Updated upstream
-		48220AD221358611003284AC /* libReactNativeConfig.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libReactNativeConfig.a;
-			remoteRef = 48220AD121358611003284AC /* PBXContainerItemProxy */;
-=======
-		48220A852135860C003284AC /* libReactNativeConfig.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libReactNativeConfig.a;
-			remoteRef = 48220A842135860C003284AC /* PBXContainerItemProxy */;
->>>>>>> Stashed changes
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		48F02702211AC1A000182492 /* libRNFS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1528,6 +1498,13 @@
 			fileType = archive.ar;
 			path = libAppCenterReactNativeCrashes.a;
 			remoteRef = FD5CFD1F2107F2A500BD8BEA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FD67640D213617F000BC56B8 /* libReactNativeConfig.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libReactNativeConfig.a;
+			remoteRef = FD67640C213617F000BC56B8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
