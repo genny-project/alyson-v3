@@ -14,6 +14,7 @@ class InputTag extends Component {
     placeholder: string,
     onChangeValue: func,
     items: array,
+    value: array,
   }
 
   handleChange = selectedItems => {
@@ -39,12 +40,13 @@ class InputTag extends Component {
   }
 
   render() {
-    const { items, ...restProps } = this.props;
+    const { items, value, ...restProps } = this.props;
 
     return (
       <MultiDownshift
         onChange={this.handleChange}
         itemToString={this.itemToString}
+        selectedItems={value}
       >
         {({
           getRootProps,
@@ -98,14 +100,18 @@ class InputTag extends Component {
                 selectedItems.map( item => (
                   <Box
                     key={item}
-                    backgroundColor="#CCC"
                     alignItems="center"
                     marginRight={10}
                     marginBottom={10}
+                    shape="pill"
+                    borderWidth={2}
+                    borderColor="#FFF"
+                    paddingLeft={10}
+                    paddingRight={5}
                     cleanStyleObject
                   >
                     <Box marginLeft={5}>
-                      <Text color="black">
+                      <Text color="#FFF">
                         {item}
                       </Text>
                     </Box>
@@ -122,7 +128,7 @@ class InputTag extends Component {
                       <Icon
                         type="material-icons"
                         name="clear"
-                        color="black"
+                        color="white"
                       />
                     </Touchable>
                   </Box>
