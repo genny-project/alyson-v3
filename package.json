@@ -11,7 +11,8 @@
     "setup-files": "node generate-configs.js $ENVFILE",
     "setup-images": "app-icon generate -i $IMAGE",
     "serve:web": "node server.js",
-    "clear-cache:web": "rm -rf ./node_modules/.cache/babel-loader/*"
+    "clear-cache:web": "rm -rf ./node_modules/.cache/babel-loader/*",
+    "layout-editor": "node layout-editor"
   },
   "dependencies": {
     "appcenter": "^1.6.0",
@@ -100,6 +101,8 @@
     "redux-logger": "^3.0.6",
     "redux-observable": "^0.18.0",
     "rxjs": "^5.5.10",
+    "socket.io": "^2.1.1",
+    "socket.io-client": "^2.1.1",
     "style-loader": "^0.21.0",
     "uppy": "0.24.4",
     "url-loader": "^1.0.1",

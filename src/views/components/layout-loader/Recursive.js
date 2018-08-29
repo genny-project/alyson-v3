@@ -290,7 +290,7 @@ class Recursive extends Component {
             ...children,
             props: {
               ...children.props,
-              ...child,
+              ...( Array.isArray( child ) ? child : {}),
             },
             context: {
               ...context,

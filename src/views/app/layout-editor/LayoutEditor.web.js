@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import MonacoEditor from 'react-monaco-editor';
 import { ConnectedRouter } from 'react-router-redux';
+import SocketIO from 'socket.io-client';
 import { Text, Box, LayoutLoader } from '../../components';
 import history from '../../../redux/history';
 
@@ -9,6 +10,11 @@ class LayoutEditor extends Component {
     code: '',
     validCode: '',
   };
+
+  componentDidMount() {
+    this.socket = SocketIO( 'http://localhost:6500' );
+    this.lastSent = null;
+  }
 
   getJSONCode() {
     try {
@@ -24,6 +30,11 @@ class LayoutEditor extends Component {
     }, () => {
       this.setState({
         validCode: this.getJSONCode(),
+      }, () => {
+        if ( this.state.validCode !== this.lastSent ) {
+          this.socket.emit( 'code', this.state.validCode );
+          this.lastSent = this.state.validCode;
+        }
       });
     });
   }
