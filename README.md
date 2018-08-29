@@ -1,12 +1,5 @@
 # alysonv3
 
-
-## !WARNING!
-
-- Do NOT run `react-native link`, it will break `react-native-maps`
-
-
-
 ## Get started
 
 ### iOS
@@ -73,6 +66,19 @@ if using an environment variable file that is not ` .env `, use
 ```
 ENVFILE=.env.project-name  react-native run-android
 ```
+
+---
+
+## Notes
+
+- Do not run `npm link`! Always only use `npm link {library_name}`.
+
+ ```diff
+- npm link
++ npm link {library_name}
+ ```
+
+ If you do run `npm link` across the project, you will break many other libraries. These other libraries need installations more complex than `npm link` command can offer, and in running that command you are breaking their complex installations. It is tricky to reverse the effects of running this command, so we recommend you simply reset your project files.
 
 ---
 
