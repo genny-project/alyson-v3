@@ -73,3 +73,17 @@ if using an environment variable file that is not ` .env `, use
 ```
 ENVFILE=.env.project-name  react-native run-android
 ```
+
+---
+
+## Troubleshooting
+
+### Copy Plist File Error (iOS)
+
+> /PROJECT_PATH/alyson-v3/ios/alysonv3/AppCenter-Config.plist:0: error: reading data: The file “AppCenter-Config.plist” couldn’t be opened because there is no such file.
+
+To fix this error, run the following command:
+
+```bash
+ENVFILE=.env npm run setup-files
+```
