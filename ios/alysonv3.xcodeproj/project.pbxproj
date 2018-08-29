@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -379,13 +380,6 @@
 			remoteGlobalIDString = 5DBEB1501B18CEA900B34395;
 			remoteInfo = RNVectorIcons;
 		};
-		F2859908211AA9CA002D81DA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CD8A020B50E644AD9298A1C5 /* ReactNativeConfig.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EB2648DF1C7BE17A00B8F155;
-			remoteInfo = ReactNativeConfig;
-		};
 		F285990E211AB2C1002D81DA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
@@ -434,6 +428,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 5419C2701D824AA700DDF3A1;
 			remoteInfo = AppCenterReactNativeCrashes;
+		};
+		FD67640C213617F000BC56B8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD8A020B50E644AD9298A1C5 /* ReactNativeConfig.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EB2648DF1C7BE17A00B8F155;
+			remoteInfo = ReactNativeConfig;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -841,7 +842,6 @@
 				EB0804E97BDB48069B61FD80 /* libAppCenterReactNativeAnalytics.a */,
 				1A20999BFDF146E89267DE75 /* libAppCenterReactNativeCrashes.a */,
 				E3751B92C4CD4DB288DE81E9 /* libReactNativeConfig.a */,
-				BA1E5804E7C24FEC89445C13 /* libRNAudioTranscoder.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -897,14 +897,6 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		F2859905211AA9CA002D81DA /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F2859909211AA9CA002D81DA /* libReactNativeConfig.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		FD5CFD122107F2A400BD8BEA /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -925,6 +917,14 @@
 			isa = PBXGroup;
 			children = (
 				FD5CFD1D2107F2A500BD8BEA /* libAppCenterReactNativeAnalytics.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FD6763DF213617F000BC56B8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FD67640D213617F000BC56B8 /* libReactNativeConfig.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1111,8 +1111,10 @@
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 				},
 				{
-					ProductGroup = F2859905211AA9CA002D81DA /* Products */;
+					ProductGroup = FD6763DF213617F000BC56B8 /* Products */;
 					ProjectRef = CD8A020B50E644AD9298A1C5 /* ReactNativeConfig.xcodeproj */;
+				},
+				{
 					ProductGroup = 48024E7121196B7C002C3D74 /* Products */;
 					ProjectRef = 48024E7021196B7C002C3D74 /* RNAudioRecorderPlayer.xcodeproj */;
 				},
@@ -1449,13 +1451,6 @@
 			remoteRef = B146B99220ECA5960012B2F9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F2859909211AA9CA002D81DA /* libReactNativeConfig.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libReactNativeConfig.a;
-			remoteRef = F2859908211AA9CA002D81DA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		F285990F211AB2C1002D81DA /* libjsinspector.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1503,6 +1498,13 @@
 			fileType = archive.ar;
 			path = libAppCenterReactNativeCrashes.a;
 			remoteRef = FD5CFD1F2107F2A500BD8BEA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FD67640D213617F000BC56B8 /* libReactNativeConfig.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libReactNativeConfig.a;
+			remoteRef = FD67640C213617F000BC56B8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1707,9 +1709,7 @@
 				INFOPLIST_FILE = alysonv3Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1740,9 +1740,7 @@
 				INFOPLIST_FILE = alysonv3Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1849,9 +1847,7 @@
 				);
 				INFOPLIST_FILE = "alysonv3-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1890,9 +1886,7 @@
 				);
 				INFOPLIST_FILE = "alysonv3-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1930,9 +1924,7 @@
 				);
 				INFOPLIST_FILE = "alysonv3-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1970,9 +1962,7 @@
 				);
 				INFOPLIST_FILE = "alysonv3-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
