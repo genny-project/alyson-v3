@@ -10,3 +10,4 @@ export * from './layout.events.incoming';
 export * from './notification.events.incoming';
 export * from './redirect.events.incoming';
 export * from './routeChange.events.incoming';
+export * from './routeBack.events.incoming';

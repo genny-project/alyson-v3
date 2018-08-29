@@ -15,6 +15,10 @@ export default ( data, options ) => {
     return data;
   }
 
+  if ( !fields || typeof fields !== 'object' ) {
+    return data;
+  }
+
   return data.map( item => ({
     ...( append ? item : {}),
     ...( Object.keys( fields ).reduce(( result, current ) => ({

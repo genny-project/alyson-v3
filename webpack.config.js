@@ -36,6 +36,7 @@ const babelLoaderConfiguration = {
       presets: [
         'react-native',
         'react',
+        'react-native-dotenv',
       ],
     },
   },
@@ -68,7 +69,7 @@ module.exports = {
 
   // configures where the build ends up
   output: {
-    filename: 'bundle.web.js',
+    filename: 'bundle.[hash].js',
     path: path.resolve( __dirname, 'dist' ),
     publicPath: '/',
   },
@@ -103,6 +104,9 @@ module.exports = {
     // module implementations should be written in files using the extension
     // `.web.js`.
     extensions: ['.web.js', '.js'],
+  },
+  node: {
+    fs: 'empty',
   },
 
   devtool: 'eval',

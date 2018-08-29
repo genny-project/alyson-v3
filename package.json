@@ -7,8 +7,11 @@
     "start:web": "./node_modules/.bin/webpack-dev-server -d --config ./webpack.config.js --inline --hot --colors",
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/alysonv3/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
     "build:web": "./node_modules/.bin/webpack -p --config ./webpack.config.js",
+    "test": "jest",
+    "setup-files": "node generate-configs.js $ENVFILE",
+    "setup-images": "app-icon generate -i $IMAGE",
     "serve:web": "node server.js",
-    "test": "jest"
+    "clear-cache:web": "rm -rf ./node_modules/.cache/babel-loader/*"
   },
   "dependencies": {
     "appcenter": "^1.6.0",
@@ -64,9 +67,9 @@
     "react-monaco-editor": "^0.18.0",
     "react-native": "0.55.4",
     "react-native-audio-recorder-player": "^1.2.2",
-    "react-native-audio-transcoder": "0.1.0",
     "react-native-blur": "^3.2.2",
     "react-native-code-push": "^5.4.0",
+    "react-native-config": "0.9.1",
     "react-native-credit-card-input": "^0.4.1",
     "react-native-fs": "^2.11.15",
     "react-native-gesture-handler": "^1.0.5",
@@ -107,12 +110,16 @@
     "webpack-dev-server": "^3.1.4"
   },
   "devDependencies": {
+    "app-icon": "^0.6.3",
     "babel-jest": "23.2.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-preset-react-native": "4.0.0",
     "enzyme": "^3.3.0",
+    "fs-extra": "^7.0.0",
+    "handlebars": "^4.0.11",
     "jest": "23.2.0",
     "react-native-debugger-open": "^0.3.17",
+    "react-native-dotenv": "^0.2.0",
     "react-test-renderer": "16.3.1",
     "remotedev-rn-debugger": "^0.8.3"
   },

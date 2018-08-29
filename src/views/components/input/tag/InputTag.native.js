@@ -22,7 +22,7 @@ class InputTag extends Component {
   }
 
   handleFilter = ( inputValue, selectedItems ) => dropdownItem => {
-    if ( selectedItems.includes( dropdownItem ))
+    if ( selectedItems && selectedItems.includes( dropdownItem ))
       return false;
 
     if ( !inputValue )
@@ -227,7 +227,7 @@ class InputTag extends Component {
                         >
                           <Text
                             color={highlightedIndex === index ? 'red' : 'black'}
-                            fontWeight={selectedItems.includes( item ) ? 'bold' : 'normal'}
+                            fontWeight={selectedItems && selectedItems.includes( item ) ? 'bold' : 'normal'}
                           >
                             {item}
                           </Text>
