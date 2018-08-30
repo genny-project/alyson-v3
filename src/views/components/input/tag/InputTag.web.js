@@ -186,6 +186,7 @@ class InputTag extends Component {
                     alignItems="center"
                     marginRight={10}
                     marginBottom={10}
+                    borderRadius={20}
                     cleanStyleObject
                   >
                     <Box marginLeft={5}>
