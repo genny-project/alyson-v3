@@ -247,6 +247,7 @@ class Input extends Component {
           <Passcode
             {...this.props}
             numberOfInputs={5}
+            keyboardType="default"
             ref={input => this.input = input}
           />
         );

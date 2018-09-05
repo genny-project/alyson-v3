@@ -657,7 +657,11 @@ class Form extends Component {
                       {...renderHeading}
                       key={questionGroup.name}
                       context={{
-                        heading: questionGroup.name,
+                        heading:
+                          questionGroup.childAsks.length === 1 &&
+                          questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                            ? questionGroup.childAsks[0].question.name
+                            : questionGroup.name,
                       }}
                     />
                   ) : null}
