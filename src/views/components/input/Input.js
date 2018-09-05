@@ -90,6 +90,7 @@ class Input extends Component {
         );
 
       case 'number':
+      case 'java.lang.integer':
       case 'java.lang.Integer':
       case 'mobile':
       case 'landline':

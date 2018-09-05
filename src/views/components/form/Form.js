@@ -42,7 +42,31 @@ class Form extends Component {
     const { questionGroupCode } = this.props;
     const { questionGroups } = this.state;
 
+    const checkIfSetNeeded = () => {
+      return (
+        this.state.questionGroups.length !== prevState.questionGroups.length ||
+        questionGroupCode !== prevProps.questionGroupCode
+      );
+    };
+
     if (
+      isString( questionGroupCode ) &&
+      questionGroupCode !== prevProps.questionGroupCode
+    ) {
+      const newGroups = this.getQuestionGroups();
+
+      if ( newGroups.length > 0 ) {
+        // eslint-disable-next-line react/no-did-update-set-state
+        this.setState({ questionGroups: newGroups }, () => {
+          if ( checkIfSetNeeded ) {
+            this.setInitialValues();
+            this.setValidationList();
+          }
+        });
+      }
+    }
+
+    else if (
       isString( questionGroupCode ) &&
       isArray( questionGroups, { ofExactLength: 0 })
     ) {
@@ -50,7 +74,12 @@ class Form extends Component {
 
       if ( newGroups.length > 0 ) {
         // eslint-disable-next-line react/no-did-update-set-state
-        this.setState({ questionGroups: newGroups });
+        this.setState({ questionGroups: newGroups }, () => {
+          if ( checkIfSetNeeded ) {
+            this.setInitialValues();
+            this.setValidationList();
+          }
+        });
       }
     }
 
@@ -63,13 +92,13 @@ class Form extends Component {
 
       if ( newGroups.length !== prevGroups.length ) {
         // eslint-disable-next-line react/no-did-update-set-state
-        this.setState({ questionGroups: newGroups });
+        this.setState({ questionGroups: newGroups }, () => {
+          if ( checkIfSetNeeded ) {
+            this.setInitialValues();
+            this.setValidationList();
+          }
+        });
       }
-    }
-
-    if ( this.state.questionGroups.length !== prevState.questionGroups.length ) {
-      this.setInitialValues();
-      this.setValidationList();
     }
   }
 
