@@ -3,8 +3,8 @@ export default {
     name: 'Genny',
   },
   genny: {
-    host: 'https://bridge.pcss.io/',
-    initUrl: 'https://app.pcss.io/',
+    host: 'https://bridge-fourdegrees-dev.outcome-hub.com/',
+    initUrl: 'https://fourdegrees-dev.outcome-hub.com/',
     bridge: {
       port: '80',
       endpoints: {
@@ -29,7 +29,7 @@ export default {
   layouts: {
     publicURL: 'http://localhost:2224/',
     query: {
-      url: 'git@github.com/pcss-new/null.git',
+      url: 'git@github.com/fourdegrees-new/null.git',
     },
   },
 };

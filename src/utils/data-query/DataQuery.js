@@ -45,8 +45,6 @@ class DataQuery {
       }
     });
 
-    // console.log( output );
-
     return output;
   }
 
