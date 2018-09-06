@@ -35,9 +35,33 @@ class Passcode extends Component {
   }
 
   // static getDerivedStateFromProps( nextProps, prevState ) {
-  //   if ( nextProps.value !== prevState.value ) {
+  //   if (
+  //     nextProps.value !== null &&
+  //     nextProps.value !== prevState.value &&
+  //     isString( nextProps.value )
+  //   ) {
+  //     const splitIntoParts = ( string, splitLength ) => {
+  //       var list = [];
+
+  //       for ( var i = 0; i < string.length; i += splitLength ) {
+  //         list.push( string.substr( i, Math.min( splitLength, string.length )));
+  //       }
+
+  //       return list;
+  //     };
+
+  //     const value = splitIntoParts( nextProps.value, this.props.charactersRequired );
+  //     console.log(value);
+
+  //     value.map(( characters, index ) => {
+  //       return {
+  //         [index]: characters,
+  //       };
+  //     });
+  //     console.log( value );
+
   //     return {
-  //       value: nextProps.value,
+  //       currentValues: value,
   //     };
   //   }
 
@@ -48,24 +72,34 @@ class Passcode extends Component {
 
   state = {
     currentValues: {},
+    lastSentValue: null,
   }
 
   handleChangeValue = ( index ) => ( data ) => {
+    const { charactersRequired } = this.props;
+
+    let inputValue = data.toString();
+
+    if ( inputValue.length > charactersRequired ) {
+      inputValue = inputValue.substr( inputValue.length - charactersRequired, charactersRequired );
+    }
+
     this.setState( prevState => ({
       currentValues: {
         ...prevState.currentValues,
-        [index]: data,
+        [index]: inputValue,
       },
     }), () => {
       if (
         this.inputs[index] &&
         !this.inputs[index + 1] &&
-        index === this.props.numberOfInputs - 1
+        index === this.props.numberOfInputs - 1 &&
+        inputValue.length === charactersRequired
       ) {
         this.inputs[index].blur();
         this.handleComplete();
       }
-      else if ( data.length >= this.props.charactersRequired ) {
+      else if ( inputValue.length >= charactersRequired ) {
         this.inputs[index + 1].focus();
       }
     });
@@ -73,32 +107,43 @@ class Passcode extends Component {
 
   handleComplete = () => {
     const { numberOfInputs, onChangeValue, charactersRequired } = this.props;
-    const { currentValues } = this.state;
+    const { currentValues, lastSentValue } = this.state;
     const value = Object.values( currentValues ).join( '' );
 
     if (
       onChangeValue &&
-      value.length === ( numberOfInputs * charactersRequired )
+      value.length === ( numberOfInputs * charactersRequired ) &&
+      value !== lastSentValue
     ) {
-      onChangeValue( value );
+      this.setState({
+        lastSentValue: value,
+      }, () => {
+        onChangeValue( value );
+      });
     }
   }
 
-  handleBlur = event => {
-    const { numberOfInputs, onBlur, charactersRequired } = this.props;
-    const { currentValues } = this.state;
-    const value = Object.values( currentValues ).join( '' );
+  // handleBlur = event => {
+  //   const { numberOfInputs, onBlur, charactersRequired } = this.props;
+  //   const { currentValues, lastSentValue } = this.state;
+  //   const value = Object.values( currentValues ).join( '' );
 
-    if (
-      onBlur &&
-      value.length === ( numberOfInputs * charactersRequired )
-    ) {
-      onBlur( event );
-    }
-  }
+  //   if (
+  //     onBlur &&
+  //     value.length === ( numberOfInputs * charactersRequired ) &&
+  //     value !== lastSentValue
+  //   ) {
+  //     console.log( 'blur', value, lastSentValue );
+  //     this.setState({
+  //       lastSentValue: value,
+  //     }, () => {
+  //       onBlur( event );
+  //     });
+  //   }
+  // }
 
   render() {
-    const { numberOfInputs, charactersRequired, size, keyboardType } = this.props;
+    const { numberOfInputs, size, keyboardType, ...restProps } = this.props;
     const { currentValues } = this.state;
 
     return (
@@ -114,9 +159,9 @@ class Passcode extends Component {
               marginRight={i < numberOfInputs - 1 && 10}
             >
               <Input
+                {...restProps}
                 width="100%"
                 type="text"
-                maxLength={charactersRequired}
                 value={currentValues[i] || ''}
                 textSize={size}
                 padding={inputPadding[size]}

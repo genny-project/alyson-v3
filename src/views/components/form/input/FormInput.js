@@ -67,6 +67,8 @@ class FormInput extends Component {
       case 'date':
       case 'java.time.localdate':
       case 'datetime':
+      case 'codeverificationfive':
+      case 'codeVerificationFive':
       case 'java.time.localdatetime':
         return (
           <Input

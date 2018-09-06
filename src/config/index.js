@@ -37,4 +37,8 @@ export default {
       directory: Config.LAYOUT_QUERY_DIRECTORY,
     },
   },
+  guest: {
+    username: Config.GUEST_USERNAME,
+    password: Config.GUEST_PASSWORD,
+  },
 };
