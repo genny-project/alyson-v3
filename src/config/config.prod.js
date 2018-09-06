@@ -29,7 +29,7 @@ export default {
   layouts: {
     publicURL: 'https://layout-fourdegrees-dev.outcome-hub.com/',
     query: {
-      directory: 'layouts/fourdegrees-new',
+      directory: 'layouts/pcss-new',
     },
   },
 };
