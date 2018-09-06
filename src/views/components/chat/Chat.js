@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { any, array, string } from 'prop-types';
+import { any, array, string, object } from 'prop-types';
 import { GiftedChat, MessageText, Bubble, Send } from 'react-native-gifted-chat';
 
 import { Icon, Box }  from '../../components';
@@ -7,12 +7,19 @@ import { Icon, Box }  from '../../components';
 class Chat extends Component {
   static defaultProps = {
     bubbleRightColor: 'red',
+    user: {
+      _id: 1,
+    },
   };
 
   static propTypes = {
     children: any,
     tabs: array,
     bubbleRightColor: string,
+    sendIcon: string,
+    sendIconColor: string,
+    sendIconBackgroundColor: string,
+    user: object,
   };
 
   state = {
@@ -46,8 +53,6 @@ class Chat extends Component {
       sendIconColor,
       sendIconBackgroundColor,
     } = this.props;
-
-    console.log( props );
 
     if ( sendIcon ) {
       return (
@@ -95,15 +100,15 @@ class Chat extends Component {
   }
 
   render() {
+    const { user } = this.props;
+
     return (
       <GiftedChat
         messages={this.state.messages}
         onSend={messages => this.onSend( messages )}
         renderBubble={this.renderBubble}
         renderSend={this.renderSend}
-        user={{
-          _id: 1,
-        }}
+        user={user}
       />
     );
   }
