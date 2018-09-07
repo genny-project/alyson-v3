@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
-import { object, string } from 'prop-types';
+import { object, string, number } from 'prop-types';
 import Config from '../../../../config';
-import { withKeycloak, Redirect, ActivityIndicator } from '../../index';
+import { withKeycloak, Redirect, ActivityIndicator, Timeout } from '../../index';
 import store from '../../../../redux/store';
 
 class AuthenticationGuestLogin extends Component {
+  static defaultProps = {
+    timeout: 60000,
+  }
+
   static propTypes = {
     keycloak: object,
     redirectTo: string.isRequired,
+    redirectFallback: string,
+    timeout: number,
   }
 
   componentDidMount() {
@@ -39,22 +45,46 @@ class AuthenticationGuestLogin extends Component {
   }
 
   render() {
-    const { keycloak, redirectTo } = this.props;
+    const { keycloak, redirectTo, redirectFallback, timeout } = this.props;
     const layouts = store.getState().vertx.layouts;
 
     if (
       keycloak.isAuthenticated &&
-      layouts.pages[redirectTo]
+      layouts.pages
     ) {
       return (
-        <Redirect
-          to={redirectTo}
-          removeRedirectURL
-          useMainNavigator
-          appTo={
-            redirectTo
-          }
-        />
+        <Timeout
+          duration={timeout}
+          ref={timeout => ( this.timeout = timeout )}
+        >
+          {({ isTimeUp }) => (
+            layouts.pages[redirectTo]
+              ? (
+                <Redirect
+                  to={redirectTo}
+                  removeRedirectURL
+                  useMainNavigator
+                  appTo={
+                    redirectTo
+                  }
+                />
+              )
+              : isTimeUp
+                ? (
+                  <Redirect
+                    to={redirectFallback || 'home'}
+                    removeRedirectURL
+                    useMainNavigator
+                    appTo={
+                      redirectFallback
+                    }
+                  />
+                )
+                : (
+                  <ActivityIndicator size="large" />
+                )
+          )}
+        </Timeout>
       );
     }
 
