@@ -1,7 +1,6 @@
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
-const MonacoWebpackPlugin = require( 'monaco-editor-webpack-plugin' );
 
 // This is needed for webpack to compile JavaScript.
 // Many OSS React Native packages are not compiled to ES5 before being
@@ -96,7 +95,6 @@ module.exports = {
       template: '../web/index.html',
     }),
     new webpack.NamedModulesPlugin(),
-    new MonacoWebpackPlugin(),
   ],
 
   resolve: {
@@ -108,8 +106,6 @@ module.exports = {
   node: {
     fs: 'empty',
   },
-
-  devtool: 'eval',
 
   devServer: {
     port: process.env.PORT || 3000,
