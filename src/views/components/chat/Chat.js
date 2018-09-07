@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { any, array, string, object } from 'prop-types';
 import { GiftedChat, MessageText, Bubble, Send } from 'react-native-gifted-chat';
 
-import { Icon, Box }  from '../../components';
+import { Icon, Box, Text, BackButton }  from '../../components';
 
 class Chat extends Component {
   static defaultProps = {
@@ -10,6 +10,7 @@ class Chat extends Component {
     user: {
       _id: 1,
     },
+    users: [],
   };
 
   static propTypes = {
@@ -20,6 +21,7 @@ class Chat extends Component {
     sendIconColor: string,
     sendIconBackgroundColor: string,
     user: object,
+    users: array,
   };
 
   state = {
@@ -41,6 +43,14 @@ class Chat extends Component {
     this.setState( previousState => ({
       messages: GiftedChat.append( previousState.messages, messages ),
     }));
+  }
+
+  renderParticipants = () => {
+    const { users } = this.props;
+
+    return users
+      .filter( user => user.code !== this.props.user._id )
+      .map( user => user.name ).join( ', ' );
   }
 
   renderMessage = props => {
@@ -102,14 +112,40 @@ class Chat extends Component {
   render() {
     const { user } = this.props;
 
+    console.warn( this.props );
+
     return (
-      <GiftedChat
-        messages={this.state.messages}
-        onSend={messages => this.onSend( messages )}
-        renderBubble={this.renderBubble}
-        renderSend={this.renderSend}
-        user={user}
-      />
+      <Fragment>
+        <Box>
+          <Box
+            flex={1}
+          >
+            <BackButton />
+          </Box>
+          <Box
+            flex={4}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Text>
+              {
+                this.renderParticipants()
+              }
+            </Text>
+          </Box>
+          <Box
+            flex={1}
+          />
+
+        </Box>
+        <GiftedChat
+          messages={this.state.messages}
+          onSend={messages => this.onSend( messages )}
+          renderBubble={this.renderBubble}
+          renderSend={this.renderSend}
+          user={user}
+        />
+      </Fragment>
     );
   }
 }
