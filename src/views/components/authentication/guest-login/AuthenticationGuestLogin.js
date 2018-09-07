@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { object, string } from 'prop-types';
 import Config from '../../../../config';
 import { withKeycloak, Redirect, ActivityIndicator } from '../../index';
+import store from '../../../../redux/store';
 
 class AuthenticationGuestLogin extends Component {
   static propTypes = {
     keycloak: object,
-    redirectTo: string,
+    redirectTo: string.isRequired,
   }
 
   componentDidMount() {
@@ -39,8 +40,12 @@ class AuthenticationGuestLogin extends Component {
 
   render() {
     const { keycloak, redirectTo } = this.props;
+    const layouts = store.getState().vertx.layouts;
 
-    if ( keycloak.isAuthenticated && redirectTo ) {
+    if (
+      keycloak.isAuthenticated &&
+      layouts.pages[redirectTo]
+    ) {
       return (
         <Redirect
           to={redirectTo}
