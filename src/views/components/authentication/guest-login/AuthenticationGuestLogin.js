@@ -7,6 +7,7 @@ import store from '../../../../redux/store';
 class AuthenticationGuestLogin extends Component {
   static defaultProps = {
     timeout: 60000,
+    redirectFallback: 'home',
   }
 
   static propTypes = {
@@ -72,7 +73,7 @@ class AuthenticationGuestLogin extends Component {
               : isTimeUp
                 ? (
                   <Redirect
-                    to={redirectFallback || 'home'}
+                    to={redirectFallback}
                     removeRedirectURL
                     useMainNavigator
                     appTo={
