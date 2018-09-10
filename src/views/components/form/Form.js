@@ -578,7 +578,7 @@ class Form extends Component {
           values,
           errors,
           touched,
-          handleSubmit,
+          submitForm,
           isSubmitting,
           isValid,
           setFieldValue,
@@ -645,7 +645,7 @@ class Form extends Component {
                       disabled: !isValid || isSubmitting,
                       onPress: () => {
                         setStatus({ action: 'cancel' });
-                        handleSubmit();
+                        submitForm();
                       },
                       key: 'cancel',
                       text: 'Cancel',
@@ -659,7 +659,7 @@ class Form extends Component {
                     this.renderButton({
                       onPress: () => {
                         setStatus({ action: 'yes' });
-                        handleSubmit();
+                        submitForm();
                       },
                       key: 'YES',
                       text: 'Yes',
@@ -673,7 +673,7 @@ class Form extends Component {
                     this.renderButton({
                       onPress: () => {
                         setStatus({ action: 'no' });
-                        handleSubmit();
+                        submitForm();
                       },
                       key: 'NO',
                       text: 'No',
@@ -688,7 +688,7 @@ class Form extends Component {
                       disabled: !isValid || isSubmitting,
                       onPress: () => {
                         setStatus({ action: 'submit' });
-                        handleSubmit();
+                        submitForm();
                       },
                       key: 'submit',
                       text: 'Submit',
@@ -703,7 +703,7 @@ class Form extends Component {
                       disabled: !isValid || isSubmitting,
                       onPress: () => {
                         setStatus({ action: 'next' });
-                        handleSubmit();
+                        submitForm();
                       },
                       key: 'next',
                       text: 'Next',
@@ -722,7 +722,7 @@ class Form extends Component {
                       disabled: !isValid || isSubmitting,
                       onPress: () => {
                         setStatus({ action: 'submit' });
-                        handleSubmit();
+                        submitForm();
                       },
                       text: 'Submit',
                       showSpinnerOnClick: true,
