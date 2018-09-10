@@ -692,6 +692,18 @@ class Form extends Component {
               ))}
 
               {questionGroups.reduce(( buttons, { attributeCode }, index ) => {
+                if ( attributeCode.includes( 'CANCEL' )) {
+                  buttons.push(
+                    this.renderButton({
+                      disabled: !isValid || isSubmitting,
+                      onPress: handleSubmit,
+                      key: 'cancel',
+                      text: 'Cancel',
+                      showSpinnerOnClick: true,
+                    })
+                  );
+                }
+
                 if ( attributeCode.includes( 'YES' )) {
                   buttons.push(
                     this.renderButton({
@@ -719,8 +731,20 @@ class Form extends Component {
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
                       onPress: handleSubmit,
-                      key: 'YES',
+                      key: 'submit',
                       text: 'Submit',
+                      showSpinnerOnClick: true,
+                    })
+                  );
+                }
+
+                if ( attributeCode.includes( 'NEXT' )) {
+                  buttons.push(
+                    this.renderButton({
+                      disabled: !isValid || isSubmitting,
+                      onPress: handleSubmit,
+                      key: 'next',
+                      text: 'Next',
                       showSpinnerOnClick: true,
                     })
                   );
@@ -735,7 +759,7 @@ class Form extends Component {
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
                       onPress: handleSubmit,
-                      key: 'YES',
+                      key: 'submit',
                       text: 'Submit',
                       showSpinnerOnClick: true,
                     })
