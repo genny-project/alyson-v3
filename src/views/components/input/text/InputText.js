@@ -190,6 +190,7 @@ class Input extends Component {
   }
 
   handleChangeText = event => {
+    console.log( event );
     if ( this.props.onChangeText ) {
       this.props.onChangeText( event );
     }
@@ -409,6 +410,8 @@ class Input extends Component {
     const webProps = {
 
     };
+
+    console.log( this.props );
 
     return (
       <Box

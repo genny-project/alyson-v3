@@ -20,7 +20,7 @@ class Passcode extends Component {
     numberOfInputs: 4,
     charactersRequired: 1,
     size: 'md',
-    keyboardType: 'numeric',
+    keyboardType: 'number-pad',
   }
 
   static propTypes = {
@@ -80,10 +80,11 @@ class Passcode extends Component {
 
     let inputValue = data.toString();
 
+    console.log( inputValue );
     if ( inputValue.length > charactersRequired ) {
       inputValue = inputValue.substr( inputValue.length - charactersRequired, charactersRequired );
     }
-
+    console.log( inputValue );
     this.setState( prevState => ({
       currentValues: {
         ...prevState.currentValues,
@@ -142,9 +143,19 @@ class Passcode extends Component {
   //   }
   // }
 
+  handleKeyPress = ( value ) => {
+    console.log( 'keypress', value );
+  }
+
+  handleChange = ( value ) => {
+    console.log( 'handlechange', value );
+  }
+
   render() {
     const { numberOfInputs, size, keyboardType, ...restProps } = this.props;
     const { currentValues } = this.state;
+
+    console.log( this.props );
 
     return (
       <Box
@@ -162,13 +173,15 @@ class Passcode extends Component {
                 {...restProps}
                 width="100%"
                 type="text"
-                value={currentValues[i] || ''}
+                value={currentValues[i]}
                 textSize={size}
                 padding={inputPadding[size]}
                 textAlign="center"
                 placeholder="-"
-                onChangeValue={this.handleChangeValue( i )}
+                onChangeText={this.handleChangeValue( i )}
                 onBlur={this.handleBlur}
+                onKeyPress={this.handleKeyPress}
+                onChange={this.handleChange}
                 ref={input => this.inputs[i] = input}
                 keyboardType={keyboardType}
               />
