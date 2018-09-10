@@ -316,7 +316,7 @@ class Form extends Component {
   }
 
   handleSubmit = ( values, form ) => {
-    const { setSubmitting } = form;
+    const { setSubmitting, status } = form;
     const { questionGroups } = this.state;
 
     setSubmitting( true );
@@ -334,68 +334,14 @@ class Form extends Component {
       return;
     }
 
-    /* send event to back end */
-    const eventData = {
-      code: questionGroup.questionCode,
-      value: JSON.stringify({
-        targetCode: questionGroup.targetCode,
-        action: 'submit',
-      }),
-    };
-
-    Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
-  }
-
-  handlePressNo = () => {
-    const { questionGroups } = this.state;
-
-    const questionGroup = questionGroups.find( group => {
-      return group.attributeCode.includes( 'BUTTON' );
-    }) || (
-      questionGroups.length > 0 &&
-      questionGroups[0]
-    );
-
-    if ( !questionGroup ) {
-      console.warn( 'Could not submit form - no question group associated with form.' );
-
-      return;
-    }
+    console.warn({ status });
 
     /* send event to back end */
     const eventData = {
       code: questionGroup.questionCode,
       value: JSON.stringify({
         targetCode: questionGroup.targetCode,
-        action: 'no',
-      }),
-    };
-
-    Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
-  }
-
-  handlePressYes = () => {
-    const { questionGroups } = this.state;
-
-    const questionGroup = questionGroups.find( group => {
-      return group.attributeCode.includes( 'BUTTON' );
-    }) || (
-      questionGroups.length > 0 &&
-      questionGroups[0]
-    );
-
-    if ( !questionGroup ) {
-      console.warn( 'Could not submit form - no question group associated with form.' );
-
-      return;
-    }
-
-    /* send event to back end */
-    const eventData = {
-      code: questionGroup.questionCode,
-      value: JSON.stringify({
-        targetCode: questionGroup.targetCode,
-        action: 'yes',
+        action: status.action || 'submit',
       }),
     };
 
@@ -637,6 +583,7 @@ class Form extends Component {
           isValid,
           setFieldValue,
           setFieldTouched,
+          setStatus,
         }) => (
           <KeyboardAwareScrollView
             style={{
@@ -696,7 +643,10 @@ class Form extends Component {
                   buttons.push(
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
-                      onPress: handleSubmit,
+                      onPress: () => {
+                        setStatus({ action: 'cancel' });
+                        handleSubmit();
+                      },
                       key: 'cancel',
                       text: 'Cancel',
                       showSpinnerOnClick: true,
@@ -707,7 +657,10 @@ class Form extends Component {
                 if ( attributeCode.includes( 'YES' )) {
                   buttons.push(
                     this.renderButton({
-                      onPress: this.handlePressYes,
+                      onPress: () => {
+                        setStatus({ action: 'yes' });
+                        handleSubmit();
+                      },
                       key: 'YES',
                       text: 'Yes',
                       showSpinnerOnClick: true,
@@ -718,7 +671,10 @@ class Form extends Component {
                 if ( attributeCode.includes( 'NO' )) {
                   buttons.push(
                     this.renderButton({
-                      onPress: this.handlePressNo,
+                      onPress: () => {
+                        setStatus({ action: 'no' });
+                        handleSubmit();
+                      },
                       key: 'NO',
                       text: 'No',
                       showSpinnerOnClick: true,
@@ -730,7 +686,10 @@ class Form extends Component {
                   buttons.push(
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
-                      onPress: handleSubmit,
+                      onPress: () => {
+                        setStatus({ action: 'submit' });
+                        handleSubmit();
+                      },
                       key: 'submit',
                       text: 'Submit',
                       showSpinnerOnClick: true,
@@ -742,7 +701,10 @@ class Form extends Component {
                   buttons.push(
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
-                      onPress: handleSubmit,
+                      onPress: () => {
+                        setStatus({ action: 'next' });
+                        handleSubmit();
+                      },
                       key: 'next',
                       text: 'Next',
                       showSpinnerOnClick: true,
@@ -758,8 +720,10 @@ class Form extends Component {
                   buttons.push(
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
-                      onPress: handleSubmit,
-                      key: 'submit',
+                      onPress: () => {
+                        setStatus({ action: 'submit' });
+                        handleSubmit();
+                      },
                       text: 'Submit',
                       showSpinnerOnClick: true,
                     })
