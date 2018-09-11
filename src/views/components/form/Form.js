@@ -31,6 +31,7 @@ class Form extends Component {
     validationList: {},
     initialValues: {},
     questionGroups: [],
+    formStatus: null,
   }
 
   componentDidMount() {
@@ -316,8 +317,8 @@ class Form extends Component {
   }
 
   handleSubmit = ( values, form ) => {
-    const { setSubmitting, status } = form;
-    const { questionGroups } = this.state;
+    const { setSubmitting } = form;
+    const { questionGroups, formStatus } = this.state;
 
     setSubmitting( true );
 
@@ -334,14 +335,12 @@ class Form extends Component {
       return;
     }
 
-    console.warn({ status });
-
     /* send event to back end */
     const eventData = {
       code: questionGroup.questionCode,
       value: JSON.stringify({
         targetCode: questionGroup.targetCode,
-        action: status.action || 'submit',
+        action: formStatus || 'submit',
       }),
     };
 
@@ -583,7 +582,6 @@ class Form extends Component {
           isValid,
           setFieldValue,
           setFieldTouched,
-          setStatus,
         }) => (
           <KeyboardAwareScrollView
             style={{
@@ -644,8 +642,11 @@ class Form extends Component {
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
                       onPress: () => {
-                        setStatus({ action: 'cancel' });
-                        submitForm();
+                        this.setState({
+                          formStatus: 'cancel',
+                        }, () => {
+                          submitForm();
+                        });
                       },
                       key: 'cancel',
                       text: 'Cancel',
@@ -658,8 +659,11 @@ class Form extends Component {
                   buttons.push(
                     this.renderButton({
                       onPress: () => {
-                        setStatus({ action: 'yes' });
-                        submitForm();
+                        this.setState({
+                          formStatus: 'yes',
+                        }, () => {
+                          submitForm();
+                        });
                       },
                       key: 'YES',
                       text: 'Yes',
@@ -672,8 +676,11 @@ class Form extends Component {
                   buttons.push(
                     this.renderButton({
                       onPress: () => {
-                        setStatus({ action: 'no' });
-                        submitForm();
+                        this.setState({
+                          formStatus: 'no',
+                        }, () => {
+                          submitForm();
+                        });
                       },
                       key: 'NO',
                       text: 'No',
@@ -687,8 +694,11 @@ class Form extends Component {
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
                       onPress: () => {
-                        setStatus({ action: 'submit' });
-                        submitForm();
+                        this.setState({
+                          formStatus: 'submit',
+                        }, () => {
+                          submitForm();
+                        });
                       },
                       key: 'submit',
                       text: 'Submit',
@@ -702,8 +712,11 @@ class Form extends Component {
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
                       onPress: () => {
-                        setStatus({ action: 'next' });
-                        submitForm();
+                        this.setState({
+                          formStatus: 'next',
+                        }, () => {
+                          submitForm();
+                        });
                       },
                       key: 'next',
                       text: 'Next',
@@ -721,8 +734,11 @@ class Form extends Component {
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
                       onPress: () => {
-                        setStatus({ action: 'submit' });
-                        submitForm();
+                        this.setState({
+                          formStatus: 'submit',
+                        }, () => {
+                          submitForm();
+                        });
                       },
                       text: 'Submit',
                       showSpinnerOnClick: true,
