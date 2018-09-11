@@ -317,10 +317,13 @@ class Form extends Component {
   }
 
   handleSubmit = ( values, form ) => {
-    const { setSubmitting } = form;
-    const { questionGroups, formStatus } = this.state;
+    if ( form ) {
+      const { setSubmitting } = form;
 
-    setSubmitting( true );
+      setSubmitting( true );
+    }
+
+    const { questionGroups, formStatus } = this.state;
 
     const questionGroup = questionGroups.find( group => {
       return group.attributeCode.includes( 'BUTTON' );
@@ -329,6 +332,7 @@ class Form extends Component {
       questionGroups[0]
     );
 
+    console.log( questionGroup );
     if ( !questionGroup ) {
       console.warn( 'Could not submit form - no question group associated with form.' );
 
@@ -662,7 +666,7 @@ class Form extends Component {
                         this.setState({
                           formStatus: 'yes',
                         }, () => {
-                          submitForm();
+                          this.handleSubmit();
                         });
                       },
                       key: 'YES',
@@ -679,7 +683,7 @@ class Form extends Component {
                         this.setState({
                           formStatus: 'no',
                         }, () => {
-                          submitForm();
+                          this.handleSubmit();
                         });
                       },
                       key: 'NO',
