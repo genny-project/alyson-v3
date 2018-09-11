@@ -152,28 +152,36 @@ class Passcode extends Component {
         justifyContent="center"
       >
         {range( numberOfInputs )
-          .map( i => (
-            <Box
-              key={i}
-              width={inputWidth[size]}
-              marginRight={i < numberOfInputs - 1 && 10}
-            >
-              <Input
-                {...restProps}
-                width="100%"
-                type="text"
-                value={currentValues[i] || ''}
-                textSize={size}
-                padding={inputPadding[size]}
-                textAlign="center"
-                placeholder="-"
-                onChangeValue={this.handleChangeValue( i )}
-                onBlur={this.handleBlur}
-                ref={input => this.inputs[i] = input}
-                keyboardType={keyboardType}
-              />
-            </Box>
-          ))}
+          .map( i => {
+            const marginRight = i < numberOfInputs - 1
+              ? {
+                marginRight: 10,
+              }
+              : {};
+
+            return (
+              <Box
+                key={i}
+                width={inputWidth[size]}
+                {...marginRight}
+              >
+                <Input
+                  {...restProps}
+                  width="100%"
+                  type="text"
+                  value={currentValues[i] || ''}
+                  textSize={size}
+                  padding={inputPadding[size]}
+                  textAlign="center"
+                  placeholder="-"
+                  onChangeValue={this.handleChangeValue( i )}
+                  onBlur={this.handleBlur}
+                  ref={input => this.inputs[i] = input}
+                  keyboardType={keyboardType}
+                />
+              </Box>
+            );
+          })}
       </Box>
     );
   }
