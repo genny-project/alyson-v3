@@ -169,49 +169,73 @@ const handleReduceData = ( resultant, current ) => {
   resultant[current.code] = wantedData;
   /* If the current has a parentCode, ensure there is an accompanying base entity. */
   if ( current.parentCode ) {
-    const fakeLink = {
-      created: current.created,
-      updated: current.updated,
-      code: current.code,
-      weight: ( current.weight != null ) ? current.weight : 1,
-      link: {
-        attributeCode: 'LNK_CORE',
-        targetCode: current.code,
-        sourceCode: current.parentCode,
-        weight: 1,
-        linkValue: 'LINK',
-        ...current.link,
-      },
-    };
-
     /* If the parent base entity does not exist, simply create a basic one with a link
      * back to the current base entity. */
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
-        links: [fakeLink],
+        links: [
+          {
+            created: current.created,
+            updated: current.updated,
+            code: current.code,
+            weight: ( current.weight != null ) ? current.weight : 1,
+            link: {
+              attributeCode: 'LNK_CORE',
+              targetCode: current.code,
+              sourceCode: current.parentCode,
+              weight: 1,
+              linkValue: 'LINK',
+              ...current.link,
+            },
+          },
+        ],
       };
     }
     /* If there already is a base entity, add the current base entity to the list of links
      * inside of it. Be sure that no duplicates occur by filtering out the current's code
      * from the list of existing links. */
     else {
-      const noExistingLinks = !resultant[current.parentCode].links;
-      const newLinks = noExistingLinks ? [current] : [
-        ...(
-          !current.replace &&
-          !current.shouldDeleteLinkedBaseEntities
-        )
-          ? [
-            ...resultant[current.parentCode].links.filter(
-              link => link.targetCode !== current.code
-            ),
-            fakeLink,
-          ]
-          : [
-            ...resultant[current.parentCode].links,
-            fakeLink,
-          ],
-      ];
+      const noLinksExist = !resultant[current.parentCode].links;
+
+      /* If no links exist yet, simply set the links to be array of the new link (current). */
+      const newLinks = noLinksExist ? [current] : (
+        /* Loop through each existing link. */
+        resultant[current.parentCode].links.reduce(( links, link, index ) => {
+          /* If the current link is in the existing links, update the
+           * existing link with the new link data (current). */
+          if ( link.link.targetCode === current.code ) {
+            links[index] = {
+              ...link,
+              updated: current.updated,
+              link: {
+                ...link.link,
+                targetCode: current.code,
+                sourceCode: current.parentCode,
+                ...current.link,
+              },
+            };
+          }
+          /* If the new link (current) isn't already in the existing links, add it. */
+          else if ( !links.find( link => link.link.targetCode === current.code )) {
+            links.push({
+              created: current.created,
+              updated: current.updated,
+              code: current.code,
+              weight: ( current.weight != null ) ? current.weight : 1,
+              link: {
+                attributeCode: 'LNK_CORE',
+                targetCode: current.code,
+                sourceCode: current.parentCode,
+                weight: 1,
+                linkValue: 'LINK',
+                ...current.link,
+              },
+            });
+          }
+
+          return links;
+        }, resultant[current.parentCode].links )
+      );
 
       resultant[current.parentCode] = {
         ...resultant[current.parentCode],
