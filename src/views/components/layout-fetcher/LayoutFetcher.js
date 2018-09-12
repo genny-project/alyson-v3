@@ -63,7 +63,7 @@ class LayoutFetcher extends Component {
       const keys = Object.keys( pages ).sort( this.handleSortPages );
       const fragments = strippedCurrentUrl.split( '/' );
 
-      keys.some( key => {
+      const found = keys.some( key => {
         const params = {};
 
         const splitKey = key.split( '/' ).map(( split, index ) => {
@@ -100,6 +100,14 @@ class LayoutFetcher extends Component {
 
           return true;
         }
+
+        /* If we were unable to locate a new layout, and
+         * there is currently a saved layout in state, clear
+         * the old layout from the state. This typically fixes
+         * when the currentUrl changes but the new layout for
+         * the new currentUrl isn't the state just yet. */
+        if ( !found && this.state.layout )
+          this.setState({ layout: null });
       });
     }
   }

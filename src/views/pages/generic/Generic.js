@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { object } from 'prop-types';
-import { connect } from 'react-redux';
+import queryString from 'query-string';
 import { location } from '../../../utils';
-import { LayoutLoader, LayoutFetcher, KeycloakConsumer } from '../../components';
-import Public from '../public';
+import { LayoutLoader, LayoutFetcher, KeycloakConsumer, Redirect } from '../../components';
 
 class Generic extends Component {
   static propTypes = {
@@ -11,14 +10,30 @@ class Generic extends Component {
   }
 
   render() {
-    if ( !this.props.keycloak.isAuthenticated )
-      return <Public {...this.props} />;
-
+    const { isAuthenticated } = this.props.keycloak;
     const currentUrl = location.getBasePath();
+    const { redirectUri } = location.getQueryParams();
+
+    const loginUrl = `login?${queryString.stringify({
+      redirectUri: redirectUri || `/${currentUrl}`,
+    })}`;
 
     return (
       <LayoutFetcher currentUrl={currentUrl}>
-        {layout => (
+        {layout => ( layout && !isAuthenticated ) ? (
+          layout.isPublic
+            ? (
+              <LayoutLoader
+                layout={layout}
+              />
+            )
+            : (
+              <Redirect
+                to={loginUrl}
+                useMainNavigator
+              />
+            )
+        ) : (
           <LayoutLoader
             layout={layout}
           />
@@ -30,11 +45,7 @@ class Generic extends Component {
 
 export { Generic };
 
-const mapStateToProps = state => ({
-  navigation: state.navigation,
-});
-
-export default connect( mapStateToProps )(
+export default (
   props => (
     <KeycloakConsumer>
       {keycloak => (
