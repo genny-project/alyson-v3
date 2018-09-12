@@ -30,7 +30,10 @@ class BackButton extends Component {
 
   render() {
     return (
-      <Touchable onClick={this.handleClick}>
+      <Touchable
+        withFeedback
+        onPress={this.handleClick}
+      >
         <Icon
           name="chevron-left"
           color="black"
