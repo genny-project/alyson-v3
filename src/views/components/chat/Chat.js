@@ -2,7 +2,9 @@ import React, { Component, Fragment } from 'react';
 import { any, array, string, object } from 'prop-types';
 import { GiftedChat, MessageText, Bubble, Send } from 'react-native-gifted-chat';
 
+import { Bridge } from '../../../utils';
 import { Icon, Box, Text, BackButton }  from '../../components';
+import EventTouchable from '../event-touchable';
 
 class Chat extends Component {
   static defaultProps = {
@@ -11,6 +13,7 @@ class Chat extends Component {
       _id: 1,
     },
     users: [],
+    chatLinks: [],
   };
 
   static propTypes = {
@@ -21,7 +24,7 @@ class Chat extends Component {
     sendIconColor: string,
     sendIconBackgroundColor: string,
     user: object,
-    users: array,
+    chatLinks: array,
   };
 
   state = {
@@ -39,7 +42,70 @@ class Chat extends Component {
     ],
   };
 
+  static getDerivedStateFromProps( props, state ) {
+    const { chatLinks } = props;
+
+    console.warn({
+      state, props, chatLinks,
+    });
+
+    const newState = chatLinks.reduce(
+      ( acc, curr ) => {
+        console.warn({
+          curr, acc,
+        });
+        if ( curr.name === 'message' )  {
+          const { PRI_MESSAGE, PRI_CREATOR } = curr.attributes;
+
+          const newMessage = {
+            _id: PRI_MESSAGE.baseEntityCode,
+            text: PRI_MESSAGE.value,
+            createdAt: new Date( PRI_MESSAGE.created ),
+            user: {
+              _id: PRI_CREATOR.value,
+            },
+          };
+
+          return {
+            ...acc,
+            messages: [
+              ...acc.messages, newMessage,
+            ],
+          };
+        }
+
+        // if it's not a message, it's a user
+
+        return {
+          ...acc,
+          users: [
+            ...acc.users, curr,
+          ],
+        };
+      }, {
+        users: [],
+        messages: [],
+      });
+
+    console.log({ newState });
+
+    return newState;
+  }
+
   onSend = ( messages = [] ) => {
+    const { itemCode, user } = this.props;
+
+    messages.forEach( message => {
+      Bridge.sendButtonEvent( 'BTN_CLICK', {
+        code: 'BTN_SEND_MESSAGE',
+        value: JSON.stringify({
+          itemCode,
+          userCode: user._id,
+          message: message.text || null,
+        }),
+      });
+    });
+
     this.setState( previousState => ({
       messages: GiftedChat.append( previousState.messages, messages ),
     }));
@@ -113,6 +179,7 @@ class Chat extends Component {
     const { user } = this.props;
 
     console.warn( this.props );
+    console.warn( this.state );
 
     return (
       <Fragment>
