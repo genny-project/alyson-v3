@@ -124,16 +124,7 @@ const handleReduceLinks = ( resultant, current ) => {
       resultant[current.parentCode] = {
         ...resultant[current.parentCode],
         links: [
-          ...(
-            resultant[current.parentCode] &&
-            isArray( resultant[current.parentCode].links ) &&
-            !current.replace &&
-            !current.shouldDeleteLinkedBaseEntities
-          )
-            ? resultant[current.parentCode].links.filter(({ code }) => code !== current.code )
-            : [
-              ...resultant[current.parentCode].links,
-            ],
+          ...resultant[current.parentCode].links.filter( code => code !== current.code ),
           current.code,
         ],
       };
