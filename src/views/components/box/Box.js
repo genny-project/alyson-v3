@@ -134,17 +134,18 @@ const Box = ({
     borderColor,
     borderStyle,
     borderRadius: borderRadius || shapeStyles[shape],
+    display,
+    ...__dangerouslySetStyle,
+  };
+
+  const webStyle = Platform.OS !== 'web' ? {} : {
+    accessibilityRole,
     ...boxShadow && (
       boxShadows[boxShadow]
     ),
     overflow,
     overflowX,
     overflowY,
-    display,
-    ...__dangerouslySetStyle,
-  };
-
-  const webStyle = Platform.OS !== 'web' ? {} : {
     transitionDuration,
     transitionProperty,
     transitionTimingFunction,
