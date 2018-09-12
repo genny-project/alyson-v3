@@ -70,6 +70,9 @@ class Button extends Component {
     theme: shape({
       components: object,
     }),
+    hoverProps: object,
+    onMouseEnter: func,
+    onMouseLeave: func,
   }
 
   static getDerivedStateFromProps( props, state ) {
@@ -85,6 +88,21 @@ class Button extends Component {
 
   state = {
     isSpinning: this.props.isSpinning,
+    isHovering: false,
+  }
+
+  getProps() {
+    const { hoverProps } = this.props;
+    const { isHovering } = this.state;
+
+    if ( isHovering ) {
+      return {
+        ...this.props,
+        ...hoverProps,
+      };
+    }
+
+    return this.props;
   }
 
   getThemes() {
@@ -101,6 +119,20 @@ class Button extends Component {
 
   setSpinning = isSpinning => {
     this.setState({ isSpinning });
+  }
+
+  handleMouseEnter = event => {
+    this.setState({ isHovering: true });
+
+    if ( this.props.onMouseEnter )
+      this.props.onMouseEnter( event );
+  }
+
+  handleMouseLeave = () => {
+    this.setState({ isHovering: false });
+
+    if ( this.props.onMouseLeave )
+      this.props.onMouseLeave( event );
   }
 
   handlePressAttempt = event => {
@@ -128,7 +160,7 @@ class Button extends Component {
   }
 
   handlePress = event => {
-    const { showSpinnerOnClick, onPress } = this.props;
+    const { showSpinnerOnClick, onPress } = this.getProps();
 
     if ( showSpinnerOnClick )
       this.setState({ isSpinning: true });
@@ -138,7 +170,7 @@ class Button extends Component {
   }
 
   renderIconChild() {
-    const { textColor, color, icon, size } = this.props;
+    const { textColor, color, icon, size } = this.getProps();
     const themeConfig = this.getThemeConfig();
 
     const actualColor = textColor || (
@@ -156,7 +188,7 @@ class Button extends Component {
   }
 
   renderTextChild() {
-    const { textColor, color, children, size, text, fontWeight, inverted } = this.props;
+    const { textColor, color, children, size, text, fontWeight, inverted } = this.getProps();
     const themeConfig = this.getThemeConfig();
 
     const actualColor = textColor || (
@@ -187,7 +219,7 @@ class Button extends Component {
   }
 
   renderSpinnerChild() {
-    const { size, color, children, text, icon } = this.props;
+    const { size, color, children, text, icon } = this.getProps();
     const themeConfig = this.getThemeConfig();
 
     const actualBackgroundColor = (
@@ -254,7 +286,7 @@ class Button extends Component {
       boxShadow,
       submitting,
       inverted,
-    } = this.props;
+    } = this.getProps();
 
     const { isSpinning } = this.state;
     const themeConfig = this.getThemeConfig();
@@ -377,7 +409,7 @@ class Button extends Component {
       marginX,
       borderWidth,
       borderColor,
-    } = this.props;
+    } = this.getProps();
 
     const { isSpinning } = this.state;
     const themeConfig = this.getThemeConfig();
@@ -409,6 +441,8 @@ class Button extends Component {
           submitting
         ),
         onPress: this.handlePressAttempt,
+        onMouseEnter: this.handleMouseEnter,
+        onMouseLeave: this.handleMouseLeave,
         accessible,
         accessibilityLabel,
         accessibilityRole,

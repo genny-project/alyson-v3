@@ -90,6 +90,7 @@ class Input extends Component {
         );
 
       case 'number':
+      case 'java.lang.integer':
       case 'java.lang.Integer':
       case 'mobile':
       case 'landline':
@@ -246,6 +247,7 @@ class Input extends Component {
           <Passcode
             {...this.props}
             numberOfInputs={5}
+            keyboardType="default"
             ref={input => this.input = input}
           />
         );

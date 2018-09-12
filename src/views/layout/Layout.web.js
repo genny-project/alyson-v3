@@ -12,6 +12,7 @@ class Layout extends Component {
     children: any,
     title: string,
     header: object,
+    sidebar: object,
     hideSidebar: bool,
     layout: object,
     appColor: string,
@@ -20,15 +21,18 @@ class Layout extends Component {
     headerProps: object,
     backgroundColor: string,
     layouts: object,
+    variant: string,
   }
 
   state = {
     unableToFindHeader: false,
+    unableToFindSidebar: false,
   }
 
   componentDidMount() {
     this.setLayoutProperties();
     this.setHeaderProperties();
+    this.setSidebarProperties();
   }
 
   componentDidUpdate( prevProps ) {
@@ -57,15 +61,30 @@ class Layout extends Component {
       this.setHeaderProperties();
     }
 
+    if ( !shallowCompare( this.props.sidebar, prevProps.sidebar )) {
+      this.setSidebarProperties();
+    }
+
     if (
       this.state.unableToFindHeader &&
       this.props.header &&
       this.props.header.variant
     ) {
-      const variant = `header-${this.props.header.variant}`;
+      const variant = `header/header.${this.props.header.variant}`;
 
       if ( this.props.layouts.sublayouts[variant] )
         this.setHeaderProperties();
+    }
+
+    if (
+      this.state.unableToFindSidebar &&
+      this.props.sidebar &&
+      this.props.sidebar.variant
+    ) {
+      const variant = `sidebar/sidebar.${this.props.sidebar.variant}`;
+
+      if ( this.props.layouts.sublayouts[variant] )
+        this.setSidebarProperties();
     }
   }
 
@@ -102,7 +121,7 @@ class Layout extends Component {
     const { header, layouts } = this.props;
 
     if ( header && header.variant ) {
-      const variant = `header-${header.variant}`;
+      const variant = `header/header.${header.variant}`;
       const headerProps = layouts.sublayouts[variant];
 
       if ( headerProps ) {
@@ -118,6 +137,29 @@ class Layout extends Component {
     }
     else {
       this.props.layout.setHeaderVisibility( false );
+    }
+  }
+
+  setSidebarProperties() {
+    const { sidebar, layouts } = this.props;
+
+    if ( sidebar && sidebar.variant ) {
+      const variant = `sidebar/sidebar.${sidebar.variant}`;
+      const sidebarProps = layouts.sublayouts[variant];
+
+      if ( sidebarProps ) {
+        this.props.layout.setSidebarProps( sidebarProps );
+        this.props.layout.setSidebarVisibility( true );
+
+        if ( this.state.unableToFindSidebar )
+          this.setState({ unableToFindSidebar: false });
+      }
+      else {
+        this.setState({ unableToFindSidebar: true });
+      }
+    }
+    else {
+      this.props.layout.setSidebarVisibility( false );
     }
   }
 
