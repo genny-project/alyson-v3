@@ -3,6 +3,9 @@ package com.alysonv3;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.rssignaturecapture.RSSignatureCapturePackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
+import org.wonday.pdf.RCTPdfView;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.rnfs.RNFSPackage;
 import com.microsoft.codepush.react.CodePush;
@@ -40,6 +43,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RSSignatureCapturePackage(),
+            new RNFetchBlobPackage(),
+            new RCTPdfView(),
           new ReactNativeConfigPackage(),
           new RNFSPackage(),
           new CodePush(BuildConfig.CODEPUSH_KEY, MainApplication.this, BuildConfig.DEBUG),

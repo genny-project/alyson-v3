@@ -1,0 +1,72 @@
+
+.rt-td {
+    border: solid 2px white;
+    border-top: solid 1px white;
+    border-bottom: solid 1px white;
+    background: #d2e8ff;
+    color: rgb(69, 69, 69);
+}
+
+.-odd {
+    .rt-td {
+        background: #eff7ff
+    }
+}
+
+.rt-noData {
+  margin-top: 30px;
+}
+
+.-previous, .-center, .-next {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.list-item-total {
+    text-align: left;
+    color: #222;
+}
+
+.table-prev, .table-next {
+    cursor: pointer;
+}
+
+.pagination-bottom {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+
+    .-pagination {
+      border-top-color: rgba(0, 0, 0, 0.25);
+    }
+
+    .-pageJump > input {
+        background-color: #ddd;
+    }
+}
+
+.list-pagination {
+    background: #ddd;
+    border-radius: 5px;
+    padding: 5px !important;
+    border: none !important;
+
+    justify-content: center !important;
+
+    .-previous, .-next {
+        display: flex ;
+        align-items: center;
+        flex: 0 !important;
+    }
+
+    .-center {
+        flex: 0 !important;
+    }
+
+    i {
+        color: #222;
+    }
+}
+

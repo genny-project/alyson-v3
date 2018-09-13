@@ -1,17 +1,21 @@
 import React, { Component } from 'react';
-import { string, func } from 'prop-types';
+import { string, func, number ,oneOfType } from 'prop-types';
 import { Input, Box, Touchable } from '../../../../components';
 
 class InputFileTouchable extends Component {
   static defaultProps = {
     text: 'Upload a file',
     icon: 'camera-alt',
+    width: 260,
+    height: 20,
   }
 
   static propTypes = {
     text: string,
     onPress: func,
     icon: string,
+    width: oneOfType ( [string, number] ),
+    height: oneOfType( [string, number] ),
   }
 
   render() {
@@ -19,6 +23,8 @@ class InputFileTouchable extends Component {
       text,
       onPress,
       icon,
+      width,
+      height,
     } = this.props;
 
     return (
@@ -26,7 +32,8 @@ class InputFileTouchable extends Component {
         withFeedback
         onPress={onPress}
         style={{
-          width: '100%',
+          width: width ,
+          height: height,
           position: 'relative',
         }}
       >

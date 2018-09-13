@@ -59,6 +59,7 @@ export { default as MultiDownshift } from './multi-downshift';
 export { default as DisplayHTML } from './display-html';
 export { default as PdfViewer } from './pdf-viewer';
 export { default as DisplayMarkdown } from './display-markdown';
+export { default as Table } from './table';
 
 export * from './keycloak';
 export * from './vertx';

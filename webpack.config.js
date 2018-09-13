@@ -53,10 +53,11 @@ const imageLoaderConfiguration = {
 };
 
 const styleLoaderConfiguration = {
-  test: /\.css$/,
+  test: /\.css|.scss$/,
   use: [
     { loader: 'style-loader' },
     { loader: 'css-loader' },
+    { loader: 'sass-loader' },
   ],
 };
 
@@ -106,7 +107,7 @@ module.exports = {
   node: {
     fs: 'empty',
   },
-
+ 
   devtool: 'eval',
 
   devServer: {

@@ -41,7 +41,8 @@ const Icon = ({
     <Text
       style={[
         styles.wrapper,
-        style,
+        style ,
+        componentStyle, 
       ]}
     >
       {name.includes( '-' )

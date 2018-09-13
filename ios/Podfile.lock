@@ -50,6 +50,8 @@ PODS:
     - React
   - react-native-maps (0.21.0):
     - React
+  - react-native-pdf (5.0.2):
+    - React
   - React/Core (0.55.4):
     - yoga (= 0.55.4.React)
   - React/CxxBridge (0.55.4):
@@ -95,6 +97,10 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - rn-fetch-blob (0.10.6):
+    - React/Core
+  - RNFS (2.11.15):
+    - React
   - SSZipArchive (2.1.3)
   - yoga (0.55.4.React)
 
@@ -110,6 +116,7 @@ DEPENDENCIES:
   - GoogleMaps
   - react-native-google-maps (from `../node_modules/react-native-maps`)
   - react-native-maps (from `../node_modules/react-native-maps`)
+  - react-native-pdf (from `../node_modules/react-native-pdf`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
   - React/DevSupport (from `../node_modules/react-native`)
@@ -123,55 +130,55 @@ DEPENDENCIES:
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
+  - RNFS (from `../node_modules/react-native-fs`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga/yoga.podspec`)
-
-SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
-    - AppCenter
-    - AppCenterReactNativeShared
-    - Base64
-    - boost-for-react-native
-    - Google-Maps-iOS-Utils
-    - GoogleMaps
-    - JWT
-    - SSZipArchive
 
 EXTERNAL SOURCES:
   CodePush:
-    :path: "../node_modules/react-native-code-push"
+    :path: ../node_modules/react-native-code-push
   DoubleConversion:
-    :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+    :podspec: ../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec
   Folly:
-    :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
+    :podspec: ../node_modules/react-native/third-party-podspecs/Folly.podspec
   glog:
-    :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+    :podspec: ../node_modules/react-native/third-party-podspecs/glog.podspec
   React:
-    :path: "../node_modules/react-native"
+    :path: ../node_modules/react-native
   react-native-google-maps:
-    :path: "../node_modules/react-native-maps"
+    :path: ../node_modules/react-native-maps
   react-native-maps:
-    :path: "../node_modules/react-native-maps"
+    :path: ../node_modules/react-native-maps
+  react-native-pdf:
+    :path: ../node_modules/react-native-pdf
+  rn-fetch-blob:
+    :path: ../node_modules/rn-fetch-blob
+  RNFS:
+    :path: ../node_modules/react-native-fs
   yoga:
-    :path: "../node_modules/react-native/ReactCommon/yoga/yoga.podspec"
+    :path: ../node_modules/react-native/ReactCommon/yoga/yoga.podspec
 
 SPEC CHECKSUMS:
   AppCenter: 53349f138e596f2514f7559bb50a7e6e55219f17
   AppCenterReactNativeShared: 9174f9a976f5d4b1949dccfac7f3a38399478c87
   Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  CodePush: f6b348759cdc42c734d9c3a46ceb2997c270b12e
+  CodePush: 4fa9b16990e570da141e22beb84f963cef8dd664
   DoubleConversion: e22e0762848812a87afd67ffda3998d9ef29170c
   Folly: 211775e49d8da0ca658aebc8eab89d642935755c
   glog: 1de0bb937dccdc981596d3b5825ebfb765017ded
   Google-Maps-iOS-Utils: c32891ff472eaaa1fca032beedafa1a013af7875
   GoogleMaps: c087b8e5dfe87ca6ebf59adb9b4894a4146bec4f
   JWT: 8ace44791ddd338cfeff39d03b8397af53f5d63e
-  React: aa2040dbb6f317b95314968021bd2888816e03d5
-  react-native-google-maps: 2cfe3b01f8422c7dae51d8764139fd70f888cfce
-  react-native-maps: 066c2afcc89e18726377bcc685315f989ca22449
+  React: 755b16d9a9387e856d4dce6528130c51e4d409b8
+  react-native-google-maps: 68a831730110823d3dadfea0e133f0f4426cd213
+  react-native-maps: fb06a43ce6884256097eec1dd69d23957b71df88
+  react-native-pdf: aa005cfc867184ce3368587b1ed3b3f7fc05721a
+  rn-fetch-blob: 766f85cabd2992300dfa1be2bc9e4e258abc6f04
+  RNFS: b359bfc5789c2e68053e40f3781805a278d98d33
   SSZipArchive: 51a800ebb77f95a8329b6ced1faaff394b47f509
-  yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
+  yoga: c3ce6137f85f60c93a834235d7f08e2b44a42eed
 
-PODFILE CHECKSUM: 2a2234d88260173259ce7b5e01cef52274c0552e
+PODFILE CHECKSUM: 4d2188986ba0ac870d291763e190f21efa8b99fb
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.3.1

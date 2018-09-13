@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactMd from 'react-native-markdown-renderer';
-import { string } from 'prop-types';
+import { string, object } from 'prop-types';
 
-const DisplayMarkdown = ({ source }) => { 
+const DisplayMarkdown = ({ source, style = { backgroundColor: '#fff' } }) => { 
   return (
-    <ReactMd> 
+    <ReactMd
+      style={style}
+    >
       {source}
     </ReactMd>
   );
@@ -12,6 +14,7 @@ const DisplayMarkdown = ({ source }) => {
 
 DisplayMarkdown.propTypes = { 
   source: string,
+  style: object,
 };
 
 export default DisplayMarkdown;
