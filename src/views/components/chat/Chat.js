@@ -1,10 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { any, array, string, object } from 'prop-types';
 import { GiftedChat, MessageText, Bubble, Send } from 'react-native-gifted-chat';
+import moment from 'moment';
 
 import { Bridge } from '../../../utils';
 import { Icon, Box, Text, BackButton }  from '../../components';
-import EventTouchable from '../event-touchable';
 
 class Chat extends Component {
   static defaultProps = {
@@ -12,7 +12,6 @@ class Chat extends Component {
     user: {
       _id: 1,
     },
-    users: [],
     chatLinks: [],
   };
 
@@ -25,21 +24,12 @@ class Chat extends Component {
     sendIconBackgroundColor: string,
     user: object,
     chatLinks: array,
+    itemCode: string,
   };
 
   state = {
-    messages: [
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-    ],
+    messages: [],
+    users: [],
   };
 
   static getDerivedStateFromProps( props, state ) {
@@ -51,16 +41,13 @@ class Chat extends Component {
 
     const newState = chatLinks.reduce(
       ( acc, curr ) => {
-        console.warn({
-          curr, acc,
-        });
         if ( curr.name === 'message' )  {
           const { PRI_MESSAGE, PRI_CREATOR } = curr.attributes;
 
           const newMessage = {
             _id: PRI_MESSAGE.baseEntityCode,
             text: PRI_MESSAGE.value,
-            createdAt: new Date( PRI_MESSAGE.created ),
+            createdAt: moment( `${PRI_MESSAGE.created}Z` ),
             user: {
               _id: PRI_CREATOR.value,
             },
@@ -87,9 +74,7 @@ class Chat extends Component {
         messages: [],
       });
 
-    newState.messages = newState.messages.sort(( messageA, messageB ) => messageA.createdAt < messageB.createdAt );
-
-    console.log({ newState });
+    newState.messages.sort(( messageA, messageB ) => messageB.createdAt.diff( messageA.createdAt ));
 
     return newState;
   }
@@ -114,7 +99,9 @@ class Chat extends Component {
   }
 
   renderParticipants = () => {
-    const { users } = this.props;
+    const { users } = this.state;
+
+    console.warn({ users });
 
     return users
       .filter( user => user.code !== this.props.user._id )
@@ -179,9 +166,6 @@ class Chat extends Component {
 
   render() {
     const { user } = this.props;
-
-    console.warn( this.props );
-    console.warn( this.state );
 
     return (
       <Fragment>

@@ -1,16 +1,16 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { func, object } from 'prop-types';
 import { NavigationActions, withNavigation } from 'react-navigation';
 import { withKeycloak } from '../keycloak';
-import { any, array, string, object } from 'prop-types';
 
-import { Icon, Box, Touchable }  from '../../components';
+import { Icon, Touchable }  from '../../components';
 
 class BackButton extends Component {
-  static defaultProps = {
-  };
-
   static propTypes = {
+    dispatch: func,
+    keycloak: object,
+    stackNavigation: object,
   };
 
   state = {};
