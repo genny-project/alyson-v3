@@ -140,18 +140,19 @@ class Signature extends Component {
               onChange={this.handleTextSignatureChange}
               value={this.state.textSignatureValue}
             />
-            <p>
+            <p style={{ fontFamily: 'satisfy', fontSize: 20 }}> 
               {' '}
               {this.state.textSignatureValue}
-              <Button
-                onPress={this.handleSignatureSubmitOnText}
-                color="green"
-                withFeedback
-                style={{ marginTop: '10px' }}
-              >
-              Submit
-              </Button>
+              
             </p>
+            <Button
+              onPress={this.handleSignatureSubmitOnText}
+              color="green"
+              withFeedback
+              style={{ marginTop: '10px' }}
+            >
+              Submit
+            </Button>
           </div>
           <div style={{ width: '100%', height: '100%', padding: '20px', backgroundColor: '#fff' }}>
             <Input type="upload" />

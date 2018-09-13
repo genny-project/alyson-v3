@@ -36,7 +36,13 @@ class TableView extends Component {
      }
 
      render() {
-       const { columns, data, itemsPerPage, filterable,tableBackgroundColor,tableHeight } = this.props;
+       const { 
+         columns,
+         data,
+         itemsPerPage,
+         filterable,
+         tableBackgroundColor,
+         tableHeight } = this.props;
 
        return (
          <ReactTable

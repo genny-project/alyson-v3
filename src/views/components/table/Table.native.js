@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Text } from 'react-native';
 import { object, array } from 'prop-types';
 import { Header, HeaderCell,Row, Cell,DataTable } from 'react-native-data-table';
 import { Box } from '../../components';
@@ -57,10 +56,12 @@ class TableView extends Component {
   /* Doing */
   /* render the row part this is a TODO */
   renderRow( item ) {
-    const { rowStyle, rowCellStyle ,rowCellTextStyle } = this.props;
-    const cells = [];
+    const { rowStyle, rowCellStyle ,rowCellTextStyle, rowData } = this.props;
 
-    if ( this.state.data && this.state.data.length > 0 ) {
+    const cells = [];
+    const DataFromRow = rowData;
+
+    if ( DataFromRow && DataFromRow.length > 0 ) {
       const firstObject = this.state.data[0];
 
       for ( const [key] of Object.entries( firstObject )) {
