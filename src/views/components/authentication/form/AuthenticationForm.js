@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { object, node, oneOf } from 'prop-types';
 import { Formik } from 'formik';
+import { location } from '../../../../utils';
 import { withKeycloak, Redirect } from '../../index';
 
 class AuthenticationForm extends Component {
@@ -10,6 +11,26 @@ class AuthenticationForm extends Component {
     type: oneOf(
       ['register', 'login']
     ),
+  }
+
+  state = {
+    redirectUri: null,
+  }
+
+  componentDidMount() {
+    this.setRedirectUri();
+  }
+
+  setRedirectUri() {
+    const { redirectUri } = location.getQueryParams();
+
+    if (
+      redirectUri &&
+      redirectUri !== 'login' &&
+      redirectUri !== 'register'
+    ) {
+      this.setState({ redirectUri });
+    }
   }
 
   handleSubmit = async ( values, form ) => {
@@ -44,10 +65,11 @@ class AuthenticationForm extends Component {
     const { children, keycloak } = this.props;
 
     if ( keycloak.isAuthenticated ) {
+      const { redirectUri } = this.state;
+
       return (
         <Redirect
-          to="app"
-          removeRedirectURL
+          to={redirectUri || 'app'}
           useMainNavigator
           appTo="home"
         />

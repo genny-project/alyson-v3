@@ -1,14 +1,14 @@
 import React from 'react';
 import { Redirect as ReactRouterRedirect } from 'react-router-dom';
-import { string, bool } from 'prop-types';
+import { string } from 'prop-types';
+import { removeStartingAndEndingSlashes } from '../../../utils';
 
-const Redirect = ({ to, removeRedirectURL = false }) => {
-  let route = to === 'splash'
-    ? '/'
-    : `/${to}`;
+const Redirect = ({ to }) => {
+  const strippedTo = removeStartingAndEndingSlashes( to );
 
-  if ( location.search && !removeRedirectURL )
-    route += location.search;
+  const route = strippedTo === 'splash'
+    ? `/${location.search}`
+    : `/${strippedTo}`;
 
   return (
     <ReactRouterRedirect
@@ -19,7 +19,6 @@ const Redirect = ({ to, removeRedirectURL = false }) => {
 
 Redirect.propTypes = {
   to: string.isRequired,
-  removeRedirectURL: bool,
 };
 
 export default Redirect;

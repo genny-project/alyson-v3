@@ -22,6 +22,10 @@ const getBasePath = () => {
   return layout;
 };
 
+/* Mock - there will never be query params here. */
+const getQueryParams = () => ({});
+
 export default {
   getBasePath,
+  getQueryParams,
 };
