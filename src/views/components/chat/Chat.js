@@ -87,6 +87,8 @@ class Chat extends Component {
         messages: [],
       });
 
+    newState.messages = newState.messages.sort(( messageA, messageB ) => messageA.createdAt < messageB.createdAt );
+
     console.log({ newState });
 
     return newState;
