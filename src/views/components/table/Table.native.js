@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { object, array } from 'prop-types';
 import { Header, HeaderCell,Row, Cell,DataTable } from 'react-native-data-table';
+
 import { Box } from '../../components';
 
 class TableView extends Component {
   defaultProps = {
     headerData: [],
     rowData: [],
+    data: [],
     headerCellStyle: {},
     headerCellTextStyle: {},
     headerStyle: {  },
@@ -30,6 +32,13 @@ class TableView extends Component {
     listViewStyle: object,
   }
 
+  constructor( props ) { 
+    super( props );
+    this.state = { 
+      data: null,
+    };
+  }
+
   /* render the header part */
   renderHeader() {
     const { headerCellStyle, headerCellTextStyle, headerStyle } = this.props;
@@ -38,7 +47,7 @@ class TableView extends Component {
     this.props.headerData.map( eachData => 
       headerCells.push(
         <HeaderCell
-          key={eachData.key}
+          key={eachData && eachData.key && eachData.key}
           style={headerCellStyle}
           textStyle={headerCellTextStyle}
           width={1}
@@ -54,7 +63,7 @@ class TableView extends Component {
   }
   
   /* Doing */
-  /* render the row part this is a TODO */
+  /* render the row part this is a TODO once data format is known. */
   renderRow( item ) {
     const { rowStyle, rowCellStyle ,rowCellTextStyle, rowData } = this.props;
 
@@ -103,7 +112,6 @@ class TableView extends Component {
         <DataTable
           style={tableStyle}
           listViewStyle={listViewStyle}
-          dataSource={this.state.dataSource}
           renderRow={this.renderRow}
           renderHeader={this.renderHeader}
         />
