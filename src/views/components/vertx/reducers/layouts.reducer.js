@@ -15,7 +15,7 @@ const layoutGroups = ['pages', 'sublayouts'];
  * are able to modify the object inside this function and use the changes in the local variable
  * (that is, whatever we passed into `state`) from the block this function was called from.
  * See uses. */
-const injectLayoutIntoState = ({ uri, data, state, isDevLayout }) => {
+const injectLayoutIntoState = ({ uri, data, state, isDevLayout, isPublic = false }) => {
   /* Use of `Array.some()` here is to counteract using `Array.forEach()`,
   * but we only want to loop through `layoutGroups` until we find the corresponding
   * group to the layout URI. `.some()` allows us to cancel out at any time by
@@ -39,6 +39,7 @@ const injectLayoutIntoState = ({ uri, data, state, isDevLayout }) => {
       }
 
       state[layoutGroup][newUri] = data;
+      state[layoutGroup][newUri].isPublic = isPublic;
 
       if ( isDevLayout )
         state[layoutGroup][newUri].isDevLayout = true;
@@ -141,7 +142,7 @@ const reducer = ( state = initialState, { type, payload }) => {
       payload.forEach( layout => {
         const { uri, data } = layout;
 
-        injectLayoutIntoState({ uri, data, state: newState });
+        injectLayoutIntoState({ uri, data, state: newState, isPublic: true });
       });
 
       return newState;
