@@ -22,6 +22,7 @@ class Form extends Component {
     renderSubheading: object,
     renderFormInput: object,
     renderFormInputWrapper: object,
+    renderFormInputLabel: object,
     renderLoading: object,
     renderSubmitButtonWrapper: object,
     renderSubmitButton: object,
@@ -472,7 +473,14 @@ class Form extends Component {
     isSubmitting,
     questionGroupCode
   ) => ( ask, index ) => {
-    const { renderFormInput, renderFormInputWrapper, renderSubheading, baseEntities } = this.props;
+    const {
+      renderFormInput,
+      renderFormInputWrapper,
+      renderFormInputLabel,
+      renderSubheading,
+      baseEntities,
+    } = this.props;
+
     const { questionCode, attributeCode, name, mandatory, question, childAsks } = ask;
     const { dataType } = baseEntities.definitions.data[attributeCode];
 
@@ -541,45 +549,47 @@ class Form extends Component {
       disabled: isSubmitting,
     };
 
-    if ( renderFormInputWrapper ) {
-      return (
-        <Recursive
-          key={questionCode}
-          {...renderFormInputWrapper}
-          context={context}
-          children={( // eslint-disable-line react/no-children-prop
-            renderFormInput
-              ? {
-                ...renderFormInput,
-                props: {
-                  ...renderFormInput.props,
-                  ...inputProps,
-                },
-              }
-              : {
-                component: 'FormInput',
-                props: inputProps,
-              }
-          )}
+    const children = [];
+
+    if ( renderFormInputLabel ) {
+      children.push({
+        ...renderFormInputLabel,
+        context,
+        props: {
+          ...renderFormInputLabel.props,
+          ...inputProps,
+        },
+      });
+    }
+
+    if ( renderFormInput ) {
+      children.push({
+        ...renderFormInput,
+        context,
+        props: {
+          ...renderFormInput.props,
+          ...inputProps,
+        },
+      });
+    }
+    else {
+      children.push(
+        <FormInput
+          {...inputProps}
         />
       );
     }
 
     return (
-      <Box key={questionCode}>
-        {renderFormInput ? (
-          <Recursive
-            {...renderFormInput}
-            context={context}
-            props={{
-              ...renderFormInput.props,
-              ...inputProps,
-            }}
-          />
-        ) : (
-          <FormInput {...inputProps} />
-        )}
-      </Box>
+      <Recursive
+        key={questionCode}
+        context={context}
+        /* Default to the 'Box' component if `renderFormInputWrapper` is
+         * not given as a prop. */
+        component="Box"
+        {...renderFormInputWrapper}
+        children={children} // eslint-disable-line react/no-children-prop
+      />
     );
   }
 
