@@ -107,8 +107,6 @@ module.exports = {
   node: {
     fs: 'empty',
   },
- 
-  devtool: 'eval',
 
   devServer: {
     port: process.env.PORT || 3000,

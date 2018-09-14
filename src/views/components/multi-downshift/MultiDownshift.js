@@ -4,7 +4,7 @@
 
 import React from 'react';
 import Downshift from 'downshift';
-import { func } from 'prop-types';
+import { func, array } from 'prop-types';
 
 class MultiDownshift extends React.Component {
   static propTypes = {
@@ -12,9 +12,20 @@ class MultiDownshift extends React.Component {
     onSelect: func,
     render: func,
     children: func,
+    selectedItems: array,
   }
 
   state = { selectedItems: [] }
+
+  componentDidMount() {
+    this.populateSelectedItems();
+  }
+
+  componentDidUpdate( prevProps ) {
+    if ( prevProps.selectedItems !== this.props.selectedItems ) {
+      this.populateSelectedItems();
+    }
+  }
 
   getRemoveButtonProps = ({ onPress, item, ...props } = {}) => {
     return {
@@ -38,6 +49,14 @@ class MultiDownshift extends React.Component {
       selectedItems,
       ...downshift,
     };
+  }
+
+  populateSelectedItems = () => {
+    if ( this.props.selectedItems ) {
+      this.setState({
+        selectedItems: this.props.selectedItems,
+      });
+    }
   }
 
   stateReducer = ( state, changes ) => {

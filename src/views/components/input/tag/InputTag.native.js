@@ -1,19 +1,26 @@
 import React, { Component } from 'react';
 import { Modal } from 'react-native';
 import { string, func, array } from 'prop-types';
-import { isString, isArray } from '../../../../utils';
+import { isString, isArray, isObject } from '../../../../utils';
 import { Box, MultiDownshift, Input, Text, SafeAreaView, Touchable, Icon } from '../../index';
 
 class InputTag extends Component {
   static defaultProps = {
     placeholder: 'Add a tag...',
     items: [],
+    itemStringKey: 'label',
+    itemValueKey: 'value',
+    itemIdKey: 'id',
   }
 
   static propTypes = {
     placeholder: string,
     onChangeValue: func,
     items: array,
+    itemStringKey: string,
+    itemValueKey: string,
+    itemIdKey: string,
+    value: array,
   }
 
   handleChange = selectedItems => {
@@ -22,15 +29,21 @@ class InputTag extends Component {
   }
 
   handleFilter = ( inputValue, selectedItems ) => dropdownItem => {
-    if ( selectedItems && selectedItems.includes( dropdownItem ))
+    const { itemStringKey } = this.props;
+    const itemString = isObject( dropdownItem ) ? dropdownItem[itemStringKey] : dropdownItem;
+
+    if ( selectedItems && selectedItems.includes( itemString ))
       return false;
+
+    if ( !dropdownItem )
+      return true;
 
     if ( !inputValue )
       return true;
 
     if (
-      isString( dropdownItem ) &&
-      dropdownItem.toLowerCase().includes( inputValue.toLowerCase())
+      isString( itemString ) &&
+      itemString.toLowerCase().includes( inputValue.toLowerCase())
     ) {
       return true;
     }
@@ -39,12 +52,13 @@ class InputTag extends Component {
   }
 
   render() {
-    const { items, ...restProps } = this.props;
+    const { items, value, itemStringKey, itemIdKey, ...restProps } = this.props;
 
     return (
       <MultiDownshift
         onChange={this.handleChange}
         itemToString={this.itemToString}
+        selectedItems={value}
       >
         {({
           getRootProps,
@@ -98,14 +112,18 @@ class InputTag extends Component {
                 selectedItems.map( item => (
                   <Box
                     key={item}
-                    backgroundColor="#CCC"
                     alignItems="center"
                     marginRight={10}
                     marginBottom={10}
+                    shape="pill"
+                    borderWidth={2}
+                    borderColor="#FFF"
+                    paddingLeft={10}
+                    paddingRight={5}
                     cleanStyleObject
                   >
                     <Box marginLeft={5}>
-                      <Text color="black">
+                      <Text color="#FFF">
                         {item}
                       </Text>
                     </Box>
@@ -122,7 +140,7 @@ class InputTag extends Component {
                       <Icon
                         type="material-icons"
                         name="clear"
-                        color="black"
+                        color="white"
                       />
                     </Touchable>
                   </Box>
@@ -201,39 +219,46 @@ class InputTag extends Component {
                   ) : null}
                 </Box>
 
-                {inputValue.length > 0 ? (
-                  isArray( items ) ? (
+                {(
+                  isArray( items ) ||
+                  inputValue.length > 0
+                ) ? (
                     items
-                    .filter( this.handleFilter( inputValue ))
                     .concat( [inputValue] )
-                    .map(( item, index ) => (
-                      <Touchable
-                        key={item}
-                        {...getItemProps({
-                          item,
-                          withFeedback: true,
-                          onPress: () => {
-                            selectItem( item );
-                            clearSelection();
-                          },
-                        })}
-                      >
-                        <Box
-                          padding={15}
-                          borderBottomWidth={1}
-                          borderColor="#DDD"
-                          borderStyle="solid"
-                          alignItems="center"
+                    .filter( this.handleFilter( inputValue ))
+                    .map(( item, index ) => {
+                      const itemString = isObject( item ) ? item[itemStringKey] : item;
+                      const itemId = isObject( item ) ? item[itemIdKey] : item;
+
+                      return (
+                        <Touchable
+                          key={itemId}
+                          {...getItemProps({
+                            item,
+                            withFeedback: true,
+                            onPress: () => {
+                              selectItem( itemString );
+                              clearSelection();
+                            },
+                          })}
                         >
-                          <Text
-                            color={highlightedIndex === index ? 'red' : 'black'}
-                            fontWeight={selectedItems && selectedItems.includes( item ) ? 'bold' : 'normal'}
+                          <Box
+                            padding={15}
+                            borderBottomWidth={1}
+                            borderColor="#DDD"
+                            borderStyle="solid"
+                            alignItems="center"
                           >
-                            {item}
-                          </Text>
-                        </Box>
-                      </Touchable>
-                    ))
+                            <Text
+                              color={highlightedIndex === index ? 'red' : 'black'}
+                              fontWeight={selectedItems && selectedItems.includes( itemString ) ? 'bold' : 'normal'}
+                            >
+                              {itemString}
+                            </Text>
+                          </Box>
+                        </Touchable>
+                      );
+                    })
                   ) : (
                     <Box
                       paddingX={15}
@@ -249,11 +274,10 @@ class InputTag extends Component {
                         {inputValue.length > 0
                           ? 'No results'
                           : 'Please type...'
-                        }
+                      }
                       </Text>
                     </Box>
-                  )
-                ) : null}
+                  )}
               </SafeAreaView>
             </Modal>
           </Box>

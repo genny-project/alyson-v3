@@ -22,6 +22,10 @@ export default ( data, options, allData ) => {
   /* Get the root level beg */
   const beg = allData.baseEntities.data[code];
 
+  if ( !beg ) {
+    return data;
+  }
+
   /* Store the root beg as depth 0 */
   result[beg.code] = 0;
 
@@ -36,6 +40,9 @@ export default ( data, options, allData ) => {
 };
 
 function getChildrenLinks( beg, depth, existing, allData ) {
+  if ( !beg )
+    return existing;
+
   const links = beg.links;
 
   links.forEach(({ link }) => {

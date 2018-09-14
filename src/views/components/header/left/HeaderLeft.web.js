@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { func, bool, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Link, Button, Box, Heading, Image } from '../../index';
+import { Link, Button, Box, Heading, Image, Touchable } from '../../index';
 import { LayoutConsumer } from '../../../layout';
 import { toggleSidebar } from '../../../../redux/actions';
 
@@ -14,6 +14,7 @@ class HeaderLeft extends Component {
     showTitle: bool,
     logoSource: string,
     title: string,
+    logoOpensMenu: bool,
   }
 
   handleToggleSidebar = () => {
@@ -27,6 +28,7 @@ class HeaderLeft extends Component {
       showTitle,
       logoSource,
       title,
+      logoOpensMenu,
     } = this.props;
 
     return (
@@ -49,15 +51,22 @@ class HeaderLeft extends Component {
             )}
 
             {showLogo ? (
-              <Box
-                marginLeft={5}
-                marginRight={15}
+              <Touchable
+                {...logoOpensMenu && {
+                  withFeedback: true,
+                  onPress: this.handleToggleSidebar,
+                }}
               >
-                <Image
-                  height="100%"
-                  source={logoSource}
-                />
-              </Box>
+                <Box
+                  marginLeft={5}
+                  marginRight={15}
+                >
+                  <Image
+                    height="100%"
+                    source={logoSource}
+                  />
+                </Box>
+              </Touchable>
             ) : null}
 
             {showTitle ? (

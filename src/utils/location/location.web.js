@@ -1,3 +1,5 @@
+import queryString from 'query-string';
+
 const getBasePath = () => {
   const { pathname } = window.location;
   const split = pathname.split( '/' );
@@ -12,6 +14,19 @@ const getBasePath = () => {
   return split.slice( 1 ).join( '/' );
 };
 
+const getQueryParams = () => {
+  const { search } = window.location;
+  const decodedQuery = decodeURIComponent( search );
+
+  return queryString.parse( decodedQuery );
+};
+
+const goBack = () => {
+  window.history.go( -1 );
+};
+
 export default {
   getBasePath,
+  getQueryParams,
+  goBack,
 };
