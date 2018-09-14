@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { string } from 'prop-types';
 import {  Box, Text, BackButton }  from '../../components';
 
 class Chat extends Component {
@@ -6,6 +7,7 @@ class Chat extends Component {
   };
 
   static propTypes = {
+    user: string,
   };
 
   renderParticipants = () => {
