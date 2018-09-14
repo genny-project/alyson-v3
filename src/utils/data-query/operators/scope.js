@@ -1,9 +1,10 @@
 import dlv from 'dlv';
 import dset from 'dset';
+import { isArray } from '../../../utils';
 import * as operators from './';
 
 export default ( data, options, allData ) => {
-  return data.length ? data.map( item => {
+  return isArray( data ) ? data.map( item => {
     return getSingleItemScoped( item, options, allData );
   }) : getSingleItemScoped( data, options, allData );
 };
