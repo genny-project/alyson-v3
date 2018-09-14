@@ -35,10 +35,6 @@ class Chat extends Component {
   static getDerivedStateFromProps( props, state ) {
     const { chatLinks } = props;
 
-    console.warn({
-      state, props, chatLinks,
-    });
-
     const newState = chatLinks.reduce(
       ( acc, curr ) => {
         if ( curr.name === 'message' )  {
@@ -66,13 +62,31 @@ class Chat extends Component {
         return {
           ...acc,
           users: [
-            ...acc.users, curr,
+            ...acc.users,
+            {
+              ...curr,
+              avatar: curr.attributes.PRI_IMAGE_URL.value,
+            },
           ],
         };
       }, {
         users: [],
         messages: [],
       });
+
+    newState.messages = newState.messages.map( message => {
+      const targetUser = newState.users.find(
+        user => user.code === message.user._id
+      );
+
+      return {
+        ...message,
+        user: {
+          ...message.user,
+          avatar: targetUser.attributes.PRI_IMAGE_URL.value,
+        },
+      };
+    });
 
     newState.messages.sort(( messageA, messageB ) => messageB.createdAt.diff( messageA.createdAt ));
 
@@ -100,8 +114,6 @@ class Chat extends Component {
 
   renderParticipants = () => {
     const { users } = this.state;
-
-    console.warn({ users });
 
     return users
       .filter( user => user.code !== this.props.user._id )

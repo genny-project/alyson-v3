@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import {  Box, Text, BackButton }  from '../../components';
+import { Box, Text, BackButton }  from '../../components';
 
 class Chat extends Component {
   static defaultProps = {
