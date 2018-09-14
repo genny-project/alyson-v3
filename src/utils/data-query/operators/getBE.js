@@ -27,8 +27,13 @@ const lookupBE = ( data, options, allData ) => {
   /* Create the path to the base entity */
   const be = copy( allData.baseEntities.data[injectContext( options.id, data )] );
 
-  if ( !be )
+  if (
+    !be ||
+    !be.name ||
+    !be.code
+  ) {
     return -1;
+  }
 
   return options.as ? { ...data, [options.as]: be } : be;
 };
