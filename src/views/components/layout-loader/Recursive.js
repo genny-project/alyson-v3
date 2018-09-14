@@ -140,11 +140,18 @@ class Recursive extends Component {
       const targetObject = isObject( result[current] )  ? result[current] : current;
       const keys = Object.keys( targetObject );
 
+      if ( result[current] && result[current].renderAsComponent ) {
+        result[current] = <Recursive {...result[current]} />;
+
+        return result;
+      }
+
       if ( result[current] ) {
         result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
       } else {
         result[index] = keys.reduce( this.handleReducePropInjection, result[index] );
       }
+      // console.warn( 'Result', result );
 
       return result;
     }
@@ -153,12 +160,23 @@ class Recursive extends Component {
   };
 
   injectContextIntoChildren( context, children ) {
-    return (
-      isString( children ) &&
-      children.indexOf( '{{' ) >= 0
-    )
-      ? this.curlyBracketParse( children )
-      : children;
+    if ( isString( children )) {
+      if ( children.startsWith( '_' )) {
+        let temp = children;
+
+        if ( children.includes( '{{' )) {
+          temp = this.curlyBracketParse( children );
+        }
+
+        return dlv( context, temp.substring( 1 ));
+      }
+
+      if ( children.includes( '{{' )) {
+        return this.curlyBracketParse( children );
+      }
+    }
+
+    return children;
   }
 
   /**
@@ -288,26 +306,25 @@ class Recursive extends Component {
      *
      * Investigate performance optimisation
      */
-    const repeatedChildren = injectedRepeat &&
-      isArray( injectedRepeat ) ? (
-        injectedRepeat.map(( child, index ) => ({
-          ...children,
-          props: {
-            ...children.props,
-            ...isArray( child ) ? child : {},
+    const repeatedChildren = isArray( injectedRepeat ) ? (
+      injectedRepeat.map(( child, index ) => ({
+        ...children,
+        props: {
+          ...children.props,
+          ...isArray( child ) ? child : {},
+        },
+        context: {
+          ...context,
+          repeater: !isObject( child ) ? child : {
+            ...child,
+            $index: index,
           },
-          context: {
-            ...context,
-            repeater: !isObject( child ) ? child : {
-              ...child,
-              $index: index,
-            },
-            parentRepeater: context.repeater,
-          },
-        }))
-      ) : (
-        this.injectContextIntoChildren( context, children )
-      );
+          parentRepeater: context.repeater,
+        },
+      }))
+    ) : (
+      this.injectContextIntoChildren( context, children )
+    );
 
     const componentProps = this.injectContextIntoProps({
       ...(
