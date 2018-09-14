@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Picker } from 'react-native';
 import { oneOfType, arrayOf, string, any, shape, number, func, bool } from 'prop-types';
+import { isArray, isObject } from '../../../../utils';
 
 class InputDropdown extends Component {
   static defaultProps = {
@@ -15,6 +16,7 @@ class InputDropdown extends Component {
     itemStringKey: string,
     itemValueKey: string,
     itemIdKey: string,
+    placeholder: string,
     disabled: bool,
     items: oneOfType(
       [
@@ -49,6 +51,11 @@ class InputDropdown extends Component {
   }
 
   handleChange = value => {
+    const { placeholder } = this.props;
+
+    if ( value === placeholder )
+      return;
+
     this.setState({ value });
 
     if ( this.props.onChangeValue )
@@ -56,14 +63,19 @@ class InputDropdown extends Component {
   }
 
   render() {
-    const { items, itemStringKey, itemValueKey, itemIdKey, disabled, ...restProps } = this.props;
+    const {
+      items,
+      itemStringKey,
+      itemValueKey,
+      itemIdKey,
+      disabled,
+      placeholder,
+      ...restProps
+    } = this.props;
+
     const { value } = this.state;
 
-    const validItems = (
-      items != null &&
-      items instanceof Array &&
-      items.length > 0
-    );
+    const validItems = isArray( items, { ofMinLength: 1 });
 
     return (
       <Picker
@@ -73,24 +85,31 @@ class InputDropdown extends Component {
         selectedValue={value}
       >
         {validItems ? (
-          items.map( item => {
-            const isItemObject = (
-              item != null &&
-              typeof item === 'object'
-            );
-
-            return (
+          <Fragment>
+            {placeholder ? (
               <Picker.Item
-                key={(
-                  isItemObject
-                    ? ( item[itemIdKey] || item[itemStringKey] )
-                    : item
-                )}
-                label={isItemObject ? item[itemStringKey] : item}
-                value={isItemObject ? item[itemValueKey] : item}
+                label={placeholder}
+                disabled
+                hidden
               />
-            );
-          })
+            ) : null}
+
+            {items.map( item => {
+              const isItemObject = isObject( item );
+
+              return (
+                <Picker.Item
+                  key={(
+                    isItemObject
+                      ? ( item[itemIdKey] || item[itemStringKey] )
+                      : item
+                  )}
+                  label={isItemObject ? item[itemStringKey] : item}
+                  value={isItemObject ? item[itemValueKey] : item}
+                />
+              );
+            })}
+          </Fragment>
         ) : (
           <Picker.Item
             label="No items to show"
