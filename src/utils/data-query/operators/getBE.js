@@ -11,8 +11,12 @@ export default ( data, options, allData ) => {
     : data.reduce(( result, item ) => {
       const be = lookupBE( item, options, allData );
 
-      if ( be === -1 )
+      if (
+        options.filterOutEmpty &&
+        be === undefined
+      ) {
         return result;
+      }
 
       result.push( be );
 
@@ -28,11 +32,13 @@ const lookupBE = ( data, options, allData ) => {
   const be = copy( allData.baseEntities.data[injectContext( options.id, data )] );
 
   if (
-    !be ||
-    !be.name ||
-    !be.code
+    options.filterOutEmpty && (
+      !be ||
+      !be.name ||
+      !be.code
+    )
   ) {
-    return -1;
+    return undefined;
   }
 
   return options.as ? { ...data, [options.as]: be } : be;
