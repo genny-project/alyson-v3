@@ -294,11 +294,11 @@ class Recursive extends Component {
           ...children,
           props: {
             ...children.props,
-            ...( Array.isArray( child ) ? child : {}),
+            ...isArray( child ) ? child : {},
           },
           context: {
             ...context,
-            repeater: {
+            repeater: !isObject( child ) ? child : {
               ...child,
               $index: index,
             },
