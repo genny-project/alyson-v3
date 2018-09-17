@@ -650,7 +650,7 @@ class Form extends Component {
                 </Fragment>
               ))}
 
-              {questionGroups.reduce(( buttons, { attributeCode }, index ) => {
+              {questionGroups.reduce(( buttons, { attributeCode }) => {
                 if ( attributeCode.includes( 'CANCEL' )) {
                   buttons.push(
                     this.renderButton({
@@ -740,25 +740,25 @@ class Form extends Component {
                 }
 
                 /* If there are no buttons to show, render the submit button. */
-                if (
-                  index === questionGroups.length - 1 &&
-                  buttons.length === 0
-                ) {
-                  buttons.push(
-                    this.renderButton({
-                      disabled: !isValid || isSubmitting,
-                      onPress: () => {
-                        this.setState({
-                          formStatus: 'submit',
-                        }, () => {
-                          submitForm();
-                        });
-                      },
-                      text: 'Submit',
-                      showSpinnerOnClick: true,
-                    })
-                  );
-                }
+                // if (
+                //   index === questionGroups.length - 1 &&
+                //   buttons.length === 0
+                // ) {
+                //   buttons.push(
+                //     this.renderButton({
+                //       disabled: !isValid || isSubmitting,
+                //       onPress: () => {
+                //         this.setState({
+                //           formStatus: 'submit',
+                //         }, () => {
+                //           submitForm();
+                //         });
+                //       },
+                //       text: 'Submit',
+                //       showSpinnerOnClick: true,
+                //     })
+                //   );
+                // }
 
                 return buttons;
               }, [] )}
