@@ -186,10 +186,23 @@ const handleReduceData = ( resultant, current ) => {
      * inside of it. Be sure that no duplicates occur by filtering out the current's code
      * from the list of existing links. */
     else {
-      const noLinksExist = !resultant[current.parentCode].links;
+      const noLinksExist = !isArray( resultant[current.parentCode].links, { ofMinLength: 1 });
 
       /* If no links exist yet, simply set the links to be array of the new link (current). */
-      const newLinks = noLinksExist ? [current] : (
+      const newLinks = noLinksExist ? [{
+        created: current.created,
+        updated: current.updated,
+        code: current.code,
+        weight: ( current.weight != null ) ? current.weight : 1,
+        link: {
+          attributeCode: 'LNK_CORE',
+          targetCode: current.code,
+          sourceCode: current.parentCode,
+          weight: 1,
+          linkValue: 'LINK',
+          ...current.link,
+        },
+      }] : (
         /* Loop through each existing link. */
         resultant[current.parentCode].links.reduce(( links, link, index ) => {
           /* If the current link is in the existing links, update the
