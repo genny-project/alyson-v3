@@ -1,22 +1,24 @@
 import React, { Component } from 'react';
 import { string, func, array } from 'prop-types';
-import { isString, isArray } from '../../../../utils';
+import { isString, isArray, isObject } from '../../../../utils';
 import { Box, MultiDownshift, Input, Text, Touchable, Icon } from '../../index';
-
-/**
- * For now, InputTag only works with an array of strings.
- */
 
 class InputTag extends Component {
   static defaultProps = {
     placeholder: 'Add a tag...',
     items: [],
+    itemStringKey: 'label',
+    itemValueKey: 'value',
+    itemIdKey: 'id',
   }
 
   static propTypes = {
     onChangeValue: func,
     items: array,
     placeholder: string,
+    itemStringKey: string,
+    itemValueKey: string,
+    itemIdKey: string,
   }
 
   handleChange = selectedItems => {
@@ -25,15 +27,18 @@ class InputTag extends Component {
   }
 
   handleFilter = ( inputValue, selectedItems ) => dropdownItem => {
-    if ( selectedItems.includes( dropdownItem ))
+    const { itemStringKey } = this.props;
+    const itemString = isObject( dropdownItem ) ? dropdownItem[itemStringKey] : dropdownItem;
+
+    if ( selectedItems.includes( itemString ))
       return false;
 
     if ( !inputValue )
       return true;
 
     if (
-      isString( dropdownItem ) &&
-      dropdownItem.toLowerCase().includes( inputValue.toLowerCase())
+      isString( itemString ) &&
+      itemString.toLowerCase().includes( inputValue.toLowerCase())
     ) {
       return true;
     }
@@ -42,7 +47,7 @@ class InputTag extends Component {
   }
 
   render() {
-    const { items, ...restProps } = this.props;
+    const { items, itemIdKey, itemStringKey, ...restProps } = this.props;
 
     return (
       <MultiDownshift
@@ -106,19 +111,25 @@ class InputTag extends Component {
                   maxHeight="11rem"
                   overflow="auto"
                 >
-                  {inputValue.length > 0 ? (
-                    isArray( items ) && (
+                  {(
+                    isArray( items ) ||
+                    inputValue.length > 0
+                  ) ? (
                       items
-                        .filter( this.handleFilter( inputValue, selectedItems ))
-                        .concat( [inputValue] )
-                        .map(( item, index ) => (
+                      .filter( this.handleFilter( inputValue, selectedItems ))
+                      .concat( [inputValue] )
+                      .map(( item, index ) => {
+                        const itemString = isObject( item ) ? item[itemStringKey] : item;
+                        const itemId = isObject( item ) ? item[itemIdKey] : item;
+
+                        return (
                           <Touchable
-                            key={item}
+                            key={itemId}
                             {...getItemProps({
                               item,
                               withFeedback: true,
                               onPress: () => {
-                                selectItem( item );
+                                selectItem( itemString );
                                 clearSelection();
                               },
                             })}
@@ -132,33 +143,33 @@ class InputTag extends Component {
                             >
                               <Text
                                 color={highlightedIndex === index ? 'red' : 'black'}
-                                fontWeight={selectedItems.includes( item ) ? 'bold' : 'normal'}
+                                fontWeight={selectedItems.includes( itemString ) ? 'bold' : 'normal'}
                               >
-                                {item}
+                                {itemString}
                               </Text>
                             </Box>
                           </Touchable>
-                        ))
-                    )
-                  ) : (
-                    <Box
-                      paddingX={15}
-                      paddingY={10}
-                      width="100%"
-                      justifyContent="center"
-                    >
-                      <Text
-                        align="center"
-                        color="grey"
-                        size="xs"
+                        );
+                      })
+                    ) : (
+                      <Box
+                        paddingX={15}
+                        paddingY={10}
+                        width="100%"
+                        justifyContent="center"
                       >
-                        {inputValue.length > 0
-                          ? 'No results'
-                          : 'Please type...'
+                        <Text
+                          align="center"
+                          color="grey"
+                          size="xs"
+                        >
+                          {inputValue.length > 0
+                            ? 'No results'
+                            : 'Please type...'
                         }
-                      </Text>
-                    </Box>
-                  )}
+                        </Text>
+                      </Box>
+                    )}
                 </Box>
               )}
             </Box>
@@ -175,6 +186,7 @@ class InputTag extends Component {
                     alignItems="center"
                     marginRight={10}
                     marginBottom={10}
+                    borderRadius={20}
                     cleanStyleObject
                   >
                     <Box marginLeft={5}>

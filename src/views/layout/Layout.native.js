@@ -54,7 +54,7 @@ class Layout extends Component {
     ) {
       this.props.layout.setTitle( this.props.title );
 
-      this.props.navigation.setParams({
+      this.props.navigation && this.props.navigation.setParams({
         title: this.props.title,
       });
     }
