@@ -1,4 +1,5 @@
 import { NavigationActions } from 'react-navigation';
+import dlv from 'dlv';
 import { routes } from '../../../config';
 import * as actions from './vertx.actions';
 import { Bridge, removeStartingAndEndingSlashes } from '../../../utils';
@@ -34,10 +35,13 @@ const middleware = store => next => action => {
 
     /* Stop route change from pushing the same route as the current route. */
     if ( code !== currentRoute ) {
+      const params = dlv( action, 'payload.params' );
+
       store.dispatch(
         NavigationActions.navigate({
           routeName: routes[code] ? code : 'generic',
           params: {
+            ...params || {},
             layout: code,
           },
         })
