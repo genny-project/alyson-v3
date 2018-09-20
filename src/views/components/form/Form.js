@@ -270,6 +270,7 @@ class Form extends Component {
       finalValue = JSON.stringify( finalValue );
     }
 
+    // eslint-disable-next-line no-console
     console.warn( 'sending answer...', {
       askId: ask.id,
       attributeCode: finalAttributeCode,
@@ -330,6 +331,7 @@ class Form extends Component {
     );
 
     if ( !questionGroup ) {
+      // eslint-disable-next-line no-console
       console.warn( 'Could not submit form - no question group associated with form.' );
 
       return;
@@ -358,6 +360,7 @@ class Form extends Component {
     );
 
     if ( !questionGroup ) {
+      // eslint-disable-next-line no-console
       console.warn( 'Could not submit form - no question group associated with form.' );
 
       return;
@@ -386,6 +389,7 @@ class Form extends Component {
     );
 
     if ( !questionGroup ) {
+      // eslint-disable-next-line no-console
       console.warn( 'Could not submit form - no question group associated with form.' );
 
       return;

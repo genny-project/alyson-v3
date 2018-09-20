@@ -1,4 +1,5 @@
 /* Import all of the find operators */
+import dlv from 'dlv';
 import * as findOperators from './findOperators';
 import { injectContext } from './helpers';
 
@@ -77,7 +78,7 @@ const objectMatch = ( item, query, context ) => {
   return !queryKeys.filter( queryKey => {
     const expectedValue = context ? injectContext( query[queryKey], context ) : query[queryKey];
 
-    return !doesValueMatch( item[queryKey], expectedValue, context );
+    return !doesValueMatch( dlv( item, queryKey ), expectedValue, context );
   }).length;
 };
 

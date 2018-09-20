@@ -102,6 +102,9 @@ const handleReduceAttributes = ( resultant, current ) => {
 };
 
 const handleReduceLinks = ( resultant, current ) => {
+  if ( !isArray( current.links ))
+    return resultant;
+
   const handleCombineLinkValues = link => {
     if ( link.link.linkValue ) {
       resultant[link.link.linkValue] = ({

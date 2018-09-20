@@ -20,7 +20,6 @@ const Container = ({
       maxWidth={fullWidth ? '100%' : containerWidth[size]}
       width="100%"
       marginX="auto"
-      fullHeightOnWeb
       cleanStyleObject
     >
       {children}

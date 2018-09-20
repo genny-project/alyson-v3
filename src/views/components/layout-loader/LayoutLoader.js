@@ -131,7 +131,11 @@ class LayoutLoader extends Component {
     /* Calculate the data for the layout */
     const context = {
       query: new DataQuery( data ).query( layout.query || [], {
-        navigation: navigation && navigation.state ? navigation.state.params : {},
+        navigation: {
+          ...(( navigation && navigation.state && navigation.state.params ) || {}),
+          ...(( router && router.location && router.location.state ) || {}),
+          ...currentRouteParams,
+        },
         props: sublayoutProps,
         user: data.user,
       }),
@@ -145,7 +149,7 @@ class LayoutLoader extends Component {
       user: data.user,
     };
 
-    const Holder = sublayout ? Box : Layout;
+    const Holder = sublayout ? Fragment : Layout;
 
     return (
       <Holder

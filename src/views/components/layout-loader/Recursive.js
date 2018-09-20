@@ -212,8 +212,13 @@ class Recursive extends Component {
         contextedField = this.curlyBracketParse( field );
       }
 
-      if ( typeof contextedValue === 'string' && contextedValue.includes( '{{' )) {
-        contextedValue = this.curlyBracketParse( contextedValue );
+      if ( isString( contextedValue )) {
+        if ( contextedValue.includes( '{{' )) {
+          contextedValue = this.curlyBracketParse( contextedValue );
+        }
+        else if ( contextedValue.startsWith( '_' )) {
+          contextedValue = dlv( dataPool, contextedValue.substring( 1 ));
+        }
       }
 
       /**

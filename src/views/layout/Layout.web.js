@@ -1,9 +1,9 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { any, string, bool, object } from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import LayoutConsumer from './consumer';
-import { Header } from '../components';
+import { Header, Box } from '../components';
 import { shallowCompare } from '../../utils';
 import { Sidebar } from '../routing';
 
@@ -164,11 +164,15 @@ class Layout extends Component {
   }
 
   render() {
-    const { children, title, layout, hideSidebar, appName } = this.props;
-    const { headerProps, showHeader } = layout;
+    const { children, title, layout, appName } = this.props;
+    const { headerProps, showHeader, showSidebar, sidebarProps } = layout;
 
     return (
-      <Fragment>
+      <Box
+        height="100%"
+        width="100%"
+        flex={1}
+      >
         <Helmet>
           <title>
             {(
@@ -190,19 +194,31 @@ class Layout extends Component {
         </Helmet>
 
         {(
-          showHeader &&
-          headerProps != null &&
-          Object.keys( headerProps ).length > 0
+          showSidebar &&
+          sidebarProps != null &&
+          Object.keys( sidebarProps ).length > 0
         ) && (
-          <Header {...headerProps} />
+          <Sidebar {...sidebarProps} />
         )}
 
-        {!hideSidebar && (
-          <Sidebar />
-        )}
+        <Box
+          flexDirection="column"
+          flex={1}
+          {...( sidebarProps && sidebarProps.width ) && {
+            width: `calc(100vw - ${sidebarProps.width}px)`,
+          }}
+        >
+          {(
+            showHeader &&
+            headerProps != null &&
+            Object.keys( headerProps ).length > 0
+          ) && (
+            <Header {...headerProps} />
+          )}
 
-        {children}
-      </Fragment>
+          {children}
+        </Box>
+      </Box>
     );
   }
 }

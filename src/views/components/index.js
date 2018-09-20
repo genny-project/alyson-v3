@@ -57,6 +57,7 @@ export { default as LayoutFetcher } from './layout-fetcher';
 export { default as SafeAreaView } from './safe-area-view';
 export { default as MultiDownshift } from './multi-downshift';
 export { default as DisplayHTML } from './display-html';
+export { default as Recursive } from './layout-loader/Recursive';
 
 export * from './keycloak';
 export * from './vertx';
