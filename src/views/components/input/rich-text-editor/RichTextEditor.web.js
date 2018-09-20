@@ -2,10 +2,12 @@ import React from 'react';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import { isKeyHotkey } from 'is-hotkey';
+import { string, oneOfType, number } from 'prop-types';
+/* This could be dynamic in the future (pre filled schemas while typing in the job description.) */
 import initialValue from './defaultSchema.json';
 import Toolbar from './ToolBar';
 import { Icon } from '../../../components';
-import Button from './Button';
+import IconWrapperButton from './Button';
 
 /* default html node to choose */
 const DEFAULT_NODE = 'paragraph';
@@ -18,6 +20,20 @@ const isUnderlinedHotkey = isKeyHotkey( 'mod+u' );
 const isCodeHotkey = isKeyHotkey( 'mod+`' );
 
 class RichTextEditor extends React.Component {
+  static defaultProps = {
+    backgroundColor: '#eee',
+    editorBackgroundColor: '#fff',
+    height: 'auto',
+    width: '100%',
+  }
+  
+  static propTypes = {
+    backgroundColor: string,
+    editorBackgroundColor: string,
+    height: oneOfType( [string, number] ),
+    width: oneOfType( [string,number] ),
+  }
+
   /* Set initial form value from the JSON file */
   state = {
     value: Value.fromJSON( initialValue ),
@@ -39,7 +55,7 @@ class RichTextEditor extends React.Component {
     const isActive = this.hasMark( type );
 
     return (
-      <Button
+      <IconWrapperButton
         active={isActive}
         onMouseDown={event => this.onClickMark( event, type )}
       >
@@ -47,7 +63,7 @@ class RichTextEditor extends React.Component {
           name={icon}
           color={`${isActive ? 'black' : 'rgb(204,204,204)'}`}
         />
-      </Button>
+      </IconWrapperButton>
     );
   };
 
@@ -62,7 +78,7 @@ class RichTextEditor extends React.Component {
     }
 
     return (
-      <Button
+      <IconWrapperButton
         active={isActive}
         onMouseDown={event => this.onClickBlock( event, type )}
       >
@@ -70,7 +86,7 @@ class RichTextEditor extends React.Component {
           name={icon}
           color={`${isActive ? 'black' : 'rgb(204,204,204)'}`}
         />
-      </Button>
+      </IconWrapperButton>
     );
   };
 
@@ -160,16 +176,9 @@ class RichTextEditor extends React.Component {
         );
       case 'paragraph':
         return (
-          <p {...attributes}>
+          <span {...attributes}>
             {children}
-          </p>
-        );
-
-      default: 
-        return (
-          <p {...attributes}> 
-            {children}
-          </p>
+          </span>
         );
     }
   };
@@ -203,7 +212,7 @@ class RichTextEditor extends React.Component {
     const { value } = this.state;
     const change = value.change().toggleMark( type );
 
-    this.onChange( change );
+    this.handleChange( change );
   };
 
   onClickBlock = ( event, type ) => {
@@ -247,13 +256,20 @@ class RichTextEditor extends React.Component {
         change.setBlocks( 'list-item' ).wrapBlock( type );
       }
     }
-    this.onChange( change );
+    this.handleChange( change );
   };
 
   render() {
+    const { backgroundColor, width, height, editorBackgroundColor } = this.props;
+
     return (
       <div
-        style={{ backgroundColor: '#eee', width: '100%', padding: 20 }}
+        style={{
+          backgroundColor: backgroundColor,
+          width: width,
+          padding: 20,
+          fontFamily: 'Helvetica',
+          height: height }}
       >
         <Toolbar>
           {this.renderMarkButton( 'bold', 'format_bold' )}
@@ -268,8 +284,13 @@ class RichTextEditor extends React.Component {
           {this.renderBlockButton( 'bulleted-list', 'format_list_bulleted' )}
         </Toolbar>
         <Editor
-          backgroundColor="#fff"
-          style={{ backgroundColor: 'white', height: 400, margin: 0, padding: 10 }}
+          backgroundColor={editorBackgroundColor}
+          style={
+            { backgroundColor: 'white',
+              height: 400, margin: 0,
+              padding: 10, 
+            }
+            }
           autoFocus
           placeholder=""
           value={this.state.value}

@@ -1,16 +1,14 @@
 # props types and props
 
 ``` 
-
-height: string, number 
-width: string, number 
+height: string, number
+width: string, number
 
 
 
 ```
 
-# Examples
-
+#Examples
 
 ```json
 
