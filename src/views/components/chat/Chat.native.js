@@ -1,10 +1,10 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { any, array, string, object } from 'prop-types';
-import { GiftedChat, MessageText, Bubble, Send } from 'react-native-gifted-chat';
+import { GiftedChat, MessageText, Bubble, Send, InputToolbar } from 'react-native-gifted-chat';
 import moment from 'moment';
 
 import { Bridge } from '../../../utils';
-import { Icon, Box, Text, BackButton }  from '../../components';
+import { Icon, Box, SafeAreaView }  from '../../components';
 
 class Chat extends Component {
   static defaultProps = {
@@ -27,6 +27,7 @@ class Chat extends Component {
     users: array,
     messages: array,
     itemCode: string,
+    // alwaysShowSend: bool, prop not working in package
   };
 
   state = {
@@ -64,6 +65,20 @@ class Chat extends Component {
       }
     );
 
+    newState.messages = newState.messages.map( message => {
+      const targetUser = newState.users.find(
+        user => user.code === message.user._id
+      );
+
+      return {
+        ...message,
+        user: {
+          ...message.user,
+          avatar: targetUser.attributes.PRI_IMAGE_URL.value,
+        },
+      };
+    });
+
     newState.messages.sort(( messageA, messageB ) => messageB.createdAt.diff( messageA.createdAt ));
 
     return newState;
@@ -90,8 +105,6 @@ class Chat extends Component {
 
   renderParticipants = () => {
     const { users } = this.state;
-
-    console.warn({ users });
 
     return users
       .filter( user => user.code !== this.props.user._id )
@@ -120,6 +133,7 @@ class Chat extends Component {
             justifyContent="center"
             backgroundColor={sendIconBackgroundColor}
             height="100%"
+            shape="circle"
           >
             <Icon
               color={sendIconColor}
@@ -154,17 +168,42 @@ class Chat extends Component {
     );
   }
 
+  renderInputToolbar = ( props ) => {
+    // Add the extra styles via containerStyle
+
+    return (
+      <InputToolbar
+        {...props}
+//        containerStyle={{ borderTopWidth: 1.5, borderTopColor: '#05C' }}
+      />
+    );
+  }
+
   render() {
     const { user } = this.props;
 
     return (
-      <GiftedChat
-        messages={this.state.messages}
-        onSend={messages => this.onSend( messages )}
-        renderBubble={this.renderBubble}
-        renderSend={this.renderSend}
-        user={user}
-      />
+      <SafeAreaView
+        forceInset={{
+          top: 'never',
+        }}
+        style={{
+          flex: 1,
+        }}
+      >
+        <Box
+          flex={1}
+        >
+          <GiftedChat
+            messages={this.state.messages}
+            onSend={messages => this.onSend( messages )}
+            renderBubble={this.renderBubble}
+            renderSend={this.renderSend}
+            renderInputToolbar={this.renderInputToolbar}
+            user={user}
+          />
+        </Box>
+      </SafeAreaView>
     );
   }
 }
