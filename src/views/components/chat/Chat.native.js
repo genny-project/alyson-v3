@@ -65,20 +65,6 @@ class Chat extends Component {
       }
     );
 
-    newState.messages = newState.messages.map( message => {
-      const targetUser = newState.users.find(
-        user => user.code === message.user._id
-      );
-
-      return {
-        ...message,
-        user: {
-          ...message.user,
-          avatar: targetUser.attributes.PRI_IMAGE_URL.value,
-        },
-      };
-    });
-
     newState.messages.sort(( messageA, messageB ) => messageB.createdAt.diff( messageA.createdAt ));
 
     return newState;
