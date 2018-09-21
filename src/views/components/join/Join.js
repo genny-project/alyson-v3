@@ -1,7 +1,7 @@
-import React, { Component, Children } from 'react';
+import React from 'react';
 import { array, string } from 'prop-types';
 
-class Join extends Component {
+class Join extends React.Component {
     static defaultProps = {
       delimiter: ', ',
       items: [],
@@ -13,9 +13,6 @@ class Join extends Component {
     }
 
     render() {
-      console.warn({
-        ABABABABA: this.props,
-      });
       const { items, delimiter } = this.props;
 
       return (
