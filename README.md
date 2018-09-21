@@ -61,7 +61,7 @@ cd .. && npm run start:native
 react-native run-android
 ```
 
-if using an environment variable file that is not ` .env `, use
+if using an environment variable file that is not `.env`, use
 
 ```
 ENVFILE=.env.project-name  react-native run-android
