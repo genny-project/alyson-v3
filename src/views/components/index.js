@@ -58,6 +58,7 @@ export { default as SafeAreaView } from './safe-area-view';
 export { default as MultiDownshift } from './multi-downshift';
 export { default as DisplayHTML } from './display-html';
 export { default as BackButton } from './back-button';
+export { default as Join } from './join';
 
 export * from './keycloak';
 export * from './vertx';

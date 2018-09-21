@@ -12,7 +12,8 @@ class Chat extends Component {
     user: {
       _id: 1,
     },
-    chatLinks: [],
+    messages: [],
+    users: [],
   };
 
   static propTypes = {
@@ -23,7 +24,8 @@ class Chat extends Component {
     sendIconColor: string,
     sendIconBackgroundColor: string,
     user: object,
-    chatLinks: array,
+    users: array,
+    messages: array,
     itemCode: string,
     // alwaysShowSend: bool, prop not working in package
   };
@@ -33,61 +35,35 @@ class Chat extends Component {
     users: [],
   };
 
-  static getDerivedStateFromProps( props ) {
-    const { chatLinks } = props;
+  static getDerivedStateFromProps( props, state ) {
+    const { messages, users } = props;
 
-    const newState = chatLinks.reduce(
-      ( acc, curr ) => {
-        if ( curr.name === 'message' )  {
-          const { PRI_MESSAGE, PRI_CREATOR } = curr.attributes;
+    const chatLinks = [];
 
-          const newMessage = {
-            _id: PRI_MESSAGE.baseEntityCode,
-            text: PRI_MESSAGE.value,
-            createdAt: moment( `${PRI_MESSAGE.created}Z` ),
-            user: {
-              _id: PRI_CREATOR.value,
-            },
-          };
+    console.warn({
+      state, props, chatLinks, messages, users,
+    });
 
-          return {
-            ...acc,
-            messages: [
-              ...acc.messages, newMessage,
-            ],
-          };
-        }
+    const newState = { ...state };
 
-        // if it's not a message, it's a user
+    newState.messages = props.messages.map(
+      message => {
+        const { PRI_MESSAGE, PRI_CREATOR } = message.attributes;
+
+        console.warn({
+          message, PRI_CREATOR, PRI_MESSAGE,
+        });
 
         return {
-          ...acc,
-          users: [
-            ...acc.users,
-            {
-              ...curr,
-              avatar: curr.attributes.PRI_IMAGE_URL.value,
-            },
-          ],
+          _id: PRI_MESSAGE.baseEntityCode,
+          text: PRI_MESSAGE.value,
+          createdAt: moment( `${PRI_MESSAGE.created}Z` ),
+          user: {
+            _id: PRI_CREATOR.value,
+          },
         };
-      }, {
-        users: [],
-        messages: [],
-      });
-
-    newState.messages = newState.messages.map( message => {
-      const targetUser = newState.users.find(
-        user => user.code === message.user._id
-      );
-
-      return {
-        ...message,
-        user: {
-          ...message.user,
-          avatar: targetUser.attributes.PRI_IMAGE_URL.value,
-        },
-      };
-    });
+      }
+    );
 
     newState.messages.sort(( messageA, messageB ) => messageB.createdAt.diff( messageA.createdAt ));
 
