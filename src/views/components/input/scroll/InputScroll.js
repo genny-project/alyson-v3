@@ -28,6 +28,11 @@ class InputScroll extends Component {
     scrollViewHeight: 0,
   }
 
+  componentDidMount() {
+    this.props.onScrollEnd( true );
+    console.warn( 'bap' );
+  }
+
   handleScroll = ( e ) => {
     const { checkedOnce, scrollViewHeight } = this.state;
     const contentHeight = e.nativeEvent.contentSize.height;

@@ -41,7 +41,7 @@ class Touchable extends PureComponent {
 
     const props = {
       ...restProps,
-      ...isHovering && hoverProps,
+      ...isHovering ? hoverProps : {},
       onMouseEnter: this.handleMouseEnter,
       onMouseLeave: this.handleMouseLeave,
     };

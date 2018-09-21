@@ -1,3 +1,4 @@
+import { NavigationActions } from 'react-navigation';
 import { store } from '../../redux';
 
 const getBasePath = () => {
@@ -22,6 +23,17 @@ const getBasePath = () => {
   return layout;
 };
 
+/* Mock - there will never be query params here. */
+const getQueryParams = () => ({});
+
+const goBack = () => {
+  store.dispatch(
+    NavigationActions.back()
+  );
+};
+
 export default {
   getBasePath,
+  getQueryParams,
+  goBack,
 };

@@ -74,6 +74,7 @@
     "react-native-credit-card-input": "^0.4.1",
     "react-native-fs": "^2.11.15",
     "react-native-gesture-handler": "^1.0.5",
+    "react-native-gifted-chat": "^0.4.3",
     "react-native-image-picker": "^0.26.10",
     "react-native-iphone-x-helper": "^1.0.3",
     "react-native-keyboard-aware-scroll-view": "^0.6.0",

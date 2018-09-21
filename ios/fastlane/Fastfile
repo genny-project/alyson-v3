@@ -1,0 +1,49 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+before_all do
+    ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
+#    cocoapods
+    
+  end
+
+
+desc "Submit a new Beta Build to Apple TestFlight"
+  desc "This will also make sure the profile is up to date"
+  lane :beta do
+    increment_build_number
+    scan(scheme: "alysonv3")
+    match(type: "development")
+    gym
+    pilot(distribute_external: true, changelog: "New build for testing")
+end
+
+
+
+
+after_all do |lane|
+    # This block is called, only if the executed lane was successful
+slack(
+      message: "fastlane was successful :champagne:",
+      success: true,
+    )
+  end
+
+error do |lane, exception|
+    slack(
+      message: exception.message,
+      success: false
+    )
+  end

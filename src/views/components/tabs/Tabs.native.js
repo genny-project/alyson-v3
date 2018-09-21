@@ -3,6 +3,7 @@ import { ActivityIndicator, Dimensions,  Platform } from 'react-native';
 import { any, array, bool, string, number, oneOfType, func, object } from 'prop-types';
 import { TabViewAnimated, PagerScroll, PagerPan, TabView, TabBar } from 'react-native-tab-view';
 import { Box, Text, Icon, Timeout } from '../../components';
+import TabDots from './tab-dots';
 
 class Tabs extends Component {
   static defaultProps = {
@@ -12,6 +13,7 @@ class Tabs extends Component {
     labelProps: {},
     indicatorProps: {},
     sceneProps: {},
+    dotProps: {},
   }
 
   static propTypes = {
@@ -41,6 +43,8 @@ class Tabs extends Component {
     activeIconColor: string,
     restrictSceneHeights: bool,
     paddingBottom: number,
+    showDots: bool,
+    dotProps: object,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -159,6 +163,10 @@ class Tabs extends Component {
       activeTabBackground,
       scrollEnabled,
       indicatorProps,
+      showDots,
+      dotProps,
+      bottomTabs,
+      children,
     } = this.props;
 
     const style = {
@@ -172,15 +180,45 @@ class Tabs extends Component {
     };
 
     return (
-      <TabBar
-        {...props}
-        onTabPress={this.handlePress}
-        scrollEnabled={scrollEnabled}
-        renderLabel={this.renderLabel}
-        renderIcon={this.renderIcon}
-        style={style}
-        indicatorStyle={indicatorStyle}
-      />
+      <Fragment>
+        {
+          showDots &&
+          children &&
+          children.length > 0 &&
+          bottomTabs
+            ? (
+              <TabDots
+                {...dotProps}
+                numberOfDots={children.length}
+                currentIndex={this.state.index}
+              />
+            )
+            : null
+        }
+        <TabBar
+          {...props}
+          onTabPress={this.handlePress}
+          scrollEnabled={scrollEnabled}
+          renderLabel={this.renderLabel}
+          renderIcon={this.renderIcon}
+          style={style}
+          indicatorStyle={indicatorStyle}
+        />
+        {
+          showDots &&
+          children &&
+          children.length > 0 &&
+          !bottomTabs
+            ? (
+              <TabDots
+                {...dotProps}
+                numberOfDots={children.length}
+                currentIndex={this.state.index}
+              />
+            )
+            : null
+        }
+      </Fragment>
     );
   };
 

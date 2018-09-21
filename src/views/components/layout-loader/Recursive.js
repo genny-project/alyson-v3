@@ -1,4 +1,4 @@
-import React, { createElement, Component } from 'react';
+import React, { createElement, cloneElement, Component, isValidElement } from 'react';
 import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
@@ -140,11 +140,18 @@ class Recursive extends Component {
       const targetObject = isObject( result[current] )  ? result[current] : current;
       const keys = Object.keys( targetObject );
 
+      if ( result[current] && result[current].renderAsComponent ) {
+        result[current] = <Recursive {...result[current]} />;
+
+        return result;
+      }
+
       if ( result[current] ) {
         result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
       } else {
         result[index] = keys.reduce( this.handleReducePropInjection, result[index] );
       }
+      // console.warn( 'Result', result );
 
       return result;
     }
@@ -153,12 +160,23 @@ class Recursive extends Component {
   };
 
   injectContextIntoChildren( context, children ) {
-    return (
-      isString( children ) &&
-      children.indexOf( '{{' ) >= 0
-    )
-      ? this.curlyBracketParse( children )
-      : children;
+    if ( isString( children )) {
+      if ( children.startsWith( '_' )) {
+        let temp = children;
+
+        if ( children.includes( '{{' )) {
+          temp = this.curlyBracketParse( children );
+        }
+
+        return dlv( context, temp.substring( 1 ));
+      }
+
+      if ( children.includes( '{{' )) {
+        return this.curlyBracketParse( children );
+      }
+    }
+
+    return children;
   }
 
   /**
@@ -288,29 +306,32 @@ class Recursive extends Component {
      *
      * Investigate performance optimisation
      */
-    const repeatedChildren =
-      injectedRepeat && injectedRepeat instanceof Array
-        ? injectedRepeat.map( child => {
-          return {
-            ...children,
-            props: {
-              ...children.props,
-              ...( Array.isArray( child ) ? child : {}),
-            },
-            context: {
-              ...context,
-              repeater: child,
-              parentRepeater: context.repeater,
-            },
-          };
-        })
-        : this.injectContextIntoChildren( context, children );
+    const repeatedChildren = isArray( injectedRepeat ) ? (
+      injectedRepeat.map(( child, index ) => ({
+        ...children,
+        props: {
+          ...children.props,
+          ...isArray( child ) ? child : {},
+        },
+        context: {
+          ...context,
+          repeater: !isObject( child ) ? child : {
+            ...child,
+            $index: index,
+          },
+          parentRepeater: context.repeater,
+        },
+      }))
+    ) : (
+      this.injectContextIntoChildren( context, children )
+    );
 
     const componentProps = this.injectContextIntoProps({
       ...(
         variant &&
         theme.components[useThemeFrom || component] &&
-        theme.components[useThemeFrom || component][variant]
+        theme.components[useThemeFrom || component][variant] &&
+        theme.components[useThemeFrom || component][variant].props
       ),
       ...props,
       ...this.calculateConditionalProps( conditional, context ),
@@ -321,20 +342,28 @@ class Recursive extends Component {
       componentProps,
       isArray( repeatedChildren ) ? (
         repeatedChildren.map(( child, index ) => (
-          <Recursive
-            context={context}
-            // eslint-disable-next-line react/no-array-index-key
-            key={index}
-            theme={theme}
-            {...child}
-          />
+          isValidElement( child )
+            ? cloneElement( child, { key: index, context, theme })
+            : (
+              <Recursive
+                context={context}
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                theme={theme}
+                {...child}
+              />
+            )
         ))
       ) : isObject( repeatedChildren ) ? (
-        <Recursive
-          context={context}
-          theme={theme}
-          {...repeatedChildren}
-        />
+        isValidElement( repeatedChildren )
+          ? cloneElement( repeatedChildren, { context, theme })
+          : (
+            <Recursive
+              context={context}
+              theme={theme}
+              {...repeatedChildren}
+            />
+          )
       ) : (
         repeatedChildren
       )

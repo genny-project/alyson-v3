@@ -22,6 +22,7 @@ class Form extends Component {
     renderSubheading: object,
     renderFormInput: object,
     renderFormInputWrapper: object,
+    renderFormInputLabel: object,
     renderLoading: object,
     renderSubmitButtonWrapper: object,
     renderSubmitButton: object,
@@ -31,6 +32,7 @@ class Form extends Component {
     validationList: {},
     initialValues: {},
     questionGroups: [],
+    formStatus: null,
   }
 
   componentDidMount() {
@@ -316,10 +318,13 @@ class Form extends Component {
   }
 
   handleSubmit = ( values, form ) => {
-    const { setSubmitting } = form;
-    const { questionGroups } = this.state;
+    if ( form ) {
+      const { setSubmitting } = form;
 
-    setSubmitting( true );
+      setSubmitting( true );
+    }
+
+    const { questionGroups, formStatus } = this.state;
 
     const questionGroup = questionGroups.find( group => {
       return group.attributeCode.includes( 'BUTTON' );
@@ -328,6 +333,7 @@ class Form extends Component {
       questionGroups[0]
     );
 
+    console.log( questionGroup );
     if ( !questionGroup ) {
       console.warn( 'Could not submit form - no question group associated with form.' );
 
@@ -339,63 +345,7 @@ class Form extends Component {
       code: questionGroup.questionCode,
       value: JSON.stringify({
         targetCode: questionGroup.targetCode,
-        action: 'submit',
-      }),
-    };
-
-    Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
-  }
-
-  handlePressNo = () => {
-    const { questionGroups } = this.state;
-
-    const questionGroup = questionGroups.find( group => {
-      return group.attributeCode.includes( 'BUTTON' );
-    }) || (
-      questionGroups.length > 0 &&
-      questionGroups[0]
-    );
-
-    if ( !questionGroup ) {
-      console.warn( 'Could not submit form - no question group associated with form.' );
-
-      return;
-    }
-
-    /* send event to back end */
-    const eventData = {
-      code: questionGroup.questionCode,
-      value: JSON.stringify({
-        targetCode: questionGroup.targetCode,
-        action: 'no',
-      }),
-    };
-
-    Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
-  }
-
-  handlePressYes = () => {
-    const { questionGroups } = this.state;
-
-    const questionGroup = questionGroups.find( group => {
-      return group.attributeCode.includes( 'BUTTON' );
-    }) || (
-      questionGroups.length > 0 &&
-      questionGroups[0]
-    );
-
-    if ( !questionGroup ) {
-      console.warn( 'Could not submit form - no question group associated with form.' );
-
-      return;
-    }
-
-    /* send event to back end */
-    const eventData = {
-      code: questionGroup.questionCode,
-      value: JSON.stringify({
-        targetCode: questionGroup.targetCode,
-        action: 'yes',
+        action: formStatus || 'submit',
       }),
     };
 
@@ -472,7 +422,14 @@ class Form extends Component {
     isSubmitting,
     questionGroupCode
   ) => ( ask, index ) => {
-    const { renderFormInput, renderFormInputWrapper, renderSubheading, baseEntities } = this.props;
+    const {
+      renderFormInput,
+      renderFormInputWrapper,
+      renderFormInputLabel,
+      renderSubheading,
+      baseEntities,
+    } = this.props;
+
     const { questionCode, attributeCode, name, mandatory, question, childAsks } = ask;
     const { dataType } = baseEntities.definitions.data[attributeCode];
 
@@ -541,45 +498,47 @@ class Form extends Component {
       disabled: isSubmitting,
     };
 
-    if ( renderFormInputWrapper ) {
-      return (
-        <Recursive
-          key={questionCode}
-          {...renderFormInputWrapper}
-          context={context}
-          children={( // eslint-disable-line react/no-children-prop
-            renderFormInput
-              ? {
-                ...renderFormInput,
-                props: {
-                  ...renderFormInput.props,
-                  ...inputProps,
-                },
-              }
-              : {
-                component: 'FormInput',
-                props: inputProps,
-              }
-          )}
+    const children = [];
+
+    if ( renderFormInputLabel ) {
+      children.push({
+        ...renderFormInputLabel,
+        context,
+        props: {
+          ...renderFormInputLabel.props,
+          ...inputProps,
+        },
+      });
+    }
+
+    if ( renderFormInput ) {
+      children.push({
+        ...renderFormInput,
+        context,
+        props: {
+          ...renderFormInput.props,
+          ...inputProps,
+        },
+      });
+    }
+    else {
+      children.push(
+        <FormInput
+          {...inputProps}
         />
       );
     }
 
     return (
-      <Box key={questionCode}>
-        {renderFormInput ? (
-          <Recursive
-            {...renderFormInput}
-            context={context}
-            props={{
-              ...renderFormInput.props,
-              ...inputProps,
-            }}
-          />
-        ) : (
-          <FormInput {...inputProps} />
-        )}
-      </Box>
+      <Recursive
+        key={questionCode}
+        context={context}
+        /* Default to the 'Box' component if `renderFormInputWrapper` is
+         * not given as a prop. */
+        component="Box"
+        {...renderFormInputWrapper}
+        children={children} // eslint-disable-line react/no-children-prop
+      />
     );
   }
 
@@ -632,7 +591,7 @@ class Form extends Component {
           values,
           errors,
           touched,
-          handleSubmit,
+          submitForm,
           isSubmitting,
           isValid,
           setFieldValue,
@@ -691,11 +650,35 @@ class Form extends Component {
                 </Fragment>
               ))}
 
-              {questionGroups.reduce(( buttons, { attributeCode }, index ) => {
+              {questionGroups.reduce(( buttons, { attributeCode }) => {
+                if ( attributeCode.includes( 'CANCEL' )) {
+                  buttons.push(
+                    this.renderButton({
+                      disabled: !isValid || isSubmitting,
+                      onPress: () => {
+                        this.setState({
+                          formStatus: 'cancel',
+                        }, () => {
+                          submitForm();
+                        });
+                      },
+                      key: 'cancel',
+                      text: 'Cancel',
+                      showSpinnerOnClick: true,
+                    })
+                  );
+                }
+
                 if ( attributeCode.includes( 'YES' )) {
                   buttons.push(
                     this.renderButton({
-                      onPress: this.handlePressYes,
+                      onPress: () => {
+                        this.setState({
+                          formStatus: 'yes',
+                        }, () => {
+                          this.handleSubmit();
+                        });
+                      },
                       key: 'YES',
                       text: 'Yes',
                       showSpinnerOnClick: true,
@@ -706,7 +689,13 @@ class Form extends Component {
                 if ( attributeCode.includes( 'NO' )) {
                   buttons.push(
                     this.renderButton({
-                      onPress: this.handlePressNo,
+                      onPress: () => {
+                        this.setState({
+                          formStatus: 'no',
+                        }, () => {
+                          this.handleSubmit();
+                        });
+                      },
                       key: 'NO',
                       text: 'No',
                       showSpinnerOnClick: true,
@@ -718,29 +707,58 @@ class Form extends Component {
                   buttons.push(
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
-                      onPress: handleSubmit,
-                      key: 'YES',
+                      onPress: () => {
+                        this.setState({
+                          formStatus: 'submit',
+                        }, () => {
+                          submitForm();
+                        });
+                      },
+                      key: 'submit',
                       text: 'Submit',
                       showSpinnerOnClick: true,
                     })
                   );
                 }
 
-                /* If there are no buttons to show, render the submit button. */
-                if (
-                  index === questionGroups.length - 1 &&
-                  buttons.length === 0
-                ) {
+                if ( attributeCode.includes( 'NEXT' )) {
                   buttons.push(
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
-                      onPress: handleSubmit,
-                      key: 'YES',
-                      text: 'Submit',
+                      onPress: () => {
+                        this.setState({
+                          formStatus: 'next',
+                        }, () => {
+                          submitForm();
+                        });
+                      },
+                      key: 'next',
+                      text: 'Next',
                       showSpinnerOnClick: true,
                     })
                   );
                 }
+
+                /* If there are no buttons to show, render the submit button. */
+                // if (
+                //   index === questionGroups.length - 1 &&
+                //   buttons.length === 0
+                // ) {
+                //   buttons.push(
+                //     this.renderButton({
+                //       disabled: !isValid || isSubmitting,
+                //       onPress: () => {
+                //         this.setState({
+                //           formStatus: 'submit',
+                //         }, () => {
+                //           submitForm();
+                //         });
+                //       },
+                //       text: 'Submit',
+                //       showSpinnerOnClick: true,
+                //     })
+                //   );
+                // }
 
                 return buttons;
               }, [] )}
