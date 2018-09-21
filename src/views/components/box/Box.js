@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Platform } from 'react-native';
-import { any, oneOf, oneOfType, string, number, array, func, bool, object } from 'prop-types';
+import { any, oneOf, oneOfType, string, number, array, func, bool, object, shape } from 'prop-types';
 import { objectClean } from '../../../utils';
 
 const shapeStyles = {
@@ -8,20 +8,6 @@ const shapeStyles = {
   rounded: 5,
   circle: 100000,
   pill: 999,
-};
-
-const boxShadows = {
-  light: {
-    shadowColor: 'black',
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    shadowOffset: {
-      height: 4,
-      width: 0,
-    },
-  },
-  medium: {},
-  dark: {},
 };
 
 const Box = ({
@@ -76,7 +62,10 @@ const Box = ({
   borderRadius,
   cleanStyleObject,
   shape,
-  boxShadow,
+  shadowColor,
+  shadowOpacity,
+  shadowRadius,
+  shadowOffset,
   fullHeightOnWeb,
   __dangerouslySetStyle = {},
   overflow,
@@ -135,14 +124,15 @@ const Box = ({
     borderStyle,
     borderRadius: borderRadius || shapeStyles[shape],
     display,
+    shadowColor,
+    shadowOpacity,
+    shadowRadius,
+    shadowOffset,
     ...__dangerouslySetStyle,
   };
 
   const webStyle = Platform.OS !== 'web' ? {} : {
     accessibilityRole,
-    ...boxShadow && (
-      boxShadows[boxShadow]
-    ),
     overflow,
     overflowX,
     overflowY,
@@ -256,15 +246,27 @@ Box.propTypes = {
   shape: oneOf(
     ['square', 'rounded', 'pill', 'circle']
   ),
-  boxShadow: oneOf(
-    ['light', 'medium', 'dark']
-  ),
   fullHeightOnWeb: bool,
   __dangerouslySetStyle: object,
   overflow: string,
   overflowX: string,
   overflowY: string,
   display: string,
+  shadowColor: string,
+  shadowOpacity: oneOfType(
+    [string, number]
+  ),
+  shadowRadius: oneOfType(
+    [string, number]
+  ),
+  shadowOffset: shape({
+    width: oneOfType(
+      [string, number]
+    ),
+    height: oneOfType(
+      [string, number]
+    ),
+  }),
 };
 
 export default Box;
