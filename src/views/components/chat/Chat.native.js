@@ -33,7 +33,7 @@ class Chat extends Component {
     users: [],
   };
 
-  static getDerivedStateFromProps( props, state ) {
+  static getDerivedStateFromProps( props ) {
     const { chatLinks } = props;
 
     const newState = chatLinks.reduce(

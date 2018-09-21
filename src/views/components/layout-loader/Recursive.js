@@ -330,7 +330,8 @@ class Recursive extends Component {
       ...(
         variant &&
         theme.components[useThemeFrom || component] &&
-        theme.components[useThemeFrom || component][variant]
+        theme.components[useThemeFrom || component][variant] &&
+        theme.components[useThemeFrom || component][variant].props
       ),
       ...props,
       ...this.calculateConditionalProps( conditional, context ),
