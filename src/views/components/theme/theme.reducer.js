@@ -14,7 +14,9 @@ const reducer = ( state = initialState, { type, payload }) => {
           ...state.components,
           [payload.componentName]: {
             ...state.components[payload.componentName],
-            [payload.themeName]: payload.theme,
+            [payload.themeName]: {
+              props: payload.theme,
+            },
           },
         },
       };
@@ -40,6 +42,7 @@ const reducer = ( state = initialState, { type, payload }) => {
           if ( uri.startsWith( 'components/' )) {
             /* Remove the group from the start of the URI,
             * and remove the starting and ending slashes. */
+
             const newUri = uri.split( 'components/' )[1];
 
             const componentName = removeStartingAndEndingSlashes(
@@ -56,7 +59,9 @@ const reducer = ( state = initialState, { type, payload }) => {
 
             newState.components[componentName] = {
               ...newState.components[componentName],
-              [themeName]: data,
+              [themeName]: {
+                props: data,
+              },
             };
           }
         }
@@ -95,7 +100,10 @@ const reducer = ( state = initialState, { type, payload }) => {
 
             newState.components[componentName] = {
               ...newState.components[componentName],
-              [themeName]: parsed,
+              [themeName]: {
+                props: parsed,
+                isDevLayout: true,
+              },
             };
           }
         }
@@ -132,9 +140,19 @@ const reducer = ( state = initialState, { type, payload }) => {
             newUri.split( '-' )[1]
           );
 
+          if (
+            newState.components[componentName] &&
+            newState.components[componentName][themeName] &&
+            newState.components[componentName][themeName].isDevLayout
+          ) {
+            return;
+          }
+
           newState.components[componentName] = {
             ...newState.components[componentName],
-            [themeName]: data,
+            [themeName]: {
+              props: data,
+            },
           };
         }
       });
