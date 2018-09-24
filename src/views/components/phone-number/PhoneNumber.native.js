@@ -1,26 +1,37 @@
 import React, { Component } from 'react';
-import { string, bool } from 'prop-types';
-import { Linking } from 'react-native';
+import { string, bool, oneOf, node } from 'prop-types';
+import { Linking, Platform } from 'react-native';
 import { formatPhoneNumber } from '../../../utils';
 import { Text, Touchable } from '../index';
 
 class PhoneNumber extends Component {
+  static defaultProps = {
+    type: 'tel',
+  }
+
   static propTypes = {
     mobile: bool,
     landline: bool,
-    children: string,
+    children: node,
     number: string,
+    type: oneOf(
+      'tel', 'sms'
+    ),
   }
 
-  handlePress = () => {
-    const { number } = this.props;
-    const url = `tel:${number}`;
+  handlePress = ( number, type ) => () => {
+    // sms doesnt crash app
+    // tel crashes app
+
+    const url = `${type}:${Platform.OS === 'android' ? '//' : ''}${number}`;
 
     Linking.canOpenURL( url )
       .then( supported => {
         if ( !supported ) {
           console.log( `Can't handle url: ${url}`  );
         } else {
+          console.log( 'opening link' );
+
           return Linking.openURL( url );
         }
       }).catch( err => console.error( 'An error occurred', err ));
@@ -32,19 +43,27 @@ class PhoneNumber extends Component {
       mobile,
       landline,
       number,
+      type,
       ...restProps
     } = this.props;
 
+    const checkedNumber =  formatPhoneNumber( number, { mobile, landline });
+
     return (
       <Touchable
-        onPress={this.handlePress}
+        onPress={this.handlePress( checkedNumber, type )}
+        withFeedback
       >
-        <Text {...restProps}>
-          {formatPhoneNumber( number || children, {
-            mobile,
-            landline,
-          })}
-        </Text>
+        {
+          children
+            ? children
+            : (
+              <Text
+                {...restProps}
+                text={checkedNumber}
+              />
+            )
+        }
       </Touchable>
     );
   }

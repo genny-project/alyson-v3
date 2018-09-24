@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { string } from 'prop-types';
+import { string, node } from 'prop-types';
 import { Linking } from 'react-native';
 import { Text, Touchable } from '../index';
 
 class EmailAddress extends Component {
   static propTypes = {
     email: string,
-    children: string,
+    children: node,
   }
 
   handlePress = () => {
@@ -33,10 +33,17 @@ class EmailAddress extends Component {
     return (
       <Touchable
         onPress={this.handlePress}
+        withFeedback
       >
-        <Text {...restProps}>
-          { email ||  children }
-        </Text>
+        {
+          children
+            ? children
+            : (
+              <Text {...restProps}>
+                { email}
+              </Text>
+            )
+        }
       </Touchable>
     );
   }
