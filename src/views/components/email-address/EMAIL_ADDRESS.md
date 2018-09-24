@@ -1,14 +1,11 @@
-# Phone Number
+# Email Address
 
 ## Description
 
-This component formats and displays a phone number.
+This component formats and displays an email address.
 
 ## Props
 
 ```
-mobile: bool,
-landline: bool,
-children: string,
-number: string,
+email: string,
 ```
