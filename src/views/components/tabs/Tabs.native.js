@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { ActivityIndicator, Dimensions,  Platform } from 'react-native';
 import { any, array, bool, string, number, oneOfType, func, object } from 'prop-types';
-import { TabViewAnimated, PagerScroll, PagerPan, TabView, TabBar } from 'react-native-tab-view';
+import { PagerScroll, PagerPan, TabView, TabBar } from 'react-native-tab-view';
 import { Box, Text, Icon, Timeout } from '../../components';
 import TabDots from './tab-dots';
 
