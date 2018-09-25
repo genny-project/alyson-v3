@@ -70,6 +70,8 @@ class Sidebar extends Component {
                             height: 200,
                           }}
                           flex={1}
+                          minWidth={40}
+                          minHeight={40}
                           source={{ uri: headerImage }}
                         />
                       </Box>

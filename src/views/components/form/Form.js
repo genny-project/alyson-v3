@@ -739,6 +739,42 @@ class Form extends Component {
                   );
                 }
 
+                if ( attributeCode.includes( 'ACCEPT' )) {
+                  buttons.push(
+                    this.renderButton({
+                      disabled: !isValid || isSubmitting,
+                      onPress: () => {
+                        this.setState({
+                          formStatus: 'accept',
+                        }, () => {
+                          submitForm();
+                        });
+                      },
+                      key: 'accept',
+                      text: 'Accept',
+                      showSpinnerOnClick: true,
+                    })
+                  );
+                }
+
+                if ( attributeCode.includes( 'DECLINE' )) {
+                  buttons.push(
+                    this.renderButton({
+                      disabled: !isValid || isSubmitting,
+                      onPress: () => {
+                        this.setState({
+                          formStatus: 'decline',
+                        }, () => {
+                          submitForm();
+                        });
+                      },
+                      key: 'decline',
+                      text: 'Decline',
+                      showSpinnerOnClick: true,
+                    })
+                  );
+                }
+
                 /* If there are no buttons to show, render the submit button. */
                 // if (
                 //   index === questionGroups.length - 1 &&

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, ActivityIndicator } from 'react-native';
 import { func, string, number, oneOfType, array, bool, object } from 'prop-types';
 import Downshift from 'downshift';
 import { Text, Box, Input, Icon, Touchable, Modal } from '../../index';
+import { Bridge } from '../../../../utils';
+import { store } from '../../../../redux';
 
 class InputAutocomplete extends Component {
   static defaultProps = {
@@ -35,6 +37,9 @@ class InputAutocomplete extends Component {
     onBlur: func,
   }
 
+  state = {
+  }
+
   handleFilter = inputValue => dropdownItem => {
     const { itemStringKey } = this.props;
 
@@ -62,7 +67,30 @@ class InputAutocomplete extends Component {
     );
   }
 
-  handleDismiss = () => {
+  handleDismiss = ( selectedItem ) => {
+    const { data } = store.getState().vertx.baseEntities;
+
+    if ( selectedItem && data && this.props.defaultValue !== selectedItem ) {
+      console.log( data );
+      Object.keys( data ).forEach( be => {
+        if ( data[be].name === selectedItem ) {
+          console.log( 'sending' );
+          Bridge.sendEvent({
+            event: 'BTN',
+            eventType: 'BTN_CLICK',
+            sendWithToken: true,
+            data: {
+              code: 'SEE_PROFILE',
+              value: JSON.stringify({
+                userCode: be,
+              }),
+            },
+          });
+
+          return;
+        }
+      });
+    }
     if ( this.props.onBlur )
       this.props.onBlur();
   }
@@ -70,6 +98,26 @@ class InputAutocomplete extends Component {
   handleChange = item => {
     if ( this.props.onChange )
       this.props.onChange( item );
+
+    if ( this.state.timer ) {
+      clearTimeout( this.state.timer );
+    }
+
+    this.setState({
+      timer: setTimeout(() => {
+        Bridge.sendEvent({
+          event: 'BTN',
+          eventType: 'BTN_CLICK',
+          sendWithToken: true,
+          data: {
+            code: 'SEARCH_KEYWORD',
+            value: JSON.stringify({
+              itemCode: item,
+            }),
+          },
+        });
+      }, 1000 ),
+    });
   }
 
   handleClearInputValue = setState => () => {
@@ -79,7 +127,6 @@ class InputAutocomplete extends Component {
   render() {
     const {
       inputType,
-      items,
       itemStringKey,
       inputProps,
       onType,
@@ -87,6 +134,23 @@ class InputAutocomplete extends Component {
       defaultValue,
       value,
     } = this.props;
+
+    const ites = [];
+    const { data } = store.getState().vertx.baseEntities;
+
+    if ( data && Object.keys( data ).length > 0 && data['GRP_KEYWORD_SEARCH'] && data['GRP_KEYWORD_SEARCH'].links ) {
+      data['GRP_KEYWORD_SEARCH'].links.forEach( link => {
+        if (
+          link &&
+            link.link &&
+            link.link.targetCode
+        ) {
+          if ( data[link.link.targetCode] ) {
+            ites.push( data[link.link.targetCode].name );
+          }
+        }
+      });
+    }
 
     return (
       <Downshift
@@ -111,6 +175,8 @@ class InputAutocomplete extends Component {
           closeMenu,
           setState,
         }) => {
+          const finalItems = ites.filter( this.handleFilter( inputValue ));
+
           return (
             <Box
               {...getRootProps( undefined, { suppressRefError: true })}
@@ -147,7 +213,7 @@ class InputAutocomplete extends Component {
                 style={{
                   backgroundColor: 'white',
                 }}
-                onDismiss={this.handleDismiss}
+                onDismiss={() => this.handleDismiss( selectedItem )}
               >
                 <SafeAreaView
                   style={{
@@ -179,7 +245,7 @@ class InputAutocomplete extends Component {
                       {...getInputProps()}
                       type={inputType}
                       clearButtonMode="while-editing"
-                      onChangeValue={onType}
+                      onChangeValue={onType || this.handleChange}
                       autoFocus
                       paddingLeft={50}
                       paddingY={15}
@@ -217,43 +283,38 @@ class InputAutocomplete extends Component {
                   </Box>
 
                   {(
-                    items &&
-                    items instanceof Array &&
-                    items
-                      // TODO: optimize filtering so it isn't performed twice (state?)
-                      .filter( this.handleFilter( inputValue ))
-                      .length > 0
+                    ites &&
+                    ites instanceof Array &&
+                    finalItems.length > 0
                   ) ? (
-                      items
-                        .filter( this.handleFilter( inputValue ))
-                        .map( item => {
-                          const idom = typeof item === 'string'
-                            ? item
-                            : item[itemStringKey];
+                      ites.map( item => {
+                        const idom = typeof item === 'string'
+                          ? item
+                          : item[itemStringKey];
 
-                          return (
-                            <Touchable
-                              {...getItemProps({ item: idom })}
-                              key={idom}
-                              onPress={() => selectItem( item )}
-                              withFeedback
+                        return (
+                          <Touchable
+                            {...getItemProps({ item: idom })}
+                            key={idom}
+                            onPress={() => selectItem( item )}
+                            withFeedback
+                          >
+                            <Box
+                              padding={15}
+                              borderBottomWidth={1}
+                              borderColor="#DDD"
+                              borderStyle="solid"
+                              alignItems="center"
                             >
-                              <Box
-                                padding={15}
-                                borderBottomWidth={1}
-                                borderColor="#DDD"
-                                borderStyle="solid"
-                                alignItems="center"
+                              <Text
+                                fontWeight={selectedItem === idom ? 'bold' : 'normal'}
                               >
-                                <Text
-                                  fontWeight={selectedItem === idom ? 'bold' : 'normal'}
-                                >
-                                  {idom}
-                                </Text>
-                              </Box>
-                            </Touchable>
-                          );
-                        })
+                                {idom}
+                              </Text>
+                            </Box>
+                          </Touchable>
+                        );
+                      })
                     ) : (
                       <Box
                         paddingX={15}
@@ -267,7 +328,7 @@ class InputAutocomplete extends Component {
                           size="xs"
                         >
                           {inputValue.length > 0
-                            ? 'No results'
+                            ? <ActivityIndicator />
                             : 'Please enter an address above'
                           }
                         </Text>

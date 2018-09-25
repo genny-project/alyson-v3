@@ -128,6 +128,10 @@ class HeaderLeft extends Component {
                     logoProps &&
                     logoProps.width
                   ) || 50}
+                  height={(
+                    logoProps &&
+                    logoProps.height
+                  ) || 50}
                   marginLeft={10}
                   marginRight={10}
                 />

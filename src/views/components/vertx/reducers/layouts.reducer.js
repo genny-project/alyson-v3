@@ -83,7 +83,7 @@ const reducer = ( state = initialState, { type, payload }) => {
 
           if ( !isString( code, { startsWith: 'LAY_' }))
             return newState;
-
+          
           const uri = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' ).value;
           const data = JSON.parse(
             baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_DATA' ).value

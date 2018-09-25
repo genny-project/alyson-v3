@@ -6,7 +6,7 @@
 
 # Remove the # in front of the line to enable the option
 
-scheme("")
+scheme("alysonv3")
 
 open_report(true)
 

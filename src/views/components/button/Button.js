@@ -145,13 +145,12 @@ class Button extends Component {
         buttons: confirmation.buttons && (
           confirmation.buttons.map( button => ({
             ...button,
-            onPress: (
-              ( button.type === 'ok' ) ? () => this.handlePress( event )
+            onPress: ( type ) => (
+              ( button.type === 'ok' || ( type && type === 'ok' )) ? this.handlePress( event )
               : ( button.type === 'cancel' ) ? () => {}
               : () => {}
             ),
-          }))
-        ),
+          }))),
       });
     }
     else {

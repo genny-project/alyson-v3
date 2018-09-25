@@ -36,33 +36,37 @@ const reducer = ( state = initialState, { type, payload }) => {
 
           if ( !isString( code, { startsWith: 'LAY_' }))
             return newState;
+            
+          const attr = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' );
 
-          const uri = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' ).value;
+          if ( attr ) {
+            const uri = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' ).value;
 
-          if ( uri.startsWith( 'components/' )) {
+            if ( uri.startsWith( 'components/' )) {
             /* Remove the group from the start of the URI,
             * and remove the starting and ending slashes. */
 
-            const newUri = uri.split( 'components/' )[1];
+              const newUri = uri.split( 'components/' )[1];
 
-            const componentName = removeStartingAndEndingSlashes(
-              newUri.split( '-' )[0]
-            );
+              const componentName = removeStartingAndEndingSlashes(
+                newUri.split( '-' )[0]
+              );
 
-            const themeName = removeStartingAndEndingSlashes(
-              newUri.split( '-' )[1]
-            );
+              const themeName = removeStartingAndEndingSlashes(
+                newUri.split( '-' )[1]
+              );
 
-            const data = JSON.parse(
-              baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_DATA' ).value
-            );
+              const data = JSON.parse(
+                baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_DATA' ).value
+              );
 
-            newState.components[componentName] = {
-              ...newState.components[componentName],
-              [themeName]: {
-                props: data,
-              },
-            };
+              newState.components[componentName] = {
+                ...newState.components[componentName],
+                [themeName]: {
+                  props: data,
+                },
+              };
+            }
           }
         }
         catch ( error ) {
