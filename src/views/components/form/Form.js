@@ -654,7 +654,7 @@ class Form extends Component {
                 if ( attributeCode.includes( 'CANCEL' )) {
                   buttons.push(
                     this.renderButton({
-                      disabled: !isValid || isSubmitting,
+                      disabled: isSubmitting,
                       onPress: () => {
                         this.setState({
                           formStatus: 'cancel',
@@ -706,7 +706,7 @@ class Form extends Component {
                 if ( attributeCode.includes( 'SUBMIT' )) {
                   buttons.push(
                     this.renderButton({
-                      disabled: !isValid || isSubmitting,
+                      disabled: isSubmitting,
                       onPress: () => {
                         this.setState({
                           formStatus: 'submit',
