@@ -17,10 +17,6 @@ class Dialog extends Component {
     show: [],
   }
 
-  componentDidMount() {
-    this.checkForDialogsToShow();
-  }
-
   componentDidUpdate( prevProps ) {
     const keys = Object.keys( this.props.dialog );
 
@@ -54,12 +50,12 @@ class Dialog extends Component {
     return (
       <Fragment>
         {show.map( key => {
-          const it = dialog[key];
+          const modal = dialog[key];
 
           return (
             <DialogOverlay
               key={key}
-              isOpen={it && it.show}
+              isOpen={modal && modal.show}
               onDismiss={this.handleDismiss( key )}
             >
               <DialogContent>
