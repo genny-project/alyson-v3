@@ -31,6 +31,7 @@ class LayoutLoader extends Component {
     sublayoutProps: object,
     sublayout: bool,
     router: object,
+    isDialog: bool,
   };
 
   handleRetry = () => {
@@ -38,12 +39,20 @@ class LayoutLoader extends Component {
   };
 
   render() {
-    const { layout, data, navigation, router, sublayoutProps, sublayout } = this.props;
+    const { layout, data, navigation, router, sublayoutProps, sublayout, isDialog } = this.props;
 
     if ( !layout ) {
-      if ( sublayout ) {
+      if (
+        sublayout ||
+        isDialog
+      ) {
         return (
-          <Box padding={10}>
+          <Box
+            width="100%"
+            flex={1}
+            justifyContent="center"
+            alignItems="center"
+          >
             <ActivityIndicator size="large" />
           </Box>
         );
@@ -149,7 +158,12 @@ class LayoutLoader extends Component {
       user: data.user,
     };
 
-    const Holder = sublayout ? Fragment : Layout;
+    const Holder = (
+      sublayout ||
+      isDialog
+    )
+      ? Fragment
+      : Layout;
 
     return (
       <Holder

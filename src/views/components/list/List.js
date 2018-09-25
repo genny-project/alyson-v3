@@ -57,6 +57,7 @@ class List extends PureComponent {
     headerCountProps: object,
     headerCountTextProps: object,
     scrollViewProps: object,
+    contentBodyProps: object,
   }
 
   render() {
@@ -85,6 +86,7 @@ class List extends PureComponent {
       showCountInHeader,
       headerCountProps,
       headerCountTextProps,
+      contentBodyProps,
       ...restProps
     } = this.props;
 
@@ -138,6 +140,7 @@ class List extends PureComponent {
             <Box
               key={child.props.id}
               marginBottom={index < children.length - 1 ? contentGutter : null}
+              {...contentBodyProps}
             >
               {child}
             </Box>

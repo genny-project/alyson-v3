@@ -36,32 +36,30 @@ const Sidebar = ({
       transitionDuration="300ms"
       transitionProperty="transform"
     >
-      <ScrollView
-        paddingY={40}
-        flex={1}
-      >
-        {renderBody ? (
-          <Recursive
-            {...renderBody}
-            context={{
-              items,
-            }}
-          />
-        ) : (
-          <Fragment>
-            {headerImage ? (
-              <Image
-                resizeMode="contain"
-                source={{ uri: headerImage, width: headerImageWidth, height: headerImageHeight }}
-              />
-            ) : null}
-
-            <SidebarMenu
-              items={items}
+      {renderBody ? (
+        <Recursive
+          {...renderBody}
+          context={{
+            items,
+          }}
+        />
+      ) : (
+        <ScrollView
+          paddingY={40}
+          flex={1}
+        >
+          {headerImage ? (
+            <Image
+              resizeMode="contain"
+              source={{ uri: headerImage, width: headerImageWidth, height: headerImageHeight }}
             />
-          </Fragment>
-        )}
-      </ScrollView>
+          ) : null}
+
+          <SidebarMenu
+            items={items}
+          />
+        </ScrollView>
+      )}
     </Box>
 
     {(

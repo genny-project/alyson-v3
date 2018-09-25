@@ -3,7 +3,7 @@ import { any, string, bool, object } from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import LayoutConsumer from './consumer';
-import { Header, Box } from '../components';
+import { Header, Box, Dialog } from '../components';
 import { shallowCompare } from '../../utils';
 import { Sidebar } from '../routing';
 
@@ -218,6 +218,8 @@ class Layout extends Component {
 
           {children}
         </Box>
+
+        <Dialog />
       </Box>
     );
   }
