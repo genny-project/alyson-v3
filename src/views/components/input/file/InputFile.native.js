@@ -123,6 +123,7 @@ class InputFile extends Component {
       uri,
       name: fileName,
       fileType: mimeType,
+      type: mimeType,
     });
 
     const responsePost = await fetch( responseGet.data.url, {
