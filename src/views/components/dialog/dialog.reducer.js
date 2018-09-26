@@ -10,6 +10,19 @@ const reducer = ( state = initialState, { type, payload }) => {
         },
       };
 
+    case '@@router/LOCATION_CHANGE': {
+      const keys = Object.keys( state );
+
+      return keys.reduce(( dialogs, dialog ) => {
+        dialogs[dialog] = {
+          ...dialogs[dialog],
+          show: false,
+        };
+
+        return dialogs;
+      }, { ...state });
+    }
+
     case 'USER_LOGOUT':
       return { ...initialState };
 

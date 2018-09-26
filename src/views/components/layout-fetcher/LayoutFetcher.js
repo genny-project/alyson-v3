@@ -79,23 +79,25 @@ class LayoutFetcher extends Component {
         });
 
         if ( splitKey.join( '/' ) === strippedCurrentUrl ) {
-          if ( Platform.OS === 'web' ) {
-            store.dispatch(
-              replace({
-                pathname: location.pathname,
-                state: {
-                  ...location.state,
-                  ...params,
-                },
-              })
-            );
-          }
-          else {
-            const { key } = navigationReducer.routes[navigationReducer.index];
+          if ( !isDialog ) {
+            if ( Platform.OS === 'web' ) {
+              store.dispatch(
+                replace({
+                  pathname: location.pathname,
+                  state: {
+                    ...location.state,
+                    ...params,
+                  },
+                })
+              );
+            }
+            else {
+              const { key } = navigationReducer.routes[navigationReducer.index];
 
-            store.dispatch(
-              NavigationActions.setParams({ key, params })
-            );
+              store.dispatch(
+                NavigationActions.setParams({ key, params })
+              );
+            }
           }
 
           this.setState({ layout: layoutPool[key] });
