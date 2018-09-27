@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { ActivityIndicator } from 'react-native';
-import { string, object, oneOfType, array } from 'prop-types';
+import { string, object, oneOfType, array, oneOf } from 'prop-types';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import { isArray, isObject, isString } from '../../../utils';
@@ -11,6 +11,10 @@ import FormInput from './input';
 
 class Form extends Component {
   inputRefs = {}
+
+  static defaultProps = {
+    displayDirection: 'column',
+  }
 
   static propTypes = {
     questionGroupCode: oneOfType(
@@ -26,6 +30,9 @@ class Form extends Component {
     renderLoading: object,
     renderSubmitButtonWrapper: object,
     renderSubmitButton: object,
+    displayDirection: oneOf(
+      'column', 'row'
+    ),
   }
 
   state = {
@@ -333,7 +340,6 @@ class Form extends Component {
       questionGroups[0]
     );
 
-    console.log( questionGroup );
     if ( !questionGroup ) {
       console.warn( 'Could not submit form - no question group associated with form.' );
 
@@ -383,8 +389,8 @@ class Form extends Component {
               ? {
                 ...renderSubmitButton,
                 props: {
-                  ...renderSubmitButton.props,
                   ...buttonProps,
+                  ...renderSubmitButton.props,
                 },
               }
               : {
@@ -543,7 +549,7 @@ class Form extends Component {
   }
 
   render() {
-    const { questionGroupCode, renderHeading, renderLoading } = this.props;
+    const { questionGroupCode, renderHeading, renderLoading, displayDirection } = this.props;
     const { questionGroups } = this.state;
 
     if (
@@ -603,7 +609,7 @@ class Form extends Component {
             }}
           >
             <Box
-              flexDirection="column"
+              flexDirection={displayDirection}
               flex={1}
               height="100%"
               width="100%"
