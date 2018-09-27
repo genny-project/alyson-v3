@@ -15,6 +15,7 @@
     "layout-editor": "node layout-editor"
   },
   "dependencies": {
+    "antd": "^3.9.3",
     "appcenter": "^1.6.0",
     "appcenter-analytics": "^1.6.0",
     "appcenter-crashes": "^1.6.0",
@@ -38,6 +39,8 @@
     "fast-copy": "^1.2.1",
     "fast-xml-parser": "^3.11.1",
     "formik": "^0.11.11",
+    "google-map-react": "^1.0.8",
+    "google-maps-react": "^2.0.2",
     "history": "^4.7.2",
     "html-webpack-plugin": "^3.2.0",
     "husky": "^1.0.0-rc.1",
@@ -141,7 +144,8 @@
     "react-native-dotenv": "^0.2.0",
     "react-test-renderer": "16.3.1",
     "remotedev-rn-debugger": "^0.8.3",
-    "sass-loader": "^7.1.0"
+    "sass-loader": "^7.1.0",
+    "webpack-merge": "^4.1.4"
   },
   "jest": {
     "preset": "react-native",

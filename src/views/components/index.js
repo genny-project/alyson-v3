@@ -61,6 +61,7 @@ export { default as PdfViewer } from './pdf-viewer';
 export { default as DisplayMarkdown } from './display-markdown';
 export { default as Table } from './table';
 export { default as BackButton } from './back-button';
+export { default as ProgressNode } from './progress-node';
 
 export * from './keycloak';
 export * from './vertx';
