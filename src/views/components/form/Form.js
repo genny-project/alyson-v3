@@ -486,7 +486,8 @@ class Form extends Component {
     } = this.props;
 
     const { questionCode, attributeCode, name, mandatory, question, childAsks } = ask;
-    const { dataType } = baseEntities.definitions.data[attributeCode];
+    const baseEntityDefinition = baseEntities.definitions.data[attributeCode];
+    const dataType = baseEntityDefinition && baseEntityDefinition.dataType;
 
     if ( isArray( childAsks, { ofMinLength: 1 })) {
       return (
