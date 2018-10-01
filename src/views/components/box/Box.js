@@ -4,10 +4,42 @@ import { any, oneOf, oneOfType, string, number, array, func, bool, object, shape
 import { objectClean } from '../../../utils';
 
 const shapeStyles = {
-  square: 0,
-  rounded: 5,
-  circle: 100000,
-  pill: 999,
+  square: {
+    borderRadius: 0,
+  },
+  rounded: {
+    borderRadius: 5,
+  },
+  circle: {
+    borderRadius: 100000,
+  },
+  pill: {
+    borderRadius: 999,
+  },
+  roundedTop: {
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 0,
+    borderBottomLeftRadius: 0,
+  },
+  roundedBottom: {
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 5,
+    borderBottomLeftRadius: 5,
+  },
+  roundedLeft: {
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+    borderBottomLeftRadius: 5,
+  },
+  roundedRight: {
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+    borderBottomLeftRadius: 0,
+  },
 };
 
 const Box = ({
@@ -60,6 +92,10 @@ const Box = ({
   borderColor,
   borderStyle,
   borderRadius,
+  borderTopLeftRadius,
+  borderTopRightRadius,
+  borderBottomRightRadius,
+  borderBottomLeftRadius,
   cleanStyleObject,
   shape,
   shadowColor,
@@ -74,6 +110,15 @@ const Box = ({
   display = 'flex',
   ...restProps
 }) => {
+  const borderRadiusStyle = {
+    borderRadius: borderRadius,
+    borderTopLeftRadius: borderTopLeftRadius,
+    borderTopRightRadius: borderTopRightRadius,
+    borderBottomRightRadius: borderBottomRightRadius,
+    borderBottomLeftRadius: borderBottomLeftRadius,
+    ...shapeStyles[shape],
+  };
+
   const boxStyle = {
     justifyContent,
     alignItems,
@@ -122,12 +167,12 @@ const Box = ({
     borderWidth,
     borderColor,
     borderStyle,
-    borderRadius: borderRadius || shapeStyles[shape],
     display,
     shadowColor,
     shadowOpacity,
     shadowRadius,
     shadowOffset,
+    ...borderRadiusStyle,
     ...__dangerouslySetStyle,
   };
 
@@ -240,7 +285,19 @@ Box.propTypes = {
   borderColor: string,
   borderStyle: string,
   borderRadius: oneOf(
-    [2, 5, 10, '50%']
+    [2, 5, 10, 100000]
+  ),
+  borderTopLeftRadius: oneOf(
+    [2, 5, 10, 100000]
+  ),
+  borderTopRightRadius: oneOf(
+    [2, 5, 10, 100000]
+  ),
+  borderBottomRightRadius: oneOf(
+    [2, 5, 10, 100000]
+  ),
+  borderBottomLeftRadius: oneOf(
+    [2, 5, 10, 100000]
   ),
   cleanStyleObject: bool,
   shape: oneOf(

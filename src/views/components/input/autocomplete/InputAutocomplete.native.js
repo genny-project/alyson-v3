@@ -322,16 +322,18 @@ class InputAutocomplete extends Component {
                         width="100%"
                         justifyContent="center"
                       >
-                        <Text
-                          align="center"
-                          color="grey"
-                          size="xs"
-                        >
-                          {inputValue.length > 0
-                            ? <ActivityIndicator />
-                            : 'Please enter an address above'
+                        {inputValue.length > 0
+                          ? <ActivityIndicator />
+                          : (
+                            <Text
+                              align="center"
+                              color="grey"
+                              size="xs"
+                            >
+                             'Please enter an address above'
+                            </Text>
+                          )
                           }
-                        </Text>
                       </Box>
                     )}
                 </SafeAreaView>
