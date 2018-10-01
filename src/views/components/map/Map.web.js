@@ -80,7 +80,7 @@ class MapView extends Component {
           <div>
             <h1>
               {' '}
-Info window example
+              Info window example
               {' '}
             </h1>
           </div>
