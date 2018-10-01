@@ -742,7 +742,6 @@ class Form extends Component {
                 if ( attributeCode.includes( 'ACCEPT' )) {
                   buttons.push(
                     this.renderButton({
-                      disabled: isSubmitting,
                       onPress: () => {
                         this.setState({
                           formStatus: 'accept',
@@ -760,7 +759,6 @@ class Form extends Component {
                 if ( attributeCode.includes( 'DECLINE' )) {
                   buttons.push(
                     this.renderButton({
-                      disabled: isSubmitting,
                       onPress: () => {
                         this.setState({
                           formStatus: 'decline',
