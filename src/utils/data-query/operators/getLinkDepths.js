@@ -1,4 +1,5 @@
 import dset from 'dset';
+import { isArray } from '../../../utils';
 import '.';
 
 export default ( data, options, allData ) => {
@@ -51,15 +52,20 @@ function getChildrenLinks( beg, depth, existing, onlyIncludeIf, allData ) {
     return existing;
 
   const links = beg.links;
-  const filteredLinks = links.filter( link => {
-    return onlyIncludeIf.every( x => {
-      // console.log( 'checkeach', link[x.path], x.value );
 
-      return link[x.path] === x.value;
+  if (
+    isArray( onlyIncludeIf )
+  )  {
+    links.filter( link => {
+      return onlyIncludeIf.every( x => {
+        // console.log( 'checkeach', link[x.path], x.value );
+
+        return link[x.path] === x.value;
+      });
     });
-  });
+  }
 
-  filteredLinks.forEach(({ link }) => {
+  links.forEach(({ link }) => {
     if ( !existing[link.targetCode] && existing[link.targetCode] !== 0 ) {
       existing[link.targetCode] = depth + 1;
 
