@@ -46,7 +46,6 @@ const doesValueMatch = ( actualValue, expectedValue, context ) => {
   if ( isOperatorObject( expectedValue )) {
     return matchesOperators( actualValue, expectedValue, context );
   }
-
   switch ( typeof( expectedValue )) {
     case 'object':
       return ( typeof( actualValue ) === 'object' && actualValue.length ) ? arrayMatch( actualValue, expectedValue, context ).length > 0 : objectMatch( actualValue, expectedValue, context );
@@ -75,11 +74,13 @@ const objectMatch = ( item, query, context ) => {
   /* Get all of the keys for the query, excluding then and else */
   const queryKeys = Object.keys( query ).filter( key => !['then', 'else'].includes( key ));
 
-  return !queryKeys.filter( queryKey => {
+  const result = !queryKeys.filter( queryKey => {
     const expectedValue = context ? injectContext( query[queryKey], context ) : query[queryKey];
 
     return !doesValueMatch( dlv( item, queryKey ), expectedValue, context );
   }).length;
+
+  return result;
 };
 
 const valueCompare = ( actual, expected ) => {

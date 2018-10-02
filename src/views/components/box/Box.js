@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Platform } from 'react-native';
-import { any, oneOf, oneOfType, string, number, array, func, bool, object } from 'prop-types';
+import { any, oneOf, oneOfType, string, number, array, func, bool, object, shape } from 'prop-types';
 import { objectClean } from '../../../utils';
 
 const shapeStyles = {
@@ -78,6 +78,10 @@ const Box = ({
   borderRadius,
   cleanStyleObject,
   shape,
+  shadowColor,
+  shadowOpacity,
+  shadowRadius,
+  shadowOffset,
   fullHeightOnWeb,
   __dangerouslySetStyle = {},
   overflow,
@@ -150,11 +154,20 @@ const Box = ({
       borderBottomWidth,
       borderLeftWidth,
       borderWidth,
+      display,
+      shadowColor,
+      shadowOpacity,
+      shadowRadius,
+      shadowOffset,
     }),
     ...__dangerouslySetStyle,
   };
 
   const webStyle = Platform.OS !== 'web' ? {} : {
+    accessibilityRole,
+    overflow,
+    overflowX,
+    overflowY,
     transitionDuration,
     transitionProperty,
     transitionTimingFunction,
@@ -284,6 +297,21 @@ Box.propTypes = {
   overscrollBehaviorY: oneOf(
     ['auto', 'contain', 'none']
   ),
+  shadowColor: string,
+  shadowOpacity: oneOfType(
+    [string, number]
+  ),
+  shadowRadius: oneOfType(
+    [string, number]
+  ),
+  shadowOffset: shape({
+    width: oneOfType(
+      [string, number]
+    ),
+    height: oneOfType(
+      [string, number]
+    ),
+  }),
 };
 
 export default Box;

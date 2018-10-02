@@ -21,7 +21,12 @@ const getQueryParams = () => {
   return queryString.parse( decodedQuery );
 };
 
+const goBack = () => {
+  window.history.go( -1 );
+};
+
 export default {
   getBasePath,
   getQueryParams,
+  goBack,
 };

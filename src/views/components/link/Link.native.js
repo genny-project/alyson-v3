@@ -1,5 +1,6 @@
 import React, { Component, cloneElement, createElement } from 'react';
 import { withNavigation, NavigationActions } from 'react-navigation';
+import { Linking } from 'react-native';
 import { any, bool, func, string, object } from 'prop-types';
 import { routes } from '../../../config';
 import { store } from '../../../redux';
@@ -23,15 +24,39 @@ class Link extends Component {
     withoutFeedback: bool,
     params: object,
     keycloak: object,
+    externalLink: bool,
   }
 
   handlePress = event => {
-    const { disabled, useAppNavigator, to, navigation, onPress, params, keycloak } = this.props;
+    const {
+      disabled,
+      useAppNavigator,
+      to,
+      navigation,
+      onPress,
+      params,
+      keycloak,
+      externalLink,
+    } = this.props;
 
     if ( disabled )
       return;
 
-    if (
+    if ( externalLink ) {
+      const url = `http://${to}`;
+
+      Linking.canOpenURL( url )
+      .then( supported => {
+        if ( !supported ) {
+          console.log( `Can't handle url: ${url}`  );
+        } else {
+          console.log( 'opening link' );
+
+          return Linking.openURL( url );
+        }
+      }).catch( err => console.error( 'An error occurred', err ));
+    }
+    else if (
       keycloak.isAuthenticated &&
       useAppNavigator
     ) {
