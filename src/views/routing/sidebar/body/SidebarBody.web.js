@@ -16,74 +16,86 @@ const Sidebar = ({
   width,
   backgroundColor,
   renderBody,
+  openProps,
+  closedProps,
   headerImageWidth = '100%',
   headerImageHeight = 200,
-}) => (
-  <Fragment>
-    <Box
-      {...!inline && {
-        position: 'fixed',
-        left: -width,
-        top: 0,
-        transform: [
-          { translateX: sidebar.isOpen ? width : 0 },
-        ],
-      }}
-      width={300}
-      height="100%"
-      backgroundColor={backgroundColor}
-      zIndex={100}
-      transitionDuration="300ms"
-      transitionProperty="transform"
-    >
-      {renderBody ? (
-        <Recursive
-          {...renderBody}
-          context={{
-            items,
-          }}
-        />
-      ) : (
-        <ScrollView
-          paddingY={40}
-          flex={1}
-        >
-          {headerImage ? (
-            <Image
-              resizeMode="contain"
-              source={{ uri: headerImage, width: headerImageWidth, height: headerImageHeight }}
-            />
-          ) : null}
+}) => {
+  const context = {
+    items,
+    sidebar,
+  };
 
-          <SidebarMenu
-            items={items}
-          />
-        </ScrollView>
-      )}
-    </Box>
-
-    {(
-      !inline &&
-      sidebar.isOpen
-    ) && (
-      <TouchableWithoutFeedback
-        onPress={closeSidebar}
+  return (
+    <Fragment>
+      <Box
+        {...(
+          sidebar.isOpen
+            ? openProps
+            : closedProps
+        )}
+        {...!inline && {
+          position: 'fixed',
+          left: -width,
+          top: 0,
+          transform: [
+            { translateX: sidebar.isOpen ? width : 0 },
+          ],
+        }}
+        width={300}
+        height="100%"
+        backgroundColor={backgroundColor}
+        zIndex={100}
+        transitionDuration="300ms"
+        transitionProperty="transform"
       >
-        <Box
-          position="fixed"
-          top={0}
-          left={0}
-          height="100%"
-          width="100%"
-          zIndex={99}
-          backgroundColor="#000"
-          opacity={sidebar.isOpen ? 0.5 : 0}
-          transition="300ms ease opacity"
-        />
-      </TouchableWithoutFeedback>
-    )}
-  </Fragment>
-);
+        {renderBody ? (
+          <Recursive
+            {...renderBody}
+            context={context}
+          />
+        ) : (
+          <ScrollView
+            paddingY={40}
+            flex={1}
+          >
+            {headerImage ? (
+              <Image
+                resizeMode="contain"
+                source={{ uri: headerImage, width: headerImageWidth, height: headerImageHeight }}
+              />
+            ) : null}
+
+            <SidebarMenu
+              items={items}
+            />
+          </ScrollView>
+        )}
+      </Box>
+
+      {(
+        !inline &&
+        sidebar.isOpen
+      ) && (
+        <TouchableWithoutFeedback
+          onPress={closeSidebar}
+        >
+          <Box
+            position="fixed"
+            top={0}
+            left={0}
+            height="100%"
+            width="100%"
+            zIndex={99}
+            backgroundColor="#000"
+            opacity={sidebar.isOpen ? 0.5 : 0}
+            transition="300ms ease opacity"
+          />
+        </TouchableWithoutFeedback>
+      )}
+    </Fragment>
+  );
+};
 
 Sidebar.propTypes = {
   sidebar: object,
@@ -100,6 +112,8 @@ Sidebar.propTypes = {
   headerImageHeight: oneOfType(
     [number, string]
   ),
+  openProps: object,
+  closedProps: object,
 };
 
 export { Sidebar };
