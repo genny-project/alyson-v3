@@ -1,5 +1,5 @@
 import React from 'react';
-import { string, bool, any, func } from 'prop-types';
+import { string, bool, any, func, oneOfType, object } from 'prop-types';
 import { Bridge } from '../../../utils';
 import { Touchable } from '../../components';
 
@@ -65,7 +65,7 @@ const EventTouchable = ({
 EventTouchable.propTypes = {
   children: any,
   buttonCode: string.isRequired,
-  value: string.isRequired,
+  value: oneOfType( [string, object] ).isRequired,
   onPress: func,
   disabled: bool,
   eventType: string,

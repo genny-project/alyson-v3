@@ -59,6 +59,7 @@ export { default as MultiDownshift } from './multi-downshift';
 export { default as DisplayHTML } from './display-html';
 export { default as Recursive } from './layout-loader/Recursive';
 export { default as Dialog } from './dialog';
+export { default as Selection } from './selection';
 
 export * from './keycloak';
 export * from './vertx';
