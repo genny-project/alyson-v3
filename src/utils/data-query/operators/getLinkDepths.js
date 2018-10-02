@@ -1,4 +1,5 @@
 import dset from 'dset';
+import { isArray } from '../../../utils';
 import '.';
 
 export default ( data, options, allData ) => {
@@ -10,7 +11,7 @@ export default ( data, options, allData ) => {
     return data;
   }
 
-  const { code, as } = options;
+  const { code, as, onlyIncludeIf } = options;
 
   if ( !code ) {
     return data;
@@ -27,33 +28,58 @@ export default ( data, options, allData ) => {
   }
 
   /* Store the root beg as depth 0 */
+  /* Store the root beg as depth 0 */
   result[beg.code] = 0;
 
   /* Calculate the depth of all the children */
-  result = getChildrenLinks( beg, 0, {
-    [beg.code]: 0,
-  }, allData );
+  result = getChildrenLinks(
+    beg,
+    0,
+    {
+      [beg.code]: 0,
+    },
+    onlyIncludeIf,
+    allData
+  );
 
   dset( data, as, result );
 
   return data;
 };
 
-function getChildrenLinks( beg, depth, existing, allData ) {
+function getChildrenLinks( beg, depth, existing, onlyIncludeIf, allData ) {
   if ( !beg )
     return existing;
 
   const links = beg.links;
 
+  if (
+    isArray( onlyIncludeIf )
+  )  {
+    links.filter( link => {
+      return onlyIncludeIf.every( x => {
+        // console.log( 'checkeach', link[x.path], x.value );
+
+        return link[x.path] === x.value;
+      });
+    });
+  }
+
   links.forEach(({ link }) => {
-    if ( !existing[link.targetCode] ) {
+    if ( !existing[link.targetCode] && existing[link.targetCode] !== 0 ) {
       existing[link.targetCode] = depth + 1;
 
       /* Get the link for the linked entity */
       const linkedBeg = allData.baseEntities.data[link.targetCode];
 
       if ( linkedBeg ) {
-        getChildrenLinks( linkedBeg, depth + 1, existing, allData );
+        getChildrenLinks(
+          linkedBeg,
+          depth + 1,
+          existing,
+          onlyIncludeIf,
+          allData
+        );
       }
     }
   });
