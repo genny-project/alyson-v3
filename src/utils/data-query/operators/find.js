@@ -112,8 +112,12 @@ const matchesOperators = ( value, operators, context ) => {
       ? injectContext( operators[key], context )
       : operators[key];
 
-    return !findOperators[key]( value, operatorValue, matchesOperators );
+    const doesValueMatchContexted = value => {
+      return doesValueMatch( context, value, context );
+    };
+
+    return !findOperators[key]( value, operatorValue, doesValueMatchContexted );
   });
 };
 
-export { doesValueMatch };
+export { doesValueMatch, isOperatorObject };
