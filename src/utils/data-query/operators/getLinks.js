@@ -1,15 +1,15 @@
 import copy from 'fast-copy';
 import { injectContext } from './helpers';
-import { isArray, isObject, isString } from '../../../utils';
+import { isArray, isObject } from '../../../utils';
 
 export default ( data, options, allData ) => {
   if ( !data )
     return data;
 
   return !isArray( data )
-    ? lookupBE( data, options, allData )
+    ? lookupLink( data, options, allData )
     : data.reduce(( result, item ) => {
-      const be = lookupBE( item, options, allData );
+      const be = lookupLink( item, options, allData );
 
       if (
         options.filterOutEmpty &&
@@ -24,28 +24,22 @@ export default ( data, options, allData ) => {
     }, [] );
 };
 
-const lookupBE = ( data, options, allData ) => {
-  const lookupKey = (
-    isString( data ) ? data
-    : isObject( data ) ? injectContext( options.id, data )
-    : null
-  );
-
-  if ( !lookupKey )
+const lookupLink = ( data, options, allData ) => {
+  if ( !isObject( data ))
     return;
 
   /* Create the path to the base entity */
-  const be = copy( allData.baseEntities.data[lookupKey] );
+  const be = copy( allData.baseEntities.links[injectContext( options.id, data )] );
+  const links = be ? be.links : be;
 
   if (
     options.filterOutEmpty && (
       !be ||
-      !be.name ||
-      !be.code
+      !be.links
     )
   ) {
     return undefined;
   }
 
-  return options.as ? { ...data, [options.as]: be } : be;
+  return options.as ? { ...data, [options.as]: links } : links;
 };

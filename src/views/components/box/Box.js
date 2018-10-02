@@ -10,18 +10,16 @@ const shapeStyles = {
   pill: 999,
 };
 
-const boxShadows = {
-  light: {
-    shadowColor: 'black',
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    shadowOffset: {
-      height: 4,
-      width: 0,
-    },
-  },
-  medium: {},
-  dark: {},
+/* Ensure the props we're going to use were indeed passed through. */
+const filterOutUnspecifiedProps = props => {
+  const keys = Object.keys( props );
+
+  return keys.reduce(( filteredProps, prop ) => {
+    if ( props[prop] != null )
+      filteredProps[prop] = props[prop];
+
+    return filteredProps;
+  }, {});
 };
 
 const Box = ({
@@ -41,6 +39,10 @@ const Box = ({
   flexDirection = 'row',
   flexWrap,
   padding,
+  paddingTop,
+  paddingRight,
+  paddingLeft,
+  paddingBottom,
   paddingX,
   paddingY,
   margin,
@@ -76,13 +78,15 @@ const Box = ({
   borderRadius,
   cleanStyleObject,
   shape,
-  boxShadow,
   fullHeightOnWeb,
   __dangerouslySetStyle = {},
   overflow,
   overflowX,
   overflowY,
   display = 'flex',
+  overscrollBehavior,
+  overscrollBehaviorX,
+  overscrollBehaviorY,
   ...restProps
 }) => {
   const boxStyle = {
@@ -100,16 +104,6 @@ const Box = ({
     flexShrink,
     flexDirection,
     flexWrap,
-    padding,
-    paddingHorizontal: paddingX,
-    paddingVertical: paddingY,
-    margin,
-    marginHorizontal: marginX,
-    marginVertical: marginY,
-    marginTop,
-    marginRight,
-    marginLeft,
-    marginBottom,
     backgroundColor,
     position: (
       (
@@ -134,18 +128,33 @@ const Box = ({
     borderColor,
     borderStyle,
     borderRadius: borderRadius || shapeStyles[shape],
+    overflow,
+    overflowX,
+    overflowY,
     display,
+    overscrollBehavior,
+    overscrollBehaviorX,
+    overscrollBehaviorY,
+    ...filterOutUnspecifiedProps({
+      padding,
+      paddingTop,
+      paddingRight,
+      paddingLeft,
+      paddingBottom,
+      paddingHorizontal: paddingX,
+      paddingVertical: paddingY,
+      margin,
+      marginHorizontal: marginX,
+      marginVertical: marginY,
+      marginTop,
+      marginRight,
+      marginLeft,
+      marginBottom,
+    }),
     ...__dangerouslySetStyle,
   };
 
   const webStyle = Platform.OS !== 'web' ? {} : {
-    accessibilityRole,
-    ...boxShadow && (
-      boxShadows[boxShadow]
-    ),
-    overflow,
-    overflowX,
-    overflowY,
     transitionDuration,
     transitionProperty,
     transitionTimingFunction,
@@ -207,6 +216,10 @@ Box.propTypes = {
   flexGrow: number,
   flexShrink: number,
   padding: number,
+  paddingTop: number,
+  paddingRight: number,
+  paddingLeft: number,
+  paddingBottom: number,
   paddingX: number,
   paddingY: number,
   margin: number,
@@ -250,14 +263,11 @@ Box.propTypes = {
   borderColor: string,
   borderStyle: string,
   borderRadius: oneOf(
-    [2, 5, 10, '50%']
+    [number, string]
   ),
   cleanStyleObject: bool,
   shape: oneOf(
     ['square', 'rounded', 'pill', 'circle']
-  ),
-  boxShadow: oneOf(
-    ['light', 'medium', 'dark']
   ),
   fullHeightOnWeb: bool,
   __dangerouslySetStyle: object,
@@ -265,6 +275,15 @@ Box.propTypes = {
   overflowX: string,
   overflowY: string,
   display: string,
+  overscrollBehavior: oneOf(
+    ['auto', 'contain', 'none']
+  ),
+  overscrollBehaviorX: oneOf(
+    ['auto', 'contain', 'none']
+  ),
+  overscrollBehaviorY: oneOf(
+    ['auto', 'contain', 'none']
+  ),
 };
 
 export default Box;

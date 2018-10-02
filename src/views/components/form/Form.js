@@ -32,7 +32,6 @@ class Form extends Component {
     validationList: {},
     initialValues: {},
     questionGroups: [],
-    formStatus: null,
   }
 
   componentDidMount() {
@@ -271,6 +270,7 @@ class Form extends Component {
       finalValue = JSON.stringify( finalValue );
     }
 
+    // eslint-disable-next-line no-console
     console.warn( 'sending answer...', {
       askId: ask.id,
       attributeCode: finalAttributeCode,
@@ -318,13 +318,10 @@ class Form extends Component {
   }
 
   handleSubmit = ( values, form ) => {
-    if ( form ) {
-      const { setSubmitting } = form;
+    const { setSubmitting } = form;
+    const { questionGroups } = this.state;
 
-      setSubmitting( true );
-    }
-
-    const { questionGroups, formStatus } = this.state;
+    setSubmitting( true );
 
     const questionGroup = questionGroups.find( group => {
       return group.attributeCode.includes( 'BUTTON' );
@@ -333,8 +330,8 @@ class Form extends Component {
       questionGroups[0]
     );
 
-    console.log( questionGroup );
     if ( !questionGroup ) {
+      // eslint-disable-next-line no-console
       console.warn( 'Could not submit form - no question group associated with form.' );
 
       return;
@@ -345,7 +342,65 @@ class Form extends Component {
       code: questionGroup.questionCode,
       value: JSON.stringify({
         targetCode: questionGroup.targetCode,
-        action: formStatus || 'submit',
+        action: 'submit',
+      }),
+    };
+
+    Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
+  }
+
+  handlePressNo = () => {
+    const { questionGroups } = this.state;
+
+    const questionGroup = questionGroups.find( group => {
+      return group.attributeCode.includes( 'BUTTON' );
+    }) || (
+      questionGroups.length > 0 &&
+      questionGroups[0]
+    );
+
+    if ( !questionGroup ) {
+      // eslint-disable-next-line no-console
+      console.warn( 'Could not submit form - no question group associated with form.' );
+
+      return;
+    }
+
+    /* send event to back end */
+    const eventData = {
+      code: questionGroup.questionCode,
+      value: JSON.stringify({
+        targetCode: questionGroup.targetCode,
+        action: 'no',
+      }),
+    };
+
+    Bridge.sendButtonEvent( 'FORM_SUBMIT', eventData );
+  }
+
+  handlePressYes = () => {
+    const { questionGroups } = this.state;
+
+    const questionGroup = questionGroups.find( group => {
+      return group.attributeCode.includes( 'BUTTON' );
+    }) || (
+      questionGroups.length > 0 &&
+      questionGroups[0]
+    );
+
+    if ( !questionGroup ) {
+      // eslint-disable-next-line no-console
+      console.warn( 'Could not submit form - no question group associated with form.' );
+
+      return;
+    }
+
+    /* send event to back end */
+    const eventData = {
+      code: questionGroup.questionCode,
+      value: JSON.stringify({
+        targetCode: questionGroup.targetCode,
+        action: 'yes',
       }),
     };
 
@@ -591,7 +646,7 @@ class Form extends Component {
           values,
           errors,
           touched,
-          submitForm,
+          handleSubmit,
           isSubmitting,
           isValid,
           setFieldValue,
@@ -650,35 +705,11 @@ class Form extends Component {
                 </Fragment>
               ))}
 
-              {questionGroups.reduce(( buttons, { attributeCode }) => {
-                if ( attributeCode.includes( 'CANCEL' )) {
-                  buttons.push(
-                    this.renderButton({
-                      disabled: !isValid || isSubmitting,
-                      onPress: () => {
-                        this.setState({
-                          formStatus: 'cancel',
-                        }, () => {
-                          submitForm();
-                        });
-                      },
-                      key: 'cancel',
-                      text: 'Cancel',
-                      showSpinnerOnClick: true,
-                    })
-                  );
-                }
-
+              {questionGroups.reduce(( buttons, { attributeCode }, index ) => {
                 if ( attributeCode.includes( 'YES' )) {
                   buttons.push(
                     this.renderButton({
-                      onPress: () => {
-                        this.setState({
-                          formStatus: 'yes',
-                        }, () => {
-                          this.handleSubmit();
-                        });
-                      },
+                      onPress: this.handlePressYes,
                       key: 'YES',
                       text: 'Yes',
                       showSpinnerOnClick: true,
@@ -689,13 +720,7 @@ class Form extends Component {
                 if ( attributeCode.includes( 'NO' )) {
                   buttons.push(
                     this.renderButton({
-                      onPress: () => {
-                        this.setState({
-                          formStatus: 'no',
-                        }, () => {
-                          this.handleSubmit();
-                        });
-                      },
+                      onPress: this.handlePressNo,
                       key: 'NO',
                       text: 'No',
                       showSpinnerOnClick: true,
@@ -707,58 +732,29 @@ class Form extends Component {
                   buttons.push(
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
-                      onPress: () => {
-                        this.setState({
-                          formStatus: 'submit',
-                        }, () => {
-                          submitForm();
-                        });
-                      },
-                      key: 'submit',
+                      onPress: handleSubmit,
+                      key: 'YES',
                       text: 'Submit',
                       showSpinnerOnClick: true,
                     })
                   );
                 }
 
-                if ( attributeCode.includes( 'NEXT' )) {
+                /* If there are no buttons to show, render the submit button. */
+                if (
+                  index === questionGroups.length - 1 &&
+                  buttons.length === 0
+                ) {
                   buttons.push(
                     this.renderButton({
                       disabled: !isValid || isSubmitting,
-                      onPress: () => {
-                        this.setState({
-                          formStatus: 'next',
-                        }, () => {
-                          submitForm();
-                        });
-                      },
-                      key: 'next',
-                      text: 'Next',
+                      onPress: handleSubmit,
+                      key: 'YES',
+                      text: 'Submit',
                       showSpinnerOnClick: true,
                     })
                   );
                 }
-
-                /* If there are no buttons to show, render the submit button. */
-                // if (
-                //   index === questionGroups.length - 1 &&
-                //   buttons.length === 0
-                // ) {
-                //   buttons.push(
-                //     this.renderButton({
-                //       disabled: !isValid || isSubmitting,
-                //       onPress: () => {
-                //         this.setState({
-                //           formStatus: 'submit',
-                //         }, () => {
-                //           submitForm();
-                //         });
-                //       },
-                //       text: 'Submit',
-                //       showSpinnerOnClick: true,
-                //     })
-                //   );
-                // }
 
                 return buttons;
               }, [] )}

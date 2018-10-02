@@ -25,6 +25,7 @@ class LayoutProvider extends Component {
     else {
       const colors = Object.keys( this.appColors ).join( '|' );
 
+      // eslint-disable-next-line no-console
       console.warn( `Invalid app color '${color}' was set, expected one of the following: ${colors}` );
     }
   }
@@ -37,12 +38,13 @@ class LayoutProvider extends Component {
     else {
       const colors = Object.keys( color ).join( '|' );
 
+      // eslint-disable-next-line no-console
       console.warn( `Invalid background color '${color}' was set, expected one of the following: ${colors}` );
     }
   }
 
   setSidebarVisibility = visible => {
-    this.setState({ hideSidebar: visible });
+    this.setState({ showSidebar: visible });
 
     store.dispatch(
       actions.setSidebarVisibility( visible )
@@ -106,7 +108,7 @@ class LayoutProvider extends Component {
     setHeaderVisibility: this.setHeaderVisibility,
     setHeaderProps: this.setHeaderProps,
     setSidebarProps: this.setSidebarProps,
-    hideSidebar: false,
+    showSidebar: false,
     showHeader: false,
     headerProps: {},
     sidebarProps: {},

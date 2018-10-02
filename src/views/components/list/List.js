@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
-import { string, bool, array, number, any } from 'prop-types';
-import { Box, Text, Icon, ScrollView } from '../../components';
+import { string, bool, array, number, any, object } from 'prop-types';
+import { isArray } from '../../../utils';
+import { Box, Text, Icon } from '../../components';
 
 const statusColors = {
   error: '#cc0000',
@@ -12,12 +13,9 @@ class List extends PureComponent {
   static defaultProps = {
     contentPadding: 10,
     contentGutter: 10,
-    contentBackground: 'grey',
     showHeader: true,
     headerText: 'Bucket Title',
-    headerColor: 'white',
     headerHeight: 50,
-    headerBackground: 'darkgrey',
     headerPadding: 0,
     showLegend: true,
     legend: [],
@@ -26,7 +24,7 @@ class List extends PureComponent {
     legendPadding: 10,
     legendMargin: 10,
     legendColor: 'black',
-    roundCorners: true,
+    emptyText: 'No items to show',
   }
 
   static propTypes = {
@@ -50,21 +48,27 @@ class List extends PureComponent {
     legendMargin: number,
     legendColor: string,
     roundCorners: bool,
+    emptyProps: object,
+    emptyTextProps: object,
+    emptyText: string,
+    headerProps: object,
+    headerTextProps: object,
+    showCountInHeader: bool,
+    headerCountProps: object,
+    headerCountTextProps: object,
+    scrollViewProps: object,
+    contentBodyProps: object,
   }
 
   render() {
     const {
       children,
       contentBackground,
-      contentPadding,
       contentGutter,
       showHeader,
       headerText,
       headerIcon,
-      headerHeight,
-      headerBackground,
       headerColor,
-      headerPadding,
       showLegend,
       legend,
       legendText,
@@ -74,10 +78,21 @@ class List extends PureComponent {
       legendMargin,
       legendColor,
       roundCorners,
+      emptyProps,
+      emptyTextProps,
+      emptyText,
+      headerProps,
+      headerTextProps,
+      showCountInHeader,
+      headerCountProps,
+      headerCountTextProps,
+      contentBodyProps,
+      ...restProps
     } = this.props;
 
     return (
       <Box
+        {...restProps}
         flexDirection="column"
         justifyContent="flex-start"
         flex={1}
@@ -86,15 +101,8 @@ class List extends PureComponent {
       >
         {showHeader && (
           <Box
-            justifyContent="center"
-            alignItems="center"
-            width="100%"
-            height={headerHeight}
-            backgroundColor={headerBackground}
-            position="sticky"
-            top={0}
-            margin={headerPadding}
             zIndex={5}
+            {...headerProps}
           >
             {headerIcon ? (
               <Box
@@ -108,59 +116,47 @@ class List extends PureComponent {
             ) : null}
 
             {headerText ? (
-              <Text
-                fontWeight="bold"
-                color={headerColor}
-              >
+              <Text {...headerTextProps}>
                 {headerText}
-                &nbsp;
-                {(
-                  children &&
-                  children instanceof Array &&
-                  children.length > 0
-                )
-                  ? `(${children.length})`
-                  : '(0)'}
               </Text>
             ) : null}
+
+            {(
+              showCountInHeader &&
+              isArray( children )
+            )
+              ? (
+                <Box {...headerCountProps}>
+                  <Text {...headerCountTextProps}>
+                    {children.length}
+                  </Text>
+                </Box>
+              ) : null}
           </Box>
         )}
 
-        <ScrollView
-          justifyContent="center"
-          width="100%"
-          flexDirection="column"
-          padding={contentPadding}
-        >
-          {(
-            children &&
-            children instanceof Array &&
-            children.length > 0
-          ) ? (
-              children.map(( child, index ) => (
-                <Box
-                  key={child.props.id}
-                  marginBottom={index < children.length - 1 ? contentGutter : null}
-                >
-                  {child}
-                </Box>
-              ))
-            ) : (
-              <Text
-                align="center"
-                color="white"
-              >
-              No Items To Display
-              </Text>
-            )}
-        </ScrollView>
+        {isArray( children, { ofMinLength: 1 }) ? (
+          children.map(( child, index ) => (
+            <Box
+              key={child.props.id}
+              marginBottom={index < children.length - 1 ? contentGutter : null}
+              {...contentBodyProps}
+            >
+              {child}
+            </Box>
+          ))
+        ) : (
+          <Box {...emptyProps}>
+            <Text {...emptyTextProps}>
+              {emptyText}
+            </Text>
+          </Box>
+        )}
 
         {(
           showLegend &&
-          legend &&
-          legend instanceof Array &&
-          legend.length > 0
-        ) && (
+          isArray( legend, { ofMinLength: 1 })
+        ) ? (
           <Box
             flexDirection="column"
             justifyContent="center"
@@ -234,7 +230,7 @@ class List extends PureComponent {
               ))}
             </Box>
           </Box>
-        )}
+          ) : null}
       </Box>
     );
   }

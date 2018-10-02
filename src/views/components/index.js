@@ -62,6 +62,9 @@ export { default as DisplayMarkdown } from './display-markdown';
 export { default as Table } from './table';
 export { default as BackButton } from './back-button';
 export { default as ProgressNode } from './progress-node';
+export { default as Recursive } from './layout-loader/Recursive';
+export { default as Dialog } from './dialog';
+export { default as Marker } from './marker';
 
 export * from './keycloak';
 export * from './vertx';

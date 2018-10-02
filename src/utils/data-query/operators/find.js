@@ -1,5 +1,5 @@
-import dlv from 'dlv';
 /* Import all of the find operators */
+import dlv from 'dlv';
 import * as findOperators from './findOperators';
 import { injectContext } from './helpers';
 

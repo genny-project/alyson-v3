@@ -19,7 +19,7 @@ class DataQuery {
 
     /* Apply each of the operators to the data */
     query.forEach( q => {
-      // console.log( q.operator, { output });
+      // console.warn( q.operator, output );
 
       if ( q.operator === 'navigate' ) {
         this.path = q.path;
@@ -44,6 +44,8 @@ class DataQuery {
         output = result;
       }
     });
+
+    console.warn( output );
 
     return output;
   }

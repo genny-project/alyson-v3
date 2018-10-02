@@ -1,5 +1,6 @@
 import { push } from 'react-router-redux';
 import * as actions from './vertx.actions';
+import { showDialog } from '../../../redux/actions';
 import { Bridge } from '../../../utils';
 
 const middleware = store => next => action => {
@@ -25,11 +26,18 @@ const middleware = store => next => action => {
   }
 
   if ( action.type === 'ROUTE_CHANGE' ) {
-    const { code } = action.payload;
+    const { code, modal } = action.payload;
 
-    store.dispatch(
-      push( code )
-    );
+    if ( modal ) {
+      store.dispatch(
+        showDialog({ layoutName: code })
+      );
+    }
+    else {
+      store.dispatch(
+        push( code )
+      );
+    }
   }
 };
 

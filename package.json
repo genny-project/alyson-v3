@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "antd": "^3.9.3",
+    "@reach/dialog": "^0.1.2",
+    "@reach/visually-hidden": "^0.1.1",
     "appcenter": "^1.6.0",
     "appcenter-analytics": "^1.6.0",
     "appcenter-crashes": "^1.6.0",

@@ -1,7 +1,15 @@
+/**
+ *
+ * WARNING
+ *
+ * Experimental
+ *
+ */
+
 import { Component } from 'react';
 import copy from 'fast-copy';
 import dlv from 'dlv';
-import { func } from 'prop-types';
+import { func, object } from 'prop-types';
 import { store } from '../../../redux';
 
 const handleMapCurlyTemplate = data => ( template ) => {
@@ -77,13 +85,16 @@ const handleReducePropInjection = data => ( result, current ) => {
   return result;
 };
 
-const injectProps = props => {
+const injectProps = ( props, data ) => {
   const { user } = store.getState().vertx;
 
-  const data = { user };
+  const dataPool = {
+    ...data,
+    user,
+  };
 
   const injectedProps =
-    Object.keys( props ).reduce( handleReducePropInjection( data ),  copy( props ));
+    Object.keys( props ).reduce( handleReducePropInjection( dataPool ),  copy( props ));
 
   return injectedProps;
 };
@@ -91,10 +102,13 @@ const injectProps = props => {
 class PropInjection extends Component {
   static propTypes = {
     children: func,
+    data: object,
   }
 
   static getDerivedStateFromProps( props ) {
-    return injectProps( props );
+    const { data, ...restProps } = props;
+
+    return injectProps( restProps, data );
   }
 
   state = {}
