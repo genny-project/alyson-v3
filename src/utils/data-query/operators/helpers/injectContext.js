@@ -9,6 +9,13 @@ const injectContext = ( value, context ) => {
     return curlyBracketParse( value, path => dlv( context, path ));
   }
 
+  if (
+    isString( value ) &&
+    shouldParseUnderscore( value )
+  ) {
+    return underscoreParse( value, context );
+  }
+
   /* If given an array, recursively map through its
    * elements and inject context into them. */
   if ( isArray( value, { onMinLength: 1 })) {
@@ -48,6 +55,17 @@ const shouldParseBrackets = string => {
 
 const curlyBracketParse = ( input, method ) => {
   return input.split( '{{' ).map( i => i.includes( '}}' ) ? `${method( i.split( '}}' )[0] ) || input}${i.split( '}}' ).slice( 1 )}` : i ).join( '' );
+};
+
+const shouldParseUnderscore = string => {
+  return (
+    isString( string, { ofMinLength: 1 }) &&
+    string.startsWith( '_' )
+  );
+};
+
+const underscoreParse = ( input, context ) => {
+  return dlv( context, input.split( '_' )[1] );
 };
 
 export default injectContext;

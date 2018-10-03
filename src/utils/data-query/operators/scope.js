@@ -3,20 +3,20 @@ import dset from 'dset';
 import { isArray } from '../../../utils';
 import * as operators from './';
 
-export default ( data, options, allData ) => {
+export default ( data, options, allData, context ) => {
   return isArray( data ) ? data.map( item => {
-    return getSingleItemScoped( item, options, allData );
-  }) : getSingleItemScoped( data, options, allData );
+    return getSingleItemScoped( item, options, allData, context );
+  }) : getSingleItemScoped( data, options, allData, context );
 };
 
-const getSingleItemScoped = ( item, options, allData ) => {
+const getSingleItemScoped = ( item, options, allData, context ) => {
   const { scope, path, as } = options;
 
   /* Create a copy of the object that we can modify */
   const result = { ...item };
 
   /* Get the data for the path */
-  const pathData = dlv( result, path );
+  const pathData = dlv({ ...result, ...context } , path );
 
   /* Get the scope operator */
   const { operator } = scope;
