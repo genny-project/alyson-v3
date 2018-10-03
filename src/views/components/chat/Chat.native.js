@@ -53,15 +53,16 @@ class Chat extends Component {
         console.warn({
           message, PRI_CREATOR, PRI_MESSAGE,
         });
-
-        return {
-          _id: PRI_MESSAGE.baseEntityCode,
-          text: PRI_MESSAGE.value,
-          createdAt: moment( `${PRI_MESSAGE.created}Z` ),
-          user: {
-            _id: PRI_CREATOR.value,
-          },
-        };
+        if ( PRI_MESSAGE && PRI_CREATOR ) {
+          return {
+            _id: PRI_MESSAGE.baseEntityCode,
+            text: PRI_MESSAGE.value,
+            createdAt: moment( `${PRI_MESSAGE.created}Z` ),
+            user: {
+              _id: PRI_CREATOR.value,
+            },
+          };
+        }
       }
     );
 

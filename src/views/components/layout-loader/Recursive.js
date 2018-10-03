@@ -4,7 +4,7 @@ import dlv from 'dlv';
 import copy from 'fast-copy';
 import { connect } from 'react-redux';
 import { object, any, string, array, oneOfType } from 'prop-types';
-import { doesValueMatch } from '../../../utils/data-query/operators/find';
+import { doesValueMatch, isOperatorObject } from '../../../utils/data-query/operators/find';
 import { isObject, isArray, isString } from '../../../utils';
 import { store } from '../../../redux';
 import * as Components from '../index';
@@ -217,6 +217,10 @@ class Recursive extends Component {
      */
     if ( !isObject( condition ) && !isArray( condition )) {
       console.error( condition );
+    }
+
+    if ( isOperatorObject( condition )) {
+      return doesValueMatch( true, condition, dataPool );
     }
 
     const fields = Object.keys( condition );

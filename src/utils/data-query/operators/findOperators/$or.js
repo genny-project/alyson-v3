@@ -1,3 +1,3 @@
-export default ( input, value, matchesOperators ) => {
-  return !!value.find( operators => matchesOperators( input, operators ));
+export default ( input, value, doesValueMatch ) => {
+  return !!value.find( operators => doesValueMatch( operators ));
 };
