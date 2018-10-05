@@ -1,7 +1,7 @@
 import dlv from 'dlv';
 import dset from 'dset';
 import * as Operators from './operators';
-import { injectContext } from './operators/helpers';
+import { injectContext, ifConditionsPass } from './operators/helpers';
 
 class DataQuery {
   constructor( data ) {
@@ -19,31 +19,53 @@ class DataQuery {
 
     let currentContext = {};
 
+    const checkQuery = ( query ) => {
+      query.forEach( q => {
+        if ( q.onlyShowIf ) {
+          if (
+            !ifConditionsPass({ ...queryContext, ...currentContext }, q.onlyShowIf,  ) || !q.query
+          ) return null;
+          checkQuery( q.query );
+
+          return;
+        }
+
+        if ( q.dontShowIf ) {
+          if (
+            ifConditionsPass({ ...queryContext, ...currentContext }, q.dontShowIf,  ) || !q.query
+          ) return null;
+          checkQuery( q.query );
+
+          return;
+        }
+
+        if ( q.operator === 'navigate' ) {
+          this.path = q.path;
+
+          return;
+        }
+        const queryData = this.injectQueryContext( q, { ...queryContext, ...currentContext });
+
+        const result = Operators[q.operator](
+          this.path ? dlv( output, this.path ) : output,
+          queryData,
+          this.data.length ? [...this.data] : { ...this.data },
+          queryContext
+        );
+
+        if ( this.path ) {
+          dset( output, this.path, result );
+        } else {
+          output = result;
+        }
+
+        // set the currentContext to be the most recent output object of the query array
+        currentContext = output;
+      });
+    };
+
     /* Apply each of the operators to the data */
-    query.forEach( q => {
-      if ( q.operator === 'navigate' ) {
-        this.path = q.path;
-
-        return;
-      }
-      const queryData = this.injectQueryContext( q, { ...queryContext, ...currentContext });
-
-      const result = Operators[q.operator](
-        this.path ? dlv( output, this.path ) : output,
-        queryData,
-        this.data.length ? [...this.data] : { ...this.data },
-        queryContext
-      );
-
-      if ( this.path ) {
-        dset( output, this.path, result );
-      } else {
-        output = result;
-      }
-
-      // set the currentContext to be the most recent output object of the query array
-      currentContext = output;
-    });
+    checkQuery( query );
 
     return output;
   }

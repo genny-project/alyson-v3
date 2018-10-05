@@ -202,3 +202,48 @@ export { default as myAwesomeOperator } from './myAwesomeOperator';
 ```
 
 The operator is now available inside any layouts.
+
+## onlyShowIf, dontShowIf
+
+You can also use onlyShowIf and dontShowIf to run a series of queries if a condition is passed.
+
+The only two fields needed are one of onlyShowIf or dontShowIf, and query. Query contains an array of queries that will only be processed if the conditional is met.
+
+```json
+{
+  "operator": "scope",
+  "path": "currentUser.links",
+  "as": "requests",
+  "scope": {
+    "operator": "find",
+    "query": {
+      "valueString": {
+        "$eq": "REQUEST"
+      }
+    }
+  }
+},
+{
+  "onlyShowIf": {
+    "requests": {
+      "$size": {
+        "$gt": 10
+      }
+    }
+  },
+  "query": [
+    {
+      "operator":"scope",
+      "path": "requests",
+      "scope": {
+        "operator":"find",
+        "query":{
+          "attributes.PRI_INTRODUCER_CODE.value": {
+            "$eq": "{{otherUser.code}}"
+          }
+        }
+      }
+    }
+  ]
+}
+```
