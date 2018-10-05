@@ -17,19 +17,16 @@ class DataQuery {
     /* Inject the queryContext into the data passed into the operator */
     output = JSON.parse( JSON.stringify( output ));
 
+    let currentContext = {};
+
     /* Apply each of the operators to the data */
     query.forEach( q => {
-      // console.log( q.operator, { output });
-
       if ( q.operator === 'navigate' ) {
         this.path = q.path;
 
         return;
       }
-
-      const queryData = this.injectQueryContext( q, queryContext );
-
-      // console.log( queryData );
+      const queryData = this.injectQueryContext( q, { ...queryContext, ...currentContext });
 
       const result = Operators[q.operator](
         this.path ? dlv( output, this.path ) : output,
@@ -43,6 +40,9 @@ class DataQuery {
       } else {
         output = result;
       }
+
+      // set the currentContext to be the most recent output object of the query array
+      currentContext = output;
     });
 
     return output;
