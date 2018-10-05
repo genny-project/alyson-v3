@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { string, number, object, boolean } from 'prop-types';
+import { string, number, object, bool } from 'prop-types';
 import { Dimensions } from 'react-native';
 import dlv from 'dlv';
 
@@ -28,11 +28,11 @@ class ImageProxy extends Component {
       imageHeight: number,
       quality: number,
       rotation: number,
-      fit: boolean,
-      flipX: boolean,
-      flipY: boolean,
-      screenWidth: boolean,
-      screenHeight: boolean,
+      fit: bool,
+      flipX: bool,
+      flipY: bool,
+      screenWidth: bool,
+      screenHeight: bool,
     }
 
     state = {
