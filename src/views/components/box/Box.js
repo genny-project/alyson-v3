@@ -14,7 +14,7 @@ const shapeStyles = {
     borderRadius: 100000,
   },
   pill: {
-    borderRadius: 999,
+    borderRadius: 50,
   },
   roundedTop: {
     borderTopLeftRadius: 5,
