@@ -15,9 +15,9 @@
     "layout-editor": "node layout-editor"
   },
   "dependencies": {
-    "antd": "^3.9.3",
     "@reach/dialog": "^0.1.2",
     "@reach/visually-hidden": "^0.1.1",
+    "antd": "^3.9.3",
     "appcenter": "^1.6.0",
     "appcenter-analytics": "^1.6.0",
     "appcenter-crashes": "^1.6.0",
@@ -58,6 +58,7 @@
     "lodash.lowercase": "^4.3.0",
     "lodash.range": "^3.2.0",
     "lodash.uppercase": "^4.3.0",
+    "match-sorter": "^2.3.0",
     "moment": "^2.22.2",
     "monaco-editor-webpack-plugin": "^1.5.1",
     "prettier": "^1.13.7",

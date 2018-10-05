@@ -1,20 +1,30 @@
 
+body{ 
+    font-family: Roboto;
+}
+
+.ReactTable { 
+    line-height: 1.6em;
+    font-family: Roboto;
+}
 .react-tbl {
+    font-family: Roboto;
     font-family: inherit !important;
 }
 
 .rt-td {
+    font-family: inherit;
     border: solid 2px white;
     border-top: solid 1px white;
     border-bottom: solid 1px white;
-    background: #d2e8ff;
-    color: rgb(69, 69, 69);
-    color: red;
+    border: 0;
+    background: whitesmoke;
+    color: #333;
 }
 
 .-odd {
     .rt-td {
-        background: #eff7ff
+        background: #ffffff
     }
 }
 

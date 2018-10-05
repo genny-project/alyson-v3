@@ -1,8 +1,20 @@
 import React, { Component } from 'react';
 import { string, array, number, bool, oneOfType } from 'prop-types';
 import ReactTable from 'react-table';
+import matchSorter from 'match-sorter';
 import 'react-table/react-table.css';
 import './table.scss';
+
+const utilMethod = ( filter, rows ) => {
+  // const rows1 = Array.from( rows );
+
+  // console.warn( filter,rows, '$$$$$$$$$ ' );
+  // const a =  rows1.filter( x =>  x.firstName.includes( 'anish' ));
+
+  // return a;
+
+  return  matchSorter( rows, filter.value, { keys: ['firstName'] });
+};
 
 class TableView extends Component {
   static defaultProps = {
@@ -39,43 +51,72 @@ class TableView extends Component {
     return newData;
   };
 
-  render() {
-    console.warn( this.props );
-    const {
-      columns,
-      data,
-      itemsPerPage,
-      filterable,
-      tableBackgroundColor,
-      tableWidth,
-      containerBackgroundColor,
-      tableHeight,
-    } = this.props;
+   addFilterMethodsToColumn =  () => { 
+     const { columns  } = this.props;
 
-    const tableStyleProps = [];
+     if ( columns.length < 1 ) return null;
+     const modifiedCells = columns.map( column => { 
+       if ( column.filterType === 'string' ) { 
+         return ( [{ ...column, ...({ filterMethod: column['filterMethod'] = utilMethod }), ...{ filterAll: true } }] );
+       }
 
-    tableStyleProps.push( tableHeight, tableWidth, tableBackgroundColor, containerBackgroundColor );
+       return column['filterMethod'] = 'filter2';
+     });
 
-    return (
-      <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
-        <ReactTable
-          className="react-tbl table -striped -highlight"
-          style={[tableStyleProps]}
-          showPageSizeOptions={false}
-          noDataText="No data to Display."
-          data={data}
-          columns={columns}
-          pageSize={itemsPerPage}
-          filterable={filterable}
-          defaultFilterMethod={( filter, row ) => {
-            return row[filter.id].value.includes( filter.value );
-          }}
-          // resizable={false}
-          showPagination={data.length > itemsPerPage ? true : false}
-        />
-      </div>
-    );
-  }
+      // if user passes a table cell as a component other than string, number
+      // we need to handle it specificially and combine the data
+    //  const combineCustomComponent = () => {
+    //    if ( customComponent ) { 
+    //      columns.map( column => {
+    //        return; 
+    //      });
+    //    }
+    //  };
+
+     return modifiedCells;
+   }
+
+   render() {
+     const {
+       columns,
+       data,
+       itemsPerPage,
+       filterable,
+       tableBackgroundColor,
+       tableWidth,
+       containerBackgroundColor,
+       tableHeight,
+     } = this.props;
+
+     const tableStyleProps = [];
+
+     tableStyleProps.push( 
+       tableHeight,
+       tableWidth,
+       tableBackgroundColor,
+       containerBackgroundColor );
+     console.warn( this.props, 'props *********************************' );
+     this.addFilterMethodsToColumn();
+
+     return (
+       <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
+         <ReactTable
+           className="react-tbl table -striped -highlight"
+           style={[tableStyleProps]}
+           showPageSizeOptions={false}
+           noDataText="No data to Display."
+           data={data}
+           columns={columns}
+           pageSize={itemsPerPage}
+           filterable={filterable}
+           defaultFilterMethod={( filter, row ) =>
+             String( row[filter.id] ) === filter.value}
+           showPagination={data.length > itemsPerPage ? true : false}
+
+         />
+       </div>
+     );
+   }
 }
 
 export default TableView;

@@ -22,6 +22,7 @@ class Recursive extends Component {
     variant: string,
     theme: object,
     useThemeFrom: string,
+    recursiveProps: object,
   };
 
   handleMapCurlyTemplate = template => {
@@ -186,6 +187,7 @@ class Recursive extends Component {
    * correctly.
    */
   injectContextIntoProps( props ) {
+    // console.warn( this.props.component, props );
     if ( !isObject( props )) return {};
 
     const propsCopy = copy( props );
@@ -276,6 +278,7 @@ class Recursive extends Component {
       dontShowIf,
       conditional,
       theme,
+      recursiveProps,
     } = this.props;
 
     if ( !component || !Components[component] ) {
@@ -311,12 +314,15 @@ class Recursive extends Component {
      *
      * Investigate performance optimisation
      */
+    const injectedRecursiveProps = this.injectContextIntoProps( recursiveProps );
+
     const repeatedChildren = isArray( injectedRepeat ) ? (
       injectedRepeat.map(( child, index ) => ({
         ...children,
         props: {
           ...children.props,
           ...isArray( child ) ? child : {},
+          test: 7,
         },
         context: {
           ...context,
@@ -326,12 +332,15 @@ class Recursive extends Component {
           },
           parentRepeater: context.repeater,
         },
+        ...injectedRecursiveProps,
+        recursiveProps: this.injectContextIntoProps( recursiveProps ),
+        test: 6,
       }))
     ) : (
       this.injectContextIntoChildren( context, children )
     );
-
     const componentProps = this.injectContextIntoProps({
+      ...injectedRecursiveProps,
       ...(
         variant &&
         theme.components[useThemeFrom || component] &&
@@ -339,6 +348,7 @@ class Recursive extends Component {
       ),
       ...props,
       ...this.calculateConditionalProps( conditional, context ),
+      test: 5,
     });
 
     return createElement(
@@ -347,7 +357,8 @@ class Recursive extends Component {
       isArray( repeatedChildren ) ? (
         repeatedChildren.map(( child, index ) => (
           isValidElement( child )
-            ? cloneElement( child, { key: index, context, theme })
+            ? cloneElement( child, 
+              { key: index, context, theme, ...injectedRecursiveProps, test: 4 })
             : (
               <Recursive
                 context={context}
@@ -355,17 +366,22 @@ class Recursive extends Component {
                 key={index}
                 theme={theme}
                 {...child}
+                {...injectedRecursiveProps}
+                {...recursiveProps}
+                fdshjkfdsh={3}
               />
             )
         ))
       ) : isObject( repeatedChildren ) ? (
         isValidElement( repeatedChildren )
-          ? cloneElement( repeatedChildren, { context, theme })
+          ? cloneElement( repeatedChildren, { context, theme, ...injectedRecursiveProps, test: 2 })
           : (
             <Recursive
               context={context}
               theme={theme}
               {...repeatedChildren}
+              {...injectedRecursiveProps}
+              test={1}
             />
           )
       ) : (

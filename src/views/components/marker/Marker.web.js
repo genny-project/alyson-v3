@@ -7,7 +7,7 @@ class Marker extends Component {
     lng: oneOf( [string, number] ),
   }
 
-  render() { 
+  render() {
     const {  lat, lng } = this.props;
  
     return (
