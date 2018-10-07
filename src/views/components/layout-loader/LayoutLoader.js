@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react';
-import { shape, object, any, bool } from 'prop-types';
+import { shape, object, any, bool , func } from 'prop-types';
 import { connect } from 'react-redux';
 import Layout from '../../layout';
+import { openSidebar } from '../../../redux/actions';
 import { isArray } from '../../../utils';
 import DataQuery from '../../../utils/data-query';
 import { store } from '../../../redux';
@@ -32,14 +33,33 @@ class LayoutLoader extends Component {
     sublayout: bool,
     router: object,
     isDialog: bool,
+    sidebar: object,
+    openSidebar: func,
   };
 
   handleRetry = () => {
     if ( this.timeout ) this.timeout.startTimeout();
   };
 
+  handleOpenSidebar = () => {
+    this.props.openSidebar( 'left' );
+  }
+
+  handleOpenSidebarRight = () => {
+    this.props.openSidebar( 'right' );
+  }
+
   render() {
-    const { layout, data, navigation, router, sublayoutProps, sublayout, isDialog } = this.props;
+    const {
+      layout,
+      data,
+      navigation,
+      router,
+      sublayoutProps,
+      sublayout,
+      isDialog,
+      sidebar,
+    } = this.props;
 
     if ( !layout ) {
       if (
@@ -156,6 +176,11 @@ class LayoutLoader extends Component {
       props: sublayoutProps,
       time: timeUtils,
       user: data.user,
+      sidebar,
+      actions: {
+        openSidebar: this.handleOpenSidebar,
+        openSidebarRight: this.handleOpenSidebarRight,
+      },
     };
 
     const Holder = (
@@ -187,6 +212,7 @@ class LayoutLoader extends Component {
 const mapStateToProps = state => ({
   data: state.vertx,
   router: state.router,
+  sidebar: state.sidebar,
 });
 
-export default connect( mapStateToProps )( LayoutLoader );
+export default connect( mapStateToProps, { openSidebar })( LayoutLoader );

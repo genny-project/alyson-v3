@@ -156,9 +156,36 @@ const handleReduceDefinitionData = ( resultant, current ) => {
   return resultant;
 };
 
+const deleteLinkedBaseEntities = ( data, resultant, depth = 1 ) => {
+  const { shouldDeleteLinkedBaseEntities, links } = data;
+
+  links.forEach(({ link }) => {
+    if ( depth >= shouldDeleteLinkedBaseEntities ) {
+      delete resultant[link.targetCode];
+    }
+    else {
+      deleteLinkedBaseEntities({
+        ...resultant[link.targetCode],
+        shouldDeleteLinkedBaseEntities,
+      }, resultant, depth + 1 );
+    }
+  });
+};
+
 const handleReduceData = ( resultant, current ) => {
   /* Shortcut to remove properties inside the current base entity. */
   const { baseEntityAttributes, ...wantedData } = current; // eslint-disable-line no-unused-vars
+
+  if ( current.shouldDeleteLinkedBaseEntities ) {
+    if ( Number.isInteger( current.shouldDeleteLinkedBaseEntities )) {
+      deleteLinkedBaseEntities( current, resultant );
+    }
+  }
+  else if ( current.delete ) {
+    delete resultant[current.code];
+
+    return resultant;
+  }
 
   resultant[current.code] = wantedData;
   /* If the current has a parentCode, ensure there is an accompanying base entity. */

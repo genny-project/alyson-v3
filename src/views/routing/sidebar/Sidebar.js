@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { object, string, bool } from 'prop-types';
+import { object, string, bool, oneOf, func } from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dlv from 'dlv';
@@ -18,6 +18,8 @@ class Sidebar extends Component {
     aliases: object,
     rootCode: string,
     getItemDataFromStore: bool,
+    side: oneOf( ['left', 'right'] ),
+    closeSidebar: func,
   }
 
   /*
@@ -119,8 +121,12 @@ class Sidebar extends Component {
     });
   }
 
+  handleClose = () => {
+    this.props.closeSidebar( this.props.side );
+  }
+
   render() {
-    const { rootCode, ...restProps } = this.props;
+    const { rootCode, side, ...restProps } = this.props;
     const items = this.getLinkedBaseEntities( rootCode, true );
     const logo = this.getSidebarImage();
 
@@ -129,6 +135,8 @@ class Sidebar extends Component {
         {...restProps}
         items={items}
         headerImage={logo}
+        side={side}
+        onClose={this.handleClose}
       />
     );
   }
@@ -137,7 +145,6 @@ class Sidebar extends Component {
 export { Sidebar };
 
 const mapStateToProps = state => ({
-  sidebar: state.sidebar,
   baseEntities: state.vertx.baseEntities,
   aliases: state.vertx.aliases,
   layout: state.layout,

@@ -1,24 +1,41 @@
 import { SIDEBAR_OPEN, SIDEBAR_CLOSE, SIDEBAR_TOGGLE } from '../../../constants';
 
 const initialState = {
-  isOpen: false,
+  left: {
+    isOpen: false,
+  },
+  right: {
+    isOpen: false,
+  },
 };
 
-const reducer = ( state = initialState, { type }) => {
+const reducer = ( state = initialState, { type, payload }) => {
   switch ( type ) {
     case SIDEBAR_OPEN:
       return {
-        isOpen: true,
+        ...state,
+        [payload]: {
+          ...state[payload],
+          isOpen: true,
+        },
       };
 
     case SIDEBAR_CLOSE:
       return {
-        isOpen: false,
+        ...state,
+        [payload]: {
+          ...state[payload],
+          isOpen: false,
+        },
       };
 
     case SIDEBAR_TOGGLE:
       return {
-        isOpen: !state.isOpen,
+        ...state,
+        [payload]: {
+          ...state[payload],
+          isOpen: !state.isOpen,
+        },
       };
 
     default:

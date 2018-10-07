@@ -51,6 +51,14 @@ class LayoutProvider extends Component {
     );
   }
 
+  setSidebarRightVisibility = visible => {
+    this.setState({ showSidebarRight: visible });
+
+    store.dispatch(
+      actions.setSidebarRightVisibility( visible )
+    );
+  }
+
   setHeaderVisibility = visible => {
     this.setState({ showHeader: visible });
 
@@ -72,6 +80,14 @@ class LayoutProvider extends Component {
 
     store.dispatch(
       actions.setSidebarProps( props || {})
+    );
+  }
+
+  setSidebarRightProps = props => {
+    this.setState({ sidebarRightProps: props || {} });
+
+    store.dispatch(
+      actions.setSidebarRightProps( props || {})
     );
   }
 
@@ -105,10 +121,13 @@ class LayoutProvider extends Component {
     setAppColor: this.setAppColor,
     setTitle: this.setTitle,
     setSidebarVisibility: this.setSidebarVisibility,
+    setSidebarRightVisibility: this.setSidebarRightVisibility,
     setHeaderVisibility: this.setHeaderVisibility,
     setHeaderProps: this.setHeaderProps,
     setSidebarProps: this.setSidebarProps,
+    setSidebarRightProps: this.setSidebarRightProps,
     showSidebar: false,
+    showSidebarRight: false,
     showHeader: false,
     headerProps: {},
     sidebarProps: {},

@@ -1,4 +1,4 @@
-import { prefixedLog } from '../../utils';
+import { prefixedLog, isArray } from '../../utils';
 import { store } from '../../redux';
 import * as events from './events';
 
@@ -51,22 +51,18 @@ class MessageHandler {
       return output;
     }
 
-    return {
-      ...output,
-      payload: {
-        ...output.payload,
-        items: [
-          ...output.payload.items,
-          ...current.payload.items.map( item => ({
-            ...item,
-            delete: current.payload.delete,
-            replace: current.payload.replace,
-            shouldDeleteLinkedBaseEntities: current.payload.shouldDeleteLinkedBaseEntities,
-            parentCode: current.payload.parentCode,
-          })),
-        ],
-      },
-    };
+    output.payload.items = [
+      ...output.payload.items,
+      ...current.payload.items.map( item => ({
+        delete: current.payload.delete,
+        replace: current.payload.replace,
+        shouldDeleteLinkedBaseEntities: current.payload.shouldDeleteLinkedBaseEntities,
+        parentCode: current.payload.parentCode,
+        ...item,
+      })),
+    ];
+
+    return output;
   }
 
   onMessage = message => {
@@ -89,9 +85,7 @@ class MessageHandler {
 
     if (
       data_type === 'QBulkMessage' &&
-      messages != null &&
-      messages instanceof Array &&
-      messages.length > 0
+      isArray( messages, { ofMinLength: 1 })
     ) {
       messages.forEach( this.onMessage );
 
@@ -119,8 +113,18 @@ class MessageHandler {
 
       this.lastBe = new Date().getTime();
     } else {
+      const payload = {
+        ...message,
+        items: message.items.map( item => ({
+          shouldDeleteLinkedBaseEntities: message.shouldDeleteLinkedBaseEntities,
+          delete: message.delete,
+          replace: message.replace,
+          ...item,
+        })),
+      };
+
       store.dispatch(
-        action( message )
+        action( payload )
       );
     }
   }
