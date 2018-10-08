@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { string, number, any } from 'prop-types';
+import { string, number, any, object } from 'prop-types';
 import { isArray } from '../../../utils';
 import { Box, Text } from '../../components';
 
@@ -10,6 +10,7 @@ class BucketView extends PureComponent {
     gutter: number,
     backgroundColor: string,
     alternateBackgroundColor: string,
+    contentProps: object,
   }
 
   render() {
@@ -19,6 +20,7 @@ class BucketView extends PureComponent {
       backgroundColor,
       alternateBackgroundColor,
       children,
+      contentProps,
       ...restProps
     } = this.props;
 
@@ -26,8 +28,8 @@ class BucketView extends PureComponent {
       <Box
         {...restProps}
         width="100%"
+        height="100%"
         padding={padding}
-        flex={1}
         backgroundColor={backgroundColor}
       >
         <Box
@@ -45,6 +47,7 @@ class BucketView extends PureComponent {
                     ? gutter
                     : null
                 )}
+                {...contentProps}
               >
                 {child}
               </Box>
