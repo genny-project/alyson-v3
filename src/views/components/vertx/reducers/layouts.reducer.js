@@ -4,11 +4,12 @@ import { FETCH_PUBLIC_LAYOUTS_FAILURE, FETCH_PUBLIC_LAYOUTS_SUCCESS } from '../.
 const initialState = {
   pages: {},
   sublayouts: {},
+  queries: {},
   error: null,
   hasLoadedDevLayouts: false,
 };
 
-const layoutGroups = ['pages', 'sublayouts'];
+const layoutGroups = ['pages', 'sublayouts', 'queries'];
 
 /* This function makes use of mutation for the `state` param. As we're passing through an
  * object to this function, it is being passed through by reference (and not value), so we
@@ -83,7 +84,7 @@ const reducer = ( state = initialState, { type, payload }) => {
 
           if ( !isString( code, { startsWith: 'LAY_' }))
             return newState;
-          
+
           const uri = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' ).value;
           const data = JSON.parse(
             baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_DATA' ).value

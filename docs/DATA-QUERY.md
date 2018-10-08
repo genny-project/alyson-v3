@@ -170,6 +170,63 @@ TODO - Detailed usage instructions.
 - `scope`
 - `sort`
 
+## external operator
+
+This operator is special case, in that doesn't run a query itself, it instead references a global function which is then processed with additional parameters (if supplied).
+
+To use this operator, you need to do two things: define the query you want to run, and run it using the external operator.
+
+### Define a Query
+
+Create a folder file in the `/queries` directory in the project's `layouts` github repository.
+
+Next create a `.json` file in the folder, and enter the following:
+
+`myquery.json`
+```
+{
+  "query": []
+}
+```
+
+From here, create a data query as normal. If there are any variables you want to use in the query, simple use the handlebars syntax with keyword params `{{params.}}`, followed by the variable name you wish to use.
+
+```
+{
+  "query": [
+    {
+      "operator": "getBE",
+      "id": "{{params.variableId}}",
+      "as": "{{params.varibleAs}}"
+    }
+  ]
+}
+```
+
+### Calling a Query
+
+Now the query has been defined, it can be called using the `external` operator. You must specify the name of the json file the query is in.
+
+```
+{
+  "operator": "external",
+  "name": "myquery"
+}
+```
+
+Next, we can specify the parameters we want to pass to the query.
+
+```
+{
+  "operator": "external",
+  "name": "myquery",
+  "params": {
+    "variableId": "BEG_123",
+    "asNvaribleAsame": "myBaseEntity"
+  }
+}
+```
+
 ## Adding new data query operators
 
 Whilst the large majority of data query needs will be satisfied by the operators above, you may occasionally need to add a new one. They are currently located in `src/utils/data-query/operators`.
