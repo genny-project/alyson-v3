@@ -4,7 +4,6 @@ import { doesValueMatch, isOperatorObject } from '../../../../utils/data-query/o
 import { store } from '../../../../redux';
 
 const ifConditionsPass = ( context, condition ) => {
-  console.log( context, condition );
   const { user } = store.getState().vertx;
 
   const dataPool = {
