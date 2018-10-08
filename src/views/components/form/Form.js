@@ -278,6 +278,7 @@ class Form extends Component {
       finalValue = JSON.stringify( finalValue );
     }
 
+    // eslint-disable-next-line no-console
     console.warn( 'sending answer...', {
       askId: ask.id,
       attributeCode: finalAttributeCode,
@@ -341,6 +342,7 @@ class Form extends Component {
     );
 
     if ( !questionGroup ) {
+      // eslint-disable-next-line no-console
       console.warn( 'Could not submit form - no question group associated with form.' );
 
       return;
@@ -443,7 +445,8 @@ class Form extends Component {
     } = this.props;
 
     const { questionCode, attributeCode, name, mandatory, question, childAsks } = ask;
-    const { dataType } = baseEntities.definitions.data[attributeCode];
+    const baseEntityDefinition = baseEntities.definitions.data[attributeCode];
+    const dataType = baseEntityDefinition && baseEntityDefinition.dataType;
 
     if ( isArray( childAsks, { ofMinLength: 1 })) {
       return (

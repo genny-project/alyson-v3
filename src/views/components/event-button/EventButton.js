@@ -55,10 +55,10 @@ const EventButton = ({
     showSpinnerOnClick,
   };
 
-  return React.createElement(
-    Button,
-    addedProps,
-    children
+  return (
+    <Button {...addedProps}>
+      {children}
+    </Button>
   );
 };
 

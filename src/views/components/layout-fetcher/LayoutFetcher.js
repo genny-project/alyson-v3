@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { replace } from 'react-router-redux';
-import { object, func, string } from 'prop-types';
+import { object, func, string, bool } from 'prop-types';
 import { removeStartingAndEndingSlashes, NavigationActions } from '../../../utils';
 import { store } from '../../../redux';
 import { withKeycloak } from '../../components/keycloak';
@@ -14,6 +14,7 @@ class LayoutFetcher extends Component {
     currentUrl: string.isRequired,
     navigationReducer: object,
     keycloak: object,
+    isDialog: bool,
   }
 
   state = {
@@ -51,16 +52,17 @@ class LayoutFetcher extends Component {
   }
 
   getLayout() {
-    const { pages } = this.props.layouts;
-    const { currentUrl, navigationReducer } = this.props;
+    const { pages, dialogs } = this.props.layouts;
+    const { currentUrl, navigationReducer, isDialog } = this.props;
 
+    const layoutPool = isDialog ? dialogs : pages;
     const strippedCurrentUrl = removeStartingAndEndingSlashes( currentUrl );
 
-    if ( pages[strippedCurrentUrl] ) {
-      this.setState({ layout: pages[strippedCurrentUrl] });
+    if ( layoutPool[strippedCurrentUrl] ) {
+      this.setState({ layout: layoutPool[strippedCurrentUrl] });
     }
     else {
-      const keys = Object.keys( pages ).sort( this.handleSortPages );
+      const keys = Object.keys( layoutPool ).sort( this.handleSortPages );
       const fragments = strippedCurrentUrl.split( '/' );
 
       const found = keys.some( key => {
@@ -77,26 +79,28 @@ class LayoutFetcher extends Component {
         });
 
         if ( splitKey.join( '/' ) === strippedCurrentUrl ) {
-          if ( Platform.OS === 'web' ) {
-            store.dispatch(
-              replace({
-                pathname: location.pathname,
-                state: {
-                  ...location.state,
-                  ...params,
-                },
-              })
-            );
-          }
-          else {
-            const { key } = navigationReducer.routes[navigationReducer.index];
+          if ( !isDialog ) {
+            if ( Platform.OS === 'web' ) {
+              store.dispatch(
+                replace({
+                  pathname: location.pathname,
+                  state: {
+                    ...location.state,
+                    ...params,
+                  },
+                })
+              );
+            }
+            else {
+              const { key } = navigationReducer.routes[navigationReducer.index];
 
-            store.dispatch(
-              NavigationActions.setParams({ key, params })
-            );
+              store.dispatch(
+                NavigationActions.setParams({ key, params })
+              );
+            }
           }
 
-          this.setState({ layout: pages[key] });
+          this.setState({ layout: layoutPool[key] });
 
           return true;
         }

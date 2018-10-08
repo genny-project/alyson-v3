@@ -1,9 +1,9 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { any, string, bool, object } from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import LayoutConsumer from './consumer';
-import { Header } from '../components';
+import { Header, Box, Dialog } from '../components';
 import { shallowCompare } from '../../utils';
 import { Sidebar } from '../routing';
 
@@ -13,7 +13,9 @@ class Layout extends Component {
     title: string,
     header: object,
     sidebar: object,
+    sidebarRight: object,
     hideSidebar: bool,
+    hideSidebarRight: bool,
     layout: object,
     appColor: string,
     appName: string,
@@ -27,12 +29,14 @@ class Layout extends Component {
   state = {
     unableToFindHeader: false,
     unableToFindSidebar: false,
+    unableToFindSidebarRight: false,
   }
 
   componentDidMount() {
     this.setLayoutProperties();
     this.setHeaderProperties();
     this.setSidebarProperties();
+    this.setSidebarRightProperties();
   }
 
   componentDidUpdate( prevProps ) {
@@ -65,6 +69,10 @@ class Layout extends Component {
       this.setSidebarProperties();
     }
 
+    if ( !shallowCompare( this.props.sidebarRight, prevProps.sidebarRight )) {
+      this.setSidebarRightProperties();
+    }
+
     if (
       this.state.unableToFindHeader &&
       this.props.header &&
@@ -86,10 +94,21 @@ class Layout extends Component {
       if ( this.props.layouts.sublayouts[variant] )
         this.setSidebarProperties();
     }
+
+    if (
+      this.state.unableToFindSidebarRight &&
+      this.props.sidebarRight &&
+      this.props.sidebarRight.variant
+    ) {
+      const variant = `sidebar-right/sidebar-right.${this.props.sidebarRight.variant}`;
+
+      if ( this.props.layouts.sublayouts[variant] )
+        this.setSidebarRightProperties();
+    }
   }
 
   setLayoutProperties() {
-    const { layout, title, appColor, hideSidebar, backgroundColor } = this.props;
+    const { layout, title, appColor, hideSidebar, hideSidebarRight, backgroundColor } = this.props;
 
     if (
       typeof title === 'string' &&
@@ -112,6 +131,13 @@ class Layout extends Component {
     }
     else if ( hideSidebar == null ) {
       layout.setSidebarVisibility( false );
+    }
+
+    if ( hideSidebarRight !== layout.hideSidebarRight ) {
+      layout.setSidebarRightVisibility( hideSidebarRight );
+    }
+    else if ( hideSidebarRight == null ) {
+      layout.setSidebarRightVisibility( false );
     }
 
     this.setHeaderProperties();
@@ -163,12 +189,72 @@ class Layout extends Component {
     }
   }
 
+  setSidebarRightProperties() {
+    const { sidebarRight, layouts } = this.props;
+
+    if ( sidebarRight && sidebarRight.variant ) {
+      const variant = `sidebar-right/sidebar-right.${sidebarRight.variant}`;
+      const sidebarRightProps = layouts.sublayouts[variant];
+
+      if ( sidebarRightProps ) {
+        this.props.layout.setSidebarRightProps( sidebarRightProps );
+        this.props.layout.setSidebarRightVisibility( true );
+
+        if ( this.state.unableToFindSidebarRight )
+          this.setState({ unableToFindSidebarRight: false });
+      }
+      else {
+        this.setState({ unableToFindSidebarRight: true });
+      }
+    }
+    else {
+      this.props.layout.setSidebarRightVisibility( false );
+    }
+  }
+
+  getContentWidth() {
+    const { showSidebar, showSidebarRight, sidebarProps, sidebarRightProps } = this.props.layout;
+
+    let sidebarLeftWidth = 0;
+    let sidebarRightWidth = 0;
+
+    if (
+      showSidebar &&
+      sidebarProps &&
+      sidebarProps.inline
+    ) {
+      sidebarLeftWidth = sidebarProps.width || 0;
+    }
+
+    if (
+      showSidebarRight &&
+      sidebarRightProps &&
+      sidebarRightProps.inline
+    ) {
+      sidebarRightWidth = sidebarRightProps.width || 0;
+    }
+
+    return `calc(100vw - ${sidebarLeftWidth}px - ${sidebarRightWidth}px`;
+  }
+
   render() {
-    const { children, title, layout, hideSidebar, appName } = this.props;
-    const { headerProps, showHeader } = layout;
+    const { children, title, layout, appName } = this.props;
+
+    const {
+      headerProps,
+      showHeader,
+      showSidebar,
+      sidebarProps,
+      sidebarRightProps,
+      showSidebarRight,
+    } = layout;
 
     return (
-      <Fragment>
+      <Box
+        height="100%"
+        width="100%"
+        flex={1}
+      >
         <Helmet>
           <title>
             {(
@@ -190,19 +276,50 @@ class Layout extends Component {
         </Helmet>
 
         {(
-          showHeader &&
-          headerProps != null &&
-          Object.keys( headerProps ).length > 0
+          showSidebar &&
+          sidebarProps != null &&
+          Object.keys( sidebarProps ).length > 0
         ) && (
-          <Header {...headerProps} />
+          <Sidebar
+            side="left"
+            {...sidebarProps}
+          />
         )}
 
-        {!hideSidebar && (
-          <Sidebar />
+        <Box
+          flexDirection="column"
+          flex={1}
+          {...(
+            showSidebar ||
+            showSidebarRight
+          ) && {
+            width: this.getContentWidth(),
+          }}
+        >
+          {(
+            showHeader &&
+            headerProps != null &&
+            Object.keys( headerProps ).length > 0
+          ) && (
+            <Header {...headerProps} />
+          )}
+
+          {children}
+        </Box>
+
+        {(
+          showSidebarRight &&
+          sidebarRightProps != null &&
+          Object.keys( sidebarRightProps ).length > 0
+        ) && (
+          <Sidebar
+            side="right"
+            {...sidebarRightProps}
+          />
         )}
 
-        {children}
-      </Fragment>
+        <Dialog />
+      </Box>
     );
   }
 }

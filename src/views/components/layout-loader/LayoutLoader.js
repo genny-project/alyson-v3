@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react';
-import { shape, object, any, bool } from 'prop-types';
+import { shape, object, any, bool , func } from 'prop-types';
 import { connect } from 'react-redux';
 import Layout from '../../layout';
+import { openSidebar } from '../../../redux/actions';
 import { isArray } from '../../../utils';
 import DataQuery from '../../../utils/data-query';
 import { store } from '../../../redux';
@@ -31,19 +32,47 @@ class LayoutLoader extends Component {
     sublayoutProps: object,
     sublayout: bool,
     router: object,
+    isDialog: bool,
+    sidebar: object,
+    openSidebar: func,
   };
 
   handleRetry = () => {
     if ( this.timeout ) this.timeout.startTimeout();
   };
 
+  handleOpenSidebar = () => {
+    this.props.openSidebar( 'left' );
+  }
+
+  handleOpenSidebarRight = () => {
+    this.props.openSidebar( 'right' );
+  }
+
   render() {
-    const { layout, data, navigation, router, sublayoutProps, sublayout } = this.props;
+    const {
+      layout,
+      data,
+      navigation,
+      router,
+      sublayoutProps,
+      sublayout,
+      isDialog,
+      sidebar,
+    } = this.props;
 
     if ( !layout ) {
-      if ( sublayout ) {
+      if (
+        sublayout ||
+        isDialog
+      ) {
         return (
-          <Box padding={10}>
+          <Box
+            width="100%"
+            flex={1}
+            justifyContent="center"
+            alignItems="center"
+          >
             <ActivityIndicator size="large" />
           </Box>
         );
@@ -131,7 +160,11 @@ class LayoutLoader extends Component {
     /* Calculate the data for the layout */
     const context = {
       query: new DataQuery( data ).query( layout.query || [], {
-        navigation: navigation && navigation.state ? navigation.state.params : {},
+        navigation: {
+          ...(( navigation && navigation.state && navigation.state.params ) || {}),
+          ...(( router && router.location && router.location.state ) || {}),
+          ...currentRouteParams,
+        },
         props: sublayoutProps,
         user: data.user,
       }),
@@ -143,9 +176,19 @@ class LayoutLoader extends Component {
       props: sublayoutProps,
       time: timeUtils,
       user: data.user,
+      sidebar,
+      actions: {
+        openSidebar: this.handleOpenSidebar,
+        openSidebarRight: this.handleOpenSidebarRight,
+      },
     };
 
-    const Holder = sublayout ? Box : Layout;
+    const Holder = (
+      sublayout ||
+      isDialog
+    )
+      ? Fragment
+      : Layout;
 
     return (
       <Holder
@@ -169,6 +212,7 @@ class LayoutLoader extends Component {
 const mapStateToProps = state => ({
   data: state.vertx,
   router: state.router,
+  sidebar: state.sidebar,
 });
 
-export default connect( mapStateToProps )( LayoutLoader );
+export default connect( mapStateToProps, { openSidebar })( LayoutLoader );

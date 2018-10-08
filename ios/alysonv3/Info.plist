@@ -21,7 +21,11 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
+<<<<<<< HEAD
 	<string>15</string>
+=======
+	<string>2</string>
+>>>>>>> mass-update
 	<key>CodePushDeploymentKey</key>
 	<string>__RN_CONFIG_IOS_APPCENTER_SECRET</string>
 	<key>LSRequiresIPhoneOS</key>

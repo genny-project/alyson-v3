@@ -1753,7 +1753,11 @@
 			baseConfigurationReference = 40D0769068D4787F33E27B15 /* Pods-alysonv3.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 5;
+=======
+				CURRENT_PROJECT_VERSION = 1;
+>>>>>>> mass-update
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = TRU7S39L5Z;
 				HEADER_SEARCH_PATHS = (
@@ -1790,7 +1794,11 @@
 			baseConfigurationReference = 5BBE3572F32500D814486635 /* Pods-alysonv3.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 5;
+=======
+				CURRENT_PROJECT_VERSION = 1;
+>>>>>>> mass-update
 				DEVELOPMENT_TEAM = TRU7S39L5Z;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",

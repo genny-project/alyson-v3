@@ -1,4 +1,4 @@
-import React, { Component, createElement } from 'react';
+import React, { Component } from 'react';
 import { Platform, ActivityIndicator, TouchableNativeFeedback } from 'react-native';
 import { string, bool, func, oneOf, number, oneOfType, shape, arrayOf, object } from 'prop-types';
 import { Text, Icon, Box, Touchable, alert } from '../index';
@@ -76,6 +76,7 @@ class Button extends Component {
     hoverProps: object,
     onMouseEnter: func,
     onMouseLeave: func,
+    isBackButton: bool,
   }
 
   static getDerivedStateFromProps( props, state ) {
@@ -162,7 +163,10 @@ class Button extends Component {
   }
 
   handlePress = event => {
-    const { showSpinnerOnClick, onPress } = this.getProps();
+    const { showSpinnerOnClick, onPress, isBackButton, onBack } = this.getProps();
+
+    if ( isBackButton && onBack )
+      onBack();
 
     if ( showSpinnerOnClick )
       this.setState({ isSpinning: true });
@@ -461,29 +465,29 @@ class Button extends Component {
       borderColor,
     };
 
-    return createElement(
-      Touchable,
-      {
-        style,
-        disabled: (
+    return (
+      <Touchable
+        withFeedback={withFeedback}
+        style={style}
+        disabled={(
           disabled ||
           isSpinning ||
           submitting
-        ),
-        onPress: this.handlePressAttempt,
-        onMouseEnter: this.handleMouseEnter,
-        onMouseLeave: this.handleMouseLeave,
-        accessible,
-        accessibilityLabel,
-        accessibilityRole,
-        background: (
+        )}
+        onPress={this.handlePressAttempt}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
+        accessible={accessible}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole={accessibilityRole}
+        background={(
           Platform.OS === 'android'
             ? TouchableNativeFeedback.Ripple( androidTouchColor || '#FFF', false )
             : undefined
-        ),
-        withFeedback,
-      },
-      this.renderChildWrapper()
+        )}
+      >
+        {this.renderChildWrapper()}
+      </Touchable>
     );
   }
 }

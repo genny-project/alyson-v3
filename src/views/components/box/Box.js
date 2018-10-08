@@ -42,6 +42,18 @@ const shapeStyles = {
   },
 };
 
+/* Ensure the props we're going to use were indeed passed through. */
+const filterOutUnspecifiedProps = props => {
+  const keys = Object.keys( props );
+
+  return keys.reduce(( filteredProps, prop ) => {
+    if ( props[prop] != null )
+      filteredProps[prop] = props[prop];
+
+    return filteredProps;
+  }, {});
+};
+
 const Box = ({
   children,
   justifyContent,
@@ -59,6 +71,10 @@ const Box = ({
   flexDirection = 'row',
   flexWrap,
   padding,
+  paddingTop,
+  paddingRight,
+  paddingLeft,
+  paddingBottom,
   paddingX,
   paddingY,
   margin,
@@ -108,6 +124,9 @@ const Box = ({
   overflowX,
   overflowY,
   display = 'flex',
+  overscrollBehavior,
+  overscrollBehaviorX,
+  overscrollBehaviorY,
   ...restProps
 }) => {
   const borderRadiusStyle = {
@@ -134,16 +153,6 @@ const Box = ({
     flexShrink,
     flexDirection,
     flexWrap,
-    padding,
-    paddingHorizontal: paddingX,
-    paddingVertical: paddingY,
-    margin,
-    marginHorizontal: marginX,
-    marginVertical: marginY,
-    marginTop,
-    marginRight,
-    marginLeft,
-    marginBottom,
     backgroundColor,
     position: (
       (
@@ -160,19 +169,42 @@ const Box = ({
     zIndex,
     transform,
     opacity,
-    borderTopWidth,
-    borderRightWidth,
-    borderBottomWidth,
-    borderLeftWidth,
-    borderWidth,
     borderColor,
     borderStyle,
+    overflow,
+    overflowX,
+    overflowY,
     display,
-    shadowColor,
-    shadowOpacity,
-    shadowRadius,
-    shadowOffset,
+    overscrollBehavior,
+    overscrollBehaviorX,
+    overscrollBehaviorY,
     ...borderRadiusStyle,
+    ...filterOutUnspecifiedProps({
+      padding,
+      paddingTop,
+      paddingRight,
+      paddingLeft,
+      paddingBottom,
+      paddingHorizontal: paddingX,
+      paddingVertical: paddingY,
+      margin,
+      marginHorizontal: marginX,
+      marginVertical: marginY,
+      marginTop,
+      marginRight,
+      marginLeft,
+      marginBottom,
+      borderTopWidth,
+      borderRightWidth,
+      borderBottomWidth,
+      borderLeftWidth,
+      borderWidth,
+      display,
+      shadowColor,
+      shadowOpacity,
+      shadowRadius,
+      shadowOffset,
+    }),
     ...__dangerouslySetStyle,
   };
 
@@ -242,6 +274,10 @@ Box.propTypes = {
   flexGrow: number,
   flexShrink: number,
   padding: number,
+  paddingTop: number,
+  paddingRight: number,
+  paddingLeft: number,
+  paddingBottom: number,
   paddingX: number,
   paddingY: number,
   margin: number,
@@ -285,19 +321,19 @@ Box.propTypes = {
   borderColor: string,
   borderStyle: string,
   borderRadius: oneOf(
-    [2, 5, 10, 100000]
+    [number, string]
   ),
   borderTopLeftRadius: oneOf(
-    [2, 5, 10, 100000]
+    [number, string]
   ),
   borderTopRightRadius: oneOf(
-    [2, 5, 10, 100000]
+    [number, string]
   ),
   borderBottomRightRadius: oneOf(
-    [2, 5, 10, 100000]
+    [number, string]
   ),
   borderBottomLeftRadius: oneOf(
-    [2, 5, 10, 100000]
+    [number, string]
   ),
   cleanStyleObject: bool,
   shape: oneOf(
@@ -309,6 +345,15 @@ Box.propTypes = {
   overflowX: string,
   overflowY: string,
   display: string,
+  overscrollBehavior: oneOf(
+    ['auto', 'contain', 'none']
+  ),
+  overscrollBehaviorX: oneOf(
+    ['auto', 'contain', 'none']
+  ),
+  overscrollBehaviorY: oneOf(
+    ['auto', 'contain', 'none']
+  ),
   shadowColor: string,
   shadowOpacity: oneOfType(
     [string, number]

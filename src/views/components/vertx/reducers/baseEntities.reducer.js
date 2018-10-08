@@ -102,6 +102,9 @@ const handleReduceAttributes = ( resultant, current ) => {
 };
 
 const handleReduceLinks = ( resultant, current ) => {
+  if ( !isArray( current.links ))
+    return resultant;
+
   const handleCombineLinkValues = link => {
     if ( link.link.linkValue ) {
       resultant[link.link.linkValue] = ({
@@ -156,9 +159,51 @@ const handleReduceDefinitionData = ( resultant, current ) => {
   return resultant;
 };
 
+const deleteLinkedBaseEntities = ( data, resultant, depth = 1 ) => {
+  const { shouldDeleteLinkedBaseEntities, links } = data;
+
+  links.forEach(({ link }) => {
+    if ( depth >= shouldDeleteLinkedBaseEntities ) {
+      delete resultant[link.targetCode];
+    }
+    else {
+      deleteLinkedBaseEntities({
+        ...resultant[link.targetCode],
+        shouldDeleteLinkedBaseEntities,
+      }, resultant, depth + 1 );
+    }
+  });
+};
+
+const createLink = ( current ) => ({
+  created: current.created,
+  updated: current.updated,
+  code: current.code,
+  weight: Number.isInteger( current.weight ) ? current.weight : 1,
+  link: {
+    attributeCode: 'LNK_CORE',
+    targetCode: current.code,
+    sourceCode: current.parentCode,
+    weight: 1,
+    linkValue: 'LINK',
+    ...current.link,
+  },
+});
+
 const handleReduceData = ( resultant, current ) => {
   /* Shortcut to remove properties inside the current base entity. */
   const { baseEntityAttributes, ...wantedData } = current; // eslint-disable-line no-unused-vars
+
+  if ( current.shouldDeleteLinkedBaseEntities ) {
+    if ( Number.isInteger( current.shouldDeleteLinkedBaseEntities )) {
+      deleteLinkedBaseEntities( current, resultant );
+    }
+  }
+  else if ( current.delete ) {
+    delete resultant[current.code];
+
+    return resultant;
+  }
 
   resultant[current.code] = wantedData;
   /* If the current has a parentCode, ensure there is an accompanying base entity. */
@@ -168,20 +213,7 @@ const handleReduceData = ( resultant, current ) => {
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
         links: [
-          {
-            created: current.created,
-            updated: current.updated,
-            code: current.code,
-            weight: ( current.weight != null ) ? current.weight : 1,
-            link: {
-              attributeCode: 'LNK_CORE',
-              targetCode: current.code,
-              sourceCode: current.parentCode,
-              weight: 1,
-              linkValue: 'LINK',
-              ...current.link,
-            },
-          },
+          createLink( current ),
         ],
       };
     }
@@ -189,10 +221,12 @@ const handleReduceData = ( resultant, current ) => {
      * inside of it. Be sure that no duplicates occur by filtering out the current's code
      * from the list of existing links. */
     else {
-      const noLinksExist = !resultant[current.parentCode].links;
+      const noLinksExist = !isArray( resultant[current.parentCode].links, { ofMinLength: 1 });
 
       /* If no links exist yet, simply set the links to be array of the new link (current). */
-      const newLinks = noLinksExist ? [current] : (
+      const newLinks = noLinksExist ? [
+        createLink( current ),
+      ] : (
         /* Loop through each existing link. */
         resultant[current.parentCode].links.reduce(( links, link, index ) => {
           /* If the current link is in the existing links, update the
@@ -211,20 +245,9 @@ const handleReduceData = ( resultant, current ) => {
           }
           /* If the new link (current) isn't already in the existing links, add it. */
           else if ( !links.find( link => link.link.targetCode === current.code )) {
-            links.push({
-              created: current.created,
-              updated: current.updated,
-              code: current.code,
-              weight: ( current.weight != null ) ? current.weight : 1,
-              link: {
-                attributeCode: 'LNK_CORE',
-                targetCode: current.code,
-                sourceCode: current.parentCode,
-                weight: 1,
-                linkValue: 'LINK',
-                ...current.link,
-              },
-            });
+            links.push(
+              createLink( current )
+            );
           }
 
           return links;

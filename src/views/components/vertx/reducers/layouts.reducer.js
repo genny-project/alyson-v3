@@ -5,11 +5,12 @@ const initialState = {
   pages: {},
   sublayouts: {},
   queries: {},
+  dialogs: {},
   error: null,
   hasLoadedDevLayouts: false,
 };
 
-const layoutGroups = ['pages', 'sublayouts', 'queries'];
+const layoutGroups = ['pages', 'sublayouts', 'dialogs', 'queries'];
 
 /* This function makes use of mutation for the `state` param. As we're passing through an
  * object to this function, it is being passed through by reference (and not value), so we

@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bool, func, object } from 'prop-types';
+import { NavigationActions } from 'react-navigation';
 import Button from './Button.js';
 
 class ButtonNative extends Component {
   static propTypes = {
     onPress: func,
     navigation: object,
+    dispatch: func,
     showSpinnerOnClick: bool,
   }
 
@@ -31,6 +33,14 @@ class ButtonNative extends Component {
       this.props.onPress( event );
   }
 
+  handleBack = () => {
+    const { dispatch } = this.props;
+
+    dispatch(
+      NavigationActions.goBack()
+    );
+  }
+
   render() {
     const { isSpinning } = this.state;
 
@@ -39,6 +49,7 @@ class ButtonNative extends Component {
         {...this.props}
         isSpinning={isSpinning}
         onPress={this.handlePress}
+        onBack={this.handleBack}
       />
     );
   }

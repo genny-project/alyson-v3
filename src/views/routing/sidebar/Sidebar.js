@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { object, string, bool } from 'prop-types';
+import { object, string, bool, oneOf, func } from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dlv from 'dlv';
@@ -10,14 +10,16 @@ import SidebarBody from './body';
 class Sidebar extends Component {
   static propTypes = {
     getItemDataFromStore: false,
+    rootCode: 'GRP_ROOT',
   }
 
   static propTypes = {
     baseEntities: object,
     aliases: object,
-    sidebarRootCode: string,
-    sidebarProps: object,
+    rootCode: string,
     getItemDataFromStore: bool,
+    side: oneOf( ['left', 'right'] ),
+    closeSidebar: func,
   }
 
   /*
@@ -58,15 +60,15 @@ class Sidebar extends Component {
           itemAttributes: dlv( baseEntities, `attributes.${targetCode}` ),
         };
       }
-      
+
       if ( isString( baseEntityName, { ofMinLength: 1 })) {
         const icon = dlv( baseEntities, `attributes.${targetCode}.PRI_IMAGE_URL.valueString` );
 
         if ( isRecursive ) {
           let linkedBaseEntities = this.getLinkedBaseEntities( targetCode );
-          
+
           linkedBaseEntities = linkedBaseEntities.filter( x => x.linkValue === 'LNK_CORE' );
-          
+
           if ( isArray( linkedBaseEntities, { ofMinLength: 1 })) {
             items.push({
               ...itemData,
@@ -86,7 +88,7 @@ class Sidebar extends Component {
           onPress: this.handlePress( link.link ),
         });
       }
-      
+
       return items;
     }, [] );
   }
@@ -119,16 +121,22 @@ class Sidebar extends Component {
     });
   }
 
+  handleClose = () => {
+    this.props.closeSidebar( this.props.side );
+  }
+
   render() {
-    const { sidebarRootCode, sidebarProps } = this.props;
-    const items = this.getLinkedBaseEntities( `${sidebarRootCode || 'GRP_ROOT'}`, true );
-    const logo = this.getSidebarImage(); 
-    
+    const { rootCode, side, ...restProps } = this.props;
+    const items = this.getLinkedBaseEntities( rootCode, true );
+    const logo = this.getSidebarImage();
+
     return (
       <SidebarBody
-        {...sidebarProps}
+        {...restProps}
         items={items}
         headerImage={logo}
+        side={side}
+        onClose={this.handleClose}
       />
     );
   }
@@ -137,10 +145,9 @@ class Sidebar extends Component {
 export { Sidebar };
 
 const mapStateToProps = state => ({
-  sidebar: state.sidebar,
   baseEntities: state.vertx.baseEntities,
   aliases: state.vertx.aliases,
-  ...state.layout.sidebarProps,
+  layout: state.layout,
 });
 
 const mapDispatchToProps = dispatch => {
