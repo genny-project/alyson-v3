@@ -10,6 +10,7 @@ import SidebarMenu from './menu';
 const Sidebar = ({
   sidebar,
   onClose,
+  onToggle,
   headerImage,
   items,
   inline,
@@ -27,6 +28,7 @@ const Sidebar = ({
     items,
     sidebar,
     onClose,
+    onToggle,
   };
 
   return (
@@ -47,7 +49,7 @@ const Sidebar = ({
             ],
           },
         }}
-        width={300}
+        width={width}
         height="100%"
         backgroundColor={backgroundColor}
         transitionDuration="300ms"
@@ -112,6 +114,7 @@ const Sidebar = ({
 Sidebar.propTypes = {
   sidebar: object,
   onClose: func,
+  onToggle: func,
   headerImage: string,
   items: array,
   width: number.isRequired,

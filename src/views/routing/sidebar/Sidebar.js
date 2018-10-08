@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dlv from 'dlv';
 import { isArray, isString, Bridge } from '../../../utils';
-import { closeSidebar } from '../../../redux/actions';
+import { closeSidebar, toggleSidebar } from '../../../redux/actions';
 import SidebarBody from './body';
 
 class Sidebar extends Component {
@@ -20,6 +20,7 @@ class Sidebar extends Component {
     getItemDataFromStore: bool,
     side: oneOf( ['left', 'right'] ),
     closeSidebar: func,
+    toggleSidebar: func,
   }
 
   /*
@@ -121,6 +122,10 @@ class Sidebar extends Component {
     });
   }
 
+  handleToggle = () => {
+    this.props.toggleSidebar( this.props.side );
+  }
+
   handleClose = () => {
     this.props.closeSidebar( this.props.side );
   }
@@ -137,6 +142,7 @@ class Sidebar extends Component {
         headerImage={logo}
         side={side}
         onClose={this.handleClose}
+        onToggle={this.handleToggle}
       />
     );
   }
@@ -151,7 +157,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ closeSidebar }, dispatch );
+  return bindActionCreators({ closeSidebar, toggleSidebar }, dispatch );
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( Sidebar );
