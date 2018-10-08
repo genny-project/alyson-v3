@@ -115,12 +115,14 @@ class MessageHandler {
     } else {
       const payload = {
         ...message,
-        items: message.items.map( item => ({
-          shouldDeleteLinkedBaseEntities: message.shouldDeleteLinkedBaseEntities,
-          delete: message.delete,
-          replace: message.replace,
-          ...item,
-        })),
+        ...isArray( message.items ) && {
+          items: message.items.map( item => ({
+            shouldDeleteLinkedBaseEntities: message.shouldDeleteLinkedBaseEntities,
+            delete: message.delete,
+            replace: message.replace,
+            ...item,
+          })),
+        },
       };
 
       store.dispatch(
