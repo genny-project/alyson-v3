@@ -94,46 +94,6 @@ const Box = ({
   ...restProps
 }) => {
   const boxStyle = {
-    justifyContent,
-    alignItems,
-    height: Platform.OS === 'web' && fullHeightOnWeb ? '100vh' : height,
-    minHeight,
-    maxHeight,
-    width,
-    minWidth,
-    maxWidth,
-    flex,
-    flexBasis,
-    flexGrow,
-    flexShrink,
-    flexDirection,
-    flexWrap,
-    backgroundColor,
-    position: (
-      (
-        position === 'sticky' &&
-        Platform.OS !== 'web'
-      )
-        ? 'relative'
-        : position
-    ),
-    top,
-    right,
-    bottom,
-    left,
-    zIndex,
-    transform,
-    opacity,
-    borderColor,
-    borderStyle,
-    borderRadius: borderRadius || shapeStyles[shape],
-    overflow,
-    overflowX,
-    overflowY,
-    display,
-    overscrollBehavior,
-    overscrollBehaviorX,
-    overscrollBehaviorY,
     ...filterOutUnspecifiedProps({
       padding,
       paddingTop,
@@ -159,6 +119,45 @@ const Box = ({
       shadowOpacity,
       shadowRadius,
       shadowOffset,
+      justifyContent,
+      alignItems,
+      height: Platform.OS === 'web' && fullHeightOnWeb ? '100vh' : height,
+      minHeight,
+      maxHeight,
+      width,
+      minWidth,
+      maxWidth,
+      flex,
+      flexBasis,
+      flexGrow,
+      flexShrink,
+      flexDirection,
+      flexWrap,
+      backgroundColor,
+      position: (
+        (
+          position === 'sticky' &&
+          Platform.OS !== 'web'
+        )
+          ? 'relative'
+          : position
+      ),
+      top,
+      right,
+      bottom,
+      left,
+      zIndex,
+      transform,
+      opacity,
+      borderColor,
+      borderStyle,
+      borderRadius: borderRadius || shapeStyles[shape],
+      overflow,
+      overflowX,
+      overflowY,
+      overscrollBehavior,
+      overscrollBehaviorX,
+      overscrollBehaviorY,
     }),
     ...__dangerouslySetStyle,
   };
