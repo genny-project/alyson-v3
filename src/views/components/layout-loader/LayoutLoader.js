@@ -190,10 +190,19 @@ class LayoutLoader extends Component {
       ? Fragment
       : Layout;
 
+    const holderProps = {
+      ...(
+        !sublayout &&
+        !isDialog
+      ) && {
+        context,
+      },
+    };
+
     return (
       <Holder
         {...layout.layout}
-        context={context}
+        {...holderProps}
       >
         {isArray( layout.children ) ? (
           layout.children.map(( child, index ) => (
