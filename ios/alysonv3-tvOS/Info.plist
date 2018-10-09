@@ -19,11 +19,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-<<<<<<< HEAD
 	<string>6</string>
-=======
-	<string>1</string>
->>>>>>> mass-update
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
