@@ -1,4 +1,3 @@
-export { Fragment } from 'react';
 export { default as Address } from './address';
 export { default as Avatar } from './avatar';
 export { default as Box } from './box';
@@ -66,6 +65,7 @@ export { default as Selection } from './selection';
 export { default as BackButton } from './back-button';
 export { default as Join } from './join';
 export { default as FlatList } from './flat-list';
+export { default as Fragment } from './fragment';
 
 export * from './keycloak';
 export * from './vertx';

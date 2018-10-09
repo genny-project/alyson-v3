@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { shape, object, any, bool , func } from 'prop-types';
 import { connect } from 'react-redux';
 import Layout from '../../layout';
@@ -6,7 +6,7 @@ import { openSidebar } from '../../../redux/actions';
 import { isArray } from '../../../utils';
 import DataQuery from '../../../utils/data-query';
 import { store } from '../../../redux';
-import { Box, Text, Timeout, Button, ActivityIndicator } from '../../components';
+import { Box, Text, Timeout, Button, ActivityIndicator, Fragment } from '../../components';
 import Recursive from './Recursive';
 
 const currentHourOfDay = new Date().getHours();

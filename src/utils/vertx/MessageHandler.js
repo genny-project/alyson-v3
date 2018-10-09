@@ -113,15 +113,16 @@ class MessageHandler {
 
       this.lastBe = new Date().getTime();
     } else {
-      const payload = {
-        ...message,
-        items: message.items.map( item => ({
-          shouldDeleteLinkedBaseEntities: message.shouldDeleteLinkedBaseEntities,
-          delete: message.delete,
-          replace: message.replace,
+      const payload = message;
+
+      if ( isArray( payload.items )) {
+        payload.items = payload.items.map( item => ({
+          shouldDeleteLinkedBaseEntities: payload.shouldDeleteLinkedBaseEntities,
+          delete: payload.delete,
+          replace: payload.replace,
           ...item,
-        })),
-      };
+        }));
+      }
 
       store.dispatch(
         action( payload )

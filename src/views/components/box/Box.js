@@ -3,45 +3,6 @@ import { View, Platform } from 'react-native';
 import { any, oneOf, oneOfType, string, number, array, func, bool, object, shape } from 'prop-types';
 import { objectClean } from '../../../utils';
 
-const shapeStyles = {
-  square: {
-    borderRadius: 0,
-  },
-  rounded: {
-    borderRadius: 5,
-  },
-  circle: {
-    borderRadius: 100000,
-  },
-  pill: {
-    borderRadius: 50,
-  },
-  roundedTop: {
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    borderBottomRightRadius: 0,
-    borderBottomLeftRadius: 0,
-  },
-  roundedBottom: {
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 5,
-    borderBottomLeftRadius: 5,
-  },
-  roundedLeft: {
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-    borderBottomLeftRadius: 5,
-  },
-  roundedRight: {
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 5,
-    borderBottomRightRadius: 5,
-    borderBottomLeftRadius: 0,
-  },
-};
-
 /* Ensure the props we're going to use were indeed passed through. */
 const filterOutUnspecifiedProps = props => {
   const keys = Object.keys( props );
@@ -113,7 +74,6 @@ const Box = ({
   borderBottomRightRadius,
   borderBottomLeftRadius,
   cleanStyleObject,
-  shape,
   shadowColor,
   shadowOpacity,
   shadowRadius,
@@ -129,56 +89,7 @@ const Box = ({
   overscrollBehaviorY,
   ...restProps
 }) => {
-  const borderRadiusStyle = {
-    borderRadius: borderRadius,
-    borderTopLeftRadius: borderTopLeftRadius,
-    borderTopRightRadius: borderTopRightRadius,
-    borderBottomRightRadius: borderBottomRightRadius,
-    borderBottomLeftRadius: borderBottomLeftRadius,
-    ...shapeStyles[shape],
-  };
-
   const boxStyle = {
-    justifyContent,
-    alignItems,
-    height: Platform.OS === 'web' && fullHeightOnWeb ? '100vh' : height,
-    minHeight,
-    maxHeight,
-    width,
-    minWidth,
-    maxWidth,
-    flex,
-    flexBasis,
-    flexGrow,
-    flexShrink,
-    flexDirection,
-    flexWrap,
-    backgroundColor,
-    position: (
-      (
-        position === 'sticky' &&
-        Platform.OS !== 'web'
-      )
-        ? 'relative'
-        : position
-    ),
-    top,
-    right,
-    bottom,
-    left,
-    zIndex,
-    transform,
-    opacity,
-    borderColor,
-    borderStyle,
-    overflow,
-    overflowX,
-    overflowY,
-    display,
-    overscrollBehavior,
-    overscrollBehaviorX,
-    overscrollBehaviorY,
-    ...borderRadiusStyle,
     ...filterOutUnspecifiedProps({
       padding,
       paddingTop,
@@ -204,6 +115,49 @@ const Box = ({
       shadowOpacity,
       shadowRadius,
       shadowOffset,
+      justifyContent,
+      alignItems,
+      height: Platform.OS === 'web' && fullHeightOnWeb ? '100vh' : height,
+      minHeight,
+      maxHeight,
+      width,
+      minWidth,
+      maxWidth,
+      flex,
+      flexBasis,
+      flexGrow,
+      flexShrink,
+      flexDirection,
+      flexWrap,
+      backgroundColor,
+      position: (
+        (
+          position === 'sticky' &&
+          Platform.OS !== 'web'
+        )
+          ? 'relative'
+          : position
+      ),
+      top,
+      right,
+      bottom,
+      left,
+      zIndex,
+      transform,
+      opacity,
+      borderColor,
+      borderStyle,
+      borderRadius,
+      borderBottomRightRadius,
+      borderBottomLeftRadius,
+      borderTopRightRadius,
+      borderTopLeftRadius,
+      overflow,
+      overflowX,
+      overflowY,
+      overscrollBehavior,
+      overscrollBehaviorX,
+      overscrollBehaviorY,
     }),
     ...__dangerouslySetStyle,
   };
@@ -320,25 +274,22 @@ Box.propTypes = {
   borderWidth: number,
   borderColor: string,
   borderStyle: string,
-  borderRadius: oneOf(
+  borderRadius: oneOfType(
     [number, string]
   ),
-  borderTopLeftRadius: oneOf(
+  borderTopLeftRadius: oneOfType(
     [number, string]
   ),
-  borderTopRightRadius: oneOf(
+  borderTopRightRadius: oneOfType(
     [number, string]
   ),
-  borderBottomRightRadius: oneOf(
+  borderBottomRightRadius: oneOfType(
     [number, string]
   ),
-  borderBottomLeftRadius: oneOf(
+  borderBottomLeftRadius: oneOfType(
     [number, string]
   ),
   cleanStyleObject: bool,
-  shape: oneOf(
-    ['square', 'rounded', 'pill', 'circle']
-  ),
   fullHeightOnWeb: bool,
   __dangerouslySetStyle: object,
   overflow: string,

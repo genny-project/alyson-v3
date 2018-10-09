@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dlv from 'dlv';
 import { isArray, isString, Bridge } from '../../../utils';
-import { closeSidebar } from '../../../redux/actions';
+import { closeSidebar, toggleSidebar } from '../../../redux/actions';
 import SidebarBody from './body';
 
 class Sidebar extends Component {
@@ -16,10 +16,12 @@ class Sidebar extends Component {
   static propTypes = {
     baseEntities: object,
     aliases: object,
+    layout: object,
     rootCode: string,
     getItemDataFromStore: bool,
     side: oneOf( ['left', 'right'] ),
     closeSidebar: func,
+    toggleSidebar: func,
   }
 
   /*
@@ -121,22 +123,35 @@ class Sidebar extends Component {
     });
   }
 
+  handleToggle = () => {
+    this.props.toggleSidebar( this.props.side );
+  }
+
   handleClose = () => {
     this.props.closeSidebar( this.props.side );
   }
 
   render() {
-    const { rootCode, side, ...restProps } = this.props;
-    const items = this.getLinkedBaseEntities( rootCode, true );
+    const { rootCode, side, layout, ...restProps } = this.props;
+
+    const root = rootCode || (
+      layout.sidebarProps &&
+      layout.sidebarProps.rootCode
+    );
+
+    const items = this.getLinkedBaseEntities( root, true );
     const logo = this.getSidebarImage();
 
     return (
       <SidebarBody
         {...restProps}
+        {...layout.sidebarProps}
+        layout={layout}
         items={items}
         headerImage={logo}
         side={side}
         onClose={this.handleClose}
+        onToggle={this.handleToggle}
       />
     );
   }
@@ -151,7 +166,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ closeSidebar }, dispatch );
+  return bindActionCreators({ closeSidebar, toggleSidebar }, dispatch );
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( Sidebar );

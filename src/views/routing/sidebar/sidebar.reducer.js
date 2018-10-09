@@ -34,7 +34,7 @@ const reducer = ( state = initialState, { type, payload }) => {
         ...state,
         [payload]: {
           ...state[payload],
-          isOpen: !state.isOpen,
+          isOpen: !state[payload].isOpen,
         },
       };
 
