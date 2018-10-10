@@ -44,4 +44,4 @@ const envOutput = targetVars
 
 console.log( envOutput );
 
-fs.writeFile( '.env', envOutput, );
+fs.writeFile( '.env', envOutput );
