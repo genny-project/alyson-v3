@@ -12,7 +12,8 @@
     "setup-images": "app-icon generate -i $IMAGE",
     "serve:web": "node server.js",
     "clear-cache:web": "rm -rf ./node_modules/.cache/babel-loader/*",
-    "layout-editor": "node layout-editor"
+    "layout-editor": "node layout-editor",
+    "postinstall": "node ./generate-env.js"
   },
   "dependencies": {
     "appcenter": "^1.6.0",
