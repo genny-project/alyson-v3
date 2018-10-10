@@ -25,7 +25,7 @@ const getSingleItemScoped = ( item, options, allData, context ) => {
   const { operator } = scope;
 
   /* Run the operator on the path data */
-  const processed = operators[operator]( pathData, scope, allData );
+  const processed = operators[operator]( pathData, scope, allData, context );
 
   const destination = as ? injectContext( as, { ...item, ...context }) : path;
 

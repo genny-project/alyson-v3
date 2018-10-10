@@ -21,6 +21,7 @@ class DataQuery {
 
     const checkQuery = ( query ) => {
       query.forEach( q => {
+        // console.log( q );
         if ( q.onlyShowIf ) {
           if (
             !ifConditionsPass({ ...queryContext, ...currentContext }, q.onlyShowIf,  ) || !q.query
@@ -50,7 +51,7 @@ class DataQuery {
           this.path ? dlv( output, this.path ) : output,
           queryData,
           this.data.length ? [...this.data] : { ...this.data },
-          queryContext
+          { ...queryContext, ...currentContext }
         );
 
         if ( this.path ) {
@@ -66,8 +67,6 @@ class DataQuery {
 
     /* Apply each of the operators to the data */
     checkQuery( query );
-
-    // console.warn( output );
 
     return output;
   }
