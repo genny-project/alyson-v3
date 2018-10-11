@@ -87,7 +87,15 @@ class Recursive extends Component {
       return thenProps;
     }
 
-    return elseProps || {};
+    if ( !elseProps ) {
+      return {};
+    }
+
+    if ( elseProps.if ) {
+      return this.calculateConditionalProps( elseProps, context );
+    }
+
+    return elseProps;
   };
 
   calculateConditionalPropsArray = ( conditionalProps, context ) => {
