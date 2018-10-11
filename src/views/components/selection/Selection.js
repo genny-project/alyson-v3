@@ -1,12 +1,17 @@
 import React, { Component, isValidElement } from 'react';
-import { object, array } from 'prop-types';
+import { object, array, oneOf } from 'prop-types';
 import { isArray } from '../../../utils';
 import { Recursive } from '../../components';
 
 class Selection extends Component {
+  static defaultProps = {
+    mode: 'single',
+  }
+
   static propTypes = {
     context: object,
     children: array,
+    mode: oneOf( ['single','toggle'] ),
   }
 
   state = {
@@ -15,7 +20,26 @@ class Selection extends Component {
   }
 
   handleSelect = selected => () => {
-    this.setState({ selected });
+    const { mode } = this.props;
+
+    switch ( mode ) {
+      case 'single': {
+        this.setState({ selected });
+        break;
+      }
+
+      case 'toggle': {
+        if ( this.state.selected === selected ) {
+          this.setState({ selected: null });
+        }
+        else {
+          this.setState({ selected });
+        }
+        break;
+      }
+
+      default: break;
+    }
   }
 
   render() {
