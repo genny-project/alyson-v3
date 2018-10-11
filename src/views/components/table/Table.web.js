@@ -3,17 +3,13 @@ import { string, array, number, bool, oneOfType } from 'prop-types';
 import ReactTable from 'react-table';
 import matchSorter from 'match-sorter';
 import 'react-table/react-table.css';
+
+import { Button, Text, Box } from '../../components';
+// import { Bridge } from '../../../utils/vertx';
 import './table.scss';
 
-const utilMethod = ( filter, rows ) => {
-  // const rows1 = Array.from( rows );
-
-  // console.warn( filter,rows, '$$$$$$$$$ ' );
-  // const a =  rows1.filter( x =>  x.firstName.includes( 'anish' ));
-
-  // return a;
-
-  return  matchSorter( rows, filter.value, { keys: ['firstName'] });
+const utilMethod = ( filter, rows ) =>  {
+  return matchSorter( rows, filter.value, { keys: [filter.id] });
 };
 
 class TableView extends Component {
@@ -39,46 +35,65 @@ class TableView extends Component {
     containerBackgroundColor: string,
   };
 
-  /* react table requires to create a accessor property from the data we receive */
-  /* we take each object from the prop and add accessor property to the object */
-  /* create accessor if doesnt exists  TODO*/
-  createAccesorForColumns = () => {
-    const newData = this.props.columns.map( data => ({
-      ...data,
-      ...{ accessor: data.Header.split( ' ' ).join() },
-    }));
+   addFilterMethodsToColumn =  () => {
+     const { columns   } = this.props;
 
-    return newData;
-  };
-
-   addFilterMethodsToColumn =  () => { 
-     const { columns  } = this.props;
+     /* add filtermethod to all the columns */
+     /* This is used for searching */
 
      if ( columns.length < 1 ) return null;
      const modifiedCells = columns.map( column => { 
-       if ( column.filterType === 'string' ) { 
-         return ( [{ ...column, ...({ filterMethod: column['filterMethod'] = utilMethod }), ...{ filterAll: true } }] );
+       return ({ ...column, ...{ filterMethod: utilMethod }, ...{ filterAll: true } });
+     }); 
+
+     const textInputForEditable = () => {
+       return (
+         <Box
+           width="100%"
+           justifyContent="space-around"
+           display="flex"
+           flexDirection="row"
+         >
+           <Button
+             size="sm"
+             color="green"
+           >
+             <Text color="white">
+              View
+             </Text>
+           </Button>
+
+           <Button
+             size="sm"
+             color="green"
+           >
+             <Text color="white">
+              Edit
+             </Text>
+           </Button>
+
+         </Box>
+       );
+     };
+
+     /* if editable is provided as a props  then wrap that cell with a text input */
+     const makeEditableData = modifiedCells.map( row => {
+       if ( row && row.editable ) {
+         return ({ ...row, ...{ Cell: textInputForEditable() } });
        }
 
-       return column['filterMethod'] = 'filter2';
+       return row;
      });
 
-      // if user passes a table cell as a component other than string, number
-      // we need to handle it specificially and combine the data
-    //  const combineCustomComponent = () => {
-    //    if ( customComponent ) { 
-    //      columns.map( column => {
-    //        return; 
-    //      });
-    //    }
-    //  };
+     console.warn( modifiedCells, ' $$$$$$$$$$$$$$$$$$$ modified cells' );
+     console.warn( makeEditableData, ' $$$$$$$$$$$$$$$$$$$$ make Editable Cells ' );
+     console.warn( this.props.data, ' $$$$$$$$$$$$$$$$$$$$$$$$$$$' );
 
-     return modifiedCells;
+     return makeEditableData;
    }
 
    render() {
      const {
-       columns,
        data,
        itemsPerPage,
        filterable,
@@ -95,8 +110,7 @@ class TableView extends Component {
        tableWidth,
        tableBackgroundColor,
        containerBackgroundColor );
-     console.warn( this.props, 'props *********************************' );
-     this.addFilterMethodsToColumn();
+    // this.addFilterMethodsToColumn();
 
      return (
        <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
@@ -105,14 +119,11 @@ class TableView extends Component {
            style={[tableStyleProps]}
            showPageSizeOptions={false}
            noDataText="No data to Display."
-           data={data}
-           columns={columns}
-           pageSize={itemsPerPage}
            filterable={filterable}
-           defaultFilterMethod={( filter, row ) =>
-             String( row[filter.id] ) === filter.value}
+           data={data}
+           columns={this.addFilterMethodsToColumn()}
+           pageSize={itemsPerPage}
            showPagination={data.length > itemsPerPage ? true : false}
-
          />
        </div>
      );
@@ -120,3 +131,12 @@ class TableView extends Component {
 }
 
 export default TableView;
+
+/* input style redundant right now while testing */
+// const inputStyle = {
+//   border: 'none',
+//   height: '100%',
+//   width: '100%',
+//   padding: 4,
+
+// };
