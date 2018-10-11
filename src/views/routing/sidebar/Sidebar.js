@@ -11,6 +11,7 @@ class Sidebar extends Component {
   static propTypes = {
     getItemDataFromStore: false,
     rootCode: 'GRP_ROOT',
+    side: 'left',
   }
 
   static propTypes = {
@@ -124,6 +125,7 @@ class Sidebar extends Component {
   }
 
   handleToggle = () => {
+    console.warn( this.props.side, this.props );
     this.props.toggleSidebar( this.props.side );
   }
 
@@ -135,8 +137,13 @@ class Sidebar extends Component {
     const { rootCode, side, layout, ...restProps } = this.props;
 
     const root = rootCode || (
-      layout.sidebarProps &&
-      layout.sidebarProps.rootCode
+      side === 'left' ? (
+        layout.sidebarProps &&
+        layout.sidebarProps.rootCode
+      ) : (
+        layout.sidebarRightProps &&
+        layout.sidebarRightProps.rootCode
+      )
     );
 
     const items = this.getLinkedBaseEntities( root, true );
@@ -145,7 +152,9 @@ class Sidebar extends Component {
     return (
       <SidebarBody
         {...restProps}
-        {...layout.sidebarProps}
+        {...side === 'left'
+          ? layout.sidebarProps
+          : layout.sidebarRightProps}
         layout={layout}
         items={items}
         headerImage={logo}
