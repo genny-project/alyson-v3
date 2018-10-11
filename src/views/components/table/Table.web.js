@@ -4,8 +4,9 @@ import ReactTable from 'react-table';
 import matchSorter from 'match-sorter';
 import 'react-table/react-table.css';
 
-import { Button, Text, Box } from '../../components';
+// import { Button, Text, Box } from '../../components';
 // import { Bridge } from '../../../utils/vertx';
+
 import './table.scss';
 
 const utilMethod = ( filter, rows ) =>  {
@@ -35,99 +36,67 @@ class TableView extends Component {
     containerBackgroundColor: string,
   };
 
-   addFilterMethodsToColumn =  () => {
-     const { columns   } = this.props;
+  modifiedTableColumns = () => {
+    /* make all the columns searchable  this is used for searching oneach column */
+    const addFilterMethodsToColumn =  () => {
+      const { columns   } = this.props;
 
-     /* add filtermethod to all the columns */
-     /* This is used for searching */
+      if ( columns.length < 1 ) return null;
+      const modifiedCells = columns.map( column => {
+        return ({ ...column, ...{ filterMethod: utilMethod }, ...{ filterAll: true } });
+      }); 
+ 
+      return modifiedCells;
+    };
 
-     if ( columns.length < 1 ) return null;
-     const modifiedCells = columns.map( column => { 
-       return ({ ...column, ...{ filterMethod: utilMethod }, ...{ filterAll: true } });
-     }); 
+    const addCustomComponentsToColumn = () => { 
+      const modifiedData = addFilterMethodsToColumn();
 
-     const textInputForEditable = () => {
-       return (
-         <Box
-           width="100%"
-           justifyContent="space-around"
-           display="flex"
-           flexDirection="row"
-         >
-           <Button
-             size="sm"
-             color="green"
-           >
-             <Text color="white">
-              View
-             </Text>
-           </Button>
+      console.warn( this.props, 'PROPS LOG FROM ADD CUSTOM COMPONENTS TO COLUMN' );
 
-           <Button
-             size="sm"
-             color="green"
-           >
-             <Text color="white">
-              Edit
-             </Text>
-           </Button>
+      return modifiedData;
+    };
 
-         </Box>
-       );
-     };
+    return addCustomComponentsToColumn();
+    /* method to  add custom components on each Cell */
+  }
 
-     /* if editable is provided as a props  then wrap that cell with a text input */
-     const makeEditableData = modifiedCells.map( row => {
-       if ( row && row.editable ) {
-         return ({ ...row, ...{ Cell: textInputForEditable() } });
-       }
+  render() {
+    const {
+      data,
+      itemsPerPage,
+      filterable,
+      tableBackgroundColor,
+      tableWidth,
+      containerBackgroundColor,
+      tableHeight,
+    } = this.props;
 
-       return row;
-     });
+    const tableStyleProps = [];
 
-     console.warn( modifiedCells, ' $$$$$$$$$$$$$$$$$$$ modified cells' );
-     console.warn( makeEditableData, ' $$$$$$$$$$$$$$$$$$$$ make Editable Cells ' );
-     console.warn( this.props.data, ' $$$$$$$$$$$$$$$$$$$$$$$$$$$' );
-
-     return makeEditableData;
-   }
-
-   render() {
-     const {
-       data,
-       itemsPerPage,
-       filterable,
-       tableBackgroundColor,
-       tableWidth,
-       containerBackgroundColor,
-       tableHeight,
-     } = this.props;
-
-     const tableStyleProps = [];
-
-     tableStyleProps.push( 
-       tableHeight,
-       tableWidth,
-       tableBackgroundColor,
-       containerBackgroundColor );
+    tableStyleProps.push( 
+      tableHeight,
+      tableWidth,
+      tableBackgroundColor,
+      containerBackgroundColor );
     // this.addFilterMethodsToColumn();
 
-     return (
-       <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
-         <ReactTable
-           className="react-tbl table -striped -highlight"
-           style={[tableStyleProps]}
-           showPageSizeOptions={false}
-           noDataText="No data to Display."
-           filterable={filterable}
-           data={data}
-           columns={this.addFilterMethodsToColumn()}
-           pageSize={itemsPerPage}
-           showPagination={data.length > itemsPerPage ? true : false}
-         />
-       </div>
-     );
-   }
+    return (
+      <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
+        <ReactTable
+          className="react-tbl table -striped -highlight"
+          style={[tableStyleProps]}
+          showPageSizeOptions={false}
+          noDataText="No data to Display."
+          filterable={filterable}
+          data={data}
+          columns={this.modifiedTableColumns()}
+          pageSize={itemsPerPage}
+          showPagination={data.length > itemsPerPage ? true : false}
+        />
+      </div>
+    );
+  }
 }
 
 export default TableView;
