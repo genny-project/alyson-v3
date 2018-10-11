@@ -87,6 +87,7 @@ const Box = ({
   overscrollBehavior,
   overscrollBehaviorX,
   overscrollBehaviorY,
+  onLayout,
   ...restProps
 }) => {
   const boxStyle = {
@@ -185,6 +186,7 @@ const Box = ({
           : boxStyle,
         webStyle,
       ]}
+      onLayout={onLayout}
     >
       {children}
     </View>

@@ -1,19 +1,20 @@
 import React, { Component, Fragment } from 'react';
 import { ActivityIndicator, Dimensions,  Platform } from 'react-native';
-import { any, array, bool, string, number, oneOfType, func, object } from 'prop-types';
+import { any, array, bool, string, number, oneOfType, func, object, oneOf } from 'prop-types';
 import { PagerScroll, PagerPan, TabView, TabBar } from 'react-native-tab-view';
 import { Box, Text, Icon, Timeout } from '../../components';
 import TabDots from './tab-dots';
+import { isArray } from '../../../utils';
 
 class Tabs extends Component {
   static defaultProps = {
     tabs: [],
-    height: '100%',
-    width: '100%',
     labelProps: {},
     indicatorProps: {},
     sceneProps: {},
     dotProps: {},
+    tabBarProps: {},
+    tabsPosition: 'bottom',
   }
 
   static propTypes = {
@@ -31,7 +32,10 @@ class Tabs extends Component {
     tabBarSize: string,
     iconColor: string,
     labelColor: string,
-    bottomTabs: bool,
+    tabsPosition: oneOf(
+      'top', 'bottom'
+    ),
+    tabBarProps: object,
     onPress: func,
     scrollEnabled: bool,
     iconSize: string,
@@ -42,8 +46,10 @@ class Tabs extends Component {
     activeLabelColor: string,
     activeIconColor: string,
     restrictSceneHeights: bool,
-    paddingBottom: number,
     showDots: bool,
+    dotsPosition: oneOf(
+      'top', 'bottom'
+    ),
     dotProps: object,
   }
 
@@ -73,7 +79,7 @@ class Tabs extends Component {
       this.props.onPress();
   }
 
-  handleSceneHeight = ( route ) =>  ( event ) => {
+  handleSceneHeight = ( route ) => ( event ) => {
     var { height } = event.nativeEvent.layout;
 
     this.setState( state => ({
@@ -82,6 +88,28 @@ class Tabs extends Component {
         [route && route.key]: height,
       },
     }));
+  }
+
+  shouldRenderDots = ( requiredDotsPosition, requiredTabsPosition ) => {
+    const { showDots, dotsPosition, tabsPosition, children, dotProps } = this.props;
+    const { index } = this.state;
+
+    if (
+      !showDots ||
+      !isArray( children, { ofMinLength: 1 }) ||
+      dotsPosition !== requiredDotsPosition ||
+      tabsPosition !== requiredTabsPosition
+    ) {
+      return null;
+    }
+
+    return (
+      <TabDots
+        {...dotProps}
+        numberOfDots={children.length}
+        currentIndex={index}
+      />
+    );
   }
 
   renderPager = ( props ) => {
@@ -163,14 +191,12 @@ class Tabs extends Component {
       activeTabBackground,
       scrollEnabled,
       indicatorProps,
-      showDots,
-      dotProps,
-      bottomTabs,
-      children,
+      tabBarProps,
     } = this.props;
 
     const style = {
       backgroundColor: tabBarBackground,
+      ...tabBarProps,
     };
 
     const indicatorStyle = {
@@ -182,18 +208,7 @@ class Tabs extends Component {
     return (
       <Fragment>
         {
-          showDots &&
-          children &&
-          children.length > 0 &&
-          bottomTabs
-            ? (
-              <TabDots
-                {...dotProps}
-                numberOfDots={children.length}
-                currentIndex={this.state.index}
-              />
-            )
-            : null
+          this.shouldRenderDots( 'top', 'top' )
         }
         <TabBar
           {...props}
@@ -205,18 +220,7 @@ class Tabs extends Component {
           indicatorStyle={indicatorStyle}
         />
         {
-          showDots &&
-          children &&
-          children.length > 0 &&
-          !bottomTabs
-            ? (
-              <TabDots
-                {...dotProps}
-                numberOfDots={children.length}
-                currentIndex={this.state.index}
-              />
-            )
-            : null
+          this.shouldRenderDots( 'bottom', 'bottom' )
         }
       </Fragment>
     );
@@ -244,15 +248,17 @@ class Tabs extends Component {
 
     const onLayout = restrictSceneHeights ? { onLayout: this.handleSceneHeight( route ) } : {};
 
-    children = React.Children.map( children, child => (
-      React.cloneElement( child, {
-        ...child.props,
-        props: child.props.props && {
-          ...child.props.props,
-          ...onLayout,
-        },
-      })
-    ));
+    children = React.Children.map( children, child => {
+      return (
+        React.cloneElement( child, {
+          ...child.props,
+          props: {
+            ...child.props.props || {},
+            ...onLayout,
+          },
+        })
+      );
+    });
 
     const sceneStyle = {
       ...height,
@@ -267,8 +273,7 @@ class Tabs extends Component {
         {...sceneStyle}
       >
         {(
-          children &&
-          children.length > 0 &&
+          isArray( children, { ofMinLength: 1 }) &&
           children[route.key]
         )
           ? children[route.key]
@@ -308,17 +313,11 @@ class Tabs extends Component {
   }
 
   render() {
-    const { bottomTabs, height, width, paddingBottom } = this.props;
+    const { tabsPosition } = this.props;
     const { index, routes } = this.state;
     const initialLayout = {
       height: 20,
       width: Dimensions.get( 'window' ).width,
-    };
-
-    const style = {
-      height,
-      width,
-      paddingBottom: Number( paddingBottom ),
     };
 
     const navigationState = {
@@ -327,20 +326,31 @@ class Tabs extends Component {
     };
 
     return (
-      <TabView
-        style={style}
-        navigationState={navigationState}
-        renderScene={this.renderScene}
-        renderTabBar={this.renderTabBar}
-        onIndexChange={this.handleIndexChange}
-        initialLayout={initialLayout}
-        renderPager={this.renderPager}
-        tabBarPosition={(
-          bottomTabs
-            ? 'bottom'
-            : 'top'
-        )}
-      />
+      <Box
+        height="100%"
+        width="100%"
+        flexDirection="column"
+      >
+        {
+          this.shouldRenderDots( 'top', 'bottom' )
+        }
+        <TabView
+          style={{
+            height: '100%',
+            width: '100%',
+          }}
+          navigationState={navigationState}
+          renderScene={this.renderScene}
+          renderTabBar={this.renderTabBar}
+          onIndexChange={this.handleIndexChange}
+          initialLayout={initialLayout}
+          renderPager={this.renderPager}
+          tabBarPosition={tabsPosition}
+        />
+        {
+          this.shouldRenderDots( 'bottom', 'top' )
+        }
+      </Box>
     );
   }
 }

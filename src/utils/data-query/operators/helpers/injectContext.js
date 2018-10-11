@@ -18,7 +18,7 @@ const injectContext = ( value, context ) => {
 
   /* If given an array, recursively map through its
    * elements and inject context into them. */
-  if ( isArray( value, { onMinLength: 1 })) {
+  if ( isArray( value, { ofMinLength: 1 })) {
     return value.map( val => injectContext( val, context ));
   }
 
