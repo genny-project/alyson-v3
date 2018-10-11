@@ -18,8 +18,6 @@ class MapView extends Component {
   render() {
     const { height, width } = this.props;
 
-    console.warn( ' Loggin Props', this.props );
-
     return (
       <div style={{ height: height, width: width }}>
         { google ?  (
@@ -30,7 +28,7 @@ class MapView extends Component {
           >
             {this.props.children}
           </GoogleMapReact>
-        ) 
+        )
           : 'Google Object Not found please wait or refresh the application window'
         }
       </div>
