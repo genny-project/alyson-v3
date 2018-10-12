@@ -105,7 +105,7 @@ class MessageHandler {
       return;
     }
 
-    if ( message.data_type === 'BaseEntity' && !message.delete ) {
+    if ( message.data_type === 'BaseEntity' && !message.delete && !message.replace ) {
       /* Add to a batch */
       this.beBatch.push(
         action( message )
@@ -118,8 +118,7 @@ class MessageHandler {
       if ( isArray( payload.items )) {
         payload.items = payload.items.map( item => ({
           shouldDeleteLinkedBaseEntities: payload.shouldDeleteLinkedBaseEntities,
-          delete: payload.delete,
-          replace: payload.replace,
+          parentCode: payload.parentCode,
           ...item,
         }));
       }
