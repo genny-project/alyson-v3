@@ -30,6 +30,10 @@ export default ( data, options, allData ) => {
       beg.linkValue = link.link.linkValue;
       beg.weight = link.weight;
 
+      if ( options.withAttributes ) {
+        beg.attributes = allData.baseEntities.attributes[beg.code];
+      }
+
       if ( options.as ) {
         if ( options.multiple ) {
           multipleArray.push( beg );

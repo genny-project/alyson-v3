@@ -1,3 +1,5 @@
+import omit from 'lodash.omit';
+
 const reducer = ( state = {}, { type, payload }) => {
   switch ( type ) {
     case 'BASE_ENTITY_MESSAGE': {
@@ -17,6 +19,25 @@ const reducer = ( state = {}, { type, payload }) => {
       }
 
       return state;
+    }
+
+    case 'ALIAS_ADD':
+      return {
+        ...state,
+        [payload.alias]: payload.value,
+      };
+
+    case 'ALIAS_REMOVE':
+      return omit( state, payload.alias );
+
+    case 'ALIAS_TOGGLE': {
+      if ( state[payload.alias] === payload.value )
+        return omit( state, payload.alias );
+
+      return {
+        ...state,
+        [payload.alias]: payload.value,
+      };
     }
 
     case 'USER_LOGOUT':

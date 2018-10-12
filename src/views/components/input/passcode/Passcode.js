@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { number, func, oneOf, string } from 'prop-types';
+import { number, func, oneOf, string, bool } from 'prop-types';
 import range from 'lodash.range';
 import { Box, Input } from '../../../components';
 
@@ -21,6 +21,7 @@ class Passcode extends Component {
     charactersRequired: 1,
     size: 'md',
     keyboardType: 'numeric',
+    caseSensitive: false,
   }
 
   static propTypes = {
@@ -32,6 +33,7 @@ class Passcode extends Component {
       ['sm','md','lg']
     ),
     keyboardType: string,
+    caseSensitive: bool,
   }
 
   // static getDerivedStateFromProps( nextProps, prevState ) {
@@ -76,9 +78,13 @@ class Passcode extends Component {
   }
 
   handleChangeValue = ( index ) => ( data ) => {
-    const { charactersRequired } = this.props;
+    const { charactersRequired, caseSensitive } = this.props;
 
     let inputValue = data.toString();
+
+    if ( !caseSensitive ) {
+      inputValue = inputValue.toUpperCase();
+    }
 
     if ( inputValue.length > charactersRequired ) {
       inputValue = inputValue.substr( inputValue.length - charactersRequired, charactersRequired );

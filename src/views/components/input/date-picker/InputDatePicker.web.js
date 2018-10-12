@@ -240,6 +240,9 @@ class InputDatePicker extends Component {
 
                         <Box
                           flexDirection="column"
+                          borderWidth={2}
+                          borderColor="#efefef"
+                          borderStyle="solid"
                         >
                           <Box
                             backgroundColor="#F8F8F8"
@@ -271,24 +274,23 @@ class InputDatePicker extends Component {
                                   {...getItemProps({
                                     item: day.dateValue,
                                     disabled: isDisabled( day.dateValue ),
-                                    style: {
-                                      width: 'calc(100% / 7)',
-                                      paddingVertical: 15,
-                                      paddingHorizontal: 10,
-                                      backgroundColor: (
-                                        isSelectedDay( day.dateValue )
-                                          ? calendarHeaderColor
-                                          : '#FFFFFF'
-                                      ),
-                                      ...dayIndex > 0 && {
-                                        borderLeftWidth: 1,
-                                        borderStyle: 'solid',
-                                        borderColor: '#efefef',
-                                      },
-                                      ...isDisabled( day.dateValue ) && {
-                                        cursor: 'not-allowed',
-                                      },
+                                    width: 'calc(100% / 7)',
+                                    paddingY: 15,
+                                    paddingX: 10,
+                                    backgroundColor: (
+                                      isSelectedDay( day.dateValue )
+                                        ? calendarHeaderColor
+                                        : '#FFFFFF'
+                                    ),
+                                    ...dayIndex > 0 && {
+                                      borderLeftWidth: 1,
+                                      borderStyle: 'solid',
+                                      borderColor: '#efefef',
                                     },
+                                    ...isDisabled( day.dateValue ) && {
+                                      cursor: 'not-allowed',
+                                    },
+                                    justifyContent: 'center',
                                     withFeedback: true,
                                     onPress: event => {
                                       if ( isDisabled( day.dateValue ))

@@ -1,5 +1,6 @@
 const initialState = {
   hideSidebar: false,
+  hideSidebarRight: false,
   showHeader: false,
   appName: '',
   headerProps: {},
@@ -11,6 +12,12 @@ const reducer = ( state = initialState, { type, payload }) => {
       return {
         ...state,
         hideSidebar: payload,
+      };
+
+    case 'LAYOUT_SIDEBAR_RIGHT_VISIBILITY_SET':
+      return {
+        ...state,
+        hideSidebarRight: payload,
       };
 
     case 'LAYOUT_HEADER_VISIBILITY_SET':
@@ -29,6 +36,12 @@ const reducer = ( state = initialState, { type, payload }) => {
       return {
         ...state,
         sidebarProps: payload,
+      };
+
+    case 'LAYOUT_SIDEBAR_RIGHT_PROPS_SET':
+      return {
+        ...state,
+        sidebarRightProps: payload,
       };
 
     case 'APP_NAME_SET':

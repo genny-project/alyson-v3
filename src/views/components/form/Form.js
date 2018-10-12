@@ -1,16 +1,20 @@
 import React, { Component, Fragment } from 'react';
 import { ActivityIndicator } from 'react-native';
-import { string, object, oneOfType, array } from 'prop-types';
+import { string, object, oneOfType, array, bool } from 'prop-types';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import { isArray, isObject, isString } from '../../../utils';
 import { Bridge } from '../../../utils/vertx';
-import { Box, Text, Button, KeyboardAwareScrollView } from '../index';
+import { Box, Text, Button, KeyboardAwareScrollView, ScrollView } from '../index';
 import Recursive from '../layout-loader/Recursive';
 import FormInput from './input';
 
 class Form extends Component {
   inputRefs = {}
+
+  static defaultProps = {
+    loadingText: 'Loading form...',
+  }
 
   static propTypes = {
     questionGroupCode: oneOfType(
@@ -26,6 +30,9 @@ class Form extends Component {
     renderLoading: object,
     renderSubmitButtonWrapper: object,
     renderSubmitButton: object,
+    displayInline: bool,
+    hideButtonIfDisabled: bool,
+    loadingText: string,
   }
 
   state = {
@@ -271,6 +278,7 @@ class Form extends Component {
       finalValue = JSON.stringify( finalValue );
     }
 
+    // eslint-disable-next-line no-console
     console.warn( 'sending answer...', {
       askId: ask.id,
       attributeCode: finalAttributeCode,
@@ -333,8 +341,8 @@ class Form extends Component {
       questionGroups[0]
     );
 
-    console.log( questionGroup );
     if ( !questionGroup ) {
+      // eslint-disable-next-line no-console
       console.warn( 'Could not submit form - no question group associated with form.' );
 
       return;
@@ -371,7 +379,13 @@ class Form extends Component {
   }
 
   renderButton( buttonProps ) {
-    const { renderSubmitButton, renderSubmitButtonWrapper } = this.props;
+    const { renderSubmitButton, renderSubmitButtonWrapper, hideButtonIfDisabled } = this.props;
+    const { disabled } = buttonProps;
+
+    if (
+      hideButtonIfDisabled &&
+      disabled
+    ) return null;
 
     if ( renderSubmitButtonWrapper ) {
       return (
@@ -383,8 +397,8 @@ class Form extends Component {
               ? {
                 ...renderSubmitButton,
                 props: {
-                  ...renderSubmitButton.props,
                   ...buttonProps,
+                  ...renderSubmitButton.props,
                 },
               }
               : {
@@ -431,7 +445,8 @@ class Form extends Component {
     } = this.props;
 
     const { questionCode, attributeCode, name, mandatory, question, childAsks } = ask;
-    const { dataType } = baseEntities.definitions.data[attributeCode];
+    const baseEntityDefinition = baseEntities.definitions.data[attributeCode];
+    const dataType = baseEntityDefinition && baseEntityDefinition.dataType;
 
     if ( isArray( childAsks, { ofMinLength: 1 })) {
       return (
@@ -543,7 +558,13 @@ class Form extends Component {
   }
 
   render() {
-    const { questionGroupCode, renderHeading, renderLoading } = this.props;
+    const {
+      questionGroupCode,
+      renderHeading,
+      renderLoading,
+      displayInline,
+      loadingText,
+    } = this.props;
     const { questionGroups } = this.state;
 
     if (
@@ -566,18 +587,28 @@ class Form extends Component {
           flexShrink={0}
         >
           <ActivityIndicator size="large" />
-
-          <Box marginTop={10}>
-            <Text align="center">
-              Loading form...
-            </Text>
-          </Box>
-
+          {
+            loadingText != null &&
+            isString( loadingText )
+              ? (
+                <Box
+                  marginTop={10}
+                >
+                  <Text
+                    align="center"
+                  >
+                    {loadingText}
+                  </Text>
+                </Box>
+              )
+              : null
+          }
         </Box>
       );
     }
 
     const { initialValues } = this.state;
+    const WrapperComponent = displayInline ? ScrollView : KeyboardAwareScrollView;
 
     return (
       <Formik
@@ -597,16 +628,19 @@ class Form extends Component {
           setFieldValue,
           setFieldTouched,
         }) => (
-          <KeyboardAwareScrollView
+          <WrapperComponent
+            scrollEnabled={!displayInline}
             style={{
               width: '100%',
             }}
           >
             <Box
-              flexDirection="column"
-              flex={1}
-              height="100%"
+              flexDirection={displayInline
+                ? 'row'
+                : 'column'
+              }
               width="100%"
+              flex={1}
               padding={20}
             >
               {questionGroups.map( questionGroup => (
@@ -742,7 +776,7 @@ class Form extends Component {
                 if ( attributeCode.includes( 'ACCEPT' )) {
                   buttons.push(
                     this.renderButton({
-                      disabled: isSubmitting,
+                      disabled: !isValid || isSubmitting,
                       onPress: () => {
                         this.setState({
                           formStatus: 'accept',
@@ -760,7 +794,7 @@ class Form extends Component {
                 if ( attributeCode.includes( 'DECLINE' )) {
                   buttons.push(
                     this.renderButton({
-                      disabled: isSubmitting,
+                      disabled: !isValid || isSubmitting,
                       onPress: () => {
                         this.setState({
                           formStatus: 'decline',
@@ -799,7 +833,7 @@ class Form extends Component {
                 return buttons;
               }, [] )}
             </Box>
-          </KeyboardAwareScrollView>
+          </WrapperComponent>
         )}
       </Formik>
     );
