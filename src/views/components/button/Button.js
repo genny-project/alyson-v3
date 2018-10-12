@@ -73,6 +73,7 @@ class Button extends Component {
     hoverProps: object,
     onMouseEnter: func,
     onMouseLeave: func,
+    isBackButton: bool,
   }
 
   static getDerivedStateFromProps( props, state ) {
@@ -160,7 +161,10 @@ class Button extends Component {
   }
 
   handlePress = event => {
-    const { showSpinnerOnClick, onPress } = this.getProps();
+    const { showSpinnerOnClick, onPress, isBackButton, onBack } = this.getProps();
+
+    if ( isBackButton && onBack )
+      onBack();
 
     if ( showSpinnerOnClick )
       this.setState({ isSpinning: true });

@@ -13,6 +13,10 @@ export default ( data, options, allData ) => {
   if ( code ) {
     if ( isArray( data )) {
       return data.map( item => {
+        if ( !item ) {
+          return item;
+        }
+
         const dataPool = { ...item, ...context };
         const injectedCode = injectContext( code, dataPool );
         const injectedAs = injectContext( as, dataPool );

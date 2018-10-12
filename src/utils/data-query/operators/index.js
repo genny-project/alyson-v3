@@ -14,5 +14,5 @@ export { default as populateLinkValues } from './populateLinkValues';
 export { default as populateAttributes } from './populateAttributes';
 export { default as populateBEGAttributes } from './populateBEGAttributes';
 export { default as getLinkDepths } from './getLinkDepths';
-// export { default as filter } from './filter';
 export { default as getLinks } from './getLinks';
+export { default as filter } from './filter';

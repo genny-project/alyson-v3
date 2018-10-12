@@ -1,93 +1,120 @@
 import React, { Fragment } from 'react';
 import { TouchableWithoutFeedback, Image } from 'react-native';
-import { object, func, string, array, number, bool, oneOfType } from 'prop-types';
+import { object, func, string, array, number, bool, oneOfType, oneOf } from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Box, ScrollView, Recursive } from '../../../components';
-import { closeSidebar } from '../../../../redux/actions';
+import { onClose } from '../../../../redux/actions';
 import SidebarMenu from './menu';
 
 const Sidebar = ({
   sidebar,
-  closeSidebar,
+  onClose,
+  onToggle,
   headerImage,
   items,
   inline,
   width,
   backgroundColor,
   renderBody,
+  openProps,
+  closedProps,
   headerImageWidth = '100%',
   headerImageHeight = 200,
-}) => (
-  <Fragment>
-    <Box
-      {...!inline && {
-        position: 'fixed',
-        left: -width,
-        top: 0,
-        transform: [
-          { translateX: sidebar.isOpen ? width : 0 },
-        ],
-      }}
-      width={300}
-      height="100%"
-      backgroundColor={backgroundColor}
-      zIndex={100}
-      transitionDuration="300ms"
-      transitionProperty="transform"
-    >
-      {renderBody ? (
-        <Recursive
-          {...renderBody}
-          context={{
-            items,
-          }}
-        />
-      ) : (
-        <ScrollView
-          paddingY={40}
-          flex={1}
-        >
-          {headerImage ? (
-            <Image
-              resizeMode="contain"
-              source={{ uri: headerImage, width: headerImageWidth, height: headerImageHeight }}
-            />
-          ) : null}
+  side = 'left',
+  backdropProps,
+}) => {
+  const context = {
+    items,
+    sidebar,
+    onClose,
+    onToggle,
+  };
 
-          <SidebarMenu
-            items={items}
-          />
-        </ScrollView>
-      )}
-    </Box>
-
-    {(
-      !inline &&
-      sidebar.isOpen
-    ) && (
-      <TouchableWithoutFeedback
-        onPress={closeSidebar}
+  return (
+    <Fragment>
+      <Box
+        {...!inline && {
+          position: 'fixed',
+          top: 0,
+          ...side === 'left' ? {
+            left: -width,
+            transform: [
+              { translateX: sidebar.left.isOpen ? width : 0 },
+            ],
+          } : {
+            right: -width,
+            transform: [
+              { translateX: sidebar.right.isOpen ? -width : 0 },
+            ],
+          },
+        }}
+        width={width}
+        height="100%"
+        backgroundColor={backgroundColor}
+        transitionDuration="300ms"
+        transitionProperty="transform"
+        {...sidebar[side].isOpen ? {
+          zIndex: 100,
+          ...openProps,
+        } : {
+          zIndex: 98,
+          ...closedProps,
+        }}
       >
-        <Box
-          position="fixed"
-          top={0}
-          left={0}
-          height="100%"
-          width="100%"
-          zIndex={99}
-          backgroundColor="#000"
-          opacity={sidebar.isOpen ? 0.5 : 0}
-          transition="300ms ease opacity"
-        />
-      </TouchableWithoutFeedback>
-    )}
-  </Fragment>
-);
+        {renderBody ? (
+          <Recursive
+            {...renderBody}
+            context={context}
+          />
+        ) : (
+          <ScrollView
+            paddingY={40}
+            flex={1}
+          >
+            {headerImage ? (
+              <Image
+                resizeMode="contain"
+                source={{ uri: headerImage, width: headerImageWidth, height: headerImageHeight }}
+              />
+            ) : null}
+
+            <SidebarMenu
+              items={items}
+            />
+          </ScrollView>
+        )}
+      </Box>
+
+      {(
+        !inline &&
+        sidebar[side].isOpen
+      ) && (
+        <TouchableWithoutFeedback
+          onPress={onClose}
+        >
+          <Box
+            position="fixed"
+            top={0}
+            left={0}
+            height="100%"
+            width="100%"
+            zIndex={99}
+            backgroundColor="#000"
+            opacity={sidebar[side].isOpen ? 0.5 : 0}
+            transition="300ms ease opacity"
+            {...backdropProps}
+          />
+        </TouchableWithoutFeedback>
+      )}
+    </Fragment>
+  );
+};
 
 Sidebar.propTypes = {
   sidebar: object,
-  closeSidebar: func,
+  onClose: func,
+  onToggle: func,
   headerImage: string,
   items: array,
   width: number.isRequired,
@@ -100,6 +127,10 @@ Sidebar.propTypes = {
   headerImageHeight: oneOfType(
     [number, string]
   ),
+  openProps: object,
+  closedProps: object,
+  side: oneOf( ['left','right'] ),
+  backdropProps: object,
 };
 
 export { Sidebar };
@@ -109,7 +140,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ closeSidebar }, dispatch );
+  return bindActionCreators({ onClose }, dispatch );
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( Sidebar );

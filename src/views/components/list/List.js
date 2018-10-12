@@ -58,6 +58,7 @@ class List extends PureComponent {
     headerCountTextProps: object,
     scrollViewProps: object,
     contentBodyProps: object,
+    itemProps: object,
   }
 
   render() {
@@ -87,6 +88,7 @@ class List extends PureComponent {
       headerCountProps,
       headerCountTextProps,
       contentBodyProps,
+      itemProps,
       ...restProps
     } = this.props;
 
@@ -135,23 +137,28 @@ class List extends PureComponent {
           </Box>
         )}
 
-        {isArray( children, { ofMinLength: 1 }) ? (
-          children.map(( child, index ) => (
-            <Box
-              key={child.props.id}
-              marginBottom={index < children.length - 1 ? contentGutter : null}
-              {...contentBodyProps}
-            >
-              {child}
+        <Box
+          flexDirection="column"
+          {...contentBodyProps}
+        >
+          {isArray( children, { ofMinLength: 1 }) ? (
+            children.map(( child, index ) => (
+              <Box
+                key={child.props.id}
+                marginBottom={index < children.length - 1 ? contentGutter : null}
+                {...itemProps}
+              >
+                {child}
+              </Box>
+            ))
+          ) : (
+            <Box {...emptyProps}>
+              <Text {...emptyTextProps}>
+                {emptyText}
+              </Text>
             </Box>
-          ))
-        ) : (
-          <Box {...emptyProps}>
-            <Text {...emptyTextProps}>
-              {emptyText}
-            </Text>
-          </Box>
-        )}
+          )}
+        </Box>
 
         {(
           showLegend &&

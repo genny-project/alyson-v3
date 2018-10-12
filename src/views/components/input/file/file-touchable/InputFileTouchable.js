@@ -36,6 +36,8 @@ class InputFileTouchable extends Component {
           height: height,
           position: 'relative',
         }}
+        width="100%"
+        position="relative"
       >
         <Input
           type="text"

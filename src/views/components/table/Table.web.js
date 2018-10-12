@@ -4,7 +4,7 @@ import ReactTable from 'react-table';
 import matchSorter from 'match-sorter';
 import 'react-table/react-table.css';
 
-// import { Button, Text, Box } from '../../components';
+import {  Text, Box,Touchable } from '../../components';
 // import { Bridge } from '../../../utils/vertx';
 
 import './table.scss';
@@ -49,12 +49,61 @@ class TableView extends Component {
       return modifiedCells;
     };
 
+    /* add buttons to the data (if it is asked in - in the props) */
     const addCustomComponentsToColumn = () => { 
       const modifiedData = addFilterMethodsToColumn();
 
+      console.warn( 'MODIFIED DATA', modifiedData );
+
+      /* method for returning the view */
+      const renderButtons = ( buttonComponents ) => { 
+        console.warn( 'BUTTONCOMPONENT PASS FROM addButtonsFunctions',buttonComponents );
+
+        const renderButtons = () => {
+          /* check if buttonComponents data is passed from the */
+          /* props if then render those buttons inside the table */
+          if ( buttonComponents && buttonComponents.length > 0 ) { 
+            return buttonComponents.map( btn => (
+              <Box key={btn.text}>
+                {/* Using Touchable  Component to get access to dispatchActionsOnClick method */}
+                <Touchable
+                  size="sm"
+                  color="red"
+                  height="40px"
+                  width="50px"
+                  backgroundColor="green"
+                  dispatchActionOnClick={{ type: 'DIALOG_TOGGLE', payload: { layoutName: 'test', show: true } }}
+                >
+                  <Text>
+                    {btn.text}
+                  </Text>
+                </Touchable>
+              </Box>
+            ));
+          }
+
+          return null;
+        };
+
+        return (
+          <Box
+            justifyContent="space-around"
+          >
+
+            {renderButtons()}
+
+          </Box>
+        );
+      };
+
+      /* method for adding an extra data */
+      const addButtonsToModifiedData = modifiedData.map(
+        data => ({ ...data, ...{ Cell: renderButtons( data.buttonComponent ) } })
+      );
+
       console.warn( this.props, 'PROPS LOG FROM ADD CUSTOM COMPONENTS TO COLUMN' );
 
-      return modifiedData;
+      return addButtonsToModifiedData;
     };
 
     return addCustomComponentsToColumn();

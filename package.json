@@ -56,6 +56,7 @@
     "lodash.capitalize": "^4.2.1",
     "lodash.debounce": "^4.0.8",
     "lodash.lowercase": "^4.3.0",
+    "lodash.omit": "^4.5.0",
     "lodash.range": "^3.2.0",
     "lodash.uppercase": "^4.3.0",
     "match-sorter": "^2.3.0",

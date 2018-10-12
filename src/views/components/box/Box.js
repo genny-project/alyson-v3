@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Platform } from 'react-native';
-import { any, oneOf, oneOfType, string, number, array, func, bool, object } from 'prop-types';
-import { objectClean } from '../../../utils';
+import { any, oneOf, oneOfType, string, number, array, func, bool, object, shape } from 'prop-types';
 
 const shapeStyles = {
   square: 0,
@@ -10,7 +9,7 @@ const shapeStyles = {
   pill: 999,
 };
 
-/* Ensure the props we're going to use were indeed passed through. */
+/** Ensure the props we're going to use were indeed passed through. */
 const filterOutUnspecifiedProps = props => {
   const keys = Object.keys( props );
 
@@ -76,8 +75,11 @@ const Box = ({
   borderColor,
   borderStyle,
   borderRadius,
-  cleanStyleObject,
   shape,
+  shadowColor,
+  shadowOpacity,
+  shadowRadius,
+  shadowOffset,
   fullHeightOnWeb,
   __dangerouslySetStyle = {},
   overflow,
@@ -89,7 +91,31 @@ const Box = ({
   overscrollBehaviorY,
   ...restProps
 }) => {
-  const boxStyle = {
+  const boxStyle = filterOutUnspecifiedProps({
+    padding,
+    paddingTop,
+    paddingRight,
+    paddingLeft,
+    paddingBottom,
+    paddingHorizontal: paddingX,
+    paddingVertical: paddingY,
+    margin,
+    marginHorizontal: marginX,
+    marginVertical: marginY,
+    marginTop,
+    marginRight,
+    marginLeft,
+    marginBottom,
+    borderTopWidth,
+    borderRightWidth,
+    borderBottomWidth,
+    borderLeftWidth,
+    borderWidth,
+    display,
+    shadowColor,
+    shadowOpacity,
+    shadowRadius,
+    shadowOffset,
     justifyContent,
     alignItems,
     height: Platform.OS === 'web' && fullHeightOnWeb ? '100vh' : height,
@@ -120,46 +146,28 @@ const Box = ({
     zIndex,
     transform,
     opacity,
-    borderTopWidth,
-    borderRightWidth,
-    borderBottomWidth,
-    borderLeftWidth,
-    borderWidth,
     borderColor,
     borderStyle,
     borderRadius: borderRadius || shapeStyles[shape],
     overflow,
     overflowX,
     overflowY,
-    display,
     overscrollBehavior,
     overscrollBehaviorX,
     overscrollBehaviorY,
-    ...filterOutUnspecifiedProps({
-      padding,
-      paddingTop,
-      paddingRight,
-      paddingLeft,
-      paddingBottom,
-      paddingHorizontal: paddingX,
-      paddingVertical: paddingY,
-      margin,
-      marginHorizontal: marginX,
-      marginVertical: marginY,
-      marginTop,
-      marginRight,
-      marginLeft,
-      marginBottom,
-    }),
     ...__dangerouslySetStyle,
-  };
+  });
 
-  const webStyle = Platform.OS !== 'web' ? {} : {
+  const webStyle = Platform.OS !== 'web' ? {} : filterOutUnspecifiedProps({
+    accessibilityRole,
+    overflow,
+    overflowX,
+    overflowY,
     transitionDuration,
     transitionProperty,
     transitionTimingFunction,
     transitionDelay,
-  };
+  });
 
   return (
     <View
@@ -168,9 +176,7 @@ const Box = ({
       accessibilityRole={accessibilityRole}
       accessibilityLabel={accessibilityLabel}
       style={[
-        cleanStyleObject
-          ? objectClean( boxStyle )
-          : boxStyle,
+        boxStyle,
         webStyle,
       ]}
     >
@@ -265,7 +271,6 @@ Box.propTypes = {
   borderRadius: oneOf(
     [number, string]
   ),
-  cleanStyleObject: bool,
   shape: oneOf(
     ['square', 'rounded', 'pill', 'circle']
   ),
@@ -284,6 +289,21 @@ Box.propTypes = {
   overscrollBehaviorY: oneOf(
     ['auto', 'contain', 'none']
   ),
+  shadowColor: string,
+  shadowOpacity: oneOfType(
+    [string, number]
+  ),
+  shadowRadius: oneOfType(
+    [string, number]
+  ),
+  shadowOffset: shape({
+    width: oneOfType(
+      [string, number]
+    ),
+    height: oneOfType(
+      [string, number]
+    ),
+  }),
 };
 
 export default Box;

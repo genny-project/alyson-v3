@@ -1,10 +1,10 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { any, array, string, object } from 'prop-types';
-import { GiftedChat, MessageText, Bubble, Send } from 'react-native-gifted-chat';
+import { GiftedChat, MessageText, Bubble, Send, InputToolbar } from 'react-native-gifted-chat';
 import moment from 'moment';
 
 import { Bridge } from '../../../utils';
-import { Icon, Box, Text, BackButton }  from '../../components';
+import { Icon, Box, SafeAreaView }  from '../../components';
 
 class Chat extends Component {
   static defaultProps = {
@@ -12,7 +12,8 @@ class Chat extends Component {
     user: {
       _id: 1,
     },
-    chatLinks: [],
+    messages: [],
+    users: [],
   };
 
   static propTypes = {
@@ -23,8 +24,10 @@ class Chat extends Component {
     sendIconColor: string,
     sendIconBackgroundColor: string,
     user: object,
-    chatLinks: array,
+    users: array,
+    messages: array,
     itemCode: string,
+    // alwaysShowSend: bool, prop not working in package
   };
 
   state = {
@@ -33,46 +36,34 @@ class Chat extends Component {
   };
 
   static getDerivedStateFromProps( props, state ) {
-    const { chatLinks } = props;
+    const { messages, users } = props;
+
+    const chatLinks = [];
 
     console.warn({
-      state, props, chatLinks,
+      state, props, chatLinks, messages, users,
     });
 
-    const newState = chatLinks.reduce(
-      ( acc, curr ) => {
-        if ( curr.name === 'message' )  {
-          const { PRI_MESSAGE, PRI_CREATOR } = curr.attributes;
+    const newState = { ...state };
 
-          const newMessage = {
-            _id: PRI_MESSAGE.baseEntityCode,
-            text: PRI_MESSAGE.value,
-            createdAt: moment( `${PRI_MESSAGE.created}Z` ),
-            user: {
-              _id: PRI_CREATOR.value,
-            },
-          };
+    newState.messages = props.messages.map(
+      message => {
+        const { PRI_MESSAGE, PRI_CREATOR } = message.attributes;
 
-          return {
-            ...acc,
-            messages: [
-              ...acc.messages, newMessage,
-            ],
-          };
-        }
-
-        // if it's not a message, it's a user
+        console.warn({
+          message, PRI_CREATOR, PRI_MESSAGE,
+        });
 
         return {
-          ...acc,
-          users: [
-            ...acc.users, curr,
-          ],
+          _id: PRI_MESSAGE.baseEntityCode,
+          text: PRI_MESSAGE.value,
+          createdAt: moment( `${PRI_MESSAGE.created}Z` ),
+          user: {
+            _id: PRI_CREATOR.value,
+          },
         };
-      }, {
-        users: [],
-        messages: [],
-      });
+      }
+    );
 
     newState.messages.sort(( messageA, messageB ) => messageB.createdAt.diff( messageA.createdAt ));
 
@@ -101,8 +92,6 @@ class Chat extends Component {
   renderParticipants = () => {
     const { users } = this.state;
 
-    console.warn({ users });
-
     return users
       .filter( user => user.code !== this.props.user._id )
       .map( user => user.name ).join( ', ' );
@@ -130,6 +119,7 @@ class Chat extends Component {
             justifyContent="center"
             backgroundColor={sendIconBackgroundColor}
             height="100%"
+            shape="circle"
           >
             <Icon
               color={sendIconColor}
@@ -164,41 +154,42 @@ class Chat extends Component {
     );
   }
 
+  renderInputToolbar = ( props ) => {
+    // Add the extra styles via containerStyle
+
+    return (
+      <InputToolbar
+        {...props}
+//        containerStyle={{ borderTopWidth: 1.5, borderTopColor: '#05C' }}
+      />
+    );
+  }
+
   render() {
     const { user } = this.props;
 
     return (
-      <Fragment>
-        <Box>
-          <Box
-            flex={1}
-          >
-            <BackButton />
-          </Box>
-          <Box
-            flex={4}
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Text>
-              {
-                this.renderParticipants()
-              }
-            </Text>
-          </Box>
-          <Box
-            flex={1}
+      <SafeAreaView
+        forceInset={{
+          top: 'never',
+        }}
+        style={{
+          flex: 1,
+        }}
+      >
+        <Box
+          flex={1}
+        >
+          <GiftedChat
+            messages={this.state.messages}
+            onSend={messages => this.onSend( messages )}
+            renderBubble={this.renderBubble}
+            renderSend={this.renderSend}
+            renderInputToolbar={this.renderInputToolbar}
+            user={user}
           />
-
         </Box>
-        <GiftedChat
-          messages={this.state.messages}
-          onSend={messages => this.onSend( messages )}
-          renderBubble={this.renderBubble}
-          renderSend={this.renderSend}
-          user={user}
-        />
-      </Fragment>
+      </SafeAreaView>
     );
   }
 }

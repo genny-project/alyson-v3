@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { TouchableWithoutFeedback, TouchableOpacity, Platform } from 'react-native';
-import { node, bool, object, func, oneOf, oneOfType, string, number, array } from 'prop-types';
-import { objectClean } from '../../../utils';
+import { node, bool, object, func, oneOf, oneOfType, string, number, array, shape, any } from 'prop-types';
+import { store } from '../../../redux';
 
 class Touchable extends Component {
   static defaultProps = {
@@ -101,12 +101,15 @@ class Touchable extends Component {
     borderRadius: oneOfType(
       [string, number]
     ),
-    cleanStyleObject: bool,
     __dangerouslySetStyle: object,
     overflow: string,
     overflowX: string,
     overflowY: string,
     display: string,
+    dispatchActionOnClick: shape({
+      type: string,
+      payload: any,
+    }),
   }
 
   state = {
@@ -127,7 +130,17 @@ class Touchable extends Component {
       this.props.onMouseLeave( event );
   }
 
-  /* Ensure the props we're going to use were indeed passed through. */
+  handlePress = event => {
+    const { dispatchActionOnClick } = this.props;
+
+    if ( dispatchActionOnClick )
+      store.dispatch( dispatchActionOnClick );
+
+    if ( this.props.onPress )
+      this.props.onPress( event );
+  }
+
+  /** Ensure the props we're going to use were indeed passed through. */
   filterOutUnspecifiedProps( props ) {
     const keys = Object.keys( props );
 
@@ -193,7 +206,6 @@ class Touchable extends Component {
       borderColor,
       borderStyle,
       borderRadius,
-      cleanStyleObject,
       __dangerouslySetStyle,
       overflow,
       overflowX,
@@ -204,7 +216,21 @@ class Touchable extends Component {
 
     const { isHovering } = this.state;
 
-    const touchableStyle = {
+    const touchableStyle = this.filterOutUnspecifiedProps({
+      padding,
+      paddingTop,
+      paddingRight,
+      paddingLeft,
+      paddingBottom,
+      paddingHorizontal: paddingX,
+      paddingVertical: paddingY,
+      margin,
+      marginHorizontal: marginX,
+      marginVertical: marginY,
+      marginTop,
+      marginRight,
+      marginLeft,
+      marginBottom,
       justifyContent,
       alignItems,
       height,
@@ -247,31 +273,15 @@ class Touchable extends Component {
       overflowX,
       overflowY,
       display,
-      ...this.filterOutUnspecifiedProps({
-        padding,
-        paddingTop,
-        paddingRight,
-        paddingLeft,
-        paddingBottom,
-        paddingHorizontal: paddingX,
-        paddingVertical: paddingY,
-        margin,
-        marginHorizontal: marginX,
-        marginVertical: marginY,
-        marginTop,
-        marginRight,
-        marginLeft,
-        marginBottom,
-      }),
       ...__dangerouslySetStyle,
-    };
+    });
 
-    const webStyle = Platform.OS !== 'web' ? {} : {
+    const webStyle = Platform.OS !== 'web' ? {} : this.filterOutUnspecifiedProps({
       transitionDuration,
       transitionProperty,
       transitionTimingFunction,
       transitionDelay,
-    };
+    });
 
     const Element = (
       !withFeedback
@@ -284,14 +294,13 @@ class Touchable extends Component {
         {...restProps}
         {...isHovering ? hoverProps : {}}
         style={[
-          cleanStyleObject
-            ? objectClean( touchableStyle )
-            : touchableStyle,
+          touchableStyle,
           webStyle,
           isHovering ? hoverProps.style : {},
         ]}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
+        onPress={this.handlePress}
       >
         {children}
       </Element>

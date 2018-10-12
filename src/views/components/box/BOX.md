@@ -92,13 +92,25 @@ children: any,
   shape: oneOf(
     ['square', 'rounded', 'pill', 'circle']
   ),
-  boxShadow: oneOf(
-    ['light', 'medium', 'dark']
-  ),
   fullHeightOnWeb: bool,
   __dangerouslySetStyle: object,
   overflow: string,
   overflowX: string,
   overflowY: string,
   display: string,
+  shadowColor: string,
+  shadowOpacity: oneOfType(
+    [string, number]
+  ),
+  shadowRadius: oneOfType(
+    [string, number]
+  ),
+  shadowOffset: shape({
+    width: oneOfType(
+      [string, number]
+    ),
+    height: oneOfType(
+      [string, number]
+    ),
+  })
   ```

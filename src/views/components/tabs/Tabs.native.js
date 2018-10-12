@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
-import { ActivityIndicator, Dimensions } from 'react-native';
+import { ActivityIndicator, Dimensions,  Platform } from 'react-native';
 import { any, array, bool, string, number, oneOfType, func, object } from 'prop-types';
-import { TabView, TabBar } from 'react-native-tab-view';
+import { PagerScroll, PagerPan, TabView, TabBar } from 'react-native-tab-view';
 import { Box, Text, Icon, Timeout } from '../../components';
 import TabDots from './tab-dots';
 
@@ -82,6 +82,10 @@ class Tabs extends Component {
         [route && route.key]: height,
       },
     }));
+  }
+
+  renderPager = ( props ) => {
+    return ( Platform.OS === 'ios' ) ? <PagerScroll {...props} /> : <PagerPan {...props} />;
   }
 
   renderIcon = ({ route }) => {
@@ -330,6 +334,7 @@ class Tabs extends Component {
         renderTabBar={this.renderTabBar}
         onIndexChange={this.handleIndexChange}
         initialLayout={initialLayout}
+        renderPager={this.renderPager}
         tabBarPosition={(
           bottomTabs
             ? 'bottom'
