@@ -184,7 +184,6 @@ class Passcode extends Component {
                   onBlur={this.handleBlur}
                   ref={input => this.inputs[i] = input}
                   keyboardType={keyboardType}
-                  autoCapitalize
                 />
               </Box>
             );
