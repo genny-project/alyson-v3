@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, ActivityIndicator, TouchableNativeFeedback } from 'react-native';
-import { string, bool, func, oneOf, number, oneOfType, shape, arrayOf, object } from 'prop-types';
+import { string, bool, func, oneOf, number, oneOfType, shape, arrayOf, object, any } from 'prop-types';
 import { Text, Icon, Box, Touchable, alert } from '../index';
 import { withTheme } from '../theme';
 import defaultThemeConfig from './defaultThemeConfig.json';
@@ -77,6 +77,10 @@ class Button extends Component {
     onMouseEnter: func,
     onMouseLeave: func,
     isBackButton: bool,
+    dispatchActionOnClick: shape({
+      type: string.isRequired,
+      payload: any,
+    }),
   }
 
   static getDerivedStateFromProps( props, state ) {
@@ -443,6 +447,7 @@ class Button extends Component {
       marginX,
       borderWidth,
       borderColor,
+      dispatchActionOnClick,
     } = this.getProps();
 
     const { isSpinning } = this.state;
@@ -485,6 +490,7 @@ class Button extends Component {
             ? TouchableNativeFeedback.Ripple( androidTouchColor || '#FFF', false )
             : undefined
         )}
+        dispatchActionOnClick={dispatchActionOnClick}
       >
         {this.renderChildWrapper()}
       </Touchable>
