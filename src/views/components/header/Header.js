@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { string, object, number, oneOfType, shape, arrayOf, bool, oneOf } from 'prop-types';
-import { Box } from '../index';
+import { connect } from 'react-redux';
+import { Box, Recursive } from '../index';
 import HeaderLeft from './left';
 import HeaderRight from './right';
 import { LayoutConsumer } from '../../layout';
@@ -56,6 +57,8 @@ class Header extends Component {
       items: arrayOf( headerItemPropTypes ),
     }),
     navigation: object,
+    renderHeader: object,
+    user: object,
   }
 
   render() {
@@ -68,37 +71,65 @@ class Header extends Component {
       boxShadow,
       headerLeft,
       headerRight,
-      title,
       navigation,
+      renderHeader,
+      layout,
+      title,
+      user,
       ...restProps
     } = this.props;
 
+    if ( renderHeader ) {
+      const context = {
+        title: layout.title,
+        user,
+      };
+
+      return (
+        <Recursive
+          context={context}
+          {...renderHeader}
+        />
+      );
+    }
+
     return (
-      <LayoutConsumer>
-        {layout => (
-          <Box
-            {...restProps}
-            height={height}
-            justifyContent="space-between"
-            alignItems="center"
-            width="100%"
-            backgroundColor={backgroundColor || layout.appColor}
-            paddingX={paddingX}
-            paddingY={paddingY}
-            padding={padding}
-            boxShadow={boxShadow}
-          >
-            <HeaderLeft
-              {...headerLeft}
-              stackNavigation={navigation}
-              title={title}
-            />
-            <HeaderRight {...headerRight} />
-          </Box>
-        )}
-      </LayoutConsumer>
+      <Box
+        {...restProps}
+        height={height}
+        justifyContent="space-between"
+        alignItems="center"
+        width="100%"
+        backgroundColor={backgroundColor || layout.appColor}
+        paddingX={paddingX}
+        paddingY={paddingY}
+        padding={padding}
+        boxShadow={boxShadow}
+      >
+        <HeaderLeft
+          {...headerLeft}
+          stackNavigation={navigation}
+          title={title}
+        />
+        <HeaderRight {...headerRight} />
+      </Box>
     );
   }
 }
 
-export default Header;
+const mapStateToProps = state => ({
+  user: state.vertx.user,
+});
+
+export default connect( mapStateToProps )(
+  props => (
+    <LayoutConsumer>
+      {layout => (
+        <Header
+          {...props}
+          layout={layout}
+        />
+      )}
+    </LayoutConsumer>
+  )
+);

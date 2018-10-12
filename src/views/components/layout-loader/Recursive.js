@@ -3,8 +3,8 @@ import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
 import { connect } from 'react-redux';
-import { object, any, string, array, oneOfType } from 'prop-types';
-import { doesValueMatch } from '../../../utils/data-query/operators/find';
+import { object, any, string, array, oneOfType, oneOf } from 'prop-types';
+import { doesValueMatch, isOperatorObject } from '../../../utils/data-query/operators/find';
 import { isObject, isArray, isString } from '../../../utils';
 import { store } from '../../../redux';
 import * as Components from '../index';
@@ -22,6 +22,7 @@ class Recursive extends Component {
     variant: string,
     theme: object,
     useThemeFrom: string,
+    sort: oneOf( ['reverse'] ),
   };
 
   handleMapCurlyTemplate = template => {
@@ -39,6 +40,15 @@ class Recursive extends Component {
 
     return `${resolved}${textAfterTemplate}`;
   };
+
+  handleSortRepeatedChildren = () => {
+    const { sort } = this.props;
+
+    switch ( sort ) {
+      case 'reverse': return 1; // Place the current element after the next one (i.e. reverse order)
+      default: return 0;
+    }
+  }
 
   curlyBracketParse = string => {
     return String( string )
@@ -77,7 +87,15 @@ class Recursive extends Component {
       return thenProps;
     }
 
-    return elseProps || {};
+    if ( !elseProps ) {
+      return {};
+    }
+
+    if ( elseProps.if ) {
+      return this.calculateConditionalProps( elseProps, context );
+    }
+
+    return elseProps;
   };
 
   calculateConditionalPropsArray = ( conditionalProps, context ) => {
@@ -219,6 +237,10 @@ class Recursive extends Component {
       console.error( condition );
     }
 
+    if ( isOperatorObject( condition )) {
+      return doesValueMatch( true, condition, dataPool );
+    }
+
     const fields = Object.keys( condition );
 
     for ( let i = 0; i < fields.length; i++ ) {
@@ -230,8 +252,13 @@ class Recursive extends Component {
         contextedField = this.curlyBracketParse( field );
       }
 
-      if ( typeof contextedValue === 'string' && contextedValue.includes( '{{' )) {
-        contextedValue = this.curlyBracketParse( contextedValue );
+      if ( isString( contextedValue )) {
+        if ( contextedValue.includes( '{{' )) {
+          contextedValue = this.curlyBracketParse( contextedValue );
+        }
+        else if ( contextedValue.startsWith( '_' )) {
+          contextedValue = dlv( dataPool, contextedValue.substring( 1 ));
+        }
       }
 
       /**
@@ -341,19 +368,21 @@ class Recursive extends Component {
       Components[component],
       componentProps,
       isArray( repeatedChildren ) ? (
-        repeatedChildren.map(( child, index ) => (
-          isValidElement( child )
-            ? cloneElement( child, { key: index, context, theme })
-            : (
-              <Recursive
-                context={context}
+        repeatedChildren
+          .sort( this.handleSortRepeatedChildren )
+          .map(( child, index ) => (
+            isValidElement( child )
+              ? cloneElement( child, { key: index, context, theme })
+              : (
+                <Recursive
+                  context={context}
                 // eslint-disable-next-line react/no-array-index-key
-                key={index}
-                theme={theme}
-                {...child}
-              />
-            )
-        ))
+                  key={index}
+                  theme={theme}
+                  {...child}
+                />
+              )
+          ))
       ) : isObject( repeatedChildren ) ? (
         isValidElement( repeatedChildren )
           ? cloneElement( repeatedChildren, { context, theme })

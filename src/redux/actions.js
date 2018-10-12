@@ -5,3 +5,4 @@ export * from '../views/components/user/user.actions';
 export * from '../views/layout/layout.actions';
 export * from '../utils/layouts-dev/layouts-dev.actions';
 export * from '../views/components/theme/theme.actions';
+export * from '../views/components/dialog/dialog.actions';

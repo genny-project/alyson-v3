@@ -25,6 +25,7 @@ class LayoutProvider extends Component {
     else {
       const colors = Object.keys( this.appColors ).join( '|' );
 
+      // eslint-disable-next-line no-console
       console.warn( `Invalid app color '${color}' was set, expected one of the following: ${colors}` );
     }
   }
@@ -37,15 +38,24 @@ class LayoutProvider extends Component {
     else {
       const colors = Object.keys( color ).join( '|' );
 
+      // eslint-disable-next-line no-console
       console.warn( `Invalid background color '${color}' was set, expected one of the following: ${colors}` );
     }
   }
 
   setSidebarVisibility = visible => {
-    this.setState({ hideSidebar: visible });
+    this.setState({ showSidebar: visible });
 
     store.dispatch(
       actions.setSidebarVisibility( visible )
+    );
+  }
+
+  setSidebarRightVisibility = visible => {
+    this.setState({ showSidebarRight: visible });
+
+    store.dispatch(
+      actions.setSidebarRightVisibility( visible )
     );
   }
 
@@ -70,6 +80,14 @@ class LayoutProvider extends Component {
 
     store.dispatch(
       actions.setSidebarProps( props || {})
+    );
+  }
+
+  setSidebarRightProps = props => {
+    this.setState({ sidebarRightProps: props || {} });
+
+    store.dispatch(
+      actions.setSidebarRightProps( props || {})
     );
   }
 
@@ -103,10 +121,13 @@ class LayoutProvider extends Component {
     setAppColor: this.setAppColor,
     setTitle: this.setTitle,
     setSidebarVisibility: this.setSidebarVisibility,
+    setSidebarRightVisibility: this.setSidebarRightVisibility,
     setHeaderVisibility: this.setHeaderVisibility,
     setHeaderProps: this.setHeaderProps,
     setSidebarProps: this.setSidebarProps,
-    hideSidebar: false,
+    setSidebarRightProps: this.setSidebarRightProps,
+    showSidebar: false,
+    showSidebarRight: false,
     showHeader: false,
     headerProps: {},
     sidebarProps: {},

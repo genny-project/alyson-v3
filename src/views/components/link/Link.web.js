@@ -2,21 +2,24 @@ import React from 'react';
 import { Link as ReactRouterLink, withRouter } from 'react-router-dom';
 import { string, bool, any, func, oneOf, object } from 'prop-types';
 import { withKeycloak } from '../keycloak';
+import { Touchable } from '../index';
 
 const Link = ({
   children = 'Link',
   to,
   disabled = false,
   onPress,
-  decoration = 'none',
   history,
+  decoration = 'none',
+  wrapperProps = {},
+  withFeedback = true,
   ...restProps
 }) => {
-  const href = to === 'home'
-    ? '/'
-    : to.startsWith( '/' )
-      ? to
-      : `/${to}`;
+  const href = (
+    to === 'home' ? '/'
+    : to.startsWith( '/' ) ? to
+    : `/${to}`
+  );
 
   const handleClick = event => {
     if ( disabled ) {
@@ -45,15 +48,20 @@ const Link = ({
 
   return (
     <ReactRouterLink
-      {...restProps}
+      {...wrapperProps}
       to={href}
       onClick={handleClick}
       style={{
-        ...restProps.style,
+        ...wrapperProps.style,
         textDecoration: decoration,
       }}
     >
-      {children}
+      <Touchable
+        {...restProps}
+        withFeedback={withFeedback}
+      >
+        {children}
+      </Touchable>
     </ReactRouterLink>
   );
 };
@@ -67,6 +75,8 @@ Link.propTypes = {
     ['none', 'underline', 'line-through']
   ),
   history: object,
+  wrapperProps: object,
+  withFeedback: bool,
 };
 
 export default withKeycloak( withRouter( Link ));

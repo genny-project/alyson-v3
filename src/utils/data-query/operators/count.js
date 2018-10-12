@@ -4,6 +4,7 @@ import find from './find';
 export default ( data, options ) => {
   const { query } = options;
 
+  if ( !data ) return null;
   if ( query ) {
     /* First filter the data then return the count */
     return find( data, options ).length;

@@ -36,32 +36,36 @@ class Chat extends Component {
   };
 
   static getDerivedStateFromProps( props, state ) {
-    const { messages, users } = props;
+    const {
+      messages,
+      // users
+    } = props;
 
-    const chatLinks = [];
+    // const chatLinks = [];
 
-    console.warn({
-      state, props, chatLinks, messages, users,
-    });
+    // console.warn({
+    //   state, props, chatLinks, messages, users,
+    // });
 
     const newState = { ...state };
 
-    newState.messages = props.messages.map(
+    newState.messages = messages.map(
       message => {
         const { PRI_MESSAGE, PRI_CREATOR } = message.attributes;
 
-        console.warn({
-          message, PRI_CREATOR, PRI_MESSAGE,
-        });
-
-        return {
-          _id: PRI_MESSAGE.baseEntityCode,
-          text: PRI_MESSAGE.value,
-          createdAt: moment( `${PRI_MESSAGE.created}Z` ),
-          user: {
-            _id: PRI_CREATOR.value,
-          },
-        };
+        // console.warn({
+        //   message, PRI_CREATOR, PRI_MESSAGE,
+        // });
+        if ( PRI_MESSAGE && PRI_CREATOR ) {
+          return {
+            _id: PRI_MESSAGE.baseEntityCode,
+            text: PRI_MESSAGE.value,
+            createdAt: moment( `${PRI_MESSAGE.created}Z` ),
+            user: {
+              _id: PRI_CREATOR.value,
+            },
+          };
+        }
       }
     );
 

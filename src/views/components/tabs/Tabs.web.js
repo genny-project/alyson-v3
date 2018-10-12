@@ -1,13 +1,8 @@
 import React, { PureComponent } from 'react';
-import { string, oneOfType, array, number, any, func, oneOf } from 'prop-types';
+import { string, oneOfType, array, number, any, func, oneOf, object } from 'prop-types';
 import { TouchableOpacity } from 'react-native';
+import { isArray } from '../../../utils';
 import { Icon, Box, Text } from '../../components';
-
-const tabBarHeight = {
-  sm: 30,
-  md: 50,
-  lg: 70,
-};
 
 const tabBarLocation = {
   top: 'column',
@@ -25,14 +20,13 @@ const tabBarDirection = {
 
 class Tabs extends PureComponent {
   static defaultProps = {
-    width: '100%',
-    height: '100%',
     padding: 0,
     tabs: [
     ],
     tabBarSize: 'md',
     tabBarBackground: 'lightgray',
     activeTabBackground: 'darkgrey',
+    activeTabTextColor: 'white',
     textColor: 'white',
     tabBarSide: 'top',
   }
@@ -48,14 +42,26 @@ class Tabs extends PureComponent {
       [string, number]
     ),
     tabBarBackground: string,
+    activeTabTextColor: string,
     tabBackground: string,
     activeTabBackground: string,
-    tabBarSize: string, 
+    tabBarSize: string,
     textColor: string,
     tabBarSide: oneOf(
       ['top', 'bottom', 'left', 'right']
     ),
     onPress: func,
+    tabProps: object,
+    activeTabProps: object,
+    inactiveTabProps: object,
+    tabWrapperProps: object,
+    tabTitleProps: object,
+    tabIconProps: object,
+    activeTabTitleProps: object,
+    inactiveTabTitleProps: object,
+    activeTabIconProps: object,
+    inactiveTabIconProps: object,
+    childProps: object,
   }
 
   state = {
@@ -77,9 +83,21 @@ class Tabs extends PureComponent {
       tabBarBackground,
       tabBackground,
       activeTabBackground,
-      tabBarSize,
+      activeTabTextColor,
       textColor,
       tabBarSide,
+      tabProps,
+      inactiveTabProps,
+      activeTabProps,
+      tabWrapperProps,
+      tabTitleProps,
+      activeTabTitleProps,
+      inactiveTabTitleProps,
+      activeTabIconProps,
+      inactiveTabIconProps,
+      tabIconProps,
+      childProps,
+      ...restProps
     } = this.props;
 
     const {
@@ -88,66 +106,62 @@ class Tabs extends PureComponent {
 
     return (
       <Box
+        {...restProps}
         flexDirection={tabBarLocation[tabBarSide]}
         flex={1}
         height={height}
         width={width}
       >
         <Box
+          {...tabWrapperProps}
           flexDirection={tabBarDirection[tabBarSide]}
           flex={0}
-          height={
-            tabBarSide === 'top' ||
-            tabBarSide === 'bottom' ? 
-              tabBarHeight[tabBarSize] :
-              null
-          }
           backgroundColor={tabBarBackground}
         >
-          {(
-            tabs &&
-            tabs instanceof Array &&
-            tabs.length > 0
-          ) ? (
-              tabs.map(( tab, index ) => (
-                <Box
-                  key={tab.id}
-                  padding={10}
-                  height={tabBarHeight[tabBarSize] || null}
-                  backgroundColor={index === currentChild ? activeTabBackground : tabBackground}
+          {isArray( tabs, { ofMinLength: 1 }) ? (
+            tabs.map(( tab, index ) => (
+              <Box
+                key={tab.id}
+                padding={10}
+                backgroundColor={index === currentChild ? activeTabBackground : tabBackground}
+                {...tabProps}
+                {...index === currentChild ? activeTabProps : inactiveTabProps}
+              >
+                <TouchableOpacity
+                  onPress={() => this.handlePress( index )}
+                  style={{ flexDirection: 'row' }}
                 >
-                  <TouchableOpacity
-                    onPress={() => this.handlePress( index )}
-                    style={{ flexDirection: 'row' }}
-                    height={tabBarHeight[tabBarSize] || null}
+                  {tab.icon ? (
+                    <Icon
+                      {...tabIconProps}
+                      {...index === currentChild ? activeTabIconProps : inactiveTabIconProps}
+                      name={tab.icon}
+                      color={index === currentChild ? activeTabTextColor : textColor}
+                    />
+                  ) : null}
+
+                  <Text
+                    {...tabTitleProps}
+                    {...index === currentChild ? activeTabTitleProps : inactiveTabTitleProps}
+                    color={index === currentChild ? activeTabTextColor : textColor}
                   >
-                    {
-                      tab.icon ?
-                        ( 
-                          <Icon
-                            name={tab.icon}
-                          />
-                        ) :
-                        null
-                    }
-                    <Text
-                      color={textColor}
-                    >
-                      {tab.title}
-                    </Text>
-                  </TouchableOpacity>
-                </Box>
-              ))
-            ) : (
-              <Text>
-                No Items
-              </Text>
-            )}
+                    {tab.title}
+                  </Text>
+                </TouchableOpacity>
+              </Box>
+            ))
+          ) : (
+            <Text>
+              No Items
+            </Text>
+          )}
         </Box>
+
         <Box
           padding={padding}
           flex={1}
           backgroundColor={activeTabBackground}
+          {...childProps}
         >
           {children[currentChild]}
         </Box>

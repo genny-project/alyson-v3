@@ -1,3 +1,8 @@
-export default ( input, value, matchesOperators ) => {
-  return value.filter( operators => matchesOperators( input, operators )).length === 0;
+import { isArray } from '../../../../utils';
+
+export default ( input, value, doesValueMatch ) => {
+  if ( !isArray( value ))
+    return false;
+
+  return value.filter( operators => doesValueMatch( operators )).length === 0;
 };

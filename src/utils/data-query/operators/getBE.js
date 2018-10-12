@@ -1,6 +1,6 @@
 import copy from 'fast-copy';
 import { injectContext } from './helpers';
-import { isArray, isObject } from '../../../utils';
+import { isArray, isObject, isString } from '../../../utils';
 
 export default ( data, options, allData ) => {
   if ( !data )
@@ -25,11 +25,17 @@ export default ( data, options, allData ) => {
 };
 
 const lookupBE = ( data, options, allData ) => {
-  if ( !isObject( data ))
+  const lookupKey = (
+    isString( data ) ? data
+    : isObject( data ) ? injectContext( options.id, data )
+    : null
+  );
+
+  if ( !lookupKey )
     return;
 
   /* Create the path to the base entity */
-  const be = copy( allData.baseEntities.data[injectContext( options.id, data )] );
+  const be = copy( allData.baseEntities.data[lookupKey] );
 
   if (
     options.filterOutEmpty && (

@@ -1,6 +1,6 @@
-import React, { Component, createElement } from 'react';
+import React, { Component } from 'react';
 import { Platform, ActivityIndicator, TouchableNativeFeedback } from 'react-native';
-import { string, bool, func, oneOf, number, oneOfType, shape, arrayOf, object } from 'prop-types';
+import { string, bool, func, oneOf, number, oneOfType, shape, arrayOf, object, any } from 'prop-types';
 import { Text, Icon, Box, Touchable, alert } from '../index';
 import { withTheme } from '../theme';
 import defaultThemeConfig from './defaultThemeConfig.json';
@@ -21,6 +21,8 @@ class Button extends Component {
     onPress: func,
     color: string,
     textColor: string,
+    colorDisabled: string,
+    textColorDisabled: string,
     fontWeight: string,
     icon: string,
     size: oneOf(
@@ -66,6 +68,7 @@ class Button extends Component {
     marginX: number,
     borderWidth: number,
     borderColor: string,
+    borderColorDisabled: string,
     inverted: bool,
     theme: shape({
       components: object,
@@ -73,6 +76,11 @@ class Button extends Component {
     hoverProps: object,
     onMouseEnter: func,
     onMouseLeave: func,
+    isBackButton: bool,
+    dispatchActionOnClick: shape({
+      type: string.isRequired,
+      payload: any,
+    }),
   }
 
   static getDerivedStateFromProps( props, state ) {
@@ -145,13 +153,12 @@ class Button extends Component {
         buttons: confirmation.buttons && (
           confirmation.buttons.map( button => ({
             ...button,
-            onPress: (
-              ( button.type === 'ok' ) ? () => this.handlePress( event )
+            onPress: ( type ) => (
+              ( button.type === 'ok' || ( type && type === 'ok' )) ? this.handlePress( event )
               : ( button.type === 'cancel' ) ? () => {}
               : () => {}
             ),
-          }))
-        ),
+          }))),
       });
     }
     else {
@@ -160,7 +167,10 @@ class Button extends Component {
   }
 
   handlePress = event => {
-    const { showSpinnerOnClick, onPress } = this.getProps();
+    const { showSpinnerOnClick, onPress, isBackButton, onBack } = this.getProps();
+
+    if ( isBackButton && onBack )
+      onBack();
 
     if ( showSpinnerOnClick )
       this.setState({ isSpinning: true });
@@ -170,13 +180,17 @@ class Button extends Component {
   }
 
   renderIconChild() {
-    const { textColor, color, icon, size } = this.getProps();
+    const { textColor, color, icon, size, disabled, textColorDisabled } = this.getProps();
     const themeConfig = this.getThemeConfig();
 
-    const actualColor = textColor || (
-      themeConfig.textColors &&
-      themeConfig.textColors[color]
-    );
+    const actualColor = disabled
+      ? textColorDisabled
+      : textColor || (
+        themeConfig.textColors &&
+        themeConfig.textColors[disabled &&
+        textColorDisabled ||
+        color]
+      );
 
     return (
       <Icon
@@ -188,14 +202,30 @@ class Button extends Component {
   }
 
   renderTextChild() {
-    const { textColor, color, children, size, text, fontWeight, inverted } = this.getProps();
+    const {
+      textColor,
+      color,
+      children,
+      size,
+      text,
+      fontWeight,
+      inverted,
+      disabled,
+      colorDisabled,
+    } = this.getProps();
     const themeConfig = this.getThemeConfig();
 
     const actualColor = textColor || (
-      inverted ? color : (
-        themeConfig.textColors &&
-        themeConfig.textColors[color]
-      )
+      inverted
+        ? disabled
+          ? colorDisabled
+          : color
+        : (
+          themeConfig.textColors &&
+          themeConfig.textColors[disabled &&
+          colorDisabled ||
+          color]
+        )
     );
 
     const actualSize = (
@@ -219,12 +249,14 @@ class Button extends Component {
   }
 
   renderSpinnerChild() {
-    const { size, color, children, text, icon } = this.getProps();
+    const { size, color, children, text, icon, disabled, colorDisabled } = this.getProps();
     const themeConfig = this.getThemeConfig();
 
     const actualBackgroundColor = (
       themeConfig.buttonColors &&
-      themeConfig.buttonColors[color]
+      themeConfig.buttonColors[disabled &&
+        colorDisabled ||
+        color]
     );
 
     const activityIndicatorSize = (
@@ -234,7 +266,9 @@ class Button extends Component {
 
     const activityIndicatorColor = (
       themeConfig.textColors &&
-      themeConfig.textColors[color]
+      themeConfig.textColors[disabled &&
+        colorDisabled ||
+        color]
     );
 
     const isIconOnly = (
@@ -273,6 +307,7 @@ class Button extends Component {
     const {
       disabled,
       color,
+      colorDisabled,
       padding,
       paddingX,
       paddingY,
@@ -292,15 +327,16 @@ class Button extends Component {
     const themeConfig = this.getThemeConfig();
 
     const actualBackgroundColor = (
-      inverted ? 'transparent'
-      : themeConfig.buttonColors && (
-        (
-          disabled &&
-          themeConfig.buttonColors.disabled
+      inverted
+        ? 'transparent'
+        : themeConfig.buttonColors && (
+          disabled && (
+            colorDisabled &&
+            themeConfig.buttonColors[colorDisabled] ||
+            themeConfig.buttonColors.disabled
+          ) ||
+          themeConfig.buttonColors[color]
         )
-          ? themeConfig.buttonColors.disabled
-          : themeConfig.buttonColors[color]
-      )
     );
 
     const actualBorderColor = (
@@ -309,7 +345,9 @@ class Button extends Component {
           disabled &&
           themeConfig.buttonColors.disabled
         )
-          ? themeConfig.buttonColors.disabled
+          ? colorDisabled
+            ? themeConfig.buttonColors[colorDisabled]
+            : themeConfig.buttonColors.disabled
           : themeConfig.buttonColors[color]
       )
     );
@@ -409,6 +447,7 @@ class Button extends Component {
       marginX,
       borderWidth,
       borderColor,
+      dispatchActionOnClick,
     } = this.getProps();
 
     const { isSpinning } = this.state;
@@ -431,29 +470,30 @@ class Button extends Component {
       borderColor,
     };
 
-    return createElement(
-      Touchable,
-      {
-        style,
-        disabled: (
+    return (
+      <Touchable
+        withFeedback={withFeedback}
+        style={style}
+        disabled={(
           disabled ||
           isSpinning ||
           submitting
-        ),
-        onPress: this.handlePressAttempt,
-        onMouseEnter: this.handleMouseEnter,
-        onMouseLeave: this.handleMouseLeave,
-        accessible,
-        accessibilityLabel,
-        accessibilityRole,
-        background: (
+        )}
+        onPress={this.handlePressAttempt}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
+        accessible={accessible}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole={accessibilityRole}
+        background={(
           Platform.OS === 'android'
             ? TouchableNativeFeedback.Ripple( androidTouchColor || '#FFF', false )
             : undefined
-        ),
-        withFeedback,
-      },
-      this.renderChildWrapper()
+        )}
+        dispatchActionOnClick={dispatchActionOnClick}
+      >
+        {this.renderChildWrapper()}
+      </Touchable>
     );
   }
 }

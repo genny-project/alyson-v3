@@ -1,15 +1,37 @@
 import dlv from 'dlv';
 import dset from 'dset';
+import { isArray } from '../../../utils';
+import { injectContext } from './helpers';
 
 export default ( data, options, allData ) => {
   if ( !data ) {
     return data;
   }
 
-  const { code, fields, path, single, as } = options;
+  const { code, fields, path, single, as, context } = options;
 
   if ( code ) {
-    dset( data, as, allData.baseEntities.attributes[code] );
+    if ( isArray( data )) {
+      return data.map( item => {
+        if ( !item ) {
+          return item;
+        }
+
+        const dataPool = { ...item, ...context };
+        const injectedCode = injectContext( code, dataPool );
+        const injectedAs = injectContext( as, dataPool );
+
+        dset( item, injectedAs, allData.baseEntities.attributes[injectedCode] );
+
+        return item;
+      });
+    }
+
+    const dataPool = { ...data, ...context };
+    const injectedCode = injectContext( code, dataPool );
+    const injectedAs = injectContext( as, dataPool );
+
+    dset( data, injectedAs, allData.baseEntities.attributes[injectedCode] );
 
     return data;
   }
