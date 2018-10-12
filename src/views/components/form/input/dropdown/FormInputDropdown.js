@@ -27,25 +27,19 @@ class FormInputDropdown extends Component {
     const { validationList } = this.props.question.attribute.dataType;
     const items = [];
 
-    console.log( 'Getting items', validationList );
-
     if (
       validationList &&
       validationList instanceof Array &&
       validationList.length > 0
     ) {
       validationList.forEach( validation => {
-        console.log( 'new validation: ', validation );
         if (
           validation.selectionBaseEntityGroupList &&
           validation.selectionBaseEntityGroupList instanceof Array &&
           validation.selectionBaseEntityGroupList.length > 0
         ) {
           validation.selectionBaseEntityGroupList.forEach( baseEntity => {
-            console.log( 'getting baseEntities: ', baseEntity );
             const linkGroup = links[baseEntity];
-
-            console.log( linkGroup );
 
             if (
               linkGroup &&
@@ -55,8 +49,6 @@ class FormInputDropdown extends Component {
             ) {
               linkGroup.links.forEach( link => {
                 const linkData = data[link];
-
-                console.log( linkData );
 
                 if (
                   linkData &&
@@ -90,8 +82,6 @@ class FormInputDropdown extends Component {
   render() {
     const { ...restProps } = this.props;
     const { items } = this.state;
-
-    console.log( items );
 
     return (
       <Input
