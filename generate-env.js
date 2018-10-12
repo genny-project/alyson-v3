@@ -4,11 +4,17 @@
 //
 const fs = require( 'fs' );
 
-if ( fs.existsSync( '.env' )) {
+const [project, environment] = process.argv.slice( 2, 4 );
+
+const targetEnv = ( project && environment )
+  ? `.env.${project}.${environment}`
+  : '.env';
+
+if ( fs.existsSync( targetEnv )) {
   console.log(
-    'Attempting to generate .env file when it already exists. ' +
-    'If you wish to generate a new .env from your system\'s environment variables, ' +
-    'please remove the existing .env'
+    `Attempting to generate ${targetEnv} file when it already exists. ` +
+    `If you wish to generate a new .${targetEnv} from your system's environment variables, ` +
+    `please remove the existing ${targetEnv}`
   );
 
   return 0;
@@ -33,7 +39,6 @@ const targetVars = [
   'APPCENTER_IOS_SECRET',
   'CODEPUSH_KEY',
   'IOS_CODEPUSH_KEY',
-  'LAYOUT_QUERY_DIRECTORY',
   'GUEST_USERNAME',
   'GUEST_PASSWORD',
 ];
@@ -44,4 +49,12 @@ const envOutput = targetVars
 
 console.log( envOutput );
 
-fs.writeFile( '.env', envOutput, );
+fs.writeFile( targetEnv, envOutput, err => {
+  if ( err ) {
+    console.log({ err });
+
+    return;
+  }
+
+  console.log( `succesfully generated blank ${targetEnv}` );
+});
