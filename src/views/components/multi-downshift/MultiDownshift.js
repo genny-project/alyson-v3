@@ -27,13 +27,13 @@ class MultiDownshift extends React.Component {
     }
   }
 
-  getRemoveButtonProps = ({ onPress, item, ...props } = {}) => {
+  getRemoveButtonProps = downshift => ({ onPress, item, ...props } = {}) => {
     return {
       onPress: e => {
         // TODO: use something like downshift's composeEventHandlers utility instead
         onPress && onPress( e );
         e.stopPropagation();
-        this.removeItem( item );
+        this.removeItem( item, downshift );
       },
       ...props,
     };
@@ -44,7 +44,7 @@ class MultiDownshift extends React.Component {
     const { getRemoveButtonProps, removeItem } = this;
 
     return {
-      getRemoveButtonProps,
+      getRemoveButtonProps: getRemoveButtonProps( downshift ),
       removeItem,
       selectedItems,
       ...downshift,
@@ -73,43 +73,51 @@ class MultiDownshift extends React.Component {
     }
   }
 
-  handleSelection = ( selectedItem, downshift ) => {
-    const callOnChange = () => {
-      if ( this.props.onSelect ) {
-        this.props.onSelect(
-          this.state.selectedItems,
-          this.getStateAndHelpers( downshift ),
-        );
-      }
-      if ( this.props.onChange ) {
-        this.props.onChange(
-          this.state.selectedItems,
-          this.getStateAndHelpers( downshift ),
-        );
-      }
-    };
+  callOnChange = ( downshift ) => {
+    if ( this.props.onSelect ) {
+      this.props.onSelect(
+        this.state.selectedItems,
+        this.getStateAndHelpers( downshift ),
+      );
+    }
+    if ( this.props.onChange ) {
+      this.props.onChange(
+        this.state.selectedItems,
+        this.getStateAndHelpers( downshift ),
+      );
+    }
+  };
 
-    if ( this.state.selectedItems.includes( selectedItem )) {
-      this.removeItem( selectedItem, callOnChange );
-    } else {
-      this.addSelectedItem( selectedItem, callOnChange );
+  handleSelection = ( selectedItem, downshift ) => {
+    // if ( this.state.selectedItems.includes( selectedItem )) {
+    //   this.removeItem( selectedItem );
+    // } else {
+    this.addSelectedItem( selectedItem, downshift );
+    // }
+  }
+
+  removeItem = ( item, downshift ) => {
+    if (
+      item != null &&
+      this.state.selectedItems !== this.state.selectedItems.filter( i => i !== item )
+    ) {
+      this.setState(({ selectedItems }) => {
+        return {
+          selectedItems: selectedItems.filter( i => i !== item ),
+        };
+      }, () => {
+        this.callOnChange( downshift );
+      });
     }
   }
 
-  removeItem = ( item, cb ) => {
-    this.setState(({ selectedItems }) => {
-      return {
-        selectedItems: selectedItems.filter( i => i !== item ),
-      };
-    }, cb );
-  }
-
-  addSelectedItem( item, cb ) {
+  addSelectedItem( item, downshift ) {
     this.setState(
       ({ selectedItems }) => ({
         selectedItems: [...selectedItems, item],
-      }),
-      cb,
+      }), () => {
+        this.callOnChange( downshift );
+      }
     );
   }
 
