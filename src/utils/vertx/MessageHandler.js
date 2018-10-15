@@ -37,10 +37,6 @@ class MessageHandler {
 
     store.dispatch( message );
 
-    // this.beBatch.forEach( message => {
-    //   store.dispatch( message );
-    // });
-
     this.beBatch = [];
   }
 
