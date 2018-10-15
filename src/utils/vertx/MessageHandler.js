@@ -45,7 +45,13 @@ class MessageHandler {
   }
 
   handleReduceMessageBatch = ( output, current ) => {
-    if ( current.payload.aliasCode ) {
+    /**
+     * If the message has an aliasCode process it individually.
+     * Additionally don't apply this to aliasCodes that match
+     * the parentCode as this eliminates a large number of
+     * individual messages, increasing performance.
+     */
+    if ( current.payload.aliasCode && current.payload.aliasCode !== current.payload.parentCode ) {
       store.dispatch( current );
 
       return output;
