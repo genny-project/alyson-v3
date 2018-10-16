@@ -254,6 +254,7 @@ class Layout extends Component {
         height="100%"
         width="100%"
         flex={1}
+        testID={layout && layout.layout ? layout.layout.id : 'layout'}
       >
         <Helmet>
           <title>
