@@ -330,6 +330,7 @@ class Tabs extends Component {
         height="100%"
         width="100%"
         flexDirection="column"
+        testID="tabs"
       >
         {
           this.shouldRenderDots( 'top', 'bottom' )

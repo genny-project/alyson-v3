@@ -156,6 +156,7 @@ class Passcode extends Component {
       <Box
         flexDirection="row"
         justifyContent="center"
+        testID="input-passcode"
       >
         {range( numberOfInputs )
           .map( i => {

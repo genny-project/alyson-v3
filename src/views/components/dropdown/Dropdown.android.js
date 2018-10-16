@@ -51,6 +51,7 @@ class Dropdown extends Component {
         items={items}
         deriveTextFromItems={item => item.text}
         onSelect={this.handleSelect}
+        testID="dropdown"
       >
         {({ showPopupMenu, setAnchorRef }) => (
           <TouchableOpacity

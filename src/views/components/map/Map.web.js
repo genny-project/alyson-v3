@@ -4,7 +4,7 @@ import { Box, Text } from '../../components';
 class Map extends Component {
   render() {
     return (
-      <Box>
+      <Box testID="map">
         <Text>
           TODO Map
         </Text>

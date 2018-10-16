@@ -8,6 +8,7 @@ class InputPayment extends Component {
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
+        testID="input-payment"
       >
         <Text>
           Input Payment

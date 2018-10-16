@@ -56,7 +56,10 @@ const EventButton = ({
   };
 
   return (
-    <Button {...addedProps}>
+    <Button
+      {...addedProps}
+      testID="event-button"
+    >
       {children}
     </Button>
   );

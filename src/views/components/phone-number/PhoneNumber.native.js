@@ -53,6 +53,7 @@ class PhoneNumber extends Component {
       <Touchable
         onPress={this.handlePress( checkedNumber, type )}
         withFeedback
+        testID="phone-number"
       >
         {
           children

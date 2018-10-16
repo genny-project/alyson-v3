@@ -13,6 +13,7 @@ class BackButton extends Component {
       <Touchable
         withFeedback
         onPress={this.handleClick}
+        testID="back-button"
       >
         <Icon
           name="chevron-left"

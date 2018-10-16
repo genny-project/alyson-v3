@@ -26,6 +26,7 @@ const Status = ({
     justifyContent="center"
     alignItems="center"
     borderRadius={roundCorners ? 5 : 0}
+    testID="status"
   >
     {(
       text &&

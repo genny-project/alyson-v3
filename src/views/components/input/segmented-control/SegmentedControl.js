@@ -114,6 +114,7 @@ class Checkbox extends Component {
       <Box
         flexDirection="row"
         width="100%"
+        testID="input-segmented-control"
       >
         {
           selected &&

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 class Payments extends Component {
   render() {
     return (
-      <div>
+      <div testID="payments">
         TODO Payments
       </div>
     );

@@ -9,7 +9,10 @@ const Address = ({
   options,
   ...restProps
 }) => (
-  <Text {...restProps}>
+  <Text
+    {...restProps}
+    testID="address"
+  >
     {formatAddress(
       children,
       format,

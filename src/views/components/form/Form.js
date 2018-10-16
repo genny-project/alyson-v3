@@ -585,6 +585,7 @@ class Form extends Component {
           justifyContent="center"
           alignItems="center"
           flexShrink={0}
+          testID="form"
         >
           <ActivityIndicator size="large" />
           {
@@ -642,6 +643,7 @@ class Form extends Component {
               width="100%"
               flex={1}
               padding={20}
+              testID="form"
             >
               {questionGroups.map( questionGroup => (
                 <Fragment key={questionGroup.name}>

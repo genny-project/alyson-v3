@@ -4,7 +4,7 @@ import { Box } from '../index';
 
 /* Mock the component. */
 const StatusBar = ({ children }) => (
-  <Box>
+  <Box testID="status-bar">
     {children}
   </Box>
 );

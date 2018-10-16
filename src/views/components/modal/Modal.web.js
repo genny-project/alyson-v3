@@ -64,6 +64,7 @@ class Modal extends Component {
         style={style}
         onRequestClose={this.handleClose}
         shouldCloseOnOverlayClick
+        testID="modal"
       >
         <Box
           position="absolute"

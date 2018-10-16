@@ -27,6 +27,7 @@ class InputRating extends Component {
     return (
       <Box
         flexDirection="row"
+        testID="input-rating"
       >
         {range( numberOfStars )
         .map( i => (

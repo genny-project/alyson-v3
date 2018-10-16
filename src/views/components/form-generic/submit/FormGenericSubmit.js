@@ -30,6 +30,7 @@ class FormGenericSubmit extends Component {
                 ? submittingText
                 : text
             )}
+            testID="form-generic-submit"
           />
         )}
       </Field>

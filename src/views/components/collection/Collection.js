@@ -11,6 +11,7 @@ const Collection = ({
     <Box
       {...restProps}
       width={width}
+      testID="collection"
     >
       {children}
     </Box>

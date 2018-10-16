@@ -183,6 +183,7 @@ class Chat extends Component {
       >
         <Box
           flex={1}
+          testID="chat"
         >
           <GiftedChat
             messages={this.state.messages}

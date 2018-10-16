@@ -42,7 +42,7 @@ class Switch extends PureComponent {
     const { value } = this.state;
 
     return (
-      <View>
+      <View testID="input-switch">
         <NativeSwitch
           {...this.props}
           onValueChange={this.handleChangeValue}

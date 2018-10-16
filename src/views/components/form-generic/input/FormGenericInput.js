@@ -25,6 +25,7 @@ class FormGenericInput extends Component {
               form.setFieldTouched( name, true );
               form.setFieldValue( name, value );
             }}
+            testID="form-generic-input"
           />
         )}
       </Field>

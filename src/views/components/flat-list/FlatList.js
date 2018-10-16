@@ -40,6 +40,7 @@ class FlatList extends Component {
         {...restProps}
         data={data}
         renderItem={this.renderItem}
+        testID="flat-list"
       />
     );
   }

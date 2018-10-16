@@ -53,6 +53,7 @@ class InputCreditCard extends Component {
         marginRight={marginRight}
         marginBottom={marginBottom}
         marginLeft={marginLeft}
+        testID="input-credit-card"
       >
         <Text>
           TODO Credit Card Input

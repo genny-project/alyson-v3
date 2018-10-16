@@ -31,6 +31,7 @@ class BucketView extends PureComponent {
         height="100%"
         padding={padding}
         backgroundColor={backgroundColor}
+        testID="bucketView"
       >
         <Box
           width="100%"

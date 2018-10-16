@@ -65,7 +65,10 @@ class CheckBox extends Component {
     const { value } = this.state;
 
     return (
-      <Box flexDirection={horizontal ? 'row' : 'column'}>
+      <Box
+        flexDirection={horizontal ? 'row' : 'column'}
+        testID="input-checkbox"
+      >
         {items && items instanceof Array && items.length > 0
           ? items.map( item => {
             return (

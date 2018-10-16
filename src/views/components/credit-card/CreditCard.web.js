@@ -4,7 +4,7 @@ import { Box, Text } from '../../components';
 class CreditCard extends Component {
   render() {
     return (
-      <Box>
+      <Box testID="credit-card-view">
         <Text>
           TODO Credit Card
         </Text>

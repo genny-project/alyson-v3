@@ -416,6 +416,7 @@ class Input extends Component {
         position="relative"
         flex={1}
         width={width}
+        testID="input-text"
       >
         <TextInput
           autoCapitalize={autoCapitalize}

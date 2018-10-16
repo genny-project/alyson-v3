@@ -42,6 +42,7 @@ class RefreshControl extends Component {
         title={title}
         titleColor={titleColor}
         progressViewOffset={progressViewOffset}
+        testID="refresh-control"
       />
     );
   }

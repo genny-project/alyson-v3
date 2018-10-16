@@ -23,6 +23,7 @@ const Image = ({
   ) {
     return (
       <img
+        testID="image"
         src={source}
         style={{ width, height, borderRadius: borderRadius[shape] }}
       />
@@ -37,6 +38,7 @@ const Image = ({
       justifyContent="center"
       alignItems="center"
       borderRadius={borderRadius[shape]}
+      testID="image-fallback"
     >
       <Icon
         name="photo"

@@ -96,6 +96,7 @@ class InputPayment extends Component {
       <Box
         flexDirection="column"
         justifyContent="center"
+        testID="input-payment"
       >
         {!deviceId ? (
           <Box

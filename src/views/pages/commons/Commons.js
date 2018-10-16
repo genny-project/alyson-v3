@@ -14,6 +14,7 @@ class Commons extends Component {
           alignItems="center"
           flex={1}
           flexDirection="column"
+          testID="page-commons"
         >
           <Text>
 Commons

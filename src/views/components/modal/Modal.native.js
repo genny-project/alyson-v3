@@ -26,6 +26,7 @@ class NativeModalWrapper extends Component {
       <Modal
         {...this.props}
         visible={this.props.visible}
+        testID="modal"
       />
     );
   }

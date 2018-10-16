@@ -52,6 +52,7 @@ class Media extends PureComponent {
         justifyContent="center"
         width="100%"
         flexDirection="row"
+        testID="media"
       >
         {(
           image &&

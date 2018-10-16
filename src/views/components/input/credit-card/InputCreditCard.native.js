@@ -62,6 +62,7 @@ class InputCreditCard extends Component {
         marginRight={marginRight}
         marginBottom={marginBottom}
         marginLeft={marginLeft}
+        testID="input-credit-card"
       >
         <CreditCardInput
           onChange={this.handleChange}

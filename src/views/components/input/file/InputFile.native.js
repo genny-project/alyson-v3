@@ -242,6 +242,7 @@ class InputFile extends Component {
       <Box
         width="100%"
         flexDirection="column"
+        testID="input-file"
       >
         {isArray( files, { ofMinLength: 1 }) ? (
           files.map( file => (

@@ -90,7 +90,10 @@ class HeaderLeft extends Component {
     return (
       <LayoutConsumer>
         {layout => (
-          <Box alignItems="center">
+          <Box
+            alignItems="center"
+            testID="header-left"
+          >
             {(
               showLogo &&
               !(

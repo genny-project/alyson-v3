@@ -105,6 +105,7 @@ class Header extends Component {
         paddingY={paddingY}
         padding={padding}
         boxShadow={boxShadow}
+        testID="header"
       >
         <HeaderLeft
           {...headerLeft}

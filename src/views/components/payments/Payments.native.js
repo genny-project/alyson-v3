@@ -363,6 +363,7 @@ class Payments extends Component {
             flex={1}
             flexDirection="column"
             padding={20}
+            testID="payments"
           >
             <Formik
               initialValues={initialValues}

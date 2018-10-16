@@ -71,6 +71,7 @@ class InputScroll extends Component {
         maxHeight={maxHeight}
         onScroll={this.handleScroll}
         scrollEventThrottle={scrollEventThrottle}
+        testID="input-scroll"
       >
         {children}
       </ScrollView>

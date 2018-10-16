@@ -5,6 +5,7 @@ import { string } from 'prop-types';
 const Html = ({ html }) =>  { 
   return (
     <HtmlPkg
+      testID="display-html"
       html={html}
     />
   );

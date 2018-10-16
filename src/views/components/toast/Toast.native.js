@@ -17,6 +17,7 @@ const Toast = ({
                   styles.warning : toastType === 'success' ?
                     styles.success : styles.primary
         }
+      testID="toast"
     >
       <View 
         style={

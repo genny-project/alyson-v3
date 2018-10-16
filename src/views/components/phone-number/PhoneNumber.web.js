@@ -21,7 +21,10 @@ class PhoneNumber extends Component {
     } = this.props;
 
     return (
-      <Text {...restProps}>
+      <Text
+        {...restProps}
+        testID="phone-number"
+      >
         {formatPhoneNumber( number || children, {
           mobile,
           landline,

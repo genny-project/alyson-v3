@@ -100,6 +100,7 @@ class List extends PureComponent {
         flex={1}
         flexShrink={0}
         backgroundColor={contentBackground}
+        testID="list"
       >
         {showHeader && (
           <Box

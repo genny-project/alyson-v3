@@ -57,7 +57,10 @@ class Dropdown extends PureComponent {
 
     return (
       <Fragment>
-        <Box zIndex={110}>
+        <Box
+          zIndex={110}
+          testID="dropdown"
+        >
           <Touchable
             withFeedback
             onPress={this.handleToggle}

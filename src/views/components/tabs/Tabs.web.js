@@ -111,6 +111,7 @@ class Tabs extends PureComponent {
         flex={1}
         height={height}
         width={width}
+        testID="tabs"
       >
         <Box
           {...tabWrapperProps}

@@ -57,6 +57,7 @@ class Dialog extends Component {
               key={key}
               isOpen={modal && modal.show}
               onDismiss={this.handleDismiss( key )}
+              testID="dialog"
             >
               <DialogContent>
                 <Touchable

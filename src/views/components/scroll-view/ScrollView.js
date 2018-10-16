@@ -112,6 +112,7 @@ class ScrollView extends Component {
         scrollEventThrottle={scrollEventThrottle}
         onContentSizeChange={onContentSizeChange}
         keyboardDismissMode={keyboardDismissMode}
+        testID="scroll-view"
         refreshControl={(
           (
             Platform.OS === 'ios' ||

@@ -23,6 +23,7 @@ const Heading = ({
       onPress={onPress}
       align={align}
       width={width}
+      testID="heading"
     >
       {children}
     </Text>

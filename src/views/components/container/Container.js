@@ -21,6 +21,7 @@ const Container = ({
       width="100%"
       marginX="auto"
       cleanStyleObject
+      testID="container"
     >
       {children}
     </Box>

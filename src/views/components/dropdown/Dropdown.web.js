@@ -116,6 +116,7 @@ class Dropdown extends Component {
         <Box
           position="relative"
           zIndex={755}
+          testID="dropdown"
         >
           <TouchableOpacity
             onPress={this.handleOpen}

@@ -46,6 +46,7 @@ class BucketView extends Component {
         bottomTabs
         {...restProps}
         tabs={tabData}
+        testID="bucket-view"
       >
         {children}
       </Tabs>

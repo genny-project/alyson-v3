@@ -33,6 +33,7 @@ const Image = ({
       <NativeImage
         {...restProps}
         source={{ uri: source }}
+        testiD="image"
         style={{
           height,
           width,
@@ -61,6 +62,7 @@ const Image = ({
       justifyContent="center"
       alignItems="center"
       borderRadius={borderRadius[shape]}
+      testID="image-fallback"
     >
       <Icon
         name={fallbackIcon}

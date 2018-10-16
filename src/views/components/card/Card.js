@@ -37,6 +37,7 @@ class Card extends PureComponent {
         padding={padding}
         borderRadius={roundCorners ? 5 : 0}
         boxShadow={shadow}
+        testID="card"
       >
         {children}
       </Box>

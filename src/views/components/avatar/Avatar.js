@@ -94,6 +94,7 @@ const Avatar = ({
             borderColor="white"
             backgroundColor={onlineColor[showOnline]}
             cleanStyleObject
+            testID="avatar"
           /> 
           )
       }

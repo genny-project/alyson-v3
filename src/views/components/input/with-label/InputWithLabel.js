@@ -13,6 +13,7 @@ const InputWithLabel = ({
       alignItems="center"
       flexDirection="column"
       marginBottom={20}
+      testID="input-input-with-label"
     >
       <Box
         alignItems="center"

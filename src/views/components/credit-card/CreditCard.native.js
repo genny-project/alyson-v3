@@ -29,6 +29,7 @@ const CreditCard = ({
     imageFront={imageFront}
     imageBack={imageBack}
     customIcons={customIcons}
+    testID="credit-card-view"
   />
 );
 

@@ -55,6 +55,7 @@ class Checkbox extends Component {
       <Box
         flexDirection="column"
         marginTop={10}
+        testID="input-checkbox"
       >
         {isArray( items, { ofMinLength: 1 }) ? (
           items.map( item => (

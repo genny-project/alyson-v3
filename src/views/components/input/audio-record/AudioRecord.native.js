@@ -194,6 +194,7 @@ class AudioRecord extends Component {
         marginTop={10}
         alignItems="center"
         justifyContent="space-around"
+        testID="input-audio-record"
       >
         <Touchable
           withFeedback

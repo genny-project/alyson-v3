@@ -9,7 +9,10 @@ class BlurView extends PureComponent {
 
   render() {
     return (
-      <Box opacity={0.4}>
+      <Box
+        opacity={0.4}
+        testID="blur-view"
+      >
         {this.props.children}
       </Box>
     );

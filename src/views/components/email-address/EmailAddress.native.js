@@ -34,6 +34,7 @@ class EmailAddress extends Component {
       <Touchable
         onPress={this.handlePress}
         withFeedback
+        testID="email-address"
       >
         {
           children

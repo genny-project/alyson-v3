@@ -10,7 +10,10 @@ const Date = ({
   date,
   ...restProps
 }) => (
-  <Text {...restProps}>
+  <Text
+    testID="date"
+    {...restProps}
+  >
     {formatDate( date || children, format, options )}
   </Text>
 );

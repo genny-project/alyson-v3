@@ -38,6 +38,7 @@ class HeaderLeft extends Component {
         {layout => (
           <Box
             alignItems="center"
+            testID="header-left"
           >
             {showMenu ? (
               <Button

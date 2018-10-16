@@ -60,6 +60,7 @@ class TabDots extends Component {
         width="100%"
         justifyContent="center"
         backgroundColor={backgroundColor || null}
+        testID="tab-dots"
       >
         <Box>
           {

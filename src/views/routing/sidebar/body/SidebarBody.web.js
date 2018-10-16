@@ -61,6 +61,7 @@ const Sidebar = ({
           zIndex: 98,
           ...closedProps,
         }}
+        testID="sidebar-body"
       >
         {renderBody ? (
           <Recursive

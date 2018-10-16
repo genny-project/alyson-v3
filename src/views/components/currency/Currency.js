@@ -9,7 +9,10 @@ const Currency = ({
   options,
   ...restProps
 }) => (
-  <Text {...restProps}>
+  <Text
+    testID="currency"
+    {...restProps}
+  >
     {formatCurrency(
       children,
       format,

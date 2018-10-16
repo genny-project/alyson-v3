@@ -28,6 +28,7 @@ class HeaderItem extends Component {
       <Link
         pure
         to={href}
+        testID="header-item"
       >
         {createElement(
           buttonCode ? EventButton : Button,

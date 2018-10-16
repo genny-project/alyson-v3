@@ -82,6 +82,7 @@ class AuthenticationForm extends Component {
         onSubmit={this.handleSubmit}
         validateOnBlur
         enableReinitialize
+        testID="authenticationForm"
       >
         {() => children}
       </Formik>

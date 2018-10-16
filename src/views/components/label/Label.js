@@ -11,7 +11,10 @@ class Label extends Component {
     const { text, ...restProps } = this.props;
 
     return (
-      <Text {...restProps}>
+      <Text
+        {...restProps}
+        testID="label"
+      >
         {text}
       </Text>
     );

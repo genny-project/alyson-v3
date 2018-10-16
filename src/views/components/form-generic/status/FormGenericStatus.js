@@ -16,7 +16,10 @@ class FormGenericStatus extends Component {
       <Field>
         {({ form }) => (
           form.status ? (
-            <Box {...wrapperProps}>
+            <Box
+              {...wrapperProps}
+              testID="form-generic-status"
+            >
               <Text {...textProps}>
                 {form.status}
               </Text>

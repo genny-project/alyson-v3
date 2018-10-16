@@ -26,6 +26,7 @@ const HeaderRight = ({ items }) => {
         <Box
           paddingX={5}
           alignItems="center"
+          testID="header-right"
         >
           {isArray( filteredItems, { ofMinLength: 1 }) ? (
             filteredItems.map( item => (

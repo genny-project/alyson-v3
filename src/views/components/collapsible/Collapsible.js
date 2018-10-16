@@ -51,6 +51,7 @@ class Collapsible extends Component {
       <Box
         justifyContent="center"
         flexDirection="column"
+        testID="collapsible"
       >
         {showHeader ? (
           <TouchableOpacity

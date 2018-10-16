@@ -16,7 +16,10 @@ class EmailAddress extends Component {
     } = this.props;
 
     return (
-      <Text {...restProps}>
+      <Text
+        testID="email-address"
+        {...restProps}
+      >
         { emailAddress ||  children }
       </Text>
     );

@@ -28,7 +28,10 @@ class StatusBar extends Component {
 
     return (
       <Fragment>
-        <View style={{ backgroundColor }}>
+        <View
+          style={{ backgroundColor }}
+          testID="status-bar"
+        >
           <ReactNativeStatusBar
             animated={animated}
             barStyle={barStyle}

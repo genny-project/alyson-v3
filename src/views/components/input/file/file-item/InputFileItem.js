@@ -54,6 +54,7 @@ class InputFileItem extends Component {
         alignItems="center"
         padding={10}
         paddingBottom={15}
+        testID="input-file-item"
       >
         {hasImagePreview ? (
           <Image

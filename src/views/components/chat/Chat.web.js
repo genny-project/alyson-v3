@@ -33,6 +33,7 @@ class Chat extends Component {
             flex={4}
             justifyContent="center"
             alignItems="center"
+            testID="chat"
           >
             <Text>
               {
