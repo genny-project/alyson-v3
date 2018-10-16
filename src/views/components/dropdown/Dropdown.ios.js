@@ -9,6 +9,7 @@ class Dropdown extends PureComponent {
   static defaultProps = {
     padding: 20,
     textColor: '#000',
+    testID: 'dropdown',
   }
 
   static propTypes = {
@@ -19,6 +20,7 @@ class Dropdown extends PureComponent {
     paddingY: number,
     textColor: string,
     disabled: bool,
+    testID: string,
   }
 
   state = {
@@ -51,6 +53,7 @@ class Dropdown extends PureComponent {
       paddingX,
       paddingY,
       textColor,
+      testID,
     } = this.props;
 
     const { isOpen } = this.state;
@@ -59,7 +62,7 @@ class Dropdown extends PureComponent {
       <Fragment>
         <Box
           zIndex={110}
-          testID="dropdown"
+          testID={testID}
         >
           <Touchable
             withFeedback

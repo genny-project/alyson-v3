@@ -1,6 +1,6 @@
 import '@reach/dialog/styles.css';
 import React, { Component, Fragment } from 'react';
-import { object, func } from 'prop-types';
+import { object, func, string } from 'prop-types';
 import { DialogContent, DialogOverlay } from '@reach/dialog';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -8,9 +8,14 @@ import { hideDialog } from '../../../redux/actions';
 import { LayoutLoader, LayoutFetcher, Touchable, Icon } from '../../components';
 
 class Dialog extends Component {
+  static defaultProps = {
+    testID: 'dialog',
+  }
+
   static propTypes = {
     dialog: object,
     hideDialog: func,
+    testID: string,
   }
 
   state = {
@@ -44,7 +49,7 @@ class Dialog extends Component {
   }
 
   render() {
-    const { dialog } = this.props;
+    const { dialog, testID } = this.props;
     const { show } = this.state;
 
     return (
@@ -57,7 +62,7 @@ class Dialog extends Component {
               key={key}
               isOpen={modal && modal.show}
               onDismiss={this.handleDismiss( key )}
-              testID="dialog"
+              testID={testID}
             >
               <DialogContent>
                 <Touchable

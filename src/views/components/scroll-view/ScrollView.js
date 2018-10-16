@@ -4,6 +4,10 @@ import { string, func, bool, oneOf, oneOfType, number, any } from 'prop-types';
 import { RefreshControl } from '../index';
 
 class ScrollView extends Component {
+  static defaultProps = {
+    testID: 'scroll-view',
+  }
+
   static propTypes = {
     flex: number,
     height: oneOfType(
@@ -36,6 +40,7 @@ class ScrollView extends Component {
     paddingX: number,
     paddingY: number,
     onLayout: func,
+    testID: string,
   }
 
   static getDerivedStateFromProps( nextProps, prevState ) {
@@ -81,6 +86,7 @@ class ScrollView extends Component {
       paddingY,
       onLayout,
       backgroundColor,
+      testID,
     } = this.props;
 
     const { isRefreshing } = this.state;
@@ -112,7 +118,7 @@ class ScrollView extends Component {
         scrollEventThrottle={scrollEventThrottle}
         onContentSizeChange={onContentSizeChange}
         keyboardDismissMode={keyboardDismissMode}
-        testID="scroll-view"
+        testID={testID}
         refreshControl={(
           (
             Platform.OS === 'ios' ||

@@ -7,6 +7,10 @@ import { LayoutConsumer } from '../../../layout';
 import { toggleSidebar } from '../../../../redux/actions';
 
 class HeaderLeft extends Component {
+  static defaultProps = {
+    testID: 'header-left',
+  }
+
   static propTypes = {
     toggleSidebar: func,
     showMenu: bool,
@@ -16,6 +20,7 @@ class HeaderLeft extends Component {
     title: string,
     titleFallback: string,
     logoOpensMenu: bool,
+    testID: string,
   }
 
   handleToggleSidebar = () => {
@@ -31,6 +36,7 @@ class HeaderLeft extends Component {
       title,
       titleFallback,
       logoOpensMenu,
+      testID,
     } = this.props;
 
     return (
@@ -38,7 +44,7 @@ class HeaderLeft extends Component {
         {layout => (
           <Box
             alignItems="center"
-            testID="header-left"
+            testID={testID}
           >
             {showMenu ? (
               <Button

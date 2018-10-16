@@ -7,6 +7,7 @@ class FormGenericSubmit extends Component {
   static defaultProps = {
     text: 'Submit',
     submittingText: 'Working...',
+    testID: 'form-generic-submit',
   }
 
   static propTypes = {
@@ -14,10 +15,11 @@ class FormGenericSubmit extends Component {
     text: string,
     disabled: bool,
     submittingText: string,
+    testID: string,
   }
 
   render() {
-    const { text, submittingText, ...restProps } = this.props;
+    const { text, submittingText, testID, ...restProps } = this.props;
 
     return (
       <Field>
@@ -30,7 +32,7 @@ class FormGenericSubmit extends Component {
                 ? submittingText
                 : text
             )}
-            testID="form-generic-submit"
+            testID={testID}
           />
         )}
       </Field>

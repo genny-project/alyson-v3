@@ -7,6 +7,10 @@ import { isArray, isObject } from '../../../utils';
 import { Box } from '../';
 
 class Map extends Component {
+  static defaultProps = {
+    testID: 'map',
+  }
+  
   static propTypes = {
     markers: arrayOf(
       shape({
@@ -15,6 +19,7 @@ class Map extends Component {
       })
     ),
     showDirections: bool,
+    testID: string,
   }
 
   static getDerivedStateFromProps( props, state ) {
@@ -70,7 +75,7 @@ class Map extends Component {
   }
 
   render() {
-    const { showDirections } = this.props;
+    const { showDirections, testID } = this.props;
     const { markers } = this.state;
 
     return (
@@ -79,7 +84,7 @@ class Map extends Component {
         width="100%"
         height="100%"
         flex={1}
-        testID="map"
+        testID={testID}
       >
         <MapView
           ref={mapView => this.mapView = mapView}

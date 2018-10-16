@@ -1,11 +1,12 @@
 import React, { Component, isValidElement } from 'react';
-import { object, array } from 'prop-types';
+import { object, array, string } from 'prop-types';
 import { FlatList as RNFlatList } from 'react-native';
 import Recursive from '../layout-loader/Recursive';
 
 class FlatList extends Component {
   static defaultProps = {
     data: [],
+    testID: 'flat-list',
   }
 
   static propTypes = {
@@ -13,6 +14,7 @@ class FlatList extends Component {
     renderItem: object,
     data: array,
     baseEntities: object,
+    testID: string,
   }
 
   renderItem = ({ item }) => {
@@ -33,14 +35,14 @@ class FlatList extends Component {
   }
 
   render() {
-    const { data, ...restProps } = this.props;
+    const { data, testID, ...restProps } = this.props;
 
     return (
       <RNFlatList
         {...restProps}
         data={data}
         renderItem={this.renderItem}
-        testID="flat-list"
+        testID={testID}
       />
     );
   }

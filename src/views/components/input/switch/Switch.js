@@ -1,16 +1,18 @@
 import React, { PureComponent } from 'react';
 import { View, Switch as NativeSwitch } from 'react-native';
-import { bool, func } from 'prop-types';
+import { bool, func, string } from 'prop-types';
 
 class Switch extends PureComponent {
   static defaultProps = {
     value: false,
+    testID: 'input-switch',
   }
 
   static propTypes = {
     value: bool,
     onChange: func,
     onChangeValue: func,
+    testID: string,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -39,10 +41,11 @@ class Switch extends PureComponent {
   }
 
   render() {
+    const { testID } = this.props;
     const { value } = this.state;
 
     return (
-      <View testID="input-switch">
+      <View testID={testID}>
         <NativeSwitch
           {...this.props}
           onValueChange={this.handleChangeValue}

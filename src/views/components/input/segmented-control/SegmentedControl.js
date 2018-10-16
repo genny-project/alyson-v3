@@ -9,6 +9,7 @@ class Checkbox extends Component {
     textColor: '#202532',
     selectedBackgroundColor: '#202532',
     selectedTextColor: 'white',
+    testID: 'input-segmented-control',
   }
 
   static propTypes = {
@@ -19,6 +20,7 @@ class Checkbox extends Component {
     textColor: string,
     selectedBackgroundColor: string,
     selectedTextColor: string,
+    testID: string,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -107,6 +109,7 @@ class Checkbox extends Component {
       textColor,
       selectedBackgroundColor,
       selectedTextColor,
+      testID,
     } = this.props;
     const { selected } = this.state;
     
@@ -114,7 +117,7 @@ class Checkbox extends Component {
       <Box
         flexDirection="row"
         width="100%"
-        testID="input-segmented-control"
+        testID={testID}
       >
         {
           selected &&

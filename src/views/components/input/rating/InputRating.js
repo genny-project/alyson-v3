@@ -8,6 +8,7 @@ class InputRating extends Component {
   static defaultProps = {
     numberOfStars: 5,
     color: 'lightGrey',
+    testID: 'input-rating',
   }
 
   static propTypes = {
@@ -15,6 +16,7 @@ class InputRating extends Component {
     value: number,
     onChange: func,
     color: string,
+    testID: string,
   }
 
   handleOnPress = ( value ) => {
@@ -22,12 +24,12 @@ class InputRating extends Component {
   }
 
   render() {
-    const { numberOfStars, value, color } = this.props;
+    const { numberOfStars, value, color, testID } = this.props;
 
     return (
       <Box
         flexDirection="row"
-        testID="input-rating"
+        testID={testID}
       >
         {range( numberOfStars )
         .map( i => (

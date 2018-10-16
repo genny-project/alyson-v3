@@ -3,15 +3,20 @@ import { string } from 'prop-types';
 import { Link, Button, EventButton } from '../../index';
 
 class HeaderItem extends Component {
+  static defaultProps = {
+    testID: 'header-item',
+  }
+
   static propTypes = {
     icon: string,
     href: string,
     textColor: string,
     buttonCode: string,
+    testID: string,
   }
 
   render() {
-    const { icon, href, textColor, buttonCode, ...restProps } = this.props;
+    const { icon, href, textColor, buttonCode, testID, ...restProps } = this.props;
 
     const buttonProps = {
       size: 'md',
@@ -28,7 +33,7 @@ class HeaderItem extends Component {
       <Link
         pure
         to={href}
-        testID="header-item"
+        testID={testID}
       >
         {createElement(
           buttonCode ? EventButton : Button,

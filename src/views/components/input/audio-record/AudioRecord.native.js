@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { func } from 'prop-types';
+import { func, string } from 'prop-types';
 import axios from 'axios';
 import mime from 'react-native-mime-types';
 import fastXmlParser from 'fast-xml-parser';
@@ -12,10 +12,12 @@ var RNFS = require( 'react-native-fs' );
 
 class AudioRecord extends Component {
   static defaultProps = {
+    testID: 'input-audio-record',
   }
 
   static propTypes = {
     onChangeValue: func,
+    testID: string,
   }
 
   state = {
@@ -185,7 +187,7 @@ class AudioRecord extends Component {
   }
 
   render() {
-    // const { items } = this.props;
+    const { testID } = this.props;
     const { playback, recording } = this.state;
 
     return (
@@ -194,7 +196,7 @@ class AudioRecord extends Component {
         marginTop={10}
         alignItems="center"
         justifyContent="space-around"
-        testID="input-audio-record"
+        testID={testID}
       >
         <Touchable
           withFeedback

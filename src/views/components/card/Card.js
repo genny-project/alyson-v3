@@ -7,6 +7,7 @@ class Card extends PureComponent {
     background: 'white',
     padding: 10,
     roundCorners: true,
+    testID: 'card',
   }
 
   static propTypes = {
@@ -17,6 +18,7 @@ class Card extends PureComponent {
       ['light', 'medium', 'dark']
     ),
     roundCorners: bool,
+    testID: string,
   }
 
   render() {
@@ -26,6 +28,7 @@ class Card extends PureComponent {
       padding,
       shadow,
       roundCorners,
+      testID,
     } = this.props;
 
     return (
@@ -37,7 +40,7 @@ class Card extends PureComponent {
         padding={padding}
         borderRadius={roundCorners ? 5 : 0}
         boxShadow={shadow}
-        testID="card"
+        testID={testID}
       >
         {children}
       </Box>

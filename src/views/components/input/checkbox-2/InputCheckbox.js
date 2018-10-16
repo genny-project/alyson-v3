@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
-import { array, func } from 'prop-types';
+import { array, func, string } from 'prop-types';
 import { isArray } from '../../../../utils';
 import { Box, Text, Input } from '../../index';
 
 class Checkbox extends Component {
   static defaultProps = {
     value: [],
+    testID: 'input-checkbox',
   }
 
   static propTypes = {
     items: array,
     value: array,
     onChangeValue: func,
+    testID: string,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -46,7 +48,7 @@ class Checkbox extends Component {
   }
 
   render() {
-    const { items } = this.props;
+    const { items, testID } = this.props;
     const { selected } = this.state;
 
     console.warn({ selected, items });
@@ -55,7 +57,7 @@ class Checkbox extends Component {
       <Box
         flexDirection="column"
         marginTop={10}
-        testID="input-checkbox"
+        testID={testID}
       >
         {isArray( items, { ofMinLength: 1 }) ? (
           items.map( item => (

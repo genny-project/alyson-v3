@@ -1,9 +1,20 @@
 import React, { Component } from 'react';
+import { string } from 'prop-types';
 import { Text, Box, Input } from '../../components';
 import Layout from '../../layout';
 
 class Alerts extends Component {
+  static defaultProps = {
+    testID: 'alerts',
+  }
+
+  static propTypes = {
+    testID: string,
+  }
+
   render() {
+    const { testID } = this.props;
+
     return (
       <Layout
         title="Alerts"
@@ -14,7 +25,7 @@ class Alerts extends Component {
           alignItems="center"
           flex={1}
           flexDirection="column"
-          testID="page-alerts"
+          testID={testID}
         >
           <Text>
 Alerts

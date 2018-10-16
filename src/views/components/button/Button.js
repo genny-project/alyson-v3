@@ -12,6 +12,7 @@ class Button extends Component {
     isSpinning: false,
     size: 'md',
     withFeedback: true,
+    testID: 'button',
   }
 
   static propTypes = {
@@ -378,7 +379,7 @@ class Button extends Component {
 
     return (
       <Box
-        testID={testID || 'button'}
+        testID={testID}
         cleanStyleObject
         position="relative"
         shape={shape}

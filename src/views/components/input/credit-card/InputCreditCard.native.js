@@ -6,6 +6,7 @@ import { Box } from '../../';
 class InputCreditCard extends Component {
   static defaultProps = {
     requiresName: true,
+    testID: 'input-credit-card',
   }
 
   static propTypes = {
@@ -33,6 +34,7 @@ class InputCreditCard extends Component {
     ),
     requiresName: bool,
     additionalInputsProps: object,
+    testID: string,
   }
 
   handleChange = form => {
@@ -51,6 +53,7 @@ class InputCreditCard extends Component {
       marginLeft,
       requiresName,
       additionalInputsProps,
+      testID,
     } = this.props;
 
     return (
@@ -62,7 +65,7 @@ class InputCreditCard extends Component {
         marginRight={marginRight}
         marginBottom={marginBottom}
         marginLeft={marginLeft}
-        testID="input-credit-card"
+        testID={testID}
       >
         <CreditCardInput
           onChange={this.handleChange}

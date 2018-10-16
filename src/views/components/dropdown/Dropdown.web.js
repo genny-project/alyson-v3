@@ -9,6 +9,7 @@ class Dropdown extends Component {
     padding: 20,
     backgroundColor: '#FFF',
     textColor: '#000',
+    testID: 'dropdown',
   }
 
   static propTypes = {
@@ -21,6 +22,7 @@ class Dropdown extends Component {
     backgroundColor: string,
     textColor: string,
     disabled: bool,
+    testID: string,
   }
 
   state = {
@@ -84,6 +86,7 @@ class Dropdown extends Component {
       paddingY,
       textColor,
       backgroundColor,
+      testID,
     } = this.props;
 
     const { isOpen, fadeAnim, dropdownScaleY } = this.state;
@@ -116,7 +119,7 @@ class Dropdown extends Component {
         <Box
           position="relative"
           zIndex={755}
-          testID="dropdown"
+          testID={testID}
         >
           <TouchableOpacity
             onPress={this.handleOpen}

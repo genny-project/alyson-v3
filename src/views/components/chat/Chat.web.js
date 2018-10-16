@@ -4,10 +4,12 @@ import {  Box, Text, BackButton }  from '../../components';
 
 class Chat extends Component {
   static defaultProps = {
+    testID: 'chat',
   };
 
   static propTypes = {
     user: string,
+    testID: string,
   };
 
   renderParticipants = () => {
@@ -21,6 +23,8 @@ class Chat extends Component {
   }
 
   render() {
+    const { testID } = this.props;
+
     return (
       <Fragment>
         <Box>
@@ -33,7 +37,7 @@ class Chat extends Component {
             flex={4}
             justifyContent="center"
             alignItems="center"
-            testID="chat"
+            testID={testID}
           >
             <Text>
               {

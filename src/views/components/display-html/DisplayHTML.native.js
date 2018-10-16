@@ -2,10 +2,10 @@ import React from 'react';
 import HtmlPkg from 'react-native-render-html';
 import { string } from 'prop-types';
 
-const Html = ({ html }) =>  { 
+const Html = ({ html, testID = 'display-html' }) =>  { 
   return (
     <HtmlPkg
-      testID="display-html"
+      testID={testID}
       html={html}
     />
   );
@@ -13,6 +13,7 @@ const Html = ({ html }) =>  {
 
 Html.propTypes = { 
   html: string,
+  testID: string,
 };
 
 export default Html;

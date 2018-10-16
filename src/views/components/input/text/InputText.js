@@ -67,6 +67,7 @@ class Input extends Component {
     textAlign: 'left',
     prefixColor: 'grey',
     editable: true,
+    testID: 'input',
   }
 
   static propTypes = {
@@ -168,6 +169,7 @@ class Input extends Component {
     placeholderColor: string,
     activeProps: string,
     color: string,
+    testID: string,
   }
 
   state = {
@@ -355,6 +357,7 @@ class Input extends Component {
       placeholderColor,
       activeProps,
       color,
+      testID,
     } = this.props;
 
     const { isFocused } = this.state;
@@ -416,7 +419,7 @@ class Input extends Component {
         position="relative"
         flex={1}
         width={width}
-        testID="input-text"
+        testID={testID}
       >
         <TextInput
           autoCapitalize={autoCapitalize}

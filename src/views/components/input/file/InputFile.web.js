@@ -1,6 +1,6 @@
 import 'uppy/dist/uppy.min.css';
 import React, { Component } from 'react';
-import { bool, number, func, object, array } from 'prop-types';
+import { bool, number, func, object, array, string } from 'prop-types';
 import Uppy from 'uppy/lib/core';
 import AwsS3 from 'uppy/lib/plugins/AwsS3';
 import Webcam from 'uppy/lib/plugins/Webcam';
@@ -18,6 +18,7 @@ class InputFile extends Component {
     defaultValue: [],
     imageOnly: false,
     multiple: false,
+    testID: 'input-file',
   }
 
   static propTypes = {
@@ -28,6 +29,7 @@ class InputFile extends Component {
     value: array,
     imageOnly: bool,
     multiple: bool,
+    testID: string,
   }
 
   state = {
@@ -209,7 +211,7 @@ class InputFile extends Component {
   }
 
   render() {
-    const { imageOnly, multiple } = this.props;
+    const { imageOnly, multiple, testID } = this.props;
     const { files, error } = this.state;
     const validFiles = files && files.length ? files.filter( file => this.isValidFile( file )) : [];
 
@@ -217,7 +219,7 @@ class InputFile extends Component {
       <Box
         width="100%"
         flexDirection="column"
-        testID="input-file"
+        testID={testID}
       >
         {isArray( validFiles, { ofMinLength: 1 }) && (
           validFiles.map( file => {

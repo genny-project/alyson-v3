@@ -7,10 +7,11 @@ const Currency = ({
   children,
   format,
   options,
+  testID = 'currency',
   ...restProps
 }) => (
   <Text
-    testID="currency"
+    testID={testID}
     {...restProps}
   >
     {formatCurrency(
@@ -27,6 +28,7 @@ Currency.propTypes = {
   ),
   format: string,
   options: object,
+  testID: string,
 };
 
 export default Currency;

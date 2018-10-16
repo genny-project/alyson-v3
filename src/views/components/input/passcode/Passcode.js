@@ -22,6 +22,7 @@ class Passcode extends Component {
     size: 'md',
     keyboardType: 'numeric',
     caseSensitive: false,
+    testID: 'input-passcode',
   }
 
   static propTypes = {
@@ -34,6 +35,7 @@ class Passcode extends Component {
     ),
     keyboardType: string,
     caseSensitive: bool,
+    testID: string,
   }
 
   // static getDerivedStateFromProps( nextProps, prevState ) {
@@ -149,14 +151,14 @@ class Passcode extends Component {
   // }
 
   render() {
-    const { numberOfInputs, size, keyboardType, ...restProps } = this.props;
+    const { numberOfInputs, size, keyboardType, testID, ...restProps } = this.props;
     const { currentValues } = this.state;
 
     return (
       <Box
         flexDirection="row"
         justifyContent="center"
-        testID="input-passcode"
+        testID={testID}
       >
         {range( numberOfInputs )
           .map( i => {

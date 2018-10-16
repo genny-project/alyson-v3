@@ -7,6 +7,7 @@ import styles from './Toast.type';
 const Toast = ({
   text,
   toastType,
+  testID,
 }) => {
   return (
 
@@ -18,7 +19,7 @@ const Toast = ({
                   styles.warning : toastType === 'success' ?
                     styles.success : styles.primary
         }
-      testID="toast"
+      testID={testID}
     >
       <View
         style={styles.wrapper}
@@ -56,6 +57,7 @@ Toast.propTypes = {
     ['primary', 'success', 'warning', 'error']
   ),
   text: string,
+  testID: string,
 };
 
 export default Toast;

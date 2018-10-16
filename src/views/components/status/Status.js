@@ -18,6 +18,7 @@ const Status = ({
   icon,
   iconColor = 'black',
   roundCorners = true,
+  testID = 'status',
 }) => (
   <Box
     backgroundColor={color}
@@ -26,7 +27,7 @@ const Status = ({
     justifyContent="center"
     alignItems="center"
     borderRadius={roundCorners ? 5 : 0}
-    testID="status"
+    testID={testID}
   >
     {(
       text &&
@@ -63,6 +64,7 @@ Status.propTypes = {
   icon: string,
   iconColor: string,
   roundCorners: bool,
+  testID: string,
 };
 
 export default Status;

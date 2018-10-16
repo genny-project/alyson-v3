@@ -15,6 +15,7 @@ class Tabs extends Component {
     dotProps: {},
     tabBarProps: {},
     tabsPosition: 'bottom',
+    testID: 'tabs',
   }
 
   static propTypes = {
@@ -51,6 +52,7 @@ class Tabs extends Component {
       'top', 'bottom'
     ),
     dotProps: object,
+    testID: string,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -313,7 +315,7 @@ class Tabs extends Component {
   }
 
   render() {
-    const { tabsPosition } = this.props;
+    const { tabsPosition, testID } = this.props;
     const { index, routes } = this.state;
     const initialLayout = {
       height: 20,
@@ -330,7 +332,7 @@ class Tabs extends Component {
         height="100%"
         width="100%"
         flexDirection="column"
-        testID="tabs"
+        testID={testID}
       >
         {
           this.shouldRenderDots( 'top', 'bottom' )

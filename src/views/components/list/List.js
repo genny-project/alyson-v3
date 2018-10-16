@@ -25,6 +25,7 @@ class List extends PureComponent {
     legendMargin: 10,
     legendColor: 'black',
     emptyText: 'No items to show',
+    testID: 'list',
   }
 
   static propTypes = {
@@ -59,6 +60,7 @@ class List extends PureComponent {
     scrollViewProps: object,
     contentBodyProps: object,
     itemProps: object,
+    testID: string,
   }
 
   render() {
@@ -89,6 +91,7 @@ class List extends PureComponent {
       headerCountTextProps,
       contentBodyProps,
       itemProps,
+      testID,
       ...restProps
     } = this.props;
 
@@ -100,7 +103,7 @@ class List extends PureComponent {
         flex={1}
         flexShrink={0}
         backgroundColor={contentBackground}
-        testID="list"
+        testID={testID}
       >
         {showHeader && (
           <Box

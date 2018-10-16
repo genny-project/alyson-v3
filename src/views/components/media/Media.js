@@ -9,6 +9,7 @@ class Media extends PureComponent {
     descriptionProps: {},
     imageSize: 'sm',
     imageProps: {},
+    testID: 'media',
   }
 
   static propTypes = {
@@ -26,6 +27,7 @@ class Media extends PureComponent {
     ),
     imageProps: object,
     children: node,
+    testID: string,
   }
 
   render() {
@@ -38,6 +40,7 @@ class Media extends PureComponent {
       image,
       imageSize,
       imageProps,
+      testID,
     } = this.props;
 
     const imageSizes = {
@@ -52,7 +55,7 @@ class Media extends PureComponent {
         justifyContent="center"
         width="100%"
         flexDirection="row"
-        testID="media"
+        testID={testID}
       >
         {(
           image &&

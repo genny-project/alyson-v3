@@ -14,6 +14,7 @@ class TabDots extends Component {
       paddingY: 5,
     },
     dotPadding: {},
+    testID: 'tab-dots',
   }
 
   static propTypes = {
@@ -31,6 +32,7 @@ class TabDots extends Component {
     containerPadding: object,
     dotPadding: object,
     changeIndexOnPress: func,
+    testID: string,
   }
 
   onHandlePress = ( event ) => {
@@ -52,6 +54,7 @@ class TabDots extends Component {
       backgroundColor,
       containerPadding,
       dotPadding,
+      testID,
     } = this.props;
 
     return (
@@ -60,7 +63,7 @@ class TabDots extends Component {
         width="100%"
         justifyContent="center"
         backgroundColor={backgroundColor || null}
-        testID="tab-dots"
+        testID={testID}
       >
         <Box>
           {

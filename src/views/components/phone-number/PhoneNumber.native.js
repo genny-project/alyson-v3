@@ -7,6 +7,7 @@ import { Text, Touchable } from '../index';
 class PhoneNumber extends Component {
   static defaultProps = {
     type: 'tel',
+    testID: 'input-phone-number',
   }
 
   static propTypes = {
@@ -17,6 +18,7 @@ class PhoneNumber extends Component {
     type: oneOf(
       'tel', 'sms'
     ),
+    testID: string,
   }
 
   handlePress = ( number, type ) => () => {
@@ -44,6 +46,7 @@ class PhoneNumber extends Component {
       landline,
       number,
       type,
+      testID,
       ...restProps
     } = this.props;
 
@@ -53,7 +56,7 @@ class PhoneNumber extends Component {
       <Touchable
         onPress={this.handlePress( checkedNumber, type )}
         withFeedback
-        testID="phone-number"
+        testID={testID}
       >
         {
           children
