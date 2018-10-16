@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Modal } from 'react-native';
-import { string, func, array } from 'prop-types';
+import { string, func, array, bool, object } from 'prop-types';
 import { isString, isArray, isObject } from '../../../../utils';
-import { Box, MultiDownshift, Input, Text, SafeAreaView, Touchable, Icon } from '../../index';
+import { LayoutConsumer } from '../../../layout';
+import { Box, MultiDownshift, Input, Text, SafeAreaView, Touchable, Icon, Recursive } from '../../index';
 
 class InputTag extends Component {
   static defaultProps = {
@@ -11,6 +12,7 @@ class InputTag extends Component {
     itemStringKey: 'label',
     itemValueKey: 'value',
     itemIdKey: 'id',
+    allowNewTags: false,
   }
 
   static propTypes = {
@@ -21,6 +23,10 @@ class InputTag extends Component {
     itemValueKey: string,
     itemIdKey: string,
     value: array,
+    allowNewTags: bool,
+    tagsWrapperProps: object,
+    renderTag: object,
+    renderSuggestion: object,
   }
 
   handleChange = selectedItems => {
@@ -52,7 +58,17 @@ class InputTag extends Component {
   }
 
   render() {
-    const { items, value, itemStringKey, itemIdKey, ...restProps } = this.props;
+    const {
+      items,
+      value,
+      itemStringKey,
+      itemIdKey,
+      allowNewTags,
+      tagsWrapperProps,
+      renderTag,
+      renderSuggestion,
+      ...restProps
+    } = this.props;
 
     return (
       <MultiDownshift
@@ -107,44 +123,70 @@ class InputTag extends Component {
             <Box
               flexWrap="wrap"
               marginTop={10}
+              {...tagsWrapperProps}
             >
               {selectedItems.length > 0 && (
-                selectedItems.map( item => (
-                  <Box
-                    key={item}
-                    alignItems="center"
-                    marginRight={10}
-                    marginBottom={10}
-                    shape="pill"
-                    borderWidth={2}
-                    borderColor="#FFF"
-                    paddingLeft={10}
-                    paddingRight={5}
-                    cleanStyleObject
-                  >
-                    <Box marginLeft={5}>
-                      <Text color="#FFF">
-                        {item}
-                      </Text>
-                    </Box>
+                selectedItems.map( item => {
+                  if ( renderTag ) {
+                    return (
+                      <LayoutConsumer>
+                        {layout => {
+                          const context = {
+                            item: {
+                              ...items.filter( x => x.label === item )[0],
+                            },
+                            layout,
+                            onPress: () => removeItem( item ),
+                          };
 
-                    <Touchable
-                      {...getRemoveButtonProps({
-                        withFeedback: true,
-                        onPress: () => removeItem( item ),
-                        style: {
-                          padding: 10,
-                        },
-                      })}
+                          return (
+                            <Recursive
+                              {...renderTag}
+                              context={context}
+                            />
+                          );
+                        }}
+                      </LayoutConsumer>
+                    );
+                  }
+
+                  return (
+                    <Box
+                      key={item}
+                      alignItems="center"
+                      marginRight={10}
+                      marginBottom={10}
+                      borderWidth={2}
+                      borderRadius={20}
+                      borderColor="grey"
+                      paddingLeft={10}
+                      paddingRight={5}
+                      cleanStyleObject
                     >
-                      <Icon
-                        type="material-icons"
-                        name="clear"
-                        color="white"
-                      />
-                    </Touchable>
-                  </Box>
-                ))
+                      <Box marginLeft={5}>
+                        <Text color="#grey">
+                          {item}
+                        </Text>
+                      </Box>
+
+                      <Touchable
+                        {...getRemoveButtonProps({
+                          withFeedback: true,
+                          onPress: () => removeItem( item ),
+                          style: {
+                            padding: 10,
+                          },
+                        })}
+                      >
+                        <Icon
+                          type="material-icons"
+                          name="clear"
+                          color="grey"
+                        />
+                      </Touchable>
+                    </Box>
+                  );
+                })
               )}
             </Box>
 
@@ -224,11 +266,12 @@ class InputTag extends Component {
                   inputValue.length > 0
                 ) ? (
                     items
-                    .concat( [inputValue] )
+                    .concat( allowNewTags ? [inputValue] : [] )
                     .filter( this.handleFilter( inputValue ))
                     .map(( item, index ) => {
                       const itemString = isObject( item ) ? item[itemStringKey] : item;
                       const itemId = isObject( item ) ? item[itemIdKey] : item;
+                      const isSelected = selectedItems && selectedItems.includes( itemString );
 
                       return (
                         <Touchable
@@ -242,20 +285,45 @@ class InputTag extends Component {
                             },
                           })}
                         >
-                          <Box
-                            padding={15}
-                            borderBottomWidth={1}
-                            borderColor="#DDD"
-                            borderStyle="solid"
-                            alignItems="center"
-                          >
-                            <Text
-                              color={highlightedIndex === index ? 'black' : 'gray'}
-                              fontWeight={selectedItems && selectedItems.includes( itemString ) ? 'bold' : 'normal'}
-                            >
-                              {itemString}
-                            </Text>
-                          </Box>
+                          {
+                            renderSuggestion
+                              ? (
+                                <LayoutConsumer>
+                                  {layout => {
+                                    const context = {
+                                      item: {
+                                        ...item,
+                                        selected: isSelected,
+                                      },
+                                      layout,
+                                    };
+
+                                    return (
+                                      <Recursive
+                                        {...renderSuggestion}
+                                        context={context}
+                                      />
+                                    );
+                                  }}
+                                </LayoutConsumer>
+                              )
+                              : (
+                                <Box
+                                  padding={15}
+                                  borderBottomWidth={1}
+                                  borderColor="#DDD"
+                                  borderStyle="solid"
+                                  alignItems="center"
+                                >
+                                  <Text
+                                    color={highlightedIndex === index ? 'black' : 'gray'}
+                                    fontWeight={isSelected ? 'bold' : 'normal'}
+                                  >
+                                    {itemString}
+                                  </Text>
+                                </Box>
+                              )
+                            }
                         </Touchable>
                       );
                     })
