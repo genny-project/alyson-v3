@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { string, object, func } from 'prop-types';
+import debounce from 'lodash.debounce';
 import { Input } from '../../index';
 import FormInputDropdown from './dropdown';
 import FormInputCheckbox from './checkbox';
@@ -11,8 +12,22 @@ class FormInput extends Component {
     onChangeValue: func.isRequired,
   }
 
+  constructor( props ) {
+    super( props );
+
+    this.handleChangeDebounced = debounce( this.handleChangeDebounced, 300 );
+  }
+
+  handleChangeDebounced = ( value, withSend ) => {
+    this.props.onChangeValue( value, withSend );
+  }
+
   handleChangeValueWithSend = value => {
     this.props.onChangeValue( value, true );
+  }
+
+  handleChangeValueWithSend = value => {
+    this.handleChangeDebounced( value, true );
   }
 
   focus() {
@@ -44,7 +59,7 @@ class FormInput extends Component {
         return (
           <FormInputDropdown
             {...this.props}
-            onChangeValue={this.handleChangeValueWithSend}
+            onChangeValue={this.handleChangeValueWithSendAndDebounce}
             ref={input => this.input = input}
           />
         );
@@ -54,7 +69,7 @@ class FormInput extends Component {
           <FormInputCheckbox
             {...this.props}
             ref={input => this.input = input}
-            onChangeValue={this.handleChangeValueWithSend}
+            onChangeValue={this.handleChangeValueWithSendAndDebounce}
           />
         );
 
@@ -74,7 +89,7 @@ class FormInput extends Component {
         return (
           <Input
             {...this.props}
-            onChangeValue={this.handleChangeValueWithSend}
+            onChangeValue={this.handleChangeValueWithSendAndDebounce}
             ref={input => this.input = input}
           />
         );
