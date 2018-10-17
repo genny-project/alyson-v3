@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { string, array, number, bool, oneOfType } from 'prop-types';
 import ReactTable from 'react-table';
 import matchSorter from 'match-sorter';
-import 'react-table/react-table.css';
+import  debounce  from 'lodash.debounce';
 
-import {  Text, Box,Touchable } from '../../components';
-// import { Bridge } from '../../../utils/vertx';
+import 'react-table/react-table.css';
+import { Bridge } from '../../../utils/vertx';
+import {  Text, Box, Button } from '../../components';
 
 import './table.scss';
 
@@ -23,6 +24,7 @@ class TableView extends Component {
     tableHeight: 200,
     tableWidth: '100%',
     containerBackgroundColor: '#fff',
+    buttonTextColor: 'white',
   };
 
   static propTypes = {
@@ -34,63 +36,95 @@ class TableView extends Component {
     tableHeight: oneOfType( [number, string] ),
     tableWidth: oneOfType( [number, string] ),
     containerBackgroundColor: string,
+    buttonTextColor: string,
+  };
+
+  constructor( props ) {
+    super( props );
+
+    this.sendMessageToBridge = debounce( this.sendMessageToBridge, 500 );
+  }
+ 
+  handleCellDataChange = cellInfo1 => event => {
+    const { value } = event.target;
+
+    console.warn({ cellInfo1, value });
+
+    /* Send data to the bridge */
+    this.sendMessageToBridge({
+      attributeCode: cellInfo1.column.attributeCode,
+      sourceCode: cellInfo1.column.sourceCode,
+      targetCode: cellInfo1.column.targetCode,
+      value: value,
+    });
+  }
+
+  sendMessageToBridge = message => {
+    return Bridge.sendAnswer( [message] );
   };
 
   modifiedTableColumns = () => {
     /* make all the columns searchable  this is used for searching oneach column */
     const addFilterMethodsToColumn =  () => {
       const { columns   } = this.props;
-
+      
       if ( columns.length < 1 ) return null;
       const modifiedCells = columns.map( column => {
         return ({ ...column, ...{ filterMethod: utilMethod }, ...{ filterAll: true } });
-      }); 
+      });
  
+      console.log({ modifiedCells });
+
       return modifiedCells;
     };
-
+    
     /* add buttons to the data (if it is asked in - in the props) */
-    const addCustomComponentsToColumn = () => { 
+    const addCustomComponentsToColumn = () => {
+      const { data, buttonTextColor } = this.props;
       const modifiedData = addFilterMethodsToColumn();
 
-      console.warn( 'MODIFIED DATA', modifiedData );
-
-      /* method for returning the view */
-      const renderButtons = ( buttonComponents ) => { 
-        console.warn( 'BUTTONCOMPONENT PASS FROM addButtonsFunctions',buttonComponents );
-
-        const renderButtons = () => {
+      const renderButtons = ( cellInfo, buttonComponents ) => {
+        console.warn({ cellInfo }, '%%%%%%%%%%%%%%%%%%' );
+        const renderButtons2 = () => {
           /* check if buttonComponents data is passed from the */
           /* props if then render those buttons inside the table */
           if ( buttonComponents && buttonComponents.length > 0 ) { 
             return buttonComponents.map( btn => (
               <Box key={btn.text}>
-                {/* Using Touchable  Component to get access to dispatchActionsOnClick method */}
-                <Touchable
+                <Button
                   size="sm"
-                  color="red"
+                  color="green"
                   height="40px"
                   width="50px"
+                  textColor={buttonTextColor}
                   backgroundColor="green"
-                  dispatchActionOnClick={{ type: 'DIALOG_TOGGLE', payload: { layoutName: 'test', show: true } }}
+                  dispatchActionOnClick={{ type: 'DIALOG_TOGGLE', payload: { layoutName: 'testtable', show: true } }}
                 >
                   <Text>
                     {btn.text}
                   </Text>
-                </Touchable>
+                </Button>
               </Box>
             ));
           }
-
-          return null;
+           
+          return (
+            <Fragment>
+              <input
+                defaultValue={data[cellInfo.index][cellInfo.column.id]}
+                style={inputStyle}
+                onChange={this.handleCellDataChange( cellInfo )}
+              />
+            </Fragment>
+          );
         };
-
+        
         return (
           <Box
             justifyContent="space-around"
+            height="100%"
           >
-
-            {renderButtons()}
+            {renderButtons2()}
 
           </Box>
         );
@@ -98,10 +132,8 @@ class TableView extends Component {
 
       /* method for adding an extra data */
       const addButtonsToModifiedData = modifiedData.map(
-        data => ({ ...data, ...{ Cell: renderButtons( data.buttonComponent ) } })
+        data => ({ ...data, Cell: cellInfo => renderButtons( cellInfo, data.buttonComponent ) })
       );
-
-      console.warn( this.props, 'PROPS LOG FROM ADD CUSTOM COMPONENTS TO COLUMN' );
 
       return addButtonsToModifiedData;
     };
@@ -128,8 +160,7 @@ class TableView extends Component {
       tableWidth,
       tableBackgroundColor,
       containerBackgroundColor );
-    // this.addFilterMethodsToColumn();
-
+    
     return (
       <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
         <ReactTable
@@ -150,11 +181,9 @@ class TableView extends Component {
 
 export default TableView;
 
-/* input style redundant right now while testing */
-// const inputStyle = {
-//   border: 'none',
-//   height: '100%',
-//   width: '100%',
-//   padding: 4,
-
-// };
+const inputStyle = {
+  border: 'none',
+  height: '100%',
+  width: '100%',
+  padding: '4px',
+};

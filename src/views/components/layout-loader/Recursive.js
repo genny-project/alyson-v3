@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
 import { connect } from 'react-redux';
-import { object, any, string, array, oneOfType, oneOf } from 'prop-types';
+import { object, any, string, array, oneOfType, bool } from 'prop-types';
 import { doesValueMatch } from '../../../utils/data-query/operators/find';
 import { isObject, isArray, isString } from '../../../utils';
 import { store } from '../../../redux';
@@ -22,7 +22,7 @@ class Recursive extends Component {
     variant: string,
     theme: object,
     useThemeFrom: string,
-    sort: oneOf( ['reverse'] ),
+    repeatCopiesPropsOntoRecursive: bool,
   };
 
   handleMapCurlyTemplate = template => {
@@ -114,9 +114,7 @@ class Recursive extends Component {
     }, {});
   }
 
-  handleReducePropInjection = ( result, current, index ) => {
-    const { context } = this.props;
-
+  handleReducePropInjection = context => ( result, current, index ) => {
     if (
       result[current] == null &&
       result[index] == null
@@ -149,7 +147,8 @@ class Recursive extends Component {
     }
 
     if ( isArray( result[current] )) {
-      result[current] = result[current].reduce( this.handleReducePropInjection, result[current] );
+      result[current] =
+        result[current].reduce( this.handleReducePropInjection( context ), result[current] );
 
       return result;
     }
@@ -165,9 +164,9 @@ class Recursive extends Component {
       }
 
       if ( result[current] ) {
-        result[current] = keys.reduce( this.handleReducePropInjection, result[current] );
+        result[current] = keys.reduce( this.handleReducePropInjection( context ), result[current] );
       } else {
-        result[index] = keys.reduce( this.handleReducePropInjection, result[index] );
+        result[index] = keys.reduce( this.handleReducePropInjection( context ), result[index] );
       }
       // console.warn( 'Result', result );
 
@@ -203,7 +202,7 @@ class Recursive extends Component {
    * If the prop is not a string, simply return its current value so that functions work
    * correctly.
    */
-  injectContextIntoProps( props ) {
+  injectContextIntoProps( props, context = this.props.context ) {
     // console.warn( this.props.component, props );
     if ( !isObject( props )) return {};
 
@@ -211,7 +210,8 @@ class Recursive extends Component {
     let afterProps;
 
     try {
-      afterProps = Object.keys( propsCopy ).reduce( this.handleReducePropInjection, propsCopy );
+      afterProps =
+        Object.keys( propsCopy ).reduce( this.handleReducePropInjection( context ), propsCopy );
     } catch ( e ) {
       console.error( 'FOUND IT' );
     }
@@ -295,7 +295,7 @@ class Recursive extends Component {
       dontShowIf,
       conditional,
       theme,
-      recursiveProps,
+      repeatCopiesPropsOntoRecursive,
     } = this.props;
 
     if ( !component || !Components[component] ) {
@@ -331,15 +331,12 @@ class Recursive extends Component {
      *
      * Investigate performance optimisation
      */
-    const injectedRecursiveProps = this.injectContextIntoProps( recursiveProps );
-
     const repeatedChildren = isArray( injectedRepeat ) ? (
       injectedRepeat.map(( child, index ) => ({
         ...children,
         props: {
           ...children.props,
           ...isArray( child ) ? child : {},
-          test: 7,
         },
         context: {
           ...context,
@@ -349,15 +346,11 @@ class Recursive extends Component {
           },
           parentRepeater: context.repeater,
         },
-        ...injectedRecursiveProps,
-        recursiveProps: this.injectContextIntoProps( recursiveProps ),
-        test: 6,
       }))
     ) : (
       this.injectContextIntoChildren( context, children )
     );
     const componentProps = this.injectContextIntoProps({
-      ...injectedRecursiveProps,
       ...(
         variant &&
         theme.components[useThemeFrom || component] &&
@@ -366,38 +359,42 @@ class Recursive extends Component {
       ),
       ...props,
       ...this.calculateConditionalProps( conditional, context ),
-      test: 5,
     });
 
     return createElement(
       Components[component],
       componentProps,
       isArray( repeatedChildren ) ? (
-        repeatedChildren
-          .sort( this.handleSortRepeatedChildren )
-          .map(( child, index ) => (
-            isValidElement( child )
-              ? cloneElement( child, { key: index, context, theme })
-              : (
-                <Recursive
-                  context={context}
+        repeatedChildren.map(( child, index ) => (
+          isValidElement( child )
+            ? (
+              cloneElement( child, {
+                key:
+                index,
+                context,
+                theme,
+              })
+            ) : (
+              <Recursive
+                context={context}
                 // eslint-disable-next-line react/no-array-index-key
-                  key={index}
-                  theme={theme}
-                  {...child}
-                />
-              )
-          ))
+                key={index}
+                theme={theme}
+                {...child}
+                {...repeatCopiesPropsOntoRecursive
+                  ? this.injectContextIntoProps( child.props, child.context )
+                  : {}}
+              />
+            )
+        ))
       ) : isObject( repeatedChildren ) ? (
         isValidElement( repeatedChildren )
-          ? cloneElement( repeatedChildren, { context, theme, ...injectedRecursiveProps, test: 2 })
+          ? cloneElement( repeatedChildren, { context, theme })
           : (
             <Recursive
               context={context}
               theme={theme}
               {...repeatedChildren}
-              {...injectedRecursiveProps}
-              test={1}
             />
           )
       ) : (

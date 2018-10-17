@@ -2,17 +2,24 @@ import React, { Component } from 'react';
 import { number, string, oneOf } from 'prop-types';
 
 class Marker extends Component {
-  static propTypes = { 
+  static propTypes = {
     lat: oneOf( [string, number] ),
     lng: oneOf( [string, number] ),
+    markerColor: string,
+    markerSize: number,
+  }
+
+  static defaultProps = { 
+    markerColor: 'red',
+    markerSize: 20,
   }
 
   render() {
-    const {  lat, lng } = this.props;
- 
+    const {  lat, lng, markerColor ,markerSize } = this.props;
+
     return (
       <i
-        style={{ transform: 'translate(-50%, -50%)'  }}
+        style={{ transform: 'translate(-50%, -50%)', color: markerColor, fontSize: markerSize  }}
         className="fas fa-map-marker"
         lat={lat}
         lng={lng}
