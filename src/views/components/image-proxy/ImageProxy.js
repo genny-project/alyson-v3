@@ -85,11 +85,11 @@ class ImageProxy extends Component {
 
     const options = [];
 
-    if ( screenWidth || screenHeight ) {
+    if ( screenWidth || screenHeight || imageWidth || imageHeight ) {
       const { width, height } = Dimensions.get( 'window' );
 
-      const newWidth = ( screenWidth && width ) || imageWidth;
-      const newHeight = ( screenHeight && height ) || imageHeight;
+      const newWidth = ( screenWidth && width * 2 ) || imageWidth;
+      const newHeight = ( screenHeight && height * 2 ) || imageHeight;
 
       console.warn( `${newWidth}${newWidth && newHeight ? 'x' : ''}${newHeight}` );
 
