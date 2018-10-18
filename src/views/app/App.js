@@ -29,6 +29,21 @@ class App extends Component {
   }
 
   handleBackPress = () => {
+    const currentLocation = location.getBasePath();
+
+    const exitableRoutes = [
+      '/home',
+      '/splash',
+    ];
+
+    const exitOnBack = exitableRoutes.includes( currentLocation );
+
+    if ( exitOnBack ) {
+      BackHandler.exitApp();
+
+      return true;
+    }
+
     location.goBack();
 
     return true;
