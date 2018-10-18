@@ -56,8 +56,6 @@ class App extends Component {
   render() {
     const { layoutEditorOpen } = this.state;
 
-    console.log( 'RENDERING APP' );
-
     return (
       <AuthenticatedApp>
         { !layoutEditorOpen && <Routing /> }
