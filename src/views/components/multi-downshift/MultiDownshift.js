@@ -5,6 +5,7 @@
 import React from 'react';
 import Downshift from 'downshift';
 import { func, array } from 'prop-types';
+import shallowCompare from '../../../utils/shallow-compare';
 
 class MultiDownshift extends React.Component {
   static propTypes = {
@@ -13,6 +14,8 @@ class MultiDownshift extends React.Component {
     render: func,
     children: func,
     selectedItems: array,
+    addItemFunction: func,
+    removeItemFunction: func,
   }
 
   state = { selectedItems: [] }
@@ -94,10 +97,14 @@ class MultiDownshift extends React.Component {
   }
 
   removeItem = ( item, downshift ) => {
+    const { removeItemFunction } = this.props;
+
     if ( item != null ) {
       this.setState(({ selectedItems }) => {
         return {
-          selectedItems: selectedItems.filter( i => item != null && i.value !== item.value ),
+          selectedItems: removeItemFunction
+            ? removeItemFunction( selectedItems, item )
+            : selectedItems.filter( i => shallowCompare( i, item )),
         };
       }, () => {
         this.callOnChange( downshift );
@@ -114,14 +121,15 @@ class MultiDownshift extends React.Component {
   }
 
   addSelectedItem( item, downshift ) {
+    const { addItemFunction } = this.props;
+
     this.setState(
       ({ selectedItems }) => ({
-        selectedItems: selectedItems.filter(
-          i => i != null &&
-          item != null &&
-          i.value === item.value ).length > 0
-          ? selectedItems
-          : [...selectedItems, item],
+        selectedItems: addItemFunction
+          ? addItemFunction( selectedItems, item )
+          : selectedItems.filter( i => shallowCompare( i, item )).length === 0
+            ? [...selectedItems, item]
+            : selectedItems,
       }), () => {
         this.callOnChange( downshift );
       }
