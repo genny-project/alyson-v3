@@ -86,12 +86,6 @@ class InputTag extends Component {
     );
   }
 
-  clearPreSelection = () => {
-    this.setState({
-      preSelected: [],
-    });
-  }
-
   render() {
     const {
       items,
@@ -114,6 +108,16 @@ class InputTag extends Component {
           ? value.map( i => isObject( i ) ? i
           : { [itemStringKey]: i, [itemValueKey]: i }) : null
         }
+        addItemFunction={(( selectedItems, newItem ) => (
+          selectedItems.filter( i => (
+            newItem != null &&
+            i[itemValueKey] === newItem[itemValueKey] )).length === 0
+            ? [...selectedItems, newItem]
+            : selectedItems
+        ))}
+        removeItemFunction={(( selectedItems, newItem ) => (
+          selectedItems.filter( i => i[itemValueKey] !== newItem[itemValueKey] )
+        ))}
       >
         {({
           getRootProps,
@@ -226,7 +230,7 @@ class InputTag extends Component {
                         {...getRemoveButtonProps({
                           withFeedback: true,
                           onPress: () => {
-                            removeItem( item );
+                            removeItem( item,  );
                             this.removeItemToPreSelection( item );
                           },
                           style: {
@@ -381,7 +385,7 @@ class InputTag extends Component {
                                 selectItem({
                                   [itemStringKey]: itemString,
                                   [itemValueKey]: itemId,
-                                });
+                                }, );
                                 clearSelection();
                               }
                             },
