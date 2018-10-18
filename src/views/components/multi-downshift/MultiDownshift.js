@@ -41,12 +41,13 @@ class MultiDownshift extends React.Component {
 
   getStateAndHelpers( downshift ) {
     const { selectedItems } = this.state;
-    const { getRemoveButtonProps, removeItem } = this;
+    const { getRemoveButtonProps, removeItem, selectMultipleItems } = this;
 
     return {
       getRemoveButtonProps: getRemoveButtonProps( downshift ),
       removeItem,
       selectedItems,
+      selectMultipleItems: selectMultipleItems( downshift ),
       ...downshift,
     };
   }
@@ -89,21 +90,14 @@ class MultiDownshift extends React.Component {
   };
 
   handleSelection = ( selectedItem, downshift ) => {
-    // if ( this.state.selectedItems.includes( selectedItem )) {
-    //   this.removeItem( selectedItem );
-    // } else {
     this.addSelectedItem( selectedItem, downshift );
-    // }
   }
 
   removeItem = ( item, downshift ) => {
-    if (
-      item != null &&
-      this.state.selectedItems !== this.state.selectedItems.filter( i => i !== item )
-    ) {
+    if ( item != null ) {
       this.setState(({ selectedItems }) => {
         return {
-          selectedItems: selectedItems.filter( i => i !== item ),
+          selectedItems: selectedItems.filter( i => item != null && i.value !== item.value ),
         };
       }, () => {
         this.callOnChange( downshift );
@@ -111,10 +105,23 @@ class MultiDownshift extends React.Component {
     }
   }
 
+  selectMultipleItems = ( downshift ) => ( items ) => {
+    this.setState(({
+      selectedItems: items,
+    }), () => {
+      this.callOnChange( downshift );
+    });
+  }
+
   addSelectedItem( item, downshift ) {
     this.setState(
       ({ selectedItems }) => ({
-        selectedItems: [...selectedItems, item],
+        selectedItems: selectedItems.filter(
+          i => i != null &&
+          item != null &&
+          i.value === item.value ).length > 0
+          ? selectedItems
+          : [...selectedItems, item],
       }), () => {
         this.callOnChange( downshift );
       }

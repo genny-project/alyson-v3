@@ -12,7 +12,7 @@ class InputTag extends Component {
     itemStringKey: 'label',
     itemValueKey: 'value',
     itemIdKey: 'id',
-    allowNewTags: false,
+    allowNewTags: true,
   }
 
   static propTypes = {
@@ -24,14 +24,21 @@ class InputTag extends Component {
     itemIdKey: string,
     value: array,
     allowNewTags: bool,
+    allowMultipleSelection: bool,
     tagsWrapperProps: object,
     renderTag: object,
     renderSuggestion: object,
   }
 
+  state = { preSelected: [] }
+
   handleChange = selectedItems => {
-    if ( this.props.onChangeValue )
-      this.props.onChangeValue( selectedItems );
+    if ( this.props.onChangeValue ) {
+      this.props.onChangeValue( selectedItems.map( i => i[this.props.itemValueKey]
+        ? i[this.props.itemValueKey]
+        : i
+      ));
+    }
   }
 
   handleFilter = ( inputValue, selectedItems ) => dropdownItem => {
@@ -57,13 +64,42 @@ class InputTag extends Component {
     return false;
   }
 
+  addItemToPreSelection = ( item ) => {
+    const { itemValueKey } = this.props;
+
+    this.setState(
+      ({ preSelected }) => ({
+        preSelected: preSelected.filter( i => i[itemValueKey] === item[itemValueKey] ).length > 0
+          ? preSelected.filter( i => i[itemValueKey] !== item[itemValueKey] )
+          : [...preSelected, item],
+      })
+    );
+  }
+
+  removeItemToPreSelection = ( item ) => {
+    const { itemValueKey } = this.props;
+
+    this.setState(
+      ({ preSelected }) => ({
+        preSelected: preSelected.filter( i => i[itemValueKey] !== item[itemValueKey] ),
+      })
+    );
+  }
+
+  clearPreSelection = () => {
+    this.setState({
+      preSelected: [],
+    });
+  }
+
   render() {
     const {
       items,
       value,
       itemStringKey,
-      itemIdKey,
+      itemValueKey,
       allowNewTags,
+      allowMultipleSelection,
       tagsWrapperProps,
       renderTag,
       renderSuggestion,
@@ -74,7 +110,10 @@ class InputTag extends Component {
       <MultiDownshift
         onChange={this.handleChange}
         itemToString={this.itemToString}
-        selectedItems={value}
+        selectedItems={isArray( value )
+          ? value.map( i => isObject( i ) ? i
+          : { [itemStringKey]: i, [itemValueKey]: i }) : null
+        }
       >
         {({
           getRootProps,
@@ -90,6 +129,7 @@ class InputTag extends Component {
           selectItem,
           onInputValueChange,
           clearSelection,
+          selectMultipleItems,
         }) => (
           <Box
             {...getRootProps( undefined, { suppressRefError: true })}
@@ -127,16 +167,29 @@ class InputTag extends Component {
             >
               {selectedItems.length > 0 && (
                 selectedItems.map( item => {
+                  const itemString = isObject( item ) ? item[itemStringKey] : item;
+                  const itemId = isObject( item ) ? item[itemValueKey] : item;
+
                   if ( renderTag ) {
                     return (
                       <LayoutConsumer>
                         {layout => {
                           const context = {
                             item: {
-                              ...items.filter( x => x.label === item )[0],
+                              [itemStringKey]: itemString,
+                              [itemValueKey]: itemId,
                             },
                             layout,
-                            onPress: () => removeItem( item ),
+                            onPress: () => {
+                              removeItem({
+                                [itemStringKey]: itemString,
+                                [itemValueKey]: itemId,
+                              });
+                              this.removeItemToPreSelection({
+                                [itemStringKey]: itemString,
+                                [itemValueKey]: itemId,
+                              });
+                            },
                           };
 
                           return (
@@ -152,7 +205,7 @@ class InputTag extends Component {
 
                   return (
                     <Box
-                      key={item}
+                      key={itemId}
                       alignItems="center"
                       marginRight={10}
                       marginBottom={10}
@@ -165,14 +218,17 @@ class InputTag extends Component {
                     >
                       <Box marginLeft={5}>
                         <Text color="#grey">
-                          {item}
+                          {itemString}
                         </Text>
                       </Box>
 
                       <Touchable
                         {...getRemoveButtonProps({
                           withFeedback: true,
-                          onPress: () => removeItem( item ),
+                          onPress: () => {
+                            removeItem( item );
+                            this.removeItemToPreSelection( item );
+                          },
                           style: {
                             padding: 10,
                           },
@@ -229,7 +285,7 @@ class InputTag extends Component {
                       type: 'text',
                       clearButtonMode: 'while-editing',
                       autoFocus: true,
-                      paddingLeft: 50,
+                      paddingLeft: selectMultipleItems ? 50 : 15,
                       paddingY: 15,
                       width: '100%',
                       backgroundColor: 'transparent',
@@ -239,24 +295,52 @@ class InputTag extends Component {
                     })}
                   />
 
-                  {inputValue ? (
+                  { allowMultipleSelection && selectMultipleItems ? (
+                    <Touchable
+                      withFeedback
+                      onPress={() => {
+                        selectMultipleItems( this.state.preSelected );
+                        clearSelection();
+                      }}
+                    >
+                      <Box
+                        height="100%"
+                        alignItems="center"
+                        padding={10}
+                        borderBottomWidth={2}
+                        borderColor="#DDD"
+                        borderStyle="solid"
+                        backgroundColor="#DDD"
+                      >
+                        <Icon
+                          name="done"
+                          color="black"
+                          size="md"
+                        />
+                      </Box>
+                    </Touchable>
+                  ) : null}
+
+                  { inputValue ? (
                     <Box
                       position="absolute"
                       height="100%"
                       alignItems="center"
-                      right={10}
+                      right={selectMultipleItems ? 50 : 10}
                       zIndex={5}
                     >
-                      <Touchable
-                        withFeedback
-                        onPress={clearSelection}
-                      >
-                        <Icon
-                          name="close"
-                          color="black"
-                          size="md"
-                        />
-                      </Touchable>
+                      { inputValue ? (
+                        <Touchable
+                          withFeedback
+                          onPress={clearSelection}
+                        >
+                          <Icon
+                            name="close"
+                            color="black"
+                            size="md"
+                          />
+                        </Touchable>
+                      ) : null }
                     </Box>
                   ) : null}
                 </Box>
@@ -270,8 +354,15 @@ class InputTag extends Component {
                     .filter( this.handleFilter( inputValue ))
                     .map(( item, index ) => {
                       const itemString = isObject( item ) ? item[itemStringKey] : item;
-                      const itemId = isObject( item ) ? item[itemIdKey] : item;
-                      const isSelected = selectedItems && selectedItems.includes( itemString );
+                      const itemId = isObject( item ) ? item[itemValueKey] : item;
+                      const isSelected = allowMultipleSelection
+                        ? (
+                          this.state.preSelected &&
+                          this.state.preSelected.filter(
+                            i => i[itemValueKey] === itemId
+                          ).length > 0
+                        )
+                        : selectedItems && selectedItems.includes( itemString );
 
                       return (
                         <Touchable
@@ -280,8 +371,19 @@ class InputTag extends Component {
                             item,
                             withFeedback: true,
                             onPress: () => {
-                              selectItem( itemString );
-                              clearSelection();
+                              if ( allowMultipleSelection ) {
+                                this.addItemToPreSelection({
+                                  [itemStringKey]: itemString,
+                                  [itemValueKey]: itemId,
+                                });
+                              }
+                              else {
+                                selectItem({
+                                  [itemStringKey]: itemString,
+                                  [itemValueKey]: itemId,
+                                });
+                                clearSelection();
+                              }
                             },
                           })}
                         >
