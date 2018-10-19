@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@reach/dialog": "^0.1.2",
+    "@reach/menu-button": "^0.1.7",
     "@reach/visually-hidden": "^0.1.1",
     "appcenter": "^1.6.0",
     "appcenter-analytics": "^1.6.0",
