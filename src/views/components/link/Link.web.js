@@ -20,7 +20,7 @@ class Link extends Component {
   }
 
   handleNavigate = event => {
-    const { disabled, to } = this.props;
+    const { disabled, to, history } = this.props;
 
     if ( !disabled )
       history.push( to );
