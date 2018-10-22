@@ -143,7 +143,9 @@ class InputAddress extends Component {
     const { place_id } = item;
 
     try {
-      const places = await google.geocodeAddress({ place_id });
+      const places = await google.geocodeAddress({
+        placeId: place_id,
+      });
 
       if (
         !places ||
@@ -154,6 +156,8 @@ class InputAddress extends Component {
       }
 
       const formattedPlace = this.formatPlace( places[0] );
+
+      console.log( formattedPlace );
 
       if ( this.props.onChange ) {
         this.props.onChange({
