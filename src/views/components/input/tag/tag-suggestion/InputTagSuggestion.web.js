@@ -11,6 +11,8 @@ class InputTagSuggestion extends Component {
     isSelected: bool,
     isHighlighted: bool,
     touchableProps: object,
+    allowMultipleSelection: bool,
+    functions: object,
   }
 
   render() {
@@ -20,12 +22,23 @@ class InputTagSuggestion extends Component {
       itemString,
       isSelected,
       isHighlighted,
-      touchableProps,
+      allowMultipleSelection,
+      functions,
     } = this.props;
 
     return (
       <Touchable
-        {...touchableProps}
+        withFeedback
+        onPress={() => {
+          if ( allowMultipleSelection ) {
+            functions.addItemToPreSelection( item, functions.selectMultipleItems );
+          }
+          else {
+            functions.selectItem( item, );
+            functions.clearSelection();
+            functions.handleToggleMenu();
+          }
+        }}
       >
         {
           renderProp

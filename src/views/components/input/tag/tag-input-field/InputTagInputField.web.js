@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { object, func, bool, string } from 'prop-types';
-import { Box, Input } from '../../../index';
+import { Box, Input, Icon } from '../../../index';
 
 class InputTagInputField extends Component {
   static propTypes = {
@@ -11,6 +11,7 @@ class InputTagInputField extends Component {
     shouldFocus: bool,
     inputValue: string,
     onChangeValue: func,
+    isOpen: bool,
   }
 
   render() {
@@ -25,7 +26,9 @@ class InputTagInputField extends Component {
 
     return (
       <Box
-        flexDirection="column"
+        zIndex={10}
+        position="relative"
+        flexDirection="row"
         onClick={() => {
           onPress();
           shouldFocus && this.input.focus();
@@ -38,9 +41,22 @@ class InputTagInputField extends Component {
             width: '100%',
             ref: input => this.input = input,
             onChangeValue: onChangeValue,
-            value: inputValue,
+            value: inputValue || '',
           })}
         />
+        <Box
+          position="absolute"
+          height="100%"
+          alignItems="center"
+          right={10}
+          zIndex={5}
+        >
+          <Icon
+            name={!shouldFocus ? 'keyboard-arrow-down' : 'keyboard-arrow-up'}
+            color="black"
+            size="md"
+          />
+        </Box>
       </Box>
     );
   }

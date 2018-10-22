@@ -71,7 +71,7 @@ class InputTag extends Component {
     return false;
   }
 
-  addItemToPreSelection = ( item ) => {
+  addItemToPreSelection = ( item, callback ) => {
     const { itemValueKey } = this.props;
 
     this.setState(
@@ -79,8 +79,9 @@ class InputTag extends Component {
         preSelected: preSelected.filter( i => i[itemValueKey] === item[itemValueKey] ).length > 0
           ? preSelected.filter( i => i[itemValueKey] !== item[itemValueKey] )
           : [...preSelected, item],
-      })
-    );
+      }), () => {
+        if ( callback ) callback( this.state.preSelected );
+      });
   }
 
   removeItemToPreSelection = ( item ) => {
@@ -110,6 +111,7 @@ class InputTag extends Component {
     return (
        // STATE HOLDER
       <MultiDownshift
+        allowMultipleSelection
         onChange={this.handleChange}
         itemToString={this.itemToString}
         selectedItems={isArray( value )
@@ -137,7 +139,7 @@ class InputTag extends Component {
           inputValue,
           selectedItems,
           highlightedIndex,
-          toggleMenu,
+          handleToggleMenu,
           selectItem,
           onInputValueChange,
           clearSelection,
@@ -149,12 +151,14 @@ class InputTag extends Component {
               ...getRootProps( undefined, { suppressRefError: true }),
               flexDirection: 'column',
             }}
+            isOpen={isOpen}
+            handleToggleMenu={handleToggleMenu}
           >
             {/* INPUT */ }
             <InputTagInputField
               inputProps={restProps}
               getInputProps={getInputProps}
-              onPress={toggleMenu}
+              onPress={handleToggleMenu}
               shouldFocus={!isOpen}
               inputValue={inputValue}
               onChangeValue={onInputValueChange}
@@ -200,14 +204,14 @@ class InputTag extends Component {
                 })
               )}
             </Box>
-
             {/* SUGGESTIONS CONTAINER */ }
             <InputTagSuggestionContainer
               isOpen={isOpen}
-              onPressClose={toggleMenu}
+              onPressClose={handleToggleMenu}
               onPressClear={clearSelection}
               onPressItem={() => {
                 selectMultipleItems( this.state.preSelected );
+                handleToggleMenu();
                 clearSelection();
               }}
               inputValue={inputValue}
@@ -259,22 +263,15 @@ class InputTag extends Component {
                         itemString={itemString}
                         isSelected={isSelected}
                         isHighlighted={highlightedIndex === index}
-                        touchableProps={getItemProps({
-                          item,
-                          withFeedback: true,
-                          onPress: () => {
-                            if ( allowMultipleSelection ) {
-                              // TODO: Web version fires onMouseUp from downshift package,
-                              // which closes the dropdown section.
-                              // must control isOpen state in MultiDownshift
-                              this.addItemToPreSelection( itemObject );
-                            }
-                            else {
-                              selectItem( itemObject, );
-                              clearSelection();
-                            }
-                          },
-                        })}
+                        getItemProps={getItemProps}
+                        allowMultipleSelection={allowMultipleSelection}
+                        functions={{
+                          selectMultipleItems: selectMultipleItems,
+                          addItemToPreSelection: this.addItemToPreSelection,
+                          selectItem: selectItem,
+                          clearSelection: clearSelection,
+                          handleToggleMenu: handleToggleMenu,
+                        }}
                       />
                     );
                   })

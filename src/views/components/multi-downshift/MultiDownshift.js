@@ -4,7 +4,7 @@
 
 import React from 'react';
 import Downshift from 'downshift';
-import { func, array } from 'prop-types';
+import { func, array, bool } from 'prop-types';
 import shallowCompare from '../../../utils/shallow-compare';
 
 class MultiDownshift extends React.Component {
@@ -16,9 +16,13 @@ class MultiDownshift extends React.Component {
     selectedItems: array,
     addItemFunction: func,
     removeItemFunction: func,
+    allowMultipleSelection: bool,
   }
 
-  state = { selectedItems: [] }
+  state = {
+    selectedItems: [],
+    isOpen: false,
+  }
 
   componentDidMount() {
     this.populateSelectedItems();
@@ -44,13 +48,14 @@ class MultiDownshift extends React.Component {
 
   getStateAndHelpers( downshift ) {
     const { selectedItems } = this.state;
-    const { getRemoveButtonProps, removeItem, selectMultipleItems } = this;
+    const { getRemoveButtonProps, removeItem, selectMultipleItems, handleToggleMenu } = this;
 
     return {
       getRemoveButtonProps: getRemoveButtonProps( downshift ),
       removeItem,
       selectedItems,
       selectMultipleItems: selectMultipleItems( downshift ),
+      handleToggleMenu,
       ...downshift,
     };
   }
@@ -120,6 +125,15 @@ class MultiDownshift extends React.Component {
     });
   }
 
+  handleToggleMenu = () => {
+    this.setState(
+      ({ isOpen }) => {
+        return {
+          isOpen: !isOpen,
+        };
+      });
+  }
+
   addSelectedItem( item, downshift ) {
     const { addItemFunction } = this.props;
 
@@ -138,11 +152,12 @@ class MultiDownshift extends React.Component {
 
   render() {
     const { render, children = render, ...props } = this.props;
+    const { isOpen } = this.state;
 
-    // TODO: compose together props (rather than overwriting them) like downshift does
     return (
       <Downshift
         {...props}
+        isOpen={isOpen}
         stateReducer={this.stateReducer}
         onChange={this.handleSelection}
         selectedItem={null}
