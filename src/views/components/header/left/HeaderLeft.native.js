@@ -90,7 +90,10 @@ class HeaderLeft extends Component {
     return (
       <LayoutConsumer>
         {layout => (
-          <Box alignItems="center">
+          <Box
+            alignItems="center"
+            height="100%"
+          >
             {(
               showLogo &&
               !(
@@ -103,9 +106,14 @@ class HeaderLeft extends Component {
                 {...logoOpensMenu && {
                   withFeedback: true,
                   onPress: this.handleToggleMenu,
+                  height: '100%',
                 }}
               >
-                <Box paddingX={10}>
+                <Box
+                  paddingX={15}
+                  height="100%"
+                  alignItems="center"
+                >
                   <Image
                     height={50}
                     width={50}
