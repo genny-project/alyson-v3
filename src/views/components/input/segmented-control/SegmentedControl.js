@@ -1,24 +1,34 @@
 import React, { Component } from 'react';
-import { array, func, string } from 'prop-types';
-import { isArray } from '../../../../utils';
+import { array, func, string, object, number, oneOf } from 'prop-types';
+import { isArray, objectClean } from '../../../../utils';
 import { Box, Text, Touchable } from '../../index';
+
+const textSizes = {
+  xs: 14,
+  sm: 16,
+  md: 18,
+  lg: 20,
+  xl: 24,
+};
 
 class Checkbox extends Component {
   static defaultProps = {
-    backgroundColor: 'white',
-    textColor: '#202532',
-    selectedBackgroundColor: '#202532',
-    selectedTextColor: 'white',
+    color: 'grey',
+    textSize: 'xs',
   }
 
   static propTypes = {
     items: array,
     value: array,
     onChangeValue: func,
-    backgroundColor: string,
-    textColor: string,
-    selectedBackgroundColor: string,
-    selectedTextColor: string,
+    color: string,
+    textSize: oneOf(
+      ['xs','sm','md','lg','xl']
+    ),
+    borderRadius: number,
+    wrapperProps: object,
+    activeStyling: object,
+    inputWrapperProps: object,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -39,7 +49,7 @@ class Checkbox extends Component {
         nextProps.items.length > 0 &&
         nextProps.items[0].value !== null
     ) {
-      return { 
+      return {
         selected: nextProps.items[0].value,
       };
     }
@@ -49,6 +59,7 @@ class Checkbox extends Component {
 
   state = {
     selected: this.props.value,
+    // timer: null,
   }
 
   componentDidMount() {
@@ -90,11 +101,19 @@ class Checkbox extends Component {
         return;
       }
 
-      return { 
+      return {
         selected: value,
       };
     }, () => {
       if ( onChangeValue ) {
+        // clearTimeout( this.state.timer );
+
+        // this.state.timer = setTimeout(
+        //   () => {
+        //     onChangeValue( this.state.selected );
+        //   },
+        //   1000
+        // );
         onChangeValue( this.state.selected );
       }
     });
@@ -103,15 +122,18 @@ class Checkbox extends Component {
   render() {
     const {
       items,
-      backgroundColor,
-      textColor,
-      selectedBackgroundColor,
-      selectedTextColor,
+      color,
+      borderRadius,
+      textSize,
+      activeStyling,
+      wrapperProps,
+      ...restProps
     } = this.props;
     const { selected } = this.state;
-    
+
     return (
       <Box
+        {...wrapperProps}
         flexDirection="row"
         width="100%"
       >
@@ -119,35 +141,44 @@ class Checkbox extends Component {
           selected &&
             isArray( items, { ofMinLength: 1 }) ? (
               items.map(( item, index ) => {
-                const borderCorners = {
-                  borderTopLeftRadius: index === 0 ? 10 : 0,
-                  borderTopRightRadius: index === items.length - 1 ? 10 : 0,
-                  borderBottomRightRadius: index === items.length - 1 ? 10 : 0,
-                  borderBottomLeftRadius: index === 0 ? 10 : 0,
-                };
+                const isSelected = selected === item.value;
+
+                const inputStyle = objectClean({
+                  ...borderRadius
+                    ? {
+                      borderRadius,
+                    }
+                    : {
+                      borderTopLeftRadius: index === 0 ? 10 : 0,
+                      borderTopRightRadius: index === items.length - 1 ? 10 : 0,
+                      borderBottomRightRadius: index === items.length - 1 ? 10 : 0,
+                      borderBottomLeftRadius: index === 0 ? 10 : 0,
+                    },
+                  color,
+                  backgroundColor: 'white',
+                  padding: 15,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flex: 1,
+                  ...restProps,
+                  ...isSelected ? activeStyling : {},
+                });
+
+                const textStyle = objectClean({
+                  color: isSelected && activeStyling.color || color,
+                  size: textSizes[isSelected && activeStyling.textSize || textSize],
+                });
 
                 return (
                   <Touchable
                     key={item.value}
-                    onPress={selected !== item.value ? this.handlePress( item.value ) : null}
+                    onPress={!isSelected ? this.handlePress( item.value ) : null}
                   >
                     <Box
-                      alignItems="center"
-                      justifyContent="center"
-                      flex={1}
-                      padding={15}
-                      backgroundColor={selected === item.value
-                        ? selectedBackgroundColor
-                        : backgroundColor
-                      }
-                      {...borderCorners}
+                      {...inputStyle}
                     >
                       <Text
-                        size="xs"
-                        color={selected === item.value
-                          ? selectedTextColor
-                          : textColor
-                        }
+                        {...textStyle}
                       >
                         {item.label}
                       </Text>
