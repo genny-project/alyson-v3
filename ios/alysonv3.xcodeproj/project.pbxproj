@@ -17,7 +17,6 @@
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		135B7E7624204621A89AA340 /* libReactNativeConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E3751B92C4CD4DB288DE81E9 /* libReactNativeConfig.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
-		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -42,10 +41,10 @@
 		38AB5B030EFB42B1AEA3F3BC /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C63DDD6042F0417B87B57707 /* Feather.ttf */; };
 		4059772394714E768A6D1844 /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 45A766C22A80414585DB5FFB /* libRNImagePicker.a */; };
 		48024EA521196B8C002C3D74 /* libRNAudioRecorderPlayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 48024E9F21196B7D002C3D74 /* libRNAudioRecorderPlayer.a */; };
+		48AE891E21533ABC008055DC /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
 		48F02705211AC1A700182492 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 48F02702211AC1A000182492 /* libRNFS.a */; };
 		50E00884D6214FDEA6D37BC9 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6119C574FB29498F8AE924C9 /* EvilIcons.ttf */; };
 		52DF58A1FC0A475EBE1898FF /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2F562D77D87147BDAF2ED055 /* Entypo.ttf */; };
-		5A2000CB9B664880A1D16132 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 175B75617CEB4F9BB5C3947A /* AppCenter-Config.plist */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		6EF5792531F44FC097D41F95 /* libRNBlur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 650704969A5C47C3A6608A0C /* libRNBlur.a */; };
 		7E68D74B3E3643FE934395B8 /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F8360B4C7FF43C095F7DBAA /* libRNGestureHandler.a */; };
@@ -459,7 +458,6 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = alysonv3/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = alysonv3/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
-		175B75617CEB4F9BB5C3947A /* AppCenter-Config.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "AppCenter-Config.plist"; path = "alysonv3/AppCenter-Config.plist"; sourceTree = "<group>"; };
 		1A20999BFDF146E89267DE75 /* libAppCenterReactNativeCrashes.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libAppCenterReactNativeCrashes.a; sourceTree = "<group>"; };
 		1D284773B1914F02BE9447ED /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* alysonv3-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "alysonv3-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -472,6 +470,7 @@
 		40D0769068D4787F33E27B15 /* Pods-alysonv3.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-alysonv3.debug.xcconfig"; path = "Pods/Target Support Files/Pods-alysonv3/Pods-alysonv3.debug.xcconfig"; sourceTree = "<group>"; };
 		45A766C22A80414585DB5FFB /* libRNImagePicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNImagePicker.a; sourceTree = "<group>"; };
 		48024E7021196B7C002C3D74 /* RNAudioRecorderPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNAudioRecorderPlayer.xcodeproj; path = "../node_modules/react-native-audio-recorder-player/ios/RNAudioRecorderPlayer.xcodeproj"; sourceTree = "<group>"; };
+		48AE88BB215327F1008055DC /* libyoga.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libyoga.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		48EDE4F5211C10F900526866 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		48F026FC211AC1A000182492 /* RNFS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNFS.xcodeproj; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; };
 		5BBE3572F32500D814486635 /* Pods-alysonv3.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-alysonv3.release.xcconfig"; path = "Pods/Target Support Files/Pods-alysonv3/Pods-alysonv3.release.xcconfig"; sourceTree = "<group>"; };
@@ -518,6 +517,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48AE891E21533ABC008055DC /* libRCTWebSocket.a in Frameworks */,
 				48F02705211AC1A700182492 /* libRNFS.a in Frameworks */,
 				48024EA521196B8C002C3D74 /* libRNAudioRecorderPlayer.a in Frameworks */,
 				B146B94020EC7E300012B2F9 /* libRCTPushNotification.a in Frameworks */,
@@ -533,7 +533,6 @@
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
-				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				6EF5792531F44FC097D41F95 /* libRNBlur.a in Frameworks */,
 				7E68D74B3E3643FE934395B8 /* libRNGestureHandler.a in Frameworks */,
 				4059772394714E768A6D1844 /* libRNImagePicker.a in Frameworks */,
@@ -700,6 +699,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				48AE88BB215327F1008055DC /* libyoga.a */,
 				48EDE4F5211C10F900526866 /* AVFoundation.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				7DAEFFAE447C62064745080F /* libPods-alysonv3.a */,
@@ -794,7 +794,6 @@
 				B27A1A8D255342859D7128BA /* Resources */,
 				B146B95020ECA5950012B2F9 /* Recovered References */,
 				0E98D2DE6B653B3C36B1386D /* Pods */,
-				175B75617CEB4F9BB5C3947A /* AppCenter-Config.plist */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -1534,7 +1533,6 @@
 				86F7D5284C7D4E64B79EF29A /* Octicons.ttf in Resources */,
 				D9353806F4BB4DDDAC6001BF /* SimpleLineIcons.ttf in Resources */,
 				AE4B34EB6B3E494588A6FB9C /* Zocial.ttf in Resources */,
-				5A2000CB9B664880A1D16132 /* AppCenter-Config.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1568,7 +1566,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1755,7 +1753,7 @@
 			baseConfigurationReference = 40D0769068D4787F33E27B15 /* Pods-alysonv3.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = TRU7S39L5Z;
 				HEADER_SEARCH_PATHS = (
@@ -1779,7 +1777,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.crowtech.exneer-english-test";
+				PRODUCT_BUNDLE_IDENTIFIER = au.com.fourdegrees;
+				PRODUCT_MODULE_NAME = Fourdegrees;
 				PRODUCT_NAME = alysonv3;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1791,7 +1790,7 @@
 			baseConfigurationReference = 5BBE3572F32500D814486635 /* Pods-alysonv3.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = TRU7S39L5Z;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1814,7 +1813,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.crowtech.exneer-english-test";
+				PRODUCT_BUNDLE_IDENTIFIER = au.com.fourdegrees;
+				PRODUCT_MODULE_NAME = Fourdegrees;
 				PRODUCT_NAME = alysonv3;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";

@@ -1,23 +1,28 @@
 import React, { Component } from 'react';
-import { object, string, bool } from 'prop-types';
+import { object, string, bool, oneOf, func } from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dlv from 'dlv';
 import { isArray, isString, Bridge } from '../../../utils';
-import { closeSidebar } from '../../../redux/actions';
+import { closeSidebar, toggleSidebar } from '../../../redux/actions';
 import SidebarBody from './body';
 
 class Sidebar extends Component {
-  static propTypes = {
+  static defaultProps = {
     getItemDataFromStore: false,
+    rootCode: 'GRP_ROOT',
+    side: 'left',
   }
 
   static propTypes = {
     baseEntities: object,
     aliases: object,
-    sidebarRootCode: string,
-    sidebarProps: object,
+    layout: object,
+    rootCode: string,
     getItemDataFromStore: bool,
+    side: oneOf( ['left', 'right'] ),
+    closeSidebar: func,
+    toggleSidebar: func,
   }
 
   /*
@@ -58,15 +63,15 @@ class Sidebar extends Component {
           itemAttributes: dlv( baseEntities, `attributes.${targetCode}` ),
         };
       }
-      
+
       if ( isString( baseEntityName, { ofMinLength: 1 })) {
         const icon = dlv( baseEntities, `attributes.${targetCode}.PRI_IMAGE_URL.valueString` );
 
         if ( isRecursive ) {
           let linkedBaseEntities = this.getLinkedBaseEntities( targetCode );
-          
+
           linkedBaseEntities = linkedBaseEntities.filter( x => x.linkValue === 'LNK_CORE' );
-          
+
           if ( isArray( linkedBaseEntities, { ofMinLength: 1 })) {
             items.push({
               ...itemData,
@@ -86,7 +91,7 @@ class Sidebar extends Component {
           onPress: this.handlePress( link.link ),
         });
       }
-      
+
       return items;
     }, [] );
   }
@@ -119,16 +124,47 @@ class Sidebar extends Component {
     });
   }
 
+  handleToggle = () => {
+    // console.warn( this.props.side, this.props );
+    this.props.toggleSidebar( this.props.side );
+  }
+
+  handleClose = () => {
+    this.props.closeSidebar( this.props.side );
+  }
+
   render() {
-    const { sidebarRootCode, sidebarProps } = this.props;
-    const items = this.getLinkedBaseEntities( `${sidebarRootCode || 'GRP_ROOT'}`, true );
-    const logo = this.getSidebarImage(); 
-    
+    const { rootCode, side, layout, ...restProps } = this.props;
+
+    const root = (
+      side === 'left' ? (
+        layout.sidebarProps &&
+        layout.sidebarProps.rootCode
+          ? layout.sidebarProps.rootCode
+          : rootCode
+      ) : (
+        layout.sidebarRightProps &&
+        layout.sidebarRightProps.rootCode
+          ? layout.sidebarRightProps.rootCode
+          : rootCode
+      )
+    );
+
+    const items = this.getLinkedBaseEntities( root, true );
+    const logo = this.getSidebarImage();
+
     return (
       <SidebarBody
-        {...sidebarProps}
+        {...restProps}
+        {...side === 'left'
+          ? layout.sidebarProps
+          : layout.sidebarRightProps}
+        layout={layout}
         items={items}
         headerImage={logo}
+        side={side}
+        onClose={this.handleClose}
+        onToggle={this.handleToggle}
       />
     );
   }
@@ -137,14 +173,13 @@ class Sidebar extends Component {
 export { Sidebar };
 
 const mapStateToProps = state => ({
-  sidebar: state.sidebar,
   baseEntities: state.vertx.baseEntities,
   aliases: state.vertx.aliases,
-  ...state.layout.sidebarProps,
+  layout: state.layout,
 });
 
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ closeSidebar }, dispatch );
+  return bindActionCreators({ closeSidebar, toggleSidebar }, dispatch );
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( Sidebar );

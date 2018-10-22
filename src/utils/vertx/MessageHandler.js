@@ -1,4 +1,4 @@
-import { prefixedLog } from '../../utils';
+import { prefixedLog, isArray } from '../../utils';
 import { store } from '../../redux';
 import * as events from './events';
 
@@ -37,36 +37,34 @@ class MessageHandler {
 
     store.dispatch( message );
 
-    // this.beBatch.forEach( message => {
-    //   store.dispatch( message );
-    // });
-
     this.beBatch = [];
   }
 
   handleReduceMessageBatch = ( output, current ) => {
-    if ( current.payload.aliasCode ) {
+    /**
+     * If the message has an aliasCode process it individually.
+     * Additionally don't apply this to aliasCodes that match
+     * the parentCode as this eliminates a large number of
+     * individual messages, increasing performance.
+     */
+    if ( current.payload.aliasCode && current.payload.aliasCode !== current.payload.parentCode ) {
       store.dispatch( current );
 
       return output;
     }
 
-    return {
-      ...output,
-      payload: {
-        ...output.payload,
-        items: [
-          ...output.payload.items,
-          ...current.payload.items.map( item => ({
-            ...item,
-            delete: current.payload.delete,
-            replace: current.payload.replace,
-            shouldDeleteLinkedBaseEntities: current.payload.shouldDeleteLinkedBaseEntities,
-            parentCode: current.payload.parentCode,
-          })),
-        ],
-      },
-    };
+    output.payload.items = [
+      ...output.payload.items,
+      ...current.payload.items.map( item => ({
+        delete: current.payload.delete,
+        replace: current.payload.replace,
+        shouldDeleteLinkedBaseEntities: current.payload.shouldDeleteLinkedBaseEntities,
+        parentCode: current.payload.parentCode,
+        ...item,
+      })),
+    ];
+
+    return output;
   }
 
   onMessage = message => {
@@ -89,9 +87,7 @@ class MessageHandler {
 
     if (
       data_type === 'QBulkMessage' &&
-      messages != null &&
-      messages instanceof Array &&
-      messages.length > 0
+      isArray( messages, { ofMinLength: 1 })
     ) {
       messages.forEach( this.onMessage );
 
@@ -111,7 +107,7 @@ class MessageHandler {
       return;
     }
 
-    if ( message.data_type === 'BaseEntity' && !message.delete ) {
+    if ( message.data_type === 'BaseEntity' && !message.delete && !message.replace ) {
       /* Add to a batch */
       this.beBatch.push(
         action( message )
@@ -119,8 +115,18 @@ class MessageHandler {
 
       this.lastBe = new Date().getTime();
     } else {
+      const payload = message;
+
+      if ( isArray( payload.items )) {
+        payload.items = payload.items.map( item => ({
+          shouldDeleteLinkedBaseEntities: payload.shouldDeleteLinkedBaseEntities,
+          parentCode: payload.parentCode,
+          ...item,
+        }));
+      }
+
       store.dispatch(
-        action( message )
+        action( payload )
       );
     }
   }

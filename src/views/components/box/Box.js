@@ -1,13 +1,17 @@
 import React from 'react';
 import { View, Platform } from 'react-native';
 import { any, oneOf, oneOfType, string, number, array, func, bool, object, shape } from 'prop-types';
-import { objectClean } from '../../../utils';
 
-const shapeStyles = {
-  square: 0,
-  rounded: 5,
-  circle: 100000,
-  pill: 999,
+/** Ensure the props we're going to use were indeed passed through. */
+const filterOutUnspecifiedProps = props => {
+  const keys = Object.keys( props );
+
+  return keys.reduce(( filteredProps, prop ) => {
+    if ( props[prop] != null )
+      filteredProps[prop] = props[prop];
+
+    return filteredProps;
+  }, {});
 };
 
 const Box = ({
@@ -27,6 +31,10 @@ const Box = ({
   flexDirection = 'row',
   flexWrap,
   padding,
+  paddingTop,
+  paddingRight,
+  paddingLeft,
+  paddingBottom,
   paddingX,
   paddingY,
   margin,
@@ -60,8 +68,10 @@ const Box = ({
   borderColor,
   borderStyle,
   borderRadius,
-  cleanStyleObject,
-  shape,
+  borderTopLeftRadius,
+  borderTopRightRadius,
+  borderBottomRightRadius,
+  borderBottomLeftRadius,
   shadowColor,
   shadowOpacity,
   shadowRadius,
@@ -72,9 +82,37 @@ const Box = ({
   overflowX,
   overflowY,
   display = 'flex',
+  overscrollBehavior,
+  overscrollBehaviorX,
+  overscrollBehaviorY,
+  onLayout,
   ...restProps
 }) => {
-  const boxStyle = {
+  const boxStyle = filterOutUnspecifiedProps({
+    padding,
+    paddingTop,
+    paddingRight,
+    paddingLeft,
+    paddingBottom,
+    paddingHorizontal: paddingX,
+    paddingVertical: paddingY,
+    margin,
+    marginHorizontal: marginX,
+    marginVertical: marginY,
+    marginTop,
+    marginRight,
+    marginLeft,
+    marginBottom,
+    borderTopWidth,
+    borderRightWidth,
+    borderBottomWidth,
+    borderLeftWidth,
+    borderWidth,
+    display,
+    shadowColor,
+    shadowOpacity,
+    shadowRadius,
+    shadowOffset,
     justifyContent,
     alignItems,
     height: Platform.OS === 'web' && fullHeightOnWeb ? '100vh' : height,
@@ -89,16 +127,6 @@ const Box = ({
     flexShrink,
     flexDirection,
     flexWrap,
-    padding,
-    paddingHorizontal: paddingX,
-    paddingVertical: paddingY,
-    margin,
-    marginHorizontal: marginX,
-    marginVertical: marginY,
-    marginTop,
-    marginRight,
-    marginLeft,
-    marginBottom,
     backgroundColor,
     position: (
       (
@@ -115,23 +143,23 @@ const Box = ({
     zIndex,
     transform,
     opacity,
-    borderTopWidth,
-    borderRightWidth,
-    borderBottomWidth,
-    borderLeftWidth,
-    borderWidth,
     borderColor,
     borderStyle,
-    borderRadius: borderRadius || shapeStyles[shape],
-    display,
-    shadowColor,
-    shadowOpacity,
-    shadowRadius,
-    shadowOffset,
+    borderRadius,
+    borderBottomRightRadius,
+    borderBottomLeftRadius,
+    borderTopRightRadius,
+    borderTopLeftRadius,
+    overflow,
+    overflowX,
+    overflowY,
+    overscrollBehavior,
+    overscrollBehaviorX,
+    overscrollBehaviorY,
     ...__dangerouslySetStyle,
-  };
+  });
 
-  const webStyle = Platform.OS !== 'web' ? {} : {
+  const webStyle = Platform.OS !== 'web' ? {} : filterOutUnspecifiedProps({
     accessibilityRole,
     overflow,
     overflowX,
@@ -140,7 +168,7 @@ const Box = ({
     transitionProperty,
     transitionTimingFunction,
     transitionDelay,
-  };
+  });
 
   return (
     <View
@@ -149,11 +177,10 @@ const Box = ({
       accessibilityRole={accessibilityRole}
       accessibilityLabel={accessibilityLabel}
       style={[
-        cleanStyleObject
-          ? objectClean( boxStyle )
-          : boxStyle,
+        boxStyle,
         webStyle,
       ]}
+      onLayout={onLayout}
     >
       {children}
     </View>
@@ -197,6 +224,10 @@ Box.propTypes = {
   flexGrow: number,
   flexShrink: number,
   padding: number,
+  paddingTop: number,
+  paddingRight: number,
+  paddingLeft: number,
+  paddingBottom: number,
   paddingX: number,
   paddingY: number,
   margin: number,
@@ -239,19 +270,37 @@ Box.propTypes = {
   borderWidth: number,
   borderColor: string,
   borderStyle: string,
-  borderRadius: oneOf(
-    [2, 5, 10, '50%']
+  borderRadius: oneOfType(
+    [number, string]
+  ),
+  borderTopLeftRadius: oneOfType(
+    [number, string]
+  ),
+  borderTopRightRadius: oneOfType(
+    [number, string]
+  ),
+  borderBottomRightRadius: oneOfType(
+    [number, string]
+  ),
+  borderBottomLeftRadius: oneOfType(
+    [number, string]
   ),
   cleanStyleObject: bool,
-  shape: oneOf(
-    ['square', 'rounded', 'pill', 'circle']
-  ),
   fullHeightOnWeb: bool,
   __dangerouslySetStyle: object,
   overflow: string,
   overflowX: string,
   overflowY: string,
   display: string,
+  overscrollBehavior: oneOf(
+    ['auto', 'contain', 'none']
+  ),
+  overscrollBehaviorX: oneOf(
+    ['auto', 'contain', 'none']
+  ),
+  overscrollBehaviorY: oneOf(
+    ['auto', 'contain', 'none']
+  ),
   shadowColor: string,
   shadowOpacity: oneOfType(
     [string, number]

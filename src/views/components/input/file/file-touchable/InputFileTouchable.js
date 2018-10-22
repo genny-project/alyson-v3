@@ -25,10 +25,8 @@ class InputFileTouchable extends Component {
       <Touchable
         withFeedback
         onPress={onPress}
-        style={{
-          width: '100%',
-          position: 'relative',
-        }}
+        width="100%"
+        position="relative"
       >
         <Input
           type="text"

@@ -1,3 +1,4 @@
+import copy from 'fast-copy';
 import { isArray } from '../../../../utils';
 
 const initialState = {
@@ -88,6 +89,9 @@ const handleReduceAttributeCodes = ( resultantAttributes, currentAttribute ) => 
 };
 
 const handleReduceAttributes = ( resultant, current ) => {
+  if ( !current )
+    return resultant;
+
   if ( current.baseEntityAttributes ) {
     const existing = resultant[current.code] || {};
 
@@ -102,6 +106,9 @@ const handleReduceAttributes = ( resultant, current ) => {
 };
 
 const handleReduceLinks = ( resultant, current ) => {
+  if ( !isArray( current.links ))
+    return resultant;
+
   const handleCombineLinkValues = link => {
     if ( link.link.linkValue ) {
       resultant[link.link.linkValue] = ({
@@ -135,27 +142,60 @@ const handleReduceLinks = ( resultant, current ) => {
 };
 
 const handleReduceDefinitionData = ( resultant, current ) => {
-  if (
-    current.replace ||
-    current.delete
-  ) {
-    resultant[current.code] = {
-      dataType: current.dataType.typeName,
-    };
-  }
-  else {
-    resultant[current.code] = {
-      ...current,
-      dataType: current.dataType.typeName,
-    };
-  }
+  resultant[current.code] = {
+    ...current,
+    dataType: current.dataType.typeName,
+  };
 
   return resultant;
 };
 
+const deleteLinkedBaseEntities = ( data, resultant, depth = 1 ) => {
+  if ( !data ) return;
+
+  const { shouldDeleteLinkedBaseEntities, code } = data;
+  const links = resultant[code] ? resultant[code].links : data.links;
+
+  links.forEach(({ link }) => {
+    if ( depth >= shouldDeleteLinkedBaseEntities ) {
+      delete resultant[link.targetCode];
+    }
+    else {
+      deleteLinkedBaseEntities({
+        ...resultant[link.targetCode],
+        shouldDeleteLinkedBaseEntities,
+      }, resultant, depth + 1 );
+    }
+  });
+};
+
+const createLink = ( current ) => ({
+  created: current.created,
+  updated: current.updated,
+  code: current.code,
+  weight: Number.isInteger( current.weight ) ? current.weight : 1,
+  link: {
+    attributeCode: 'LNK_CORE',
+    targetCode: current.code,
+    sourceCode: current.parentCode,
+    weight: 1,
+    linkValue: 'LINK',
+    ...current.link,
+  },
+});
+
 const handleReduceData = ( resultant, current ) => {
+  if ( !current )
+    return resultant;
+
   /* Shortcut to remove properties inside the current base entity. */
   const { baseEntityAttributes, ...wantedData } = current; // eslint-disable-line no-unused-vars
+
+  if ( current.shouldDeleteLinkedBaseEntities ) {
+    if ( Number.isInteger( current.shouldDeleteLinkedBaseEntities )) {
+      deleteLinkedBaseEntities( current, resultant );
+    }
+  }
 
   resultant[current.code] = wantedData;
   /* If the current has a parentCode, ensure there is an accompanying base entity. */
@@ -165,20 +205,7 @@ const handleReduceData = ( resultant, current ) => {
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
         links: [
-          {
-            created: current.created,
-            updated: current.updated,
-            code: current.code,
-            weight: ( current.weight != null ) ? current.weight : 1,
-            link: {
-              attributeCode: 'LNK_CORE',
-              targetCode: current.code,
-              sourceCode: current.parentCode,
-              weight: 1,
-              linkValue: 'LINK',
-              ...current.link,
-            },
-          },
+          createLink( current ),
         ],
       };
     }
@@ -186,10 +213,12 @@ const handleReduceData = ( resultant, current ) => {
      * inside of it. Be sure that no duplicates occur by filtering out the current's code
      * from the list of existing links. */
     else {
-      const noLinksExist = !resultant[current.parentCode].links;
+      const noLinksExist = !isArray( resultant[current.parentCode].links, { ofMinLength: 1 });
 
       /* If no links exist yet, simply set the links to be array of the new link (current). */
-      const newLinks = noLinksExist ? [current] : (
+      const newLinks = noLinksExist ? [
+        createLink( current ),
+      ] : (
         /* Loop through each existing link. */
         resultant[current.parentCode].links.reduce(( links, link, index ) => {
           /* If the current link is in the existing links, update the
@@ -208,20 +237,9 @@ const handleReduceData = ( resultant, current ) => {
           }
           /* If the new link (current) isn't already in the existing links, add it. */
           else if ( !links.find( link => link.link.targetCode === current.code )) {
-            links.push({
-              created: current.created,
-              updated: current.updated,
-              code: current.code,
-              weight: ( current.weight != null ) ? current.weight : 1,
-              link: {
-                attributeCode: 'LNK_CORE',
-                targetCode: current.code,
-                sourceCode: current.parentCode,
-                weight: 1,
-                linkValue: 'LINK',
-                ...current.link,
-              },
-            });
+            links.push(
+              createLink( current )
+            );
           }
 
           return links;
@@ -297,6 +315,30 @@ const handleUpdateProjectName = ( attributes, name ) => {
   };
 };
 
+function handleReduceDataTwo( message, state ) {
+  const newState = copy( state );
+
+  delete newState[message.parentCode];
+
+  if ( message.delete ) {
+    return newState;
+  }
+
+  return message.items.reduce( handleReduceData, newState );
+}
+
+function handleReduceLinksTwo( message, state ) {
+  const newState = copy( state );
+
+  delete newState[message.parentCode];
+
+  if ( message.delete ) {
+    return newState;
+  }
+
+  return message.items.reduce( handleReduceLinks, newState );
+}
+
 const reducer = ( state = initialState, { type, payload }) => {
   switch ( type ) {
     /**
@@ -311,13 +353,26 @@ const reducer = ( state = initialState, { type, payload }) => {
      *
      * TODO: explain `links`
      */
-    case 'BASE_ENTITY_MESSAGE':
+    case 'BASE_ENTITY_MESSAGE': {
+      if (
+        payload.replace ||
+        payload.delete
+      ) {
+        return {
+          ...state,
+          data: handleReduceDataTwo( payload, state.data ),
+          attributes: payload.items.reduce( handleReduceAttributes, state.attributes ),
+          links: handleReduceLinksTwo( payload, state.links ),
+        };
+      }
+
       return {
         ...state,
         data: payload.items.reduce( handleReduceData, state.data ),
         attributes: payload.items.reduce( handleReduceAttributes, state.attributes ),
         links: payload.items.reduce( handleReduceLinks, state.links ),
       };
+    }
 
     /**
      * When we receive attribute data, we are renaming it to `definitions` for semantic purposes.

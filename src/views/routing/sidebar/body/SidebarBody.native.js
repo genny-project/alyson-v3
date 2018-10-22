@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Image } from 'react-native';
 import { string, array, object } from 'prop-types';
 import { withNavigation } from 'react-navigation';
-import { ScrollView, Box, Sublayout } from '../../../components';
+import { ScrollView, Box, Sublayout, Recursive } from '../../../components';
 import { LayoutConsumer } from '../../../layout';
 import SidebarMenu from './menu';
 
@@ -12,6 +12,7 @@ class Sidebar extends Component {
     items: array,
     navigation: object,
     sidebarItemProps: object,
+    renderBody: object,
     sidebarLayout: string,
     headerLayout: string,
     footerLayout: string,
@@ -22,18 +23,35 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { 
+    const {
       headerImage,
-      items, 
+      items,
       sidebarItemProps,
       sidebarLayout,
       headerLayout,
       footerLayout,
+      renderBody,
     } = this.props;
 
     return (
       <LayoutConsumer>
         {layout => {
+          if ( renderBody ) {
+            const context = {
+              items,
+              layout,
+              onClose: this.handleCloseSidebar,
+              onToggle: this.handleCloseSidebar,
+            };
+
+            return (
+              <Recursive
+                {...renderBody}
+                context={context}
+              />
+            );
+          }
+
           if ( sidebarLayout ) {
             return (
               <Sublayout
@@ -59,7 +77,7 @@ class Sidebar extends Component {
                     />
                   )
                   : headerImage
-                    ? ( 
+                    ? (
                       <Box
                         marginBottom={20}
                       >
@@ -70,6 +88,8 @@ class Sidebar extends Component {
                             height: 200,
                           }}
                           flex={1}
+                          minWidth={40}
+                          minHeight={40}
                           source={{ uri: headerImage }}
                         />
                       </Box>

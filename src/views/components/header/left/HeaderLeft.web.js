@@ -14,6 +14,7 @@ class HeaderLeft extends Component {
     showTitle: bool,
     logoSource: string,
     title: string,
+    titleFallback: string,
     logoOpensMenu: bool,
   }
 
@@ -28,6 +29,7 @@ class HeaderLeft extends Component {
       showTitle,
       logoSource,
       title,
+      titleFallback,
       logoOpensMenu,
     } = this.props;
 
@@ -76,7 +78,7 @@ class HeaderLeft extends Component {
                   marginY={0}
                   color={layout.textColor}
                 >
-                  {title}
+                  {title || titleFallback}
                 </Heading>
               </Link>
             ) : null}
