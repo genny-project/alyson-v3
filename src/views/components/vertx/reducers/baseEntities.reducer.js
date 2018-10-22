@@ -320,7 +320,10 @@ function handleReduceDataTwo( message, state ) {
 
   delete newState[message.parentCode];
 
-  if ( message.delete ) {
+  if (
+    message.delete &&
+    !message.shouldDeleteLinkedBaseEntities
+  ) {
     return newState;
   }
 
@@ -330,9 +333,19 @@ function handleReduceDataTwo( message, state ) {
 function handleReduceLinksTwo( message, state ) {
   const newState = copy( state );
 
-  delete newState[message.parentCode];
+  if ( message.parentCode ) {
+    delete newState[message.parentCode];
+  }
+  else if ( isArray( message.items )) {
+    message.items.forEach( item => {
+      delete newState[item.code];
+    });
+  }
 
-  if ( message.delete ) {
+  if (
+    message.delete &&
+    !message.shouldDeleteLinkedBaseEntities
+  ) {
     return newState;
   }
 
