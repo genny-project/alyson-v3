@@ -1,11 +1,11 @@
 import 'uppy/dist/uppy.min.css';
 import React, { Component } from 'react';
-import { bool, number, func, object, array } from 'prop-types';
+import { bool, number, func, object, array, string, oneOf, oneOfType } from 'prop-types';
 import Uppy from 'uppy/lib/core';
 import AwsS3 from 'uppy/lib/plugins/AwsS3';
 import Webcam from 'uppy/lib/plugins/Webcam';
 import Dashboard from 'uppy/lib/plugins/Dashboard';
-import { Box } from '../../../components';
+import { Box, Recursive } from '../../../components';
 import InputFileItem from './file-item';
 import InputFileTouchable from './file-touchable';
 import config from '../../../../config';
@@ -28,6 +28,46 @@ class InputFile extends Component {
     value: array,
     imageOnly: bool,
     multiple: bool,
+    renderItem: object,
+    renderInput: object,
+    margin: number,
+    marginX: number,
+    marginY: number,
+    marginTop: number,
+    marginRight: number,
+    marginBottom: number,
+    marginLeft: number,
+    padding: number,
+    paddingX: number,
+    paddingY: number,
+    paddingTop: number,
+    paddingRight: number,
+    paddingBottom: number,
+    paddingLeft: number,
+    textAlign: oneOf(
+      ['left', 'center','right']
+    ),
+    height: oneOfType(
+      [string, number]
+    ),
+    width: oneOfType(
+      [string, number]
+    ),
+    backgroundColor: string,
+    borderWidth: number,
+    borderTopWidth: number,
+    borderRightWidth: number,
+    borderBottomWidth: number,
+    borderLeftWidth: number,
+    borderColor: string,
+    borderRadius: number,
+    borderBottomLeftRadius: number,
+    borderBottomRightRadius: number,
+    borderTopLeftRadius: number,
+    borderTopRightRadius: number,
+    wrapperProps: object,
+    color: string,
+    onChangeValue: func,
   }
 
   state = {
@@ -37,6 +77,8 @@ class InputFile extends Component {
 
   componentDidMount() {
     let files = [];
+
+    console.warn( this.props );
 
     try {
       files = ( this.props.value && this.props.value !== 'null' )
@@ -129,6 +171,12 @@ class InputFile extends Component {
     if ( this.props.onChange ) {
       this.props.onChange({ target: { value: files } });
     }
+
+    // console.warn( this.props, files );
+
+    // if ( this.props.onChangeValue ) {
+    //   this.props.onChangeValue( files );
+    // }
   }
 
   handleError = error => {
@@ -209,7 +257,14 @@ class InputFile extends Component {
   }
 
   render() {
-    const { imageOnly, multiple } = this.props;
+    const {
+      imageOnly,
+      multiple,
+      renderItem,
+      renderInput,
+      ...restProps
+    } = this.props;
+
     const { files, error } = this.state;
     const validFiles = files && files.length ? files.filter( file => this.isValidFile( file )) : [];
 
@@ -220,6 +275,22 @@ class InputFile extends Component {
       >
         {isArray( validFiles, { ofMinLength: 1 }) && (
           validFiles.map( file => {
+            if ( renderItem ) {
+              const context = {
+                file,
+                onRemove: this.handleRemoveFile,
+                error,
+              };
+
+              return (
+                <Recursive
+                  {...renderItem}
+                  key={file.id}
+                  context={context}
+                />
+              );
+            }
+
             return (
               <InputFileItem
                 key={file.id}
@@ -241,12 +312,23 @@ class InputFile extends Component {
           isArray( validFiles, { ofExactLength: 0 }) ||
           multiple
         ) && (
-          <InputFileTouchable
-            onPress={this.handleOpenModal}
-            text={(
-              `Click to Upload a${validFiles.length > 0 ? 'nother' : imageOnly ? 'n' : ''} ${imageOnly ? 'image' : 'file'} `
-            )}
-          />
+          renderInput ? (
+            <Recursive
+              {...renderInput}
+              context={{
+                numberOfUploadedFiles: validFiles.length,
+                onOpenModal: this.handleOpenModal,
+              }}
+            />
+          ) : (
+            <InputFileTouchable
+              {...restProps}
+              onPress={this.handleOpenModal}
+              text={(
+              `Click to Upload a${isArray( validFiles, { ofMinLength: 1 }) ? 'nother' : imageOnly ? 'n' : ''} ${imageOnly ? 'image' : 'file'} `
+              )}
+            />
+          )
         )}
       </Box>
     );
