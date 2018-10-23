@@ -81,7 +81,16 @@ class Dropdown extends Component {
                   key={item.text}
                   style={menuItemStyle}
                 >
-                  {item.text}
+                  {isValidElement( item.children ) ? item.children
+                  : isString( item.text ) ? item.text
+                  : isArray( item.children )
+                    ? item.children.map(( child, i ) => (
+                      isValidElement( child )
+                        ? child
+                        : <Recursive key={i} {...child} /> // eslint-disable-line
+                    ))
+                    : <Recursive {...item.children} />
+                  }
                 </MenuItem>
               )
             ))}
