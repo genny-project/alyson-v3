@@ -1,7 +1,7 @@
 import React, { Component, isValidElement } from 'react';
 import { Menu, MenuButton, MenuItem, MenuList, MenuLink } from '@reach/menu-button';
 import { array, bool, object, any } from 'prop-types';
-import { isArray, isString } from '../../../utils';
+import { isArray, isString, Bridge } from '../../../utils';
 import { Recursive } from '../../components';
 import './Dropdown.css';
 
@@ -16,6 +16,34 @@ class Dropdown extends Component {
     menuLinkStyle: object,
     menuItemStyle: object,
     children: any,
+  }
+
+  handleSelect = item => () => {
+    if ( item.buttonCode ) {
+      const {
+        value,
+        buttonCode = '',
+        messageType = 'BTN',
+        eventType = 'BTN_CLICK',
+      } = item;
+
+      const valueString = (
+        value &&
+        typeof value === 'string'
+      )
+        ? value
+        : JSON.stringify( value );
+
+      Bridge.sendEvent({
+        event: messageType,
+        eventType,
+        sendWithToken: true,
+        data: {
+          code: buttonCode,
+          value: valueString || null,
+        },
+      });
+    }
   }
 
   render() {
@@ -80,6 +108,7 @@ class Dropdown extends Component {
                 <MenuItem
                   key={item.text}
                   style={menuItemStyle}
+                  onSelect={this.handleSelect( item )}
                 >
                   {isValidElement( item.children ) ? item.children
                   : isString( item.text ) ? item.text
