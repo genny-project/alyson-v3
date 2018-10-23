@@ -26,7 +26,7 @@ class FormInput extends Component {
     this.props.onChangeValue( value, true );
   }
 
-  handleChangeValueWithSend = value => {
+  handleChangeValueWithSendAndDebounce = value => {
     this.handleChangeDebounced( value, true );
   }
 
@@ -73,7 +73,6 @@ class FormInput extends Component {
           />
         );
 
-      case 'upload':
       case 'switch':
       case 'java.lang.boolean':
       case 'payment':
@@ -90,6 +89,17 @@ class FormInput extends Component {
           <Input
             {...this.props}
             onChangeValue={this.handleChangeValueWithSendAndDebounce}
+            ref={input => this.input = input}
+          />
+        );
+
+      case 'upload':
+      case 'file':
+      case 'image':
+        return (
+          <Input
+            {...this.props}
+            onChangeValue={this.handleChangeValueWithSend}
             ref={input => this.input = input}
           />
         );

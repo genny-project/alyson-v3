@@ -1,5 +1,5 @@
 import React, { Component, isValidElement } from 'react';
-import { Menu, MenuButton, MenuList, MenuLink } from '@reach/menu-button';
+import { Menu, MenuButton, MenuItem, MenuList, MenuLink } from '@reach/menu-button';
 import { array, bool, object, any } from 'prop-types';
 import { isArray, isString } from '../../../utils';
 import { Recursive } from '../../components';
@@ -14,6 +14,7 @@ class Dropdown extends Component {
     menuButtonStyle: object,
     menuListStyle: object,
     menuLinkStyle: object,
+    menuItemStyle: object,
     children: any,
   }
 
@@ -25,6 +26,7 @@ class Dropdown extends Component {
       menuButtonStyle,
       menuListStyle,
       menuLinkStyle,
+      menuItemStyle,
       disabled,
       children,
     } = this.props;
@@ -59,17 +61,29 @@ class Dropdown extends Component {
             }}
           >
             {items.map( item => (
-              <MenuLink
-                key={item.text}
-                to={(
-                  item.href === 'home' ? '/'
-                  : item.href.startsWith( '/' ) ? item.href
-                  : `/${item.href}`
-                )}
-                style={menuLinkStyle}
-              >
-                {item.text}
-              </MenuLink>
+              item.href ? (
+                <MenuLink
+                  key={item.text}
+                  to={(
+                    item.href === 'home' ? '/'
+                    : item.href.startsWith( '/' ) ? item.href
+                    : `/${item.href}`
+                  )}
+                  style={{
+                    ...menuItemStyle,
+                    ...menuLinkStyle,
+                  }}
+                >
+                  {item.text}
+                </MenuLink>
+              ) : (
+                <MenuItem
+                  key={item.text}
+                  style={menuItemStyle}
+                >
+                  {item.text}
+                </MenuItem>
+              )
             ))}
           </MenuList>
         )}
