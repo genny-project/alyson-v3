@@ -9,9 +9,9 @@ class Marker extends Component {
     markerSize: number,
   }
 
-  static defaultProps = { 
+  static defaultProps = {
     markerColor: 'red',
-    markerSize: 20,
+    markerSize: 30,
   }
 
   render() {
@@ -20,7 +20,7 @@ class Marker extends Component {
     return (
       <i
         style={{ transform: 'translate(-50%, -50%)', color: markerColor, fontSize: markerSize  }}
-        className="fas fa-map-marker"
+        className="fas fa-map-marker-alt"
         lat={lat}
         lng={lng}
       />
