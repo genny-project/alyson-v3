@@ -6,7 +6,7 @@ import  debounce  from 'lodash.debounce';
 
 import 'react-table/react-table.css';
 import { Bridge } from '../../../utils/vertx';
-import {  Text, Box, Button } from '../../components';
+import {  Text, Box, EventTouchable } from '../../components';
 
 import './table.scss';
 
@@ -24,7 +24,7 @@ class TableView extends Component {
     tableHeight: 200,
     tableWidth: '100%',
     containerBackgroundColor: '#fff',
-    buttonTextColor: 'white',
+    buttonTextColor: '#fff',
   };
 
   static propTypes = {
@@ -84,6 +84,18 @@ class TableView extends Component {
       const modifiedData = addFilterMethodsToColumn();
 
       const renderButtons = ( cellInfo, buttonComponents ) => {
+        const handleClick = () => { 
+          Bridge.sendEvent({
+            event: 'BTN',
+            eventType: 'BTN_CLICK',
+            sendWithToken: true,
+            data: {
+              code: 'BTN_EDIT_EDU_PROVIDER',
+              value: null,
+            },
+          });
+        };
+        
         console.warn({ cellInfo }, '%%%%%%%%%%%%%%%%%%' );
         const renderButtons2 = () => {
           /* check if buttonComponents data is passed from the */
@@ -91,30 +103,26 @@ class TableView extends Component {
           if ( buttonComponents && buttonComponents.length > 0 ) { 
             return buttonComponents.map( btn => (
               <Box key={btn.text}>
-                <Button
+                <EventTouchable
                   size="sm"
                   color="green"
-                  height="40px"
-                  width="50px"
+                  width={50}
+                  height={50}
                   textColor={buttonTextColor}
-                  backgroundColor="green"
-                  dispatchActionOnClick={{ type: 'DIALOG_TOGGLE', payload: { layoutName: 'testtable', show: true } }}
+                  onClick={() => handleClick()}
                 >
                   <Text>
                     {btn.text}
                   </Text>
-                </Button>
+                </EventTouchable>
               </Box>
             ));
           }
            
           return (
             <Fragment>
-              <input
-                defaultValue={data[cellInfo.index][cellInfo.column.id]}
-                style={inputStyle}
-                onChange={this.handleCellDataChange( cellInfo )}
-              />
+
+              {data[cellInfo.index][cellInfo.column.id]}
             </Fragment>
           );
         };
@@ -181,9 +189,3 @@ class TableView extends Component {
 
 export default TableView;
 
-const inputStyle = {
-  border: 'none',
-  height: '100%',
-  width: '100%',
-  padding: '4px',
-};
