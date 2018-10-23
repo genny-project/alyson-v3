@@ -107,7 +107,7 @@ class Touchable extends Component {
     overflowY: string,
     display: string,
     dispatchActionOnClick: shape({
-      type: string,
+      type: string.isRequired,
       payload: any,
     }),
   }

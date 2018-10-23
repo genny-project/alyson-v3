@@ -1,3 +1,4 @@
+import copy from 'fast-copy';
 import { isArray } from '../../../../utils';
 
 const initialState = {
@@ -105,9 +106,6 @@ const handleReduceAttributes = ( resultant, current ) => {
 };
 
 const handleReduceLinks = ( resultant, current ) => {
-  if ( current.delete )
-    delete resultant[current.code];
-
   if ( !isArray( current.links ))
     return resultant;
 
@@ -144,20 +142,10 @@ const handleReduceLinks = ( resultant, current ) => {
 };
 
 const handleReduceDefinitionData = ( resultant, current ) => {
-  if (
-    current.replace ||
-    current.delete
-  ) {
-    resultant[current.code] = {
-      dataType: current.dataType.typeName,
-    };
-  }
-  else {
-    resultant[current.code] = {
-      ...current,
-      dataType: current.dataType.typeName,
-    };
-  }
+  resultant[current.code] = {
+    ...current,
+    dataType: current.dataType.typeName,
+  };
 
   return resultant;
 };
@@ -203,18 +191,10 @@ const handleReduceData = ( resultant, current ) => {
   /* Shortcut to remove properties inside the current base entity. */
   const { baseEntityAttributes, ...wantedData } = current; // eslint-disable-line no-unused-vars
 
-  // if(current.)
   if ( current.shouldDeleteLinkedBaseEntities ) {
     if ( Number.isInteger( current.shouldDeleteLinkedBaseEntities )) {
       deleteLinkedBaseEntities( current, resultant );
     }
-  }
-  else if ( current.delete ) {
-    // console.warn( current.code, resultant[current.code] );
-
-    delete resultant[current.code];
-
-    return resultant;
   }
 
   resultant[current.code] = wantedData;
@@ -335,6 +315,43 @@ const handleUpdateProjectName = ( attributes, name ) => {
   };
 };
 
+function handleReduceDataTwo( message, state ) {
+  const newState = copy( state );
+
+  delete newState[message.parentCode];
+
+  if (
+    message.delete &&
+    !message.shouldDeleteLinkedBaseEntities
+  ) {
+    return newState;
+  }
+
+  return message.items.reduce( handleReduceData, newState );
+}
+
+function handleReduceLinksTwo( message, state ) {
+  const newState = copy( state );
+
+  if ( message.parentCode ) {
+    delete newState[message.parentCode];
+  }
+  else if ( isArray( message.items )) {
+    message.items.forEach( item => {
+      delete newState[item.code];
+    });
+  }
+
+  if (
+    message.delete &&
+    !message.shouldDeleteLinkedBaseEntities
+  ) {
+    return newState;
+  }
+
+  return message.items.reduce( handleReduceLinks, newState );
+}
+
 const reducer = ( state = initialState, { type, payload }) => {
   switch ( type ) {
     /**
@@ -349,13 +366,26 @@ const reducer = ( state = initialState, { type, payload }) => {
      *
      * TODO: explain `links`
      */
-    case 'BASE_ENTITY_MESSAGE':
+    case 'BASE_ENTITY_MESSAGE': {
+      if (
+        payload.replace ||
+        payload.delete
+      ) {
+        return {
+          ...state,
+          data: handleReduceDataTwo( payload, state.data ),
+          attributes: payload.items.reduce( handleReduceAttributes, state.attributes ),
+          links: handleReduceLinksTwo( payload, state.links ),
+        };
+      }
+
       return {
         ...state,
         data: payload.items.reduce( handleReduceData, state.data ),
         attributes: payload.items.reduce( handleReduceAttributes, state.attributes ),
         links: payload.items.reduce( handleReduceLinks, state.links ),
       };
+    }
 
     /**
      * When we receive attribute data, we are renaming it to `definitions` for semantic purposes.

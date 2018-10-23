@@ -6,17 +6,21 @@ import { injectContext } from './helpers';
 const IGNORE_KEYS = ['then', 'else'];
 const VALID_OPERATORS = Object.keys( findOperators );
 
-export default ( data, options ) => {
+export default ( data, options, allData, context ) => {
   if ( !data ) {
     return data;
   }
 
   /* Get the query and other options */
-  const { query, projection, context, single } = options;
+  const { query, projection, single } = options;
 
   /* Make sure that a query was provided */
   if ( !query ) {
     throw new Error( 'A query object must be provided' );
+  }
+
+  if ( isOperatorObject( query )) {
+    return getMatchingValues( data, query, context );
   }
 
   const output = arrayMatch( data, query, context );
@@ -52,6 +56,21 @@ const doesValueMatch = ( actualValue, expectedValue, context ) => {
     default:
       return valueCompare( actualValue, expectedValue );
   }
+};
+
+const getMatchingValues = ( actualValue, expectedValue ) => {
+  if ( !actualValue ) {
+    return actualValue;
+  }
+
+  let value = actualValue;
+
+  if ( !Array.isArray( actualValue )) {
+    value = [actualValue];
+  }
+
+  /* Loop over the items in the left hand side */
+  return value.filter( v => doesValueMatch( v, expectedValue, v ));
 };
 
 const arrayMatch = ( data, query, context ) => {
@@ -112,8 +131,12 @@ const matchesOperators = ( value, operators, context ) => {
       ? injectContext( operators[key], context )
       : operators[key];
 
-    return !findOperators[key]( value, operatorValue, matchesOperators );
+    const doesValueMatchContexted = value => {
+      return doesValueMatch( context, value, context );
+    };
+
+    return !findOperators[key]( value, operatorValue, doesValueMatchContexted );
   });
 };
 
-export { doesValueMatch };
+export { doesValueMatch, isOperatorObject };

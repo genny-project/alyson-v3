@@ -4,7 +4,7 @@ import dlv from 'dlv';
 import copy from 'fast-copy';
 import { connect } from 'react-redux';
 import { object, any, string, array, oneOfType, bool } from 'prop-types';
-import { doesValueMatch } from '../../../utils/data-query/operators/find';
+import { doesValueMatch, isOperatorObject } from '../../../utils/data-query/operators/find';
 import { isObject, isArray, isString } from '../../../utils';
 import { store } from '../../../redux';
 import * as Components from '../index';
@@ -238,6 +238,10 @@ class Recursive extends Component {
       console.error( condition );
     }
 
+    if ( isOperatorObject( condition )) {
+      return doesValueMatch( true, condition, dataPool );
+    }
+
     const fields = Object.keys( condition );
 
     for ( let i = 0; i < fields.length; i++ ) {
@@ -284,7 +288,6 @@ class Recursive extends Component {
 
   render() {
     const {
-      component,
       props,
       variant,
       useThemeFrom,
@@ -297,6 +300,26 @@ class Recursive extends Component {
       theme,
       repeatCopiesPropsOntoRecursive,
     } = this.props;
+
+    let componentProps = this.injectContextIntoProps({
+      ...props,
+      ...this.calculateConditionalProps( conditional, context ),
+    });
+
+    const component = componentProps.component || this.props.component;
+
+    if ( variant ) {
+      componentProps = {
+        ...this.injectContextIntoProps({
+          ...(
+            theme.components[useThemeFrom || component] &&
+            theme.components[useThemeFrom || component][variant] &&
+            theme.components[useThemeFrom || component][variant].props
+          ),
+        }),
+        ...componentProps,
+      };
+    }
 
     if ( !component || !Components[component] ) {
       return (
@@ -350,16 +373,6 @@ class Recursive extends Component {
     ) : (
       this.injectContextIntoChildren( context, children )
     );
-    const componentProps = this.injectContextIntoProps({
-      ...(
-        variant &&
-        theme.components[useThemeFrom || component] &&
-        theme.components[useThemeFrom || component][variant] &&
-        theme.components[useThemeFrom || component][variant].props
-      ),
-      ...props,
-      ...this.calculateConditionalProps( conditional, context ),
-    });
 
     return createElement(
       Components[component],

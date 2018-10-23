@@ -8,14 +8,16 @@ import { closeSidebar, toggleSidebar } from '../../../redux/actions';
 import SidebarBody from './body';
 
 class Sidebar extends Component {
-  static propTypes = {
+  static defaultProps = {
     getItemDataFromStore: false,
     rootCode: 'GRP_ROOT',
+    side: 'left',
   }
 
   static propTypes = {
     baseEntities: object,
     aliases: object,
+    layout: object,
     rootCode: string,
     getItemDataFromStore: bool,
     side: oneOf( ['left', 'right'] ),
@@ -123,6 +125,7 @@ class Sidebar extends Component {
   }
 
   handleToggle = () => {
+    // console.warn( this.props.side, this.props );
     this.props.toggleSidebar( this.props.side );
   }
 
@@ -131,13 +134,32 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { rootCode, side, ...restProps } = this.props;
-    const items = this.getLinkedBaseEntities( rootCode, true );
+    const { rootCode, side, layout, ...restProps } = this.props;
+
+    const root = (
+      side === 'left' ? (
+        layout.sidebarProps &&
+        layout.sidebarProps.rootCode
+          ? layout.sidebarProps.rootCode
+          : rootCode
+      ) : (
+        layout.sidebarRightProps &&
+        layout.sidebarRightProps.rootCode
+          ? layout.sidebarRightProps.rootCode
+          : rootCode
+      )
+    );
+
+    const items = this.getLinkedBaseEntities( root, true );
     const logo = this.getSidebarImage();
 
     return (
       <SidebarBody
         {...restProps}
+        {...side === 'left'
+          ? layout.sidebarProps
+          : layout.sidebarRightProps}
+        layout={layout}
         items={items}
         headerImage={logo}
         side={side}

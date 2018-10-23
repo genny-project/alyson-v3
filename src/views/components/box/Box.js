@@ -2,13 +2,6 @@ import React from 'react';
 import { View, Platform } from 'react-native';
 import { any, oneOf, oneOfType, string, number, array, func, bool, object, shape } from 'prop-types';
 
-const shapeStyles = {
-  square: 0,
-  rounded: 5,
-  circle: 100000,
-  pill: 999,
-};
-
 /** Ensure the props we're going to use were indeed passed through. */
 const filterOutUnspecifiedProps = props => {
   const keys = Object.keys( props );
@@ -75,7 +68,10 @@ const Box = ({
   borderColor,
   borderStyle,
   borderRadius,
-  shape,
+  borderTopLeftRadius,
+  borderTopRightRadius,
+  borderBottomRightRadius,
+  borderBottomLeftRadius,
   shadowColor,
   shadowOpacity,
   shadowRadius,
@@ -89,6 +85,7 @@ const Box = ({
   overscrollBehavior,
   overscrollBehaviorX,
   overscrollBehaviorY,
+  onLayout,
   ...restProps
 }) => {
   const boxStyle = filterOutUnspecifiedProps({
@@ -148,7 +145,11 @@ const Box = ({
     opacity,
     borderColor,
     borderStyle,
-    borderRadius: borderRadius || shapeStyles[shape],
+    borderRadius,
+    borderBottomRightRadius,
+    borderBottomLeftRadius,
+    borderTopRightRadius,
+    borderTopLeftRadius,
     overflow,
     overflowX,
     overflowY,
@@ -179,6 +180,7 @@ const Box = ({
         boxStyle,
         webStyle,
       ]}
+      onLayout={onLayout}
     >
       {children}
     </View>
@@ -268,12 +270,22 @@ Box.propTypes = {
   borderWidth: number,
   borderColor: string,
   borderStyle: string,
-  borderRadius: oneOf(
+  borderRadius: oneOfType(
     [number, string]
   ),
-  shape: oneOf(
-    ['square', 'rounded', 'pill', 'circle']
+  borderTopLeftRadius: oneOfType(
+    [number, string]
   ),
+  borderTopRightRadius: oneOfType(
+    [number, string]
+  ),
+  borderBottomRightRadius: oneOfType(
+    [number, string]
+  ),
+  borderBottomLeftRadius: oneOfType(
+    [number, string]
+  ),
+  cleanStyleObject: bool,
   fullHeightOnWeb: bool,
   __dangerouslySetStyle: object,
   overflow: string,

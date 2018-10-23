@@ -1,4 +1,3 @@
-export { Fragment } from 'react';
 export { default as Address } from './address';
 export { default as Avatar } from './avatar';
 export { default as Box } from './box';
@@ -16,6 +15,7 @@ export { default as EventLink } from './event-link';
 export { default as Form } from './form';
 export { default as Heading } from './heading';
 export { default as Image } from './image';
+export { default as ImageProxy } from './image-proxy';
 export { default as Icon } from './icon';
 export { default as Collection } from './collection';
 export { default as Input } from './input';
@@ -69,6 +69,8 @@ export { default as Marker } from './marker';
 export { default as Selection } from './selection';
 export { default as BackButton } from './back-button';
 export { default as Join } from './join';
+export { default as FlatList } from './flat-list';
+export { default as Fragment } from './fragment';
 
 export * from './keycloak';
 export * from './vertx';

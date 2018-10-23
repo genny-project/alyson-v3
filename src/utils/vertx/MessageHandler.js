@@ -37,15 +37,17 @@ class MessageHandler {
 
     store.dispatch( message );
 
-    // this.beBatch.forEach( message => {
-    //   store.dispatch( message );
-    // });
-
     this.beBatch = [];
   }
 
   handleReduceMessageBatch = ( output, current ) => {
-    if ( current.payload.aliasCode ) {
+    /**
+     * If the message has an aliasCode process it individually.
+     * Additionally don't apply this to aliasCodes that match
+     * the parentCode as this eliminates a large number of
+     * individual messages, increasing performance.
+     */
+    if ( current.payload.aliasCode && current.payload.aliasCode !== current.payload.parentCode ) {
       store.dispatch( current );
 
       return output;
@@ -105,7 +107,7 @@ class MessageHandler {
       return;
     }
 
-    if ( message.data_type === 'BaseEntity' && !message.delete ) {
+    if ( message.data_type === 'BaseEntity' && !message.delete && !message.replace ) {
       /* Add to a batch */
       this.beBatch.push(
         action( message )
@@ -113,17 +115,17 @@ class MessageHandler {
 
       this.lastBe = new Date().getTime();
     } else {
-      const payload = {
-        ...message,
-        ...isArray( message.items ) && {
-          items: message.items.map( item => ({
-            shouldDeleteLinkedBaseEntities: message.shouldDeleteLinkedBaseEntities,
-            delete: message.delete,
-            replace: message.replace,
-            ...item,
-          })),
-        },
-      };
+      const payload = message;
+
+      if ( isArray( payload.items )) {
+        payload.items = payload.items.map( item => ({
+          shouldDeleteLinkedBaseEntities: payload.shouldDeleteLinkedBaseEntities,
+          parentCode: payload.parentCode,
+          delete: payload.delete,
+          replace: payload.replace,
+          ...item,
+        }));
+      }
 
       store.dispatch(
         action( payload )

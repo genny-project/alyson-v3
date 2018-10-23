@@ -250,7 +250,7 @@ class InputTag extends Component {
                             alignItems="center"
                           >
                             <Text
-                              color={highlightedIndex === index ? 'red' : 'black'}
+                              color={highlightedIndex === index ? 'black' : 'gray'}
                               fontWeight={selectedItems && selectedItems.includes( itemString ) ? 'bold' : 'normal'}
                             >
                               {itemString}

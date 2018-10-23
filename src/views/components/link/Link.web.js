@@ -1,27 +1,13 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Link as ReactRouterLink, withRouter } from 'react-router-dom';
 import { string, bool, any, func, oneOf, object } from 'prop-types';
 import { withKeycloak } from '../keycloak';
 import { Touchable } from '../index';
 
-const Link = ({
-  children = 'Link',
-  to,
-  disabled = false,
-  onPress,
-  history,
-  decoration = 'none',
-  wrapperProps = {},
-  withFeedback = true,
-  ...restProps
-}) => {
-  const href = (
-    to === 'home' ? '/'
-    : to.startsWith( '/' ) ? to
-    : `/${to}`
-  );
+class Link extends Component {
+  handleClick = event => {
+    const { onPress, disabled } = this.props;
 
-  const handleClick = event => {
     if ( disabled ) {
       event.preventDefault();
       event.stopPropagation();
@@ -31,40 +17,69 @@ const Link = ({
 
     if ( onPress )
       onPress( event );
-  };
+  }
 
-  const handleNavigate = event => {
+  handleNavigate = event => {
+    const { disabled, to, history } = this.props;
+
     if ( !disabled )
       history.push( to );
 
-    handleClick( event );
-  };
-
-  if ( typeof children === 'function' ) {
-    return children({
-      onPress: handleNavigate,
-    });
+    this.handleClick( event );
   }
 
-  return (
-    <ReactRouterLink
-      {...wrapperProps}
-      to={href}
-      onClick={handleClick}
-      style={{
-        ...wrapperProps.style,
-        textDecoration: decoration,
-      }}
-    >
-      <Touchable
-        {...restProps}
-        withFeedback={withFeedback}
+  focus() {
+    if ( this.link )
+      this.link.focus();
+  }
+
+  render() {
+    const {
+      children = 'Link',
+      to,
+      disabled = false,
+      decoration = 'none',
+      wrapperProps = {},
+      withFeedback = true,
+      onPress, // eslint-disable-line
+      ...restProps
+    } = this.props;
+
+    const href = (
+      to === 'home' ? '/'
+      : to.startsWith( '/' ) ? to
+      : `/${to}`
+    );
+
+    if ( typeof children === 'function' ) {
+      return children({
+        onPress: this.handleNavigate,
+      });
+    }
+
+    return (
+      <ReactRouterLink
+        {...wrapperProps}
+        to={href}
+        onClick={this.handleClick}
+        style={{
+          ...wrapperProps.style,
+          textDecoration: decoration,
+        }}
+        ref={link => this.link = link}
+        disabled={disabled}
+
       >
-        {children}
-      </Touchable>
-    </ReactRouterLink>
-  );
-};
+        <Touchable
+          {...restProps}
+          withFeedback={withFeedback}
+        >
+          {children}
+        </Touchable>
+      </ReactRouterLink>
+    );
+  }
+}
 
 Link.propTypes = {
   children: any,
