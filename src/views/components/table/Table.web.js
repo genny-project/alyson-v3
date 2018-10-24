@@ -92,6 +92,7 @@ class TableView extends Component {
             data: {
               code: 'BTN_EDIT_EDU_PROVIDER',
               value: null,
+              itemCode: 'PER_ALWY_PLUS_STAGING_EDU_AT_OUTCOMELIFE',
             },
           });
         };
@@ -188,4 +189,3 @@ class TableView extends Component {
 }
 
 export default TableView;
-
