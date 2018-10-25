@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { any, bool, func } from 'prop-types';
+import { any, bool, func, object } from 'prop-types';
 import { TouchableOpacity } from 'react-native';
 import { Box, Icon }  from '../../components';
 import Recursive from '../layout-loader/Recursive';
@@ -7,6 +7,9 @@ import Recursive from '../layout-loader/Recursive';
 class Collapsible extends Component {
   static defaultProps = {
     showHeader: true,
+    wrapperProps: {},
+    headerWrapperProps: {},
+    headerIconProps: {},
   }
 
   static propTypes = {
@@ -15,6 +18,9 @@ class Collapsible extends Component {
     header: any,
     // open: bool,
     onToggle: func,
+    wrapperProps: object,
+    headerWrapperProps: object,
+    headerIconProps: object,
   }
 
   // static getDerivedStateFromProps( nextProps, nextState ) {
@@ -43,6 +49,9 @@ class Collapsible extends Component {
       children,
       showHeader,
       header,
+      wrapperProps,
+      headerWrapperProps,
+      headerIconProps,
     } = this.props;
 
     const { isOpen } = this.state;
@@ -51,6 +60,7 @@ class Collapsible extends Component {
       <Box
         justifyContent="center"
         flexDirection="column"
+        {...wrapperProps}
       >
         {showHeader ? (
           <TouchableOpacity
@@ -73,10 +83,12 @@ class Collapsible extends Component {
                     transform={[
                       { rotate: isOpen ? '180deg' : '0deg' },
                     ]}
+                    {...headerWrapperProps}
                   >
                     <Icon
                       name="keyboard_arrow_down"
                       color="black"
+                      {...headerIconProps}
                     />
                   </Box>
                 )
