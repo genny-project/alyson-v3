@@ -1,8 +1,19 @@
 import React, { Component } from 'react';
 import { TextInput, Platform } from 'react-native';
 import { string, oneOf, number, shape, bool, func, oneOfType, node, object } from 'prop-types';
-import { objectClean } from '../../../../utils';
 import { Box, Icon, Text } from '../../../components';
+
+/** Ensure the props we're going to use were indeed passed through. */
+const filterOutUnspecifiedProps = props => {
+  const keys = Object.keys( props );
+
+  return keys.reduce(( filteredProps, prop ) => {
+    if ( props[prop] != null )
+      filteredProps[prop] = props[prop];
+
+    return filteredProps;
+  }, {});
+};
 
 const textSizes = {
   xs: 14,
@@ -366,7 +377,7 @@ class Input extends Component {
       : {};
 
     /* TODO: performance optimisation? */
-    const inputStyle = objectClean({
+    const inputStyle = filterOutUnspecifiedProps({
       margin,
       marginHorizontal: marginX,
       marginVertical: marginY,
