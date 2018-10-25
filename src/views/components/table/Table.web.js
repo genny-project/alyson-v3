@@ -83,16 +83,21 @@ class TableView extends Component {
       const { data, buttonTextColor } = this.props;
       const modifiedData = addFilterMethodsToColumn();
 
+      console.warn( modifiedData );
+
       const renderButtons = ( cellInfo, buttonComponents ) => {
-        const handleClick = () => { 
+        const handleClick = ( e ) => { 
           Bridge.sendEvent({
             event: 'BTN',
             eventType: 'BTN_CLICK',
             sendWithToken: true,
             data: {
-              code: 'BTN_EDIT_EDU_PROVIDER',
-              value: null,
-              itemCode: 'PER_ALWY_PLUS_STAGING_EDU_AT_OUTCOMELIFE',
+              code: e.btnCode,
+              /* Backend expects a stringified json inside the value data */
+              value: JSON.stringify({
+                itemCode: cellInfo.original.attributeCode,
+              }),
+              itemCode: cellInfo.original.attributeCode,
             },
           });
         };
@@ -110,7 +115,7 @@ class TableView extends Component {
                   width={50}
                   height={50}
                   textColor={buttonTextColor}
-                  onClick={() => handleClick()}
+                  onClick={() => handleClick( btn )}
                 >
                   <Text>
                     {btn.text}
