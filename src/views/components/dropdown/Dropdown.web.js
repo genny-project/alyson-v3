@@ -1,6 +1,7 @@
 import React, { Component, isValidElement } from 'react';
-import { Menu, MenuButton, MenuItem, MenuList, MenuLink } from '@reach/menu-button';
 import { array, bool, object, any } from 'prop-types';
+import { Menu, MenuButton, MenuItem, MenuList, MenuLink } from '@reach/menu-button';
+import { withRouter } from 'react-router-dom';
 import { isArray, isString, Bridge } from '../../../utils';
 import { Recursive } from '../../components';
 import './Dropdown.css';
@@ -16,6 +17,7 @@ class Dropdown extends Component {
     menuLinkStyle: object,
     menuItemStyle: object,
     children: any,
+    history: object,
   }
 
   handleSelect = item => () => {
@@ -44,6 +46,20 @@ class Dropdown extends Component {
         },
       });
     }
+  }
+
+  handleNavigate = item => event => {
+    event.preventDefault();
+
+    const href = (
+      item.href === 'home' ? '/'
+      : item.href.startsWith( '/' ) ? item.href
+      : `/${item.href}`
+    );
+
+    this.props.history.push( href );
+
+    return false;
   }
 
   render() {
@@ -101,6 +117,7 @@ class Dropdown extends Component {
                     ...menuItemStyle,
                     ...menuLinkStyle,
                   }}
+                  onClick={this.handleNavigate( item )}
                 >
                   {item.text}
                 </MenuLink>
@@ -130,4 +147,4 @@ class Dropdown extends Component {
   }
 }
 
-export default Dropdown;
+export default withRouter( Dropdown );
