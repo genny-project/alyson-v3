@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { node, bool, func, string, object } from 'prop-types';
-import { Box, Modal, SafeAreaView, Touchable, Icon, Input } from '../../../index';
+import { Box, Modal, SafeAreaView, Touchable, Icon, Input, ScrollView } from '../../../index';
 
 class InputTagSuggestionContainer extends Component {
   static propTypes = {
@@ -113,7 +113,12 @@ class InputTagSuggestionContainer extends Component {
               </Box>
             ) : null}
           </Box>
-          {children}
+          <ScrollView
+            width="100%"
+            flex={1}
+          >
+            {children}
+          </ScrollView>
         </SafeAreaView>
       </Modal>
     );
