@@ -14,6 +14,7 @@ class Form extends Component {
 
   static defaultProps = {
     loadingText: 'Loading form...',
+    shouldSetInitialValues: true,
   }
 
   static propTypes = {
@@ -33,6 +34,7 @@ class Form extends Component {
     displayInline: bool,
     hideButtonIfDisabled: bool,
     loadingText: string,
+    shouldSetInitialValues: bool,
   }
 
   state = {
@@ -154,7 +156,7 @@ class Form extends Component {
       });
     });
 
-    if ( Object.keys( initialValues ).length > 0 )
+    if ( Object.keys( initialValues ).length > 0 && this.props.shouldSetInitialValues )
       this.setState({ initialValues });
   }
 
