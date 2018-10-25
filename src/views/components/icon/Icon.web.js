@@ -4,7 +4,9 @@ import { oneOf, string } from 'prop-types';
 import styles from './Icon.style';
 
 const sizes = {
+  xs: 16,
   sm: 18,
+  smd: 20,
   md: 24,
   lg: 36,
   xl: 48,
