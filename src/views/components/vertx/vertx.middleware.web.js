@@ -2,6 +2,7 @@ import { push } from 'react-router-redux';
 import * as actions from './vertx.actions';
 import { showDialog } from '../../../redux/actions';
 import { Bridge } from '../../../utils';
+import { alert } from '../../components';
 
 const middleware = store => next => action => {
   /* Since we are not making any side effects to `action`, pass on next. */
@@ -13,19 +14,19 @@ const middleware = store => next => action => {
     );
   }
 
-  if ( action.type === 'VERTX_INIT_ATTEMPT' ) {
+  else if ( action.type === 'VERTX_INIT_ATTEMPT' ) {
     const { data, accessToken } = store.getState().keycloak;
 
     Bridge.initVertx( data.vertx_url, accessToken );
   }
 
-  if ( action.type === 'VERTX_INIT_SUCCESS' ) {
+  else if ( action.type === 'VERTX_INIT_SUCCESS' ) {
     const { accessToken } = store.getState().keycloak;
 
     Bridge.sendAuthInit( accessToken );
   }
 
-  if ( action.type === 'ROUTE_CHANGE' ) {
+  else if ( action.type === 'ROUTE_CHANGE' ) {
     const { code, modal } = action.payload;
 
     if ( modal ) {
@@ -38,6 +39,16 @@ const middleware = store => next => action => {
         push( code )
       );
     }
+  }
+
+  else if ( action.type === 'NOTIFICATION_MESSAGE' ) {
+    const { style, message } = action.payload;
+
+    const title = style === 'warning'
+      ? 'Warning!'
+      : 'Notification';
+
+    alert({ title, message, toast: true });
   }
 };
 
