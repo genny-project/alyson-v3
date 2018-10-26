@@ -1,8 +1,8 @@
 import { isArray } from '../../../../utils';
 
 export default ( input, value ) => {
-  if ( !isArray( value ))
+  if ( !isArray( input ))
     return false;
 
-  return value.includes( input );
+  return input.includes( value );
 };
