@@ -77,6 +77,7 @@ class Sidebar extends Component {
               ...itemData,
               icon,
               name: baseEntityName,
+              code: targetCode,
               items: linkedBaseEntities,
               isDropdown: true,
             });
@@ -88,6 +89,7 @@ class Sidebar extends Component {
         items.push({
           icon,
           name: baseEntityName,
+          code: targetCode,
           onPress: this.handlePress( link.link ),
         });
       }
