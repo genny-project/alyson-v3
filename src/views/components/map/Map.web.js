@@ -25,8 +25,6 @@ class MapView extends Component {
   render() {
     const { height, width , zoom } = this.props;
 
-    console.log( 'MARKERS CHILDREN', this.props.children.length );
-
     return (
       <div>
         <div

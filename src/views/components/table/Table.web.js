@@ -48,8 +48,6 @@ class TableView extends Component {
   handleCellDataChange = cellInfo1 => event => {
     const { value } = event.target;
 
-    console.warn({ cellInfo1, value });
-
     /* Send data to the bridge */
     this.sendMessageToBridge({
       attributeCode: cellInfo1.column.attributeCode,
@@ -72,8 +70,6 @@ class TableView extends Component {
       const modifiedCells = columns.map( column => {
         return ({ ...column, ...{ filterMethod: utilMethod }, ...{ filterAll: true } });
       });
- 
-      console.log({ modifiedCells });
 
       return modifiedCells;
     };
@@ -82,8 +78,6 @@ class TableView extends Component {
     const addCustomComponentsToColumn = () => {
       const { data, buttonTextColor } = this.props;
       const modifiedData = addFilterMethodsToColumn();
-
-      console.warn( modifiedData );
 
       const renderButtons = ( cellInfo, buttonComponents ) => {
         const handleClick = ( e ) => { 
@@ -102,7 +96,6 @@ class TableView extends Component {
           });
         };
         
-        console.warn({ cellInfo }, '%%%%%%%%%%%%%%%%%%' );
         const renderButtons2 = () => {
           /* check if buttonComponents data is passed from the */
           /* props if then render those buttons inside the table */
