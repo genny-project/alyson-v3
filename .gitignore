@@ -72,4 +72,4 @@ dist
 .env.*
 
 # Pods
-ios/Pods
+ios/Pods*
