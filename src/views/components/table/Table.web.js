@@ -8,7 +8,7 @@ import 'react-table/react-table.css';
 import { Bridge } from '../../../utils/vertx';
 import {  Text, Box, EventTouchable } from '../../components';
 
-import './table.scss';
+import './table.css';
 
 const utilMethod = ( filter, rows ) =>  {
   return matchSorter( rows, filter.value, { keys: [filter.id] });
