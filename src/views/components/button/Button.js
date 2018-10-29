@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, ActivityIndicator, TouchableNativeFeedback } from 'react-native';
-import { string, bool, func, oneOf, number, oneOfType, shape, arrayOf, object, any } from 'prop-types';
+import { array, string, bool, func, oneOf, number, oneOfType, shape, arrayOf, object, any } from 'prop-types';
 import { Text, Icon, Box, Touchable, alert } from '../index';
 import { withTheme } from '../theme';
 import defaultThemeConfig from './defaultThemeConfig.json';
@@ -15,7 +15,9 @@ class Button extends Component {
   }
 
   static propTypes = {
-    children: string,
+    children: oneOfType(
+      [array, string]
+    ),
     text: string,
     disabled: bool,
     onPress: func,

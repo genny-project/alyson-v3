@@ -48,18 +48,22 @@ class InputTagSuggestionContainer extends Component {
               position="absolute"
               height="100%"
               alignItems="center"
-              left={10}
+              left={0}
               zIndex={5}
             >
               <Touchable
                 withFeedback
                 onPress={onPressClose}
               >
-                <Icon
-                  name="arrow-back"
-                  color="black"
-                  size="md"
-                />
+                <Box
+                  paddingX={10}
+                >
+                  <Icon
+                    name="arrow-back"
+                    color="black"
+                    size="md"
+                  />
+                </Box>
               </Touchable>
             </Box>
 

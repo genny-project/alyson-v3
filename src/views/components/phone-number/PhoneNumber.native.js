@@ -15,7 +15,7 @@ class PhoneNumber extends Component {
     children: node,
     number: string,
     type: oneOf(
-      'tel', 'sms'
+      ['tel', 'sms']
     ),
   }
 
