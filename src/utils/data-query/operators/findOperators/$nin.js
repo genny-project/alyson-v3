@@ -1,3 +1,8 @@
+import { isArray } from '../../../../utils';
+
 export default ( input, value ) => {
-  return !value.includes( input );
+  if ( !isArray( input ))
+    return false;
+
+  return !input.includes( value );
 };

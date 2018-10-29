@@ -115,16 +115,20 @@ class InputTag extends Component {
         onChange={this.handleChange}
         itemToString={this.itemToString}
         selectedItems={isArray( value )
-          ? value.map( i => isObject( i ) ? i
-          : { [itemStringKey]: i, [itemValueKey]: i }) : null
+          ? value.map( i => isObject( i )
+            ? items.filter( x => x[itemValueKey] === i ).length > 0
+              ? items.filter( x => x[itemValueKey] === i )[0]
+              : i
+            : { [itemStringKey]: i, [itemValueKey]: i })
+          : null
         }
-        addItemFunction={(( selectedItems, newItem ) => (
-          selectedItems.filter( i => (
+        addItemFunction={(( selectedItems, newItem ) => {
+          return selectedItems.filter( i => (
             newItem != null &&
             i[itemValueKey] === newItem[itemValueKey] )).length === 0
             ? [...selectedItems, newItem]
-            : selectedItems
-        ))}
+            : selectedItems;
+        })}
         removeItemFunction={(( selectedItems, newItem ) => (
           selectedItems.filter( i => i[itemValueKey] !== newItem[itemValueKey] )
         ))}

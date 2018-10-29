@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text as NativeText, Platform } from 'react-native';
-import { string, number, oneOf, oneOfType, bool } from 'prop-types';
+import { string, number, oneOf, oneOfType, bool, node } from 'prop-types';
 import capitalize from 'lodash.capitalize';
 import upperCase from 'lodash.uppercase';
 import lowerCase from 'lodash.lowercase';
@@ -84,7 +84,7 @@ Text.propTypes = {
   text: string,
   color: string,
   decoration: oneOf(
-    ['none']
+    ['none', 'underline']
   ),
   fontWeight: string,
   size: string,
@@ -92,7 +92,7 @@ Text.propTypes = {
     [number, string]
   ),
   children: oneOfType(
-    [number, string]
+    [number, string, node]
   ),
   align: oneOf(
     ['auto', 'left', 'right', 'center', 'justify']

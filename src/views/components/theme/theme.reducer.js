@@ -36,7 +36,7 @@ const reducer = ( state = initialState, { type, payload }) => {
 
           if ( !isString( code, { startsWith: 'LAY_' }))
             return newState;
-            
+
           const attr = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' );
 
           if ( attr ) {
@@ -46,14 +46,19 @@ const reducer = ( state = initialState, { type, payload }) => {
             /* Remove the group from the start of the URI,
             * and remove the starting and ending slashes. */
 
-              const newUri = uri.split( 'components/' )[1];
+              const componentUriSplit = uri.split( '/' );
+              const newUri = componentUriSplit[componentUriSplit.length - 1];
+
+              const split = newUri.includes( '.' )
+                ? newUri.split( '.' )
+                : newUri.split( '-' );
 
               const componentName = removeStartingAndEndingSlashes(
-                newUri.split( '-' )[0]
+                split[0]
               );
 
               const themeName = removeStartingAndEndingSlashes(
-                newUri.split( '-' )[1]
+                split[1]
               );
 
               const data = JSON.parse(

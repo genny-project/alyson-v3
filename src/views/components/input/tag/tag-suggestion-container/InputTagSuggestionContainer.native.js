@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { node, bool, func, string, object } from 'prop-types';
-import { Box, Modal, SafeAreaView, Touchable, Icon, Input } from '../../../index';
+import { Box, Modal, SafeAreaView, Touchable, Icon, Input, ScrollView } from '../../../index';
 
 class InputTagSuggestionContainer extends Component {
   static propTypes = {
@@ -48,18 +48,22 @@ class InputTagSuggestionContainer extends Component {
               position="absolute"
               height="100%"
               alignItems="center"
-              left={10}
+              left={0}
               zIndex={5}
             >
               <Touchable
                 withFeedback
                 onPress={onPressClose}
               >
-                <Icon
-                  name="arrow-back"
-                  color="black"
-                  size="md"
-                />
+                <Box
+                  paddingX={10}
+                >
+                  <Icon
+                    name="arrow-back"
+                    color="black"
+                    size="md"
+                  />
+                </Box>
               </Touchable>
             </Box>
 
@@ -113,7 +117,12 @@ class InputTagSuggestionContainer extends Component {
               </Box>
             ) : null}
           </Box>
-          {children}
+          <ScrollView
+            width="100%"
+            flex={1}
+          >
+            {children}
+          </ScrollView>
         </SafeAreaView>
       </Modal>
     );
