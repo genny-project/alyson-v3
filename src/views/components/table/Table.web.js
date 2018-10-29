@@ -1,12 +1,12 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, isValidElement } from 'react';
 import { string, array, number, bool, oneOfType } from 'prop-types';
 import ReactTable from 'react-table';
 import matchSorter from 'match-sorter';
 import  debounce  from 'lodash.debounce';
 
 import 'react-table/react-table.css';
-import { Bridge } from '../../../utils/vertx';
-import {  Text, Box, EventTouchable } from '../../components';
+import { Bridge, isArray } from '../../../utils';
+import {   Box, Recursive } from '../../components';
 
 import './table.css';
 
@@ -64,7 +64,7 @@ class TableView extends Component {
   modifiedTableColumns = () => {
     /* make all the columns searchable  this is used for searching oneach column */
     const addFilterMethodsToColumn =  () => {
-      const { columns   } = this.props;
+      const { columns  } = this.props;
       
       if ( columns.length < 1 ) return null;
       const modifiedCells = columns.map( column => {
@@ -73,80 +73,56 @@ class TableView extends Component {
 
       return modifiedCells;
     };
-    
-    /* add buttons to the data (if it is asked in - in the props) */
-    const addCustomComponentsToColumn = () => {
-      const { data, buttonTextColor } = this.props;
-      const modifiedData = addFilterMethodsToColumn();
 
-      const renderButtons = ( cellInfo, buttonComponents ) => {
-        const handleClick = ( e ) => { 
-          Bridge.sendEvent({
-            event: 'BTN',
-            eventType: 'BTN_CLICK',
-            sendWithToken: true,
-            data: {
-              code: e.btnCode,
-              /* Backend expects a stringified json inside the value data */
-              value: JSON.stringify({
-                itemCode: cellInfo.original.attributeCode,
-              }),
-              itemCode: cellInfo.original.attributeCode,
-            },
-          });
-        };
-        
-        const renderButtons2 = () => {
-          /* check if buttonComponents data is passed from the */
-          /* props if then render those buttons inside the table */
-          if ( buttonComponents && buttonComponents.length > 0 ) { 
-            return buttonComponents.map( btn => (
-              <Box key={btn.text}>
-                <EventTouchable
-                  size="sm"
-                  color="green"
-                  width={50}
-                  height={50}
-                  textColor={buttonTextColor}
-                  onClick={() => handleClick( btn )}
-                >
-                  <Text>
-                    {btn.text}
-                  </Text>
-                </EventTouchable>
-              </Box>
-            ));
-          }
-           
-          return (
-            <Fragment>
+    const renderCell = ( cellInfo, data ) => {
+      const { renderButton } = data;
 
-              {data[cellInfo.index][cellInfo.column.id]}
-            </Fragment>
-          );
+      if ( renderButton ) { 
+        const context = {
+          ...this.props.context,
+          ...this.props.data[cellInfo.index],
         };
-        
+
+        console.warn({ context });
+            
         return (
           <Box
             justifyContent="space-around"
             height="100%"
           >
-            {renderButtons2()}
-
+            {renderButton ? (
+              isValidElement( renderButton ) ? renderButton
+              : isArray( renderButton )
+                ? renderButton.map(( element, i ) => (
+                  isValidElement( element ) ? element : (
+                    <Recursive
+                          key={i} // eslint-disable-line
+                      {...element}
+                      context={context}
+                    />
+                  )))
+                : (
+                  <Recursive
+                    {...renderButton}
+                    context={context}
+                  />
+                )
+            ) : null}
           </Box>
         );
-      };
-
-      /* method for adding an extra data */
-      const addButtonsToModifiedData = modifiedData.map(
-        data => ({ ...data, Cell: cellInfo => renderButtons( cellInfo, data.buttonComponent ) })
+      }
+           
+      return (
+        <Fragment>
+          {this.props.data[cellInfo.index][cellInfo.column.id]}
+        </Fragment>
       );
-
-      return addButtonsToModifiedData;
     };
 
-    return addCustomComponentsToColumn();
-    /* method to  add custom components on each Cell */
+    return addFilterMethodsToColumn().map(
+      data => console.warn({ data }) || 
+      ({ ...data, Cell: cellInfo => renderCell( cellInfo, data ) })
+    );
   }
 
   render() {
