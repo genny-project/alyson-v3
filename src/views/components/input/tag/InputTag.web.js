@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { string, func, array } from 'prop-types';
+import React, { Component, isValidElement } from 'react';
+import { string, func, array, object } from 'prop-types';
 import { isString, isArray, isObject } from '../../../../utils';
-import { Box, MultiDownshift, Input, Text, Touchable, Icon } from '../../index';
+import { Box, MultiDownshift, Input, Text, Touchable, Icon, Recursive } from '../../index';
 
 class InputTag extends Component {
   static defaultProps = {
@@ -19,6 +19,8 @@ class InputTag extends Component {
     itemStringKey: string,
     itemValueKey: string,
     itemIdKey: string,
+    renderTag: object,
+    context: object,
   }
 
   handleChange = selectedItems => {
@@ -47,7 +49,7 @@ class InputTag extends Component {
   }
 
   render() {
-    const { items, itemIdKey, itemStringKey, ...restProps } = this.props;
+    const { items, itemIdKey, itemStringKey, renderTag, ...restProps } = this.props;
 
     return (
       <MultiDownshift
@@ -75,6 +77,7 @@ class InputTag extends Component {
             <Box
               position="relative"
               flexDirection="column"
+              zIndex={5}
             >
               <Box
                 flexDirection="column"
@@ -140,6 +143,7 @@ class InputTag extends Component {
                               borderColor="#DDD"
                               borderStyle="solid"
                               alignItems="center"
+                              width="100%"
                             >
                               <Text
                                 color={highlightedIndex === index ? 'black' : 'gray'}
@@ -179,41 +183,70 @@ class InputTag extends Component {
               marginTop={10}
             >
               {selectedItems.length > 0 && (
-                selectedItems.map( item => (
-                  <Box
-                    key={item}
-                    backgroundColor="#CCC"
-                    alignItems="center"
-                    marginRight={10}
-                    marginBottom={10}
-                    borderRadius={20}
-                    cleanStyleObject
-                  >
-                    <Box marginLeft={5}>
-                      <Text color="black">
-                        {item}
-                      </Text>
-                    </Box>
+                selectedItems.map( item => {
+                  if ( renderTag ) {
+                    const context = {
+                      ...this.props.context,
+                      name: item,
+                      onRemove: () => removeItem( item ),
+                    };
 
-                    <Touchable
-                      {...getRemoveButtonProps({
-                        withFeedback: true,
-                        onPress: () => {
-                          removeItem( item );
-                        },
-                        style: {
-                          padding: 10,
-                        },
-                      })}
+                    return isValidElement( renderTag ) ? renderTag
+                      : isArray( renderTag )
+                        ? renderTag.map(( child, i ) => (
+                          isValidElement( child )
+                            ? child
+                            : (
+                              <Recursive
+                                key={i} // eslint-disable-line
+                                {...child}
+                                context={context}
+                              />
+                            )))
+                        : (
+                          <Recursive
+                            {...renderTag}
+                            context={context}
+                          />
+                        );
+                  }
+
+                  return (
+                    <Box
+                      key={item}
+                      backgroundColor="#CCC"
+                      alignItems="center"
+                      marginRight={10}
+                      marginBottom={10}
+                      borderRadius={20}
+                      cleanStyleObject
                     >
-                      <Icon
-                        type="material-icons"
-                        name="clear"
-                        color="black"
-                      />
-                    </Touchable>
-                  </Box>
-                ))
+                      <Box marginLeft={5}>
+                        <Text color="black">
+                          {item}
+                        </Text>
+                      </Box>
+
+                      <Touchable
+                        {...getRemoveButtonProps({
+                          withFeedback: true,
+                          onPress: () => {
+                            removeItem( item );
+                          },
+                          style: {
+                            padding: 10,
+                          },
+                        })}
+                      >
+                        <Icon
+                          type="material-icons"
+                          name="clear"
+                          color="black"
+                        />
+                      </Touchable>
+                    </Box>
+                  );
+                })
               )}
             </Box>
           </Box>

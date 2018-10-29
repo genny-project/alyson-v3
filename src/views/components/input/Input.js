@@ -78,6 +78,7 @@ class Input extends Component {
           />
         );
 
+      case 'htmlarea':
       case 'textarea':
         return (
           <InputText
@@ -91,6 +92,8 @@ class Input extends Component {
 
       case 'number':
       case 'java.lang.integer':
+      case 'java.lang.long':
+      case 'java.lang.Long':
       case 'java.lang.Integer':
       case 'mobile':
       case 'landline':
@@ -293,6 +296,7 @@ class Input extends Component {
           />
         );
 
+      case 'dropdownmultiple':
       case 'tag':
         return (
           <InputTag

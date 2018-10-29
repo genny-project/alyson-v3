@@ -22,6 +22,7 @@ class InputDatePicker extends Component {
     displayFormat: 'MMMM Do, YYYY',
     calendarHeaderColor: 'crimson',
     calendarHeaderTextColor: 'white',
+    placeholder: 'Please select a date...', // eslint-disable-line
   }
 
   static propTypes = {
@@ -206,7 +207,7 @@ class InputDatePicker extends Component {
                             <Input
                               type="dropdown"
                               items={years}
-                              value={years[getYear( date )]}
+                              value={years[years.findIndex( year => year === getYear( date ))]}
                               onChangeValue={year => {
                                 const newDate = setYear( date, year );
 

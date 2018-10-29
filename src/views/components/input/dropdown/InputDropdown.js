@@ -28,6 +28,7 @@ class InputDropdown extends Component {
     itemStringKey: 'label',
     itemValueKey: 'value',
     itemIdKey: 'id',
+    placeholder: 'Please select...',
   }
 
   static propTypes = {
@@ -100,6 +101,7 @@ class InputDropdown extends Component {
     iconType: string,
     placeholderColor: string,
     color: string,
+    appearance: string,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -117,6 +119,14 @@ class InputDropdown extends Component {
     value: this.props.value || this.props.placeholder,
   }
 
+  componentDidMount() {
+    if ( this.props.appearance === 'none' ) {
+      this.injectNativeProps({
+        'data-appearance-none': true,
+      });
+    }
+  }
+
   handleChange = value => {
     const { placeholder } = this.props;
 
@@ -127,6 +137,13 @@ class InputDropdown extends Component {
 
     if ( this.props.onChangeValue )
       this.props.onChangeValue( value );
+  }
+
+  injectNativeProps( nativeProps ) {
+    if ( !this.picker ) return;
+    if ( !this.picker.setNativeProps ) return;
+
+    this.picker.setNativeProps( nativeProps );
   }
 
   render() {
@@ -216,6 +233,7 @@ class InputDropdown extends Component {
         onValueChange={this.handleChange}
         selectedValue={value}
         style={inputStyle}
+        ref={picker => this.picker = picker}
       >
         {validItems ? (
           <Fragment>

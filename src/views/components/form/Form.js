@@ -457,7 +457,11 @@ class Form extends Component {
 
     if ( isArray( childAsks, { ofMinLength: 1 })) {
       return (
-        <Box flexDirection="column">
+        <Box
+          flexDirection="column"
+          position="relative"
+          zIndex={100 - index}
+        >
           {renderSubheading ? (
             <Recursive
               {...renderSubheading}
@@ -658,8 +662,13 @@ class Form extends Component {
               onSubmit: handleSubmit,
             }, (
               <Fragment>
-                {questionGroups.map( questionGroup => (
-                  <Fragment key={questionGroup.name}>
+                {questionGroups.map(( questionGroup, index ) => (
+                  <Box
+                    flexDirection={displayInline ? 'row' : 'column'}
+                    zIndex={150 - index}
+                    position="relative"
+                    key={questionGroup.name}
+                  >
                     {renderHeading ? (
                       <Recursive
                         {...renderHeading}
@@ -696,7 +705,7 @@ class Form extends Component {
                         )
                       )
                     }
-                  </Fragment>
+                  </Box>
                 ))}
 
                 {questionGroups.reduce(( buttons, { attributeCode }) => {
