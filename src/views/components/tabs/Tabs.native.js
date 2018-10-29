@@ -33,7 +33,7 @@ class Tabs extends Component {
     iconColor: string,
     labelColor: string,
     tabsPosition: oneOf(
-      'top', 'bottom'
+      ['top', 'bottom']
     ),
     tabBarProps: object,
     onPress: func,
@@ -48,7 +48,7 @@ class Tabs extends Component {
     restrictSceneHeights: bool,
     showDots: bool,
     dotsPosition: oneOf(
-      'top', 'bottom'
+      ['top', 'bottom']
     ),
     dotProps: object,
   }
