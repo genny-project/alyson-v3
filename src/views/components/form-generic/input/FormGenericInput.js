@@ -20,7 +20,7 @@ class FormGenericInput extends Component {
             {...restProps}
             name={name}
             disabled={disabled || form.isSubmitting}
-            value={form.values[name]}
+            value={form.values && form.values[name]}
             onChangeValue={value => {
               form.setFieldTouched( name, true );
               form.setFieldValue( name, value );

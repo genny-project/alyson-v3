@@ -57,6 +57,10 @@ class InputAddress extends Component {
     items: [],
   }
 
+  componentDidMount() {
+    console.warn( this.props );
+  }
+
   autocompleteAddress = async address => {
     const { google } = this.props;
 

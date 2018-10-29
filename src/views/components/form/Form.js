@@ -11,7 +11,7 @@ import { Box, Text, Button, KeyboardAwareScrollView, ScrollView } from '../index
 import Recursive from '../layout-loader/Recursive';
 import FormInput from './input';
 
-const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'YES', 'NO', 'ACCEPT', 'DECLINE'];
+const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE'];
 
 class Form extends Component {
   inputRefs = {}
@@ -700,26 +700,25 @@ class Form extends Component {
                 ))}
 
                 {questionGroups.reduce(( buttons, { attributeCode }) => {
-                  const type =
-                    buttonTypes.find( buttonType => attributeCode.includes( buttonType ));
-
-                  if ( type ) {
-                    buttons.push(
-                      this.renderButton({
-                        disabled: isSubmitting,
-                        onPress: () => {
-                          this.setState({
-                            formStatus: lowercase( type ),
-                          }, () => {
-                            submitForm();
-                          });
-                        },
-                        key: type,
-                        text: capitalize( type ),
-                        showSpinnerOnClick: true,
-                      })
-                    );
-                  }
+                  buttonTypes.forEach( type => {
+                    if ( attributeCode.includes( type )) {
+                      buttons.push(
+                        this.renderButton({
+                          disabled: isSubmitting,
+                          onPress: () => {
+                            this.setState({
+                              formStatus: lowercase( type ),
+                            }, () => {
+                              submitForm();
+                            });
+                          },
+                          key: type,
+                          text: capitalize( type ),
+                          showSpinnerOnClick: true,
+                        })
+                      );
+                    }
+                  });
 
                   return buttons;
                 }, [] )}
