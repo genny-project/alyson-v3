@@ -5,18 +5,22 @@ import SignatureCanvas from 'react-signature-canvas';
 import { Tabs, InputText , Input, Button } from '../../../components';
 import './signature.css';
 
+import config from '../../../../config';
+
+console.warn({ config }, 'CONFIG IN SIGNATURE' );
+
+const signatureUrl = 'https://signatures.outcome-hub.com/signature';
+
 // ! text done, draw done, upload remaining
 class Signature extends Component {
   static defaultProps = { 
     height: '250px',
     width: '400px',
-    signatureUrl: '',
   }
   
   static propTypes = {
     height: oneOfType( [number, string] ),
     width: oneOfType( [number, string] ),
-    signatureUrl: string,
   }
 
   state = {
@@ -35,29 +39,33 @@ class Signature extends Component {
 
   /* submit thw signature data  from canvas */
   handleSignatureSubmitOnDraw = () => { 
-    const dataFromDrawingPad = this.signaturePad.toData();
+    const dataFromDrawingPad = this.signaturePad.toDataURL();
 
-    this.submitSignature( dataFromDrawingPad );
+    console.warn({ dataFromDrawingPad }, 'DATA FROM DRAWING PAD ' );
+
+    this.submitSignature({ type: 'draw', data: dataFromDrawingPad });
   }
 
   /* submit text  signature data */
   handleSignatureSubmitOnText = () => {
     const { textSignatureValue } = this.state;
 
-    this.submitSignature( textSignatureValue );
+    this.submitSignature({ type: 'draw', data: textSignatureValue });
   }
 
   /* Helper method for submitting */
   submitSignature = ( dataFromDrawingPad ) => {
-    const { signatureUrl } = this.props;
-
+    console.warn({ dataFromDrawingPad });
     if ( signatureUrl  ) {
       axios({
-        method: 'post',
+        method: 'POST',
         url: signatureUrl,
         data: dataFromDrawingPad,
-      }).then( response => {
-        console.warn( response );
+      }
+      ).then( response => {
+        console.warn( response , 'RESPONSE FROM SIGNATURE' );
+      }).catch( err => { 
+        console.log( 'Error while sending the signature', err );
       });
     }
   };
