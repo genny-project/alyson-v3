@@ -12,10 +12,12 @@
     "setup-images": "app-icon generate -i $IMAGE",
     "serve:web": "node server.js",
     "clear-cache:web": "rm -rf ./node_modules/.cache/babel-loader/*",
-    "layout-editor": "node layout-editor"
+    "layout-editor": "node layout-editor",
+    "lint": "eslint --fix ."
   },
   "dependencies": {
     "@reach/dialog": "^0.1.2",
+    "@reach/menu-button": "^0.1.7",
     "@reach/visually-hidden": "^0.1.1",
     "appcenter": "^1.6.0",
     "appcenter-analytics": "^1.6.0",
@@ -125,6 +127,7 @@
     "socket.io-client": "^2.1.1",
     "style-loader": "^0.21.0",
     "sweetalert2": "^7.26.28",
+    "toastr": "^2.1.4",
     "uppy": "0.24.4",
     "url-loader": "^1.0.1",
     "uuid": "^3.3.2",

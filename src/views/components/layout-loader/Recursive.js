@@ -287,7 +287,6 @@ class Recursive extends Component {
 
   render() {
     const {
-      component,
       props,
       variant,
       useThemeFrom,
@@ -299,6 +298,26 @@ class Recursive extends Component {
       conditional,
       theme,
     } = this.props;
+
+    let componentProps = this.injectContextIntoProps({
+      ...props,
+      ...this.calculateConditionalProps( conditional, context ),
+    });
+
+    const component = componentProps.component || this.props.component;
+
+    if ( variant ) {
+      componentProps = {
+        ...this.injectContextIntoProps({
+          ...(
+            theme.components[useThemeFrom || component] &&
+            theme.components[useThemeFrom || component][variant] &&
+            theme.components[useThemeFrom || component][variant].props
+          ),
+        }),
+        ...componentProps,
+      };
+    }
 
     if ( !component || !Components[component] ) {
       return (
@@ -352,17 +371,6 @@ class Recursive extends Component {
     ) : (
       this.injectContextIntoChildren( context, children )
     );
-
-    const componentProps = this.injectContextIntoProps({
-      ...(
-        variant &&
-        theme.components[useThemeFrom || component] &&
-        theme.components[useThemeFrom || component][variant] &&
-        theme.components[useThemeFrom || component][variant].props
-      ),
-      ...props,
-      ...this.calculateConditionalProps( conditional, context ),
-    });
 
     return createElement(
       Components[component],

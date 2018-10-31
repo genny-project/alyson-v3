@@ -1,13 +1,34 @@
 import React, { Component, Fragment } from 'react';
 import { Picker } from 'react-native';
-import { oneOfType, arrayOf, string, any, shape, number, func, bool } from 'prop-types';
+import { oneOfType, arrayOf, string, any, shape, number, func, bool, oneOf } from 'prop-types';
 import { isArray, isObject } from '../../../../utils';
+
+/** Ensure the props we're going to use were indeed passed through. */
+const filterOutUnspecifiedProps = props => {
+  const keys = Object.keys( props );
+
+  return keys.reduce(( filteredProps, prop ) => {
+    if ( props[prop] != null )
+      filteredProps[prop] = props[prop];
+
+    return filteredProps;
+  }, {});
+};
+
+const textSizes = {
+  xs: 14,
+  sm: 16,
+  md: 18,
+  lg: 20,
+  xl: 24,
+};
 
 class InputDropdown extends Component {
   static defaultProps = {
     itemStringKey: 'label',
     itemValueKey: 'value',
     itemIdKey: 'id',
+    placeholder: 'Please select...',
   }
 
   static propTypes = {
@@ -33,6 +54,54 @@ class InputDropdown extends Component {
         ),
       ]
     ).isRequired,
+    margin: number,
+    marginX: number,
+    marginY: number,
+    marginTop: number,
+    marginRight: number,
+    marginBottom: number,
+    marginLeft: number,
+    error: bool,
+    success: bool,
+    warning: bool,
+    icon: string,
+    padding: number,
+    paddingX: number,
+    paddingY: number,
+    paddingTop: number,
+    paddingRight: number,
+    paddingBottom: number,
+    paddingLeft: number,
+    textSize: oneOf(
+      ['xs','sm','md','lg','xl']
+    ),
+    textAlign: oneOf(
+      ['left', 'center','right']
+    ),
+    height: oneOfType(
+      [string, number]
+    ),
+    width: oneOfType(
+      [string, number]
+    ),
+    backgroundColor: string,
+    borderWidth: number,
+    borderTopWidth: number,
+    borderRightWidth: number,
+    borderBottomWidth: number,
+    borderLeftWidth: number,
+    borderColor: string,
+    borderRadius: number,
+    borderBottomLeftRadius: number,
+    borderBottomRightRadius: number,
+    borderTopLeftRadius: number,
+    borderTopRightRadius: number,
+    returnKeyLabel: string,
+    prefixIconType: string,
+    iconType: string,
+    placeholderColor: string,
+    color: string,
+    appearance: string,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -47,7 +116,15 @@ class InputDropdown extends Component {
   }
 
   state = {
-    value: this.props.value,
+    value: this.props.value || this.props.placeholder,
+  }
+
+  componentDidMount() {
+    if ( this.props.appearance === 'none' ) {
+      this.injectNativeProps({
+        'data-appearance-none': true,
+      });
+    }
   }
 
   handleChange = value => {
@@ -62,6 +139,13 @@ class InputDropdown extends Component {
       this.props.onChangeValue( value );
   }
 
+  injectNativeProps( nativeProps ) {
+    if ( !this.picker ) return;
+    if ( !this.picker.setNativeProps ) return;
+
+    this.picker.setNativeProps( nativeProps );
+  }
+
   render() {
     const {
       items,
@@ -70,10 +154,75 @@ class InputDropdown extends Component {
       itemIdKey,
       disabled,
       placeholder,
+      margin,
+      marginX,
+      marginY,
+      marginTop,
+      marginRight,
+      marginBottom,
+      marginLeft,
+      padding,
+      paddingX,
+      paddingY,
+      paddingTop,
+      paddingRight,
+      paddingBottom,
+      paddingLeft,
+      textSize,
+      textAlign,
+      height,
+      backgroundColor,
+      borderWidth,
+      borderTopWidth,
+      borderRightWidth,
+      borderBottomWidth,
+      borderLeftWidth,
+      borderColor,
+      borderRadius,
+      borderBottomLeftRadius,
+      borderBottomRightRadius,
+      borderTopLeftRadius,
+      borderTopRightRadius,
+      color,
       ...restProps
     } = this.props;
 
     const { value } = this.state;
+
+    /* TODO: performance optimisation? */
+    const inputStyle = filterOutUnspecifiedProps({
+      margin,
+      marginHorizontal: marginX,
+      marginVertical: marginY,
+      marginTop,
+      marginRight,
+      marginBottom,
+      marginLeft,
+      padding,
+      paddingHorizontal: paddingX,
+      paddingVertical: paddingY,
+      paddingTop: paddingTop,
+      paddingRight: paddingRight,
+      paddingBottom,
+      paddingLeft,
+      fontSize: textSizes[textSize],
+      textAlign: textAlign,
+      height,
+      width: '100%', // Always be 100% of the parent width
+      backgroundColor,
+      borderWidth,
+      borderTopWidth,
+      borderRightWidth,
+      borderBottomWidth,
+      borderLeftWidth,
+      borderColor,
+      borderRadius,
+      borderBottomLeftRadius,
+      borderBottomRightRadius,
+      borderTopLeftRadius,
+      borderTopRightRadius,
+      color,
+    });
 
     const validItems = isArray( items, { ofMinLength: 1 });
 
@@ -83,6 +232,8 @@ class InputDropdown extends Component {
         enabled={!disabled && validItems}
         onValueChange={this.handleChange}
         selectedValue={value}
+        style={inputStyle}
+        ref={picker => this.picker = picker}
       >
         {validItems ? (
           <Fragment>

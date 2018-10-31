@@ -68,6 +68,8 @@ class DataQuery {
     /* Apply each of the operators to the data */
     checkQuery( query );
 
+    console.warn( output );
+
     return output;
   }
 

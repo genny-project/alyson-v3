@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { string, func } from 'prop-types';
+import { string, func, object } from 'prop-types';
 import { Input, Box, Touchable } from '../../../../components';
 
 class InputFileTouchable extends Component {
@@ -12,6 +12,7 @@ class InputFileTouchable extends Component {
     text: string,
     onPress: func,
     icon: string,
+    wrapperProps: object,
   }
 
   render() {
@@ -19,6 +20,8 @@ class InputFileTouchable extends Component {
       text,
       onPress,
       icon,
+      wrapperProps,
+      ...restProps
     } = this.props;
 
     return (
@@ -27,8 +30,10 @@ class InputFileTouchable extends Component {
         onPress={onPress}
         width="100%"
         position="relative"
+        {...wrapperProps}
       >
         <Input
+          {...restProps}
           type="text"
           icon={icon}
           editable={false}

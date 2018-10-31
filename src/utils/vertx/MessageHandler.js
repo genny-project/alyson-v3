@@ -121,6 +121,8 @@ class MessageHandler {
         payload.items = payload.items.map( item => ({
           shouldDeleteLinkedBaseEntities: payload.shouldDeleteLinkedBaseEntities,
           parentCode: payload.parentCode,
+          delete: payload.delete,
+          replace: payload.replace,
           ...item,
         }));
       }
