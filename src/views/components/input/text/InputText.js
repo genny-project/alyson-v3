@@ -76,7 +76,7 @@ class Input extends Component {
     autoComplete: string,
     autoCorrect: bool,
     autoFocus: bool,
-    blurOnSubmit: func,
+    blurOnSubmit: bool,
     clearTextOnFocus: bool,
     defaultValue: string,
     disabled: bool,
