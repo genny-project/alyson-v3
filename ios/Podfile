@@ -49,6 +49,10 @@ target 'alysonv3' do
 
   pod 'RNFS', :path => '../node_modules/react-native-fs'
 
+  pod 'react-native-pdf', :path => '../node_modules/react-native-pdf'
+
+  pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
+
 end
 
 post_install do |installer|
