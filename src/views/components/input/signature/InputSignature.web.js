@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { string, number, oneOfType, func } from 'prop-types';
 import axios from 'axios';
 import SignatureCanvas from 'react-signature-canvas';
-import { SIGNATURE_URL } from '../../../../config';
+import config from '../../../../config';
 import { Tabs, InputText , Input, Button } from '../../../components';
 
 class InputSignature extends Component {
@@ -48,9 +48,10 @@ class InputSignature extends Component {
   /* Helper method for submitting */
   submitSignature = async ( dataFromDrawingPad ) => {
     try {
+      console.warn({ config });
       const { data } = await axios({
         method: 'POST',
-        url: SIGNATURE_URL,
+        url: config.signature.url,
         data: dataFromDrawingPad,
       });
 
@@ -83,11 +84,11 @@ class InputSignature extends Component {
           tabBarSize="md"
           textColor="black"
           tabs={
-          [
-            { key: 0, title: 'Draw ' },
-            { key: 1, title: 'Write ' },
-            { key: 2, title: 'Upload ' },
-          ]
+            [
+              { key: 0, title: 'Draw ' },
+              { key: 1, title: 'Write ' },
+              { key: 2, title: 'Upload ' },
+            ]
           }
         >
           <div>

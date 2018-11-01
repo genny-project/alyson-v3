@@ -733,7 +733,7 @@ class Form extends Component {
                   return buttons;
                 }, [] )}
               </Fragment>
-              ))}
+            ))}
           </WrapperComponent>
         )}
       </Formik>

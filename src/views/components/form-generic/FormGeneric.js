@@ -71,33 +71,33 @@ const FormGeneric = ({
           ref: node => ref = node,
           onSubmit: formik.handleSubmit,
         }, (
-            isValidElement( children ) ? children
-            : isString( children ) ? children
-            : isArray( children )
-              ? children.map(( child, i ) => (
-                isValidElement( child )
-                  ? child
-                  : (
-                    <Recursive
-                      key={i} // eslint-disable-line react/no-array-index-key
-                      {...child}
-                      context={{
-                        ...context,
-                        ...formik,
-                      }}
-                    />
-                  )
-              ))
-              : (
-                <Recursive
-                  {...children}
-                  context={{
-                    ...context,
-                    ...formik,
-                  }}
-                />
-              )
-          ));
+          isValidElement( children ) ? children
+          : isString( children ) ? children
+          : isArray( children )
+            ? children.map(( child, i ) => (
+              isValidElement( child )
+                ? child
+                : (
+                  <Recursive
+                    key={i} // eslint-disable-line react/no-array-index-key
+                    {...child}
+                    context={{
+                      ...context,
+                      ...formik,
+                    }}
+                  />
+                )
+            ))
+            : (
+              <Recursive
+                {...children}
+                context={{
+                  ...context,
+                  ...formik,
+                }}
+              />
+            )
+        ));
       }}
     </Formik>
   );
