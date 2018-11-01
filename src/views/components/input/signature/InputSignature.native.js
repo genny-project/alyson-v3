@@ -5,7 +5,7 @@ import axios from 'axios';
 import {  Dimensions } from 'react-native';
 import { Box, Button, Tabs, Label, Input  } from '../../../components';
 
-class Signature extends Component {
+class InputSignature extends Component {
   static defaultProps = {
     width: Dimensions.get( 'window' ).width,
     height: 550,
@@ -28,12 +28,12 @@ class Signature extends Component {
   }
 
   /* clear the drawing canvas */
-  handleClearCanvas = () => { 
+  handleClearCanvas = () => {
     this.signaturePad.resetImage();
   }
 
   /* handle drawn signature data submit */
-  handleSubmitSignature = ( image ) => { 
+  handleSubmitSignature = ( image ) => {
     this.signaturePad.saveImage();
     this.setState({
       imageData: image,
@@ -44,7 +44,7 @@ class Signature extends Component {
   }
 
   /* handle text signature data change */
-  handleChangeText = ( text ) => { 
+  handleChangeText = ( text ) => {
     this.setState({
       inputSignatureText: text,
     });
@@ -69,12 +69,12 @@ class Signature extends Component {
     }
   };
 
-  render() { 
+  render() {
     const { height, width,uploadLabel, typeLabel } = this.props;
     const { inputSignatureText } = this.state;
 
     return (
-      <Box 
+      <Box
         height={height}
         width={width}
       >
@@ -129,15 +129,15 @@ class Signature extends Component {
               >
                 Submit
               </Button>
-            </Box> 
+            </Box>
           </Box>
-          
+
           <Box
             height={400}
             width="100%"
             backgroundColor="#fff"
           >
-            <Box 
+            <Box
               height={230}
               padding={20}
               flexDirection="column"
@@ -152,7 +152,7 @@ class Signature extends Component {
               />
               <Box>
 
-                <Input 
+                <Input
                   height={50}
                   width="100%"
                   borderWidth={1}
@@ -180,7 +180,7 @@ class Signature extends Component {
                 >
                 Submit
                 </Button>
-              </Box> 
+              </Box>
             </Box>
           </Box>
 
@@ -195,10 +195,10 @@ class Signature extends Component {
               flexDirection="column"
               justifyContent="space-around"
             >
-              <Label 
+              <Label
                 text={uploadLabel}
               />
-              <Input 
+              <Input
                 height={50}
                 width="150px"
                 borderWidth={1}
@@ -206,7 +206,7 @@ class Signature extends Component {
                 borderColor="grey"
                 type="image"
                 multiple={false}
-              />       
+              />
               <Box
                 height={50}
                 width={width}
@@ -220,7 +220,7 @@ class Signature extends Component {
                 >
                 Submit
                 </Button>
-              </Box>      
+              </Box>
             </Box>
           </Box>
         </Tabs>
@@ -229,4 +229,4 @@ class Signature extends Component {
   }
 }
 
-export default Signature;
+export default InputSignature;
