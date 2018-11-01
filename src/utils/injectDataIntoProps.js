@@ -19,7 +19,7 @@ function handleReducePropInjection( data ) {
     if ( isString( result[current] )) {
       if ( result[current].startsWith( '_' )) {
         if ( result[current].includes( '{{' )) {
-          result[current] = curlyBracketParse( result[current] );
+          result[current] = curlyBracketParse( result[current], data );
         }
 
         result[current] = dlv( data, result[current].substring( 1 ));
@@ -28,7 +28,7 @@ function handleReducePropInjection( data ) {
       }
 
       if ( result[current].includes( '{{' )) {
-        result[current] = curlyBracketParse( result[current] );
+        result[current] = curlyBracketParse( result[current], data );
 
         return result;
       }
@@ -37,7 +37,8 @@ function handleReducePropInjection( data ) {
     }
 
     if ( isArray( result[current] )) {
-      result[current] = result[current].reduce( handleReducePropInjection, result[current] );
+      result[current] =
+        result[current].reduce( handleReducePropInjection( data ), result[current] );
 
       return result;
     }
@@ -53,9 +54,9 @@ function handleReducePropInjection( data ) {
       }
 
       if ( result[current] ) {
-        result[current] = keys.reduce( handleReducePropInjection, result[current] );
+        result[current] = keys.reduce( handleReducePropInjection( data ), result[current] );
       } else {
-        result[index] = keys.reduce( handleReducePropInjection, result[index] );
+        result[index] = keys.reduce( handleReducePropInjection( data ), result[index] );
       }
       // console.warn( 'Result', result );
 
@@ -74,6 +75,7 @@ function handleReducePropInjection( data ) {
  */
 function injectDataIntoProps( props, data ) {
   if ( !isObject( props )) return {};
+  if ( !isObject( data )) return {};
 
   const propsCopy = copy( props );
   let afterProps;
