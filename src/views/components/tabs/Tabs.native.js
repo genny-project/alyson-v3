@@ -2,7 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { ActivityIndicator, Dimensions,  Platform } from 'react-native';
 import { any, array, bool, string, number, oneOfType, func, object, oneOf } from 'prop-types';
 import { PagerScroll, PagerPan, TabView, TabBar } from 'react-native-tab-view';
-import { Box, Text, Icon, Timeout } from '../../components';
+import { Box, Text, Icon, Timeout, Recursive } from '../../components';
+import { LayoutConsumer } from '../../layout';
 import TabDots from './tab-dots';
 import { isArray } from '../../../utils';
 
@@ -40,6 +41,7 @@ class Tabs extends Component {
     scrollEnabled: bool,
     iconSize: string,
     iconProps: object,
+    renderIcon: object,
     labelProps: object,
     indicatorProps: object,
     sceneProps: object,
@@ -117,21 +119,51 @@ class Tabs extends Component {
   }
 
   renderIcon = ({ route }) => {
-    const { iconColor, iconSize, iconProps, activeIconColor } = this.props;
+    const { iconColor, iconSize, iconProps, activeIconColor, renderIcon } = this.props;
+
+    const color = (
+      activeIconColor &&
+      route.key === this.state.index
+    )
+      ? activeIconColor
+      : iconColor;
 
     return route.icon
       ? (
-        <Icon
-          {...iconProps}
-          name={route.icon}
-          size={iconSize}
-          color={(
-            activeIconColor &&
-            route.key === this.state.index
-          )
-            ? activeIconColor
-            : iconColor}
-        />
+        <LayoutConsumer>
+          {layout => {
+            if ( renderIcon ) {
+              const context = {
+                route: {
+                  ...route,
+                },
+                iconProps: {
+                  ...iconProps,
+                  name: route.icon,
+                  size: iconSize,
+                  color: color,
+                },
+                layout,
+              };
+
+              return (
+                <Recursive
+                  {...renderIcon}
+                  context={context}
+                />
+              );
+            }
+
+            return (
+              <Icon
+                {...iconProps}
+                name={route.icon}
+                size={iconSize}
+                color={color}
+              />
+            );
+          }}
+        </LayoutConsumer>
       )
       : null;
   }
