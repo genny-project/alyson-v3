@@ -128,7 +128,7 @@ class HeaderLeft extends Component {
               ) ? (
                 <Button
                   onPress={this.handleBack}
-                  size={backIconSize}
+                  size={backIconSize || logoProps.size}
                   color="transparent"
                   textColor={backIconColor || layout.textColor}
                   icon={backIcon}
@@ -146,13 +146,20 @@ class HeaderLeft extends Component {
                 ) : showMenu ? (
                   <Button
                     onPress={this.handleToggleMenu}
-                    size="md"
+                    size={logoProps.size || 'md'}
                     color="transparent"
                     textColor={layout.textColor}
-                    icon="menu"
-                    width={50}
-                    marginLeft={5}
-                    marginRight={5}
+                    icon={logoProps.menuIcon || 'menu'}
+                    width={(
+                      logoProps &&
+                      logoProps.width
+                    ) || 50}
+                    height={(
+                      logoProps &&
+                      logoProps.height
+                    ) || 50}
+                    marginLeft={10}
+                    marginRight={10}
                   />
                 ) : null}
 
