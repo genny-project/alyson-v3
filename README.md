@@ -94,7 +94,7 @@ To fix this error, run the following command:
 ENVFILE=.env npm run setup-files
 ```
 
-## Running Internmatch in Up Mode Using Alyson-V3
+## Running in Up mode as part of the full Genny Project stack
 
 
 Git pull the following projects:
@@ -105,8 +105,8 @@ Git pull the following projects:
 
 Create an .env file in the alyson-v3 project. It should contain the following properties:
 ```bash
-	APP_NAME=Internmatch
-	APP_ID=internmatch
+	APP_NAME=<Project>
+	APP_ID=<project>
 	GENNY_HOST=http://bridge.genny.life
 	GENNY_INITURL=http://alyson3.genny.life
 	GENNY_BRIDGE_PORT=80
@@ -119,10 +119,10 @@ Create an .env file in the alyson-v3 project. It should contain the following pr
 	APPCENTER_IOS_SECRET=xxx
 	CODEPUSH_KEY=xxx
 	LAYOUT_PUBLICURL=http://localhost:2224/
-	LAYOUT_QUERY_DIRECTORY=layouts/internmatch-new
+	LAYOUT_QUERY_DIRECTORY=layouts/<project>-new
 	GUEST_USERNAME=guest
 	GUEST_PASSWORD=asdf1234
-	GOOGLE_MAPS_APIKEY=AIzaSyC5HjeRqeoqbxHEQWieE0g9hLaN6snjorA
+	GOOGLE_MAPS_APIKEY=<GoogleMapKey>
 	GOOGLE_MAPS_APIURL=https://maps.googleapis.com/maps/api/js
 ```
 
@@ -161,7 +161,7 @@ In layout-cache project, run the command ./build-docker.sh followed by ./start-d
 	layout-cache_1  | Layout cache public server listening on port 2224!
 ```
 
-In genny-main project, run the command ./run.sh internmatch up
+In genny-main project, run the command ./run.sh <project> up
 
 Finally, launch the browser and run the following URL: http://alyson3.genny.life
 
