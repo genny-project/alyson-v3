@@ -104,15 +104,6 @@ class FormInput extends Component {
           />
         );
 
-      case 'htmlarea':
-        return (
-          <Input
-            {...this.props}
-            onChangeValue={this.handleChangeDebounced}
-            ref={input => this.input = input}
-          />
-        );
-
       default:
         return (
           <Input

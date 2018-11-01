@@ -13,17 +13,25 @@ class FormGenericSubmit extends Component {
     name: string,
     text: string,
     disabled: bool,
+    disabledWhenFormInvalid: bool,
     submittingText: string,
   }
 
   render() {
-    const { text, submittingText, ...restProps } = this.props;
+    const {
+      text,
+      submittingText,
+      disabled,
+      disabledWhenFormInvalid,
+      ...restProps
+    } = this.props;
 
     return (
       <Field>
         {({ form }) => (
           <Button
             {...restProps}
+            disabled={disabled || ( disabledWhenFormInvalid && !form.isValid )}
             onPress={form.submitForm} // eslint-disable-line react/jsx-handler-names
             text={(
               form.isSubmitting

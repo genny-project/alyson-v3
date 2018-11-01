@@ -18,6 +18,8 @@ class Generic extends Component {
       redirectUri: redirectUri || `/${currentUrl}`,
     })}`;
 
+    // console.warn({ loginUrl, redirectUri, currentUrl, isAuthenticated });
+
     return (
       <LayoutFetcher currentUrl={currentUrl}>
         {layout => ( layout && !isAuthenticated ) ? (

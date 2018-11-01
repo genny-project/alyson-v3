@@ -5,6 +5,7 @@ import { replace } from 'react-router-redux';
 import { object, func, string, bool } from 'prop-types';
 import { removeStartingAndEndingSlashes, NavigationActions } from '../../../utils';
 import { store } from '../../../redux';
+import { setDialogParams } from '../../../redux/actions';
 import { withKeycloak } from '../../components/keycloak';
 
 class LayoutFetcher extends Component {
@@ -15,6 +16,7 @@ class LayoutFetcher extends Component {
     navigationReducer: object,
     keycloak: object,
     isDialog: bool,
+    setDialogParams: func,
   }
 
   state = {
@@ -99,6 +101,12 @@ class LayoutFetcher extends Component {
               );
             }
           }
+          else {
+            this.props.setDialogParams({
+              layoutName: strippedCurrentUrl,
+              params,
+            });
+          }
 
           this.setState({ layout: layoutPool[key] });
 
@@ -159,6 +167,6 @@ const mapStateToProps = state => ({
   navigationReducer: state.navigation,
 });
 
-export default connect( mapStateToProps )(
+export default connect( mapStateToProps, { setDialogParams })(
   withKeycloak( LayoutFetcher )
 );

@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { TextInput, Platform } from 'react-native';
 import { string, oneOf, number, shape, bool, func, oneOfType, node, object } from 'prop-types';
+// import memoize from 'memoize-one';
 import { Box, Icon, Text, Recursive } from '../../../components';
 
 /** Ensure the props we're going to use were indeed passed through. */
@@ -57,7 +58,7 @@ const successStyle = {
 
 };
 
-class Input extends Component {
+class Input extends PureComponent {
   static defaultProps = {
     autoCapitalize: 'sentences',
     autoComplete: 'no',
