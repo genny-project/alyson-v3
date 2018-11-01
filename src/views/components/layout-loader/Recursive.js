@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
 import { connect } from 'react-redux';
-import { object, any, string, array, oneOfType, oneOf } from 'prop-types';
+import { object, any, string, array, oneOfType, shape, arrayOf } from 'prop-types';
 import { isObject, isArray, isString, ifConditionsPass } from '../../../utils';
 import { store } from '../../../redux';
 import * as Components from '../index';
@@ -21,7 +21,10 @@ class Recursive extends Component {
     variant: string,
     theme: object,
     useThemeFrom: string,
-    sort: oneOf( ['reverse'] ),
+    sort: shape({
+      by: string,
+    }),
+    dontInjectContextIntoProps: arrayOf( string ),
   };
 
   handleMapCurlyTemplate = template => {
@@ -40,13 +43,48 @@ class Recursive extends Component {
     return `${resolved}${textAfterTemplate}`;
   };
 
-  handleSortRepeatedChildren = () => {
+  handleSortRepeatedChildren = ( a, b ) => {
     const { sort } = this.props;
 
-    switch ( sort ) {
-      case 'reverse': return 1; // Place the current element after the next one (i.e. reverse order)
-      default: return 0;
+    if ( typeof sort === 'string' ) {
+      switch ( sort ) {
+        case 'reverse': return 1; // Place the current element after the next one (i.e. reverse order)
+        default: return 0;
+      }
     }
+
+    if ( !isObject( sort ))
+      return 0;
+
+    const aContext = a && a.context;
+    const bContext = b && b.context;
+
+    const {
+      order = 'ascending',
+      by,
+      isDate,
+    } = sort;
+
+    if ( by ) {
+      let first;
+      let second;
+
+      if ( isDate ) {
+        first = new Date( dlv( aContext, sort.by )).valueOf();
+        second = new Date( dlv( bContext, sort.by )).valueOf();
+      }
+      else {
+        first = dlv( aContext, sort.by );
+        second = dlv( bContext, sort.by );
+      }
+
+      switch ( order ) {
+        case 'descending': return first - second;
+        default: return second - first;
+      }
+    }
+
+    return 0;
   }
 
   curlyBracketParse = string => {
@@ -205,6 +243,7 @@ class Recursive extends Component {
   injectContextIntoProps( props ) {
     if ( !isObject( props )) return {};
 
+    const { dontInjectContextIntoProps } = this.props;
     const propsCopy = copy( props );
     let afterProps;
 
@@ -212,6 +251,13 @@ class Recursive extends Component {
       afterProps = Object.keys( propsCopy ).reduce( this.handleReducePropInjection, propsCopy );
     } catch ( e ) {
       console.error( 'FOUND IT' );
+    }
+
+    if ( isArray( dontInjectContextIntoProps )) {
+      dontInjectContextIntoProps.forEach( key => {
+        /* Revert the keys. */
+        afterProps[key] = props[key];
+      });
     }
 
     return afterProps;
