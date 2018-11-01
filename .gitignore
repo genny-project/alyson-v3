@@ -70,6 +70,3 @@ ios/alysonv3/AppCenter-Config.plist
 *-logo*
 dist
 .env.*
-
-# Pods
-ios/Pods

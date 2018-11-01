@@ -1,19 +1,18 @@
 import React, { Component, Fragment } from 'react';
-import { string } from 'prop-types';
+import { object } from 'prop-types';
 import {  Box, Text, BackButton }  from '../../components';
 
 class Chat extends Component {
   static defaultProps = {
+    user: {},
   };
 
   static propTypes = {
-    user: string,
+    user: object,
   };
 
   renderParticipants = () => {
     const { users } = this.state;
-
-    console.warn({ users });
 
     return users
       .filter( user => user.code !== this.props.user._id )

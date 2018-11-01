@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Text } from 'react-native';
 import { oneOf, string } from 'prop-types';
 import styles from './Icon.style';
@@ -23,43 +23,59 @@ const colors = {
   yellow: 'yellow',
 };
 
-const Icon = ({
-  name,
-  color = 'white',
-  size = 'md',
-}) => {
-  const style = {
-    fontFamily: 'Material Icons',
-    whiteSpace: 'nowrap',
-    fontWeight: 'normal',
-    fontStyle: 'normal',
-    lineHeight: '1rem',
-    direction: 'ltr',
-    fontSize: sizes[size],
-    color: colors[color] || color,
+class Icon extends Component {
+  static defaultProps = {
+    color: 'white',
+    size: 'md',
+    type: 'material-icons',
+  }
+
+  static propTypes = {
+    name: string.isRequired,
+    color: string,
+    size: oneOf(
+      ['xs', 'sm', 'md', 'lg', 'xl']
+    ),
+    type: string,
   };
 
-  return (
-    <Text
-      style={[
-        styles.wrapper,
-        style,
-      ]}
-    >
-      {name && name.includes( '-' )
-        ? name.replace( /-/g, '_' )
-        : name
-      }
-    </Text>
-  );
-};
+  render() {
+    const { type, name } = this.props;
 
-Icon.propTypes = {
-  name: string.isRequired,
-  color: string,
-  size: oneOf(
-    ['xs', 'sm', 'md', 'lg', 'xl']
-  ),
-};
+    const style = {
+      fontFamily: 'Material Icons',
+      whiteSpace: 'nowrap',
+      fontWeight: 'normal',
+      fontStyle: 'normal',
+      lineHeight: '1rem',
+      direction: 'ltr',
+      fontSize: sizes[this.props.size],
+      color: colors[this.props.color],
+    };
+
+    if ( type === 'font-awesome' )  {
+      return (
+        <i
+          className={name}
+          style={{ ...styles.wrapper, ...style }}
+        />
+      );
+    }
+
+    return (
+      <Text
+        style={[
+          styles.wrapper,
+          style,
+        ]}
+      >
+        {name && name.includes( '-' )
+          ? name.replace( /-/g, '_' )
+          : name
+        }
+      </Text>
+    );
+  }
+}
 
 export default Icon;

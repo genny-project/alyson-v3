@@ -62,6 +62,34 @@ class Dropdown extends Component {
     return false;
   }
 
+  handleSelect = item => () => {
+    if ( item.buttonCode ) {
+      const {
+        value,
+        buttonCode = '',
+        messageType = 'BTN',
+        eventType = 'BTN_CLICK',
+      } = item;
+
+      const valueString = (
+        value &&
+        typeof value === 'string'
+      )
+        ? value
+        : JSON.stringify( value );
+
+      Bridge.sendEvent({
+        event: messageType,
+        eventType,
+        sendWithToken: true,
+        data: {
+          code: buttonCode,
+          value: valueString || null,
+        },
+      });
+    }
+  }
+
   render() {
     const {
       items,

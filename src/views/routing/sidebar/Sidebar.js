@@ -68,9 +68,9 @@ class Sidebar extends Component {
         const icon = dlv( baseEntities, `attributes.${targetCode}.PRI_IMAGE_URL.valueString` );
 
         if ( isRecursive ) {
-          let linkedBaseEntities = this.getLinkedBaseEntities( targetCode );
+          const linkedBaseEntities = this.getLinkedBaseEntities( targetCode );
 
-          linkedBaseEntities = linkedBaseEntities.filter( x => x.linkValue === 'LNK_CORE' );
+         // linkedBaseEntities = linkedBaseEntities.filter( x => x.linkValue === 'LNK_CORE' );
 
           if ( isArray( linkedBaseEntities, { ofMinLength: 1 })) {
             items.push({

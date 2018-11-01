@@ -63,3 +63,31 @@ theme: shape({
   components: object,
 }),
 ```
+
+
+## Example
+
+```json 
+{
+  "component": "Box",
+  "children": {
+    "component": "Button",
+    "props": {
+      "text":"View Document",
+      "textColor":"#ffffff",
+      "color": "#008001",
+      "size": "lg",
+      "height": "45px",
+      "width": "200px",
+      "shape": "rounded",
+      "fontFamily":"arial"
+    }
+  },
+  "props": {
+    "flexDirection":"row",
+    "justifyContent":"center",
+    "paddingTop": "30px"
+  }
+}
+
+```

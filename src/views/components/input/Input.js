@@ -313,7 +313,7 @@ class Input extends Component {
             ref={input => this.input = input}
           />
         );
-      case 'signature': 
+      case 'signature':
         return (
           <Signature
             {...this.props}
@@ -322,11 +322,11 @@ class Input extends Component {
 
       case 'rich-text-editor':
         return (
-          <RichTextEditor 
+          <RichTextEditor
             {...this.props}
           />
         );
-        
+
       default:
         return (
           <Text>
