@@ -93,3 +93,80 @@ To fix this error, run the following command:
 ```bash
 ENVFILE=.env npm run setup-files
 ```
+
+## Running Internmatch in Up Mode Using Alyson-V3
+
+
+Git pull the following projects:
+```bash
+   alyson-v3
+   layout-cache
+```
+
+Create an .env file in the alyson-v3 project. It should contain the following properties:
+```bash
+	APP_NAME=Internmatch
+	APP_ID=internmatch
+	GENNY_HOST=http://bridge.genny.life
+	GENNY_INITURL=http://alyson3.genny.life
+	GENNY_BRIDGE_PORT=80
+	GENNY_BRIDGE_VERTEX=frontend
+	GENNY_BRIDGE_SERVICE=api/service
+	GENNY_BRIDGE_EVENTS=api/events
+	UPPY_URL=""
+	KEYCLOAK_REDIRECTURI=http://keycloak.genny.life
+	APPCENTER_ANDROID_SECRET=xxx
+	APPCENTER_IOS_SECRET=xxx
+	CODEPUSH_KEY=xxx
+	LAYOUT_PUBLICURL=http://localhost:2224/
+	LAYOUT_QUERY_DIRECTORY=layouts/internmatch-new
+	GUEST_USERNAME=guest
+	GUEST_PASSWORD=asdf1234
+	GOOGLE_MAPS_APIKEY=AIzaSyC5HjeRqeoqbxHEQWieE0g9hLaN6snjorA
+	GOOGLE_MAPS_APIURL=https://maps.googleapis.com/maps/api/js
+```
+
+In alyson-v3 project, run the command ./build-docker.sh
+
+In genny-main project, copy the following service in docker-compose.yml:
+```bash
+  	alyson-v3:
+    		image: gennyproject/alyson-v3:latest
+    		container_name: alyson-v3
+    		depends_on:
+     		     - bridge
+    		ports:
+    		     - "6000:8080"
+    		environment:
+   		     - REACT_BRIDGE_HOST=http://bridge.genny.life
+    		     - NODE_ENV=production
+    		env_file:
+   	                 - ${ENV_FILE}
+   		 networks:
+      		     - mainproxy
+    		restart: always
+  ```
+
+
+In layout-cache project, run the command ./build-docker.sh followed by ./start-dev.sh. The response should be as below:
+
+```bash
+	Starting layout-cache_layout-cache_1 ... done
+	Attaching to layout-cache_layout-cache_1
+	layout-cache_1  |
+	layout-cache_1  | > layout-cache@1.0.0 start /usr/src/app
+	layout-cache_1  | > node index.js
+	layout-cache_1  |
+	layout-cache_1  | Layout cache listening on port 2223!
+	layout-cache_1  | Layout cache public server listening on port 2224!
+```
+
+In genny-main project, run the command ./run.sh internmatch up
+
+Finally, launch the browser and run the following URL: http://alyson3.genny.life
+
+
+
+
+
+
