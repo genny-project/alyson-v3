@@ -1,4 +1,5 @@
 export { default as $eq } from './$eq';
+export { default as $leq } from './$leq';
 export { default as $gt } from './$gt';
 export { default as $gte }  from './$gte';
 export { default as $lt } from './$lt';
