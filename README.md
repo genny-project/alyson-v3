@@ -161,7 +161,10 @@ In layout-cache project, run the command ./build-docker.sh followed by ./start-d
 	layout-cache_1  | Layout cache public server listening on port 2224!
 ```
 
-In genny-main project, run the command ./run.sh <project> up
+In genny-main project, run the command 
+```bash
+./run.sh <project> up
+```
 
 Finally, launch the browser and run the following URL: http://alyson3.genny.life
 
