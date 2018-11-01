@@ -659,7 +659,6 @@ class Form extends Component {
                 flexDirection: displayInline ? 'row' : 'column',
                 width: '100%',
                 flex: 1,
-                padding: 20,
               },
               onSubmit: handleSubmit,
             }, (

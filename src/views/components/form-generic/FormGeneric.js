@@ -52,6 +52,7 @@ const FormGeneric = ({
 
     if ( resetFormOnSubmit ) {
       form.resetForm();
+      console.warn({ ref, form });
       ref && ref.reset && ref.reset();
     }
   };

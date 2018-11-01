@@ -35,6 +35,7 @@ class LayoutLoader extends Component {
     isDialog: bool,
     sidebar: object,
     openSidebar: func,
+    context: object,
   };
 
   handleRetry = () => {
@@ -159,6 +160,7 @@ class LayoutLoader extends Component {
 
     /* Calculate the data for the layout */
     const context = {
+      ...this.props.context,
       query: new DataQuery( data ).query( layout.query || [], {
         navigation: {
           ...(( navigation && navigation.state && navigation.state.params ) || {}),

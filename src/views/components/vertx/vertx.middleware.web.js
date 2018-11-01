@@ -1,7 +1,7 @@
 import { push } from 'react-router-redux';
 import * as actions from './vertx.actions';
 import { showDialog } from '../../../redux/actions';
-import { Bridge } from '../../../utils';
+import { Bridge, removeStartingAndEndingSlashes } from '../../../utils';
 import { alert } from '../../components';
 
 const middleware = store => next => action => {
@@ -31,7 +31,9 @@ const middleware = store => next => action => {
 
     if ( modal ) {
       store.dispatch(
-        showDialog({ layoutName: code })
+        showDialog({
+          layoutName: removeStartingAndEndingSlashes( code ),
+        })
       );
     }
     else {

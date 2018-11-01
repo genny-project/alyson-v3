@@ -13,44 +13,20 @@ class Dialog extends Component {
     hideDialog: func,
   }
 
-  state = {
-    show: [],
-  }
-
-  componentDidUpdate( prevProps ) {
-    const keys = Object.keys( this.props.dialog );
-
-    keys.forEach( key => {
-      const dialog = this.props.dialog[key];
-
-      if ( !this.state.show.includes( key )) {
-        this.setState( state => ({
-          show: [...state.show, key],
-        }));
-      }
-      else if (
-        this.state.show.includes( key ) &&
-        ( !prevProps.dialog[key] || !prevProps.dialog[key].show ) !== ( !dialog || !dialog.show )
-      ) {
-        this.setState( state => ({
-          show: state.show.filter( x => x !== key ),
-        }));
-      }
-    });
-  }
-
   handleDismiss = layoutName => () => {
     this.props.hideDialog({ layoutName });
   }
 
   render() {
     const { dialog } = this.props;
-    const { show } = this.state;
 
     return (
       <Fragment>
-        {show.map( key => {
+        {Object.keys( dialog ).reduce(( result, key ) => {
           const modal = dialog[key];
+
+          if ( !modal || !modal.show )
+            return result;
 
           return (
             <DialogOverlay
@@ -81,13 +57,14 @@ class Dialog extends Component {
                     <LayoutLoader
                       isDialog
                       layout={layout}
+                      context={{ dialog: modal }}
                     />
                   )}
                 </LayoutFetcher>
               </DialogContent>
             </DialogOverlay>
           );
-        })}
+        }, [] )}
       </Fragment>
     );
   }

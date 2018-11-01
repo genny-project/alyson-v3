@@ -118,7 +118,8 @@ const handleReduceLinks = ( resultant, current ) => {
     }
   };
 
-  current.links.forEach( handleCombineLinkValues );
+  if ( isArray( current.links ))
+    current.links.forEach( handleCombineLinkValues );
 
   if ( current.parentCode ) {
     if ( !resultant[current.parentCode] ) {
@@ -155,6 +156,9 @@ const deleteLinkedBaseEntities = ( data, resultant, depth = 1 ) => {
 
   const { shouldDeleteLinkedBaseEntities, code } = data;
   const links = resultant[code] ? resultant[code].links : data.links;
+
+  if ( !isArray( links ))
+    return;
 
   links.forEach(({ link }) => {
     if ( depth >= shouldDeleteLinkedBaseEntities ) {

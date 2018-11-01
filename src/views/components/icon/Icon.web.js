@@ -46,7 +46,7 @@ const Icon = ({
         style,
       ]}
     >
-      {name.includes( '-' )
+      {name && name.includes( '-' )
         ? name.replace( /-/g, '_' )
         : name
       }

@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Picker } from 'react-native';
 import { oneOfType, arrayOf, string, any, shape, number, func, bool, oneOf } from 'prop-types';
+// import memoize from 'memoize-one';
 import { isArray, isObject } from '../../../../utils';
 
 /** Ensure the props we're going to use were indeed passed through. */
@@ -104,21 +105,6 @@ class InputDropdown extends Component {
     appearance: string,
   }
 
-  static getDerivedStateFromProps( nextProps, nextState ) {
-    if (
-      nextProps.value != null &&
-      nextProps.value !== nextState.value
-    ) {
-      return { value: nextProps.value };
-    }
-
-    return null;
-  }
-
-  state = {
-    value: this.props.value || this.props.placeholder,
-  }
-
   componentDidMount() {
     if ( this.props.appearance === 'none' ) {
       this.injectNativeProps({
@@ -127,13 +113,21 @@ class InputDropdown extends Component {
     }
   }
 
+  shouldComponentUpdate( nextProps ) {
+    if ( nextProps.value !== this.props.value )
+      return true;
+
+    if ( nextProps.items !== this.props.items )
+      return true;
+
+    return false;
+  }
+
   handleChange = value => {
     const { placeholder } = this.props;
 
     if ( value === placeholder )
       return;
-
-    this.setState({ value });
 
     if ( this.props.onChangeValue )
       this.props.onChangeValue( value );
@@ -187,9 +181,8 @@ class InputDropdown extends Component {
       ...restProps
     } = this.props;
 
-    const { value } = this.state;
+    const { value } = this.props;
 
-    /* TODO: performance optimisation? */
     const inputStyle = filterOutUnspecifiedProps({
       margin,
       marginHorizontal: marginX,
@@ -231,7 +224,7 @@ class InputDropdown extends Component {
         {...restProps}
         enabled={!disabled && validItems}
         onValueChange={this.handleChange}
-        selectedValue={value}
+        selectedValue={value || placeholder}
         style={inputStyle}
         ref={picker => this.picker = picker}
       >

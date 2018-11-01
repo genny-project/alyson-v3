@@ -60,6 +60,7 @@
     "lodash.range": "^3.2.0",
     "lodash.uppercase": "^4.3.0",
     "match-sorter": "2.3.0",
+    "memoize-one": "^4.0.2",
     "moment": "^2.22.2",
     "monaco-editor-webpack-plugin": "^1.5.1",
     "prettier": "^1.13.7",
