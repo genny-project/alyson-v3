@@ -19,6 +19,7 @@ class Form extends Component {
   static defaultProps = {
     loadingText: 'Loading form...',
     shouldSetInitialValues: true,
+    formWrapperProps: {},
   }
 
   static propTypes = {
@@ -29,6 +30,7 @@ class Form extends Component {
     baseEntities: object,
     renderHeading: object,
     renderSubheading: object,
+    formWrapperProps: object,
     renderFormInput: object,
     renderFormInputWrapper: object,
     renderFormInputLabel: object,
@@ -405,8 +407,9 @@ class Form extends Component {
               ? {
                 ...renderSubmitButton,
                 props: {
-                  ...renderSubmitButton.props,
                   ...buttonProps,
+                  ...renderSubmitButton.props,
+
                 },
               }
               : {
@@ -583,6 +586,7 @@ class Form extends Component {
       renderLoading,
       displayInline,
       loadingText,
+      formWrapperProps,
     } = this.props;
     const { questionGroups } = this.state;
 
@@ -659,6 +663,7 @@ class Form extends Component {
                 flexDirection: displayInline ? 'row' : 'column',
                 width: '100%',
                 flex: 1,
+                ...formWrapperProps,
               },
               onSubmit: handleSubmit,
             }, (
@@ -668,6 +673,7 @@ class Form extends Component {
                     flexDirection={displayInline ? 'row' : 'column'}
                     zIndex={150 - index}
                     position="relative"
+                    flex={1}
                     key={questionGroup.name}
                   >
                     {renderHeading ? (
