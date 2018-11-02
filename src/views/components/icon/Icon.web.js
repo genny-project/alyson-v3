@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Text } from 'react-native';
 import { oneOf, string } from 'prop-types';
-import styles from './Icon.style';
 
 const sizes = {
   xs: 16,
@@ -12,70 +11,57 @@ const sizes = {
   xl: 48,
 };
 
-const colors = {
-  white: 'white',
-  black: 'black',
-  red: 'red',
-  blue: 'blue',
-  green: 'green',
-  grey: 'grey',
-  lightGrey: 'lightgrey',
-  yellow: 'yellow',
-};
-
-class Icon extends Component {
-  static defaultProps = {
-    color: 'white',
-    size: 'md',
-    type: 'material-icons',
-  }
-
-  static propTypes = {
-    name: string.isRequired,
-    color: string,
-    size: oneOf(
-      ['xs', 'sm', 'md', 'lg', 'xl']
-    ),
-    type: string,
+const Icon = ({
+  name,
+  color = 'black',
+  size = 'md',
+  type = 'material-icons',
+}) => {
+  const style = {
+    fontSize: sizes[size],
+    color,
   };
 
-  render() {
-    const { type, name } = this.props;
+  switch ( type ) {
+    case 'material-icons':
+      return (
+        <i
+          className="material-icons"
+          style={style}
+        >
+          {name && name.includes( '-' )
+            ? name.replace( /-/g, '_' )
+            : name
+          }
+        </i>
+      );
 
-    const style = {
-      fontFamily: 'Material Icons',
-      whiteSpace: 'nowrap',
-      fontWeight: 'normal',
-      fontStyle: 'normal',
-      lineHeight: '1rem',
-      direction: 'ltr',
-      fontSize: sizes[this.props.size],
-      color: colors[this.props.color],
-    };
-
-    if ( type === 'font-awesome' )  {
+    case 'font-awesome':
       return (
         <i
           className={name}
-          style={{ ...styles.wrapper, ...style }}
+          style={style}
         />
       );
-    }
 
-    return (
-      <Text
-        style={[
-          styles.wrapper,
-          style,
-        ]}
-      >
-        {name && name.includes( '-' )
-          ? name.replace( /-/g, '_' )
-          : name
-        }
-      </Text>
-    );
+    default:
+      return (
+        <Text>
+          Icon with invalid type specified: `
+          {type}
+          `.
+        </Text>
+      );
   }
-}
+};
+
+Icon.propTypes = {
+  name: string.isRequired,
+  color: string,
+  size: oneOf(
+    ['xs', 'sm', 'md', 'lg', 'xl']
+  ),
+  type: string,
+};
 
 export default Icon;
