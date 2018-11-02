@@ -1,1 +1,1 @@
-export { default } from './Signature';
+export { default } from './InputSignature';

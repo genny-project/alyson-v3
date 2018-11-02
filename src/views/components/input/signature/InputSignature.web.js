@@ -1,26 +1,20 @@
 import React, { Component } from 'react';
-import { string,number,oneOfType } from 'prop-types';
+import { string, number, oneOfType, func } from 'prop-types';
 import axios from 'axios';
 import SignatureCanvas from 'react-signature-canvas';
-import { Tabs, InputText , Input, Button } from '../../../components';
-import './signature.css';
+import { SIGNATURE_URL } from '../../../../config';
+import { Tabs, InputText , Input, Button } from '../..';
 
-import config from '../../../../config';
-
-console.warn({ config }, 'CONFIG IN SIGNATURE' );
-
-const signatureUrl = 'https://signatures.outcome-hub.com/signature';
-
-// ! text done, draw done, upload remaining
-class Signature extends Component {
-  static defaultProps = { 
+class InputSignature extends Component {
+  static defaultProps = {
     height: '250px',
     width: '400px',
   }
-  
+
   static propTypes = {
     height: oneOfType( [number, string] ),
     width: oneOfType( [number, string] ),
+    onChangeValue: func,
   }
 
   state = {
@@ -33,15 +27,13 @@ class Signature extends Component {
   }
 
   /* clears out the signature canvas drawing pad */
-  handleClearCanvas = () => { 
+  handleClearCanvas = () => {
     this.signaturePad.clear();
   }
 
   /* submit thw signature data  from canvas */
-  handleSignatureSubmitOnDraw = () => { 
+  handleSignatureSubmitOnDraw = () => {
     const dataFromDrawingPad = this.signaturePad.toDataURL();
-
-    console.warn({ dataFromDrawingPad }, 'DATA FROM DRAWING PAD ' );
 
     this.submitSignature({ type: 'draw', data: dataFromDrawingPad });
   }
@@ -54,35 +46,34 @@ class Signature extends Component {
   }
 
   /* Helper method for submitting */
-  submitSignature = ( dataFromDrawingPad ) => {
-    console.warn({ dataFromDrawingPad });
-    if ( signatureUrl  ) {
-      axios({
+  submitSignature = async ( dataFromDrawingPad ) => {
+    try {
+      const { data } = await axios({
         method: 'POST',
-        url: signatureUrl,
+        url: SIGNATURE_URL,
         data: dataFromDrawingPad,
-      }
-      ).then( response => {
-        console.warn( response , 'RESPONSE FROM SIGNATURE' );
-      }).catch( err => { 
-        console.log( 'Error while sending the signature', err );
       });
+
+      if ( this.props.onChangeValue )
+        this.props.onChangeValue( data.signatureURL );
+    }
+    catch ( error ) {
+      // eslint-disable-next-line no-console
+      console.log( 'Error while sending the signature', error );
     }
   };
 
   /* handle text signature change */
-  handleTextSignatureChange = ( e ) => {
-    const  textValue = e.target.value;
-  
-    this.setState({
-      textSignatureValue: textValue,
-    });
+  handleTextSignatureChange = event => {
+    const { value } = event.target;
+
+    this.setState({ textSignatureValue: value });
   }
 
   render() {
     return (
       <div className="custom-signature">
-        <Tabs 
+        <Tabs
           tabBackground="#f5f5f5"
           activeTabbackground="teal"
           width="100%"
@@ -115,13 +106,13 @@ class Signature extends Component {
             />
             <div style={{ display: 'flex', flexDirection: 'row', width: '100%', marginTop: 10 }}>
               <div style={{ width: '100%' }}>
-                <Button 
-                  onPress={this.handleClearCanvas} 
+                <Button
+                  onPress={this.handleClearCanvas}
                   color="red"
                   withFeedback
                   style={{ marginTop: '10px' }}
                 >
-          Reset
+                  Reset
                 </Button>
               </div>
               <div style={{ width: '100%' }}>
@@ -131,12 +122,12 @@ class Signature extends Component {
                   withFeedback
                   style={{ marginTop: '10px' }}
                 >
-                Submit
+                  Submit
                 </Button>
               </div>
             </div>
           </div>
-          <div style={{ width: '100%', marginTop: 20 ,backgroundColor: '#fff', padding: 20 }}> 
+          <div style={{ width: '100%', marginTop: 20 ,backgroundColor: '#fff', padding: 20 }}>
             <InputText
               type="text"
               size="lg"
@@ -148,10 +139,9 @@ class Signature extends Component {
               onChange={this.handleTextSignatureChange}
               value={this.state.textSignatureValue}
             />
-            <p style={{ fontFamily: 'satisfy', fontSize: 20 }}> 
+            <p style={{ fontFamily: 'satisfy', fontSize: 20 }}>
               {' '}
               {this.state.textSignatureValue}
-              
             </p>
             <Button
               onPress={this.handleSignatureSubmitOnText}
@@ -165,11 +155,10 @@ class Signature extends Component {
           <div style={{ width: '100%', height: '100%', padding: '20px', backgroundColor: '#fff' }}>
             <Input type="upload" />
           </div>
-          
         </Tabs>
       </div>
     );
   }
 }
 
-export default Signature;
+export default InputSignature;

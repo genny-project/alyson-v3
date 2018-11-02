@@ -96,6 +96,7 @@ class FormInput extends Component {
       case 'upload':
       case 'file':
       case 'image':
+      case 'signature':
         return (
           <Input
             {...this.props}
