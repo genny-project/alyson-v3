@@ -47,13 +47,6 @@ class Recursive extends Component {
   handleSortRepeatedChildren = ( a, b ) => {
     const { sort } = this.props;
 
-    if ( typeof sort === 'string' ) {
-      switch ( sort ) {
-        case 'reverse': return 1; // Place the current element after the next one (i.e. reverse order)
-        default: return 0;
-      }
-    }
-
     if ( !isObject( sort ))
       return 0;
 
@@ -67,16 +60,12 @@ class Recursive extends Component {
     } = sort;
 
     if ( by ) {
-      let first;
-      let second;
+      let first = dlv( aContext, sort.by );
+      let second = dlv( bContext, sort.by );
 
       if ( isDate ) {
-        first = new Date( dlv( aContext, sort.by )).valueOf();
-        second = new Date( dlv( bContext, sort.by )).valueOf();
-      }
-      else {
-        first = dlv( aContext, sort.by );
-        second = dlv( bContext, sort.by );
+        first = new Date( first ).valueOf();
+        second = new Date( second ).valueOf();
       }
 
       switch ( order ) {
@@ -371,28 +360,30 @@ class Recursive extends Component {
       Components[component],
       componentProps,
       isArray( repeatedChildren ) ? (
-        repeatedChildren.map(( child, index ) => (
-          isValidElement( child )
-            ? (
-              cloneElement( child, {
-                key:
-                index,
-                context,
-                theme,
-              })
-            ) : (
-              <Recursive
-                context={context}
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
-                theme={theme}
-                {...child}
-                {...repeatCopiesPropsOntoRecursive
-                  ? this.injectContextIntoProps( child.props, child.context )
-                  : {}}
-              />
-            )
-        ))
+        repeatedChildren
+          .sort( this.handleSortRepeatedChildren )
+          .map(( child, index ) => (
+            isValidElement( child )
+              ? (
+                cloneElement( child, {
+                  key:
+                  index,
+                  context,
+                  theme,
+                })
+              ) : (
+                <Recursive
+                  context={context}
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={index}
+                  theme={theme}
+                  {...child}
+                  {...repeatCopiesPropsOntoRecursive
+                    ? this.injectContextIntoProps( child.props, child.context )
+                    : {}}
+                />
+              )
+          ))
       ) : isObject( repeatedChildren ) ? (
         isValidElement( repeatedChildren )
           ? cloneElement( repeatedChildren, { context, theme })
