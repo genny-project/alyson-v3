@@ -3,7 +3,8 @@ import { string, number, oneOfType, func } from 'prop-types';
 import axios from 'axios';
 import SignatureCanvas from 'react-signature-canvas';
 import config from '../../../../config';
-import { Tabs, InputText , Input, Button } from '../../../components';
+import { Tabs, Input, Button, Box, Touchable, Icon, Text } from '../../../components';
+import './InputSignature.css';
 
 class InputSignature extends Component {
   static defaultProps = {
@@ -48,7 +49,6 @@ class InputSignature extends Component {
   /* Helper method for submitting */
   submitSignature = async ( dataFromDrawingPad ) => {
     try {
-      console.warn({ config });
       const { data } = await axios({
         method: 'POST',
         url: config.signature.url,
@@ -73,63 +73,80 @@ class InputSignature extends Component {
 
   render() {
     return (
-      <div className="custom-signature">
+      <Box
+        className="input-signature"
+        width="100%"
+      >
         <Tabs
           tabBackground="#f5f5f5"
           activeTabbackground="teal"
           width="100%"
-          padding={30}
-          paddingTop={40}
+          padding={20}
           tabBarBackground="#f1f1f1"
           tabBarSize="md"
           textColor="black"
-          tabs={
-            [
-              { key: 0, title: 'Draw ' },
-              { key: 1, title: 'Write ' },
-              { key: 2, title: 'Upload ' },
-            ]
-          }
+          tabs={[
+            { key: 0, title: 'Draw' },
+            { key: 1, title: 'Write' },
+            { key: 2, title: 'Upload' },
+          ]}
         >
-          <div>
+          <Box
+            width="100%"
+            display="block"
+            position="relative"
+          >
+            <Box
+              marginBottom={20}
+              justifyContent="center"
+            >
+              <Text
+                align="center"
+                color="white"
+                bold
+                size="xl"
+              >
+                Please sign below
+              </Text>
+            </Box>
+
             <SignatureCanvas
               ref={ref => this.signaturePad = ref}
               backgroundColor="#f5f5f5"
-              canvasProps={
-                {
-                  height: '250px',
-                  width: '400px',
-                  marginTop: 0,
-                  className: 'sigCanvas',
-                }
-                }
+              canvasProps={{
+                height: '250px',
+                width: '400px',
+                marginTop: 0,
+                className: 'sigCanvas',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                display: 'block',
+              }}
               onend={this.handleSignatureSubmitOnDraw} /* eslint-disable-line  */
             />
-            <div style={{ display: 'flex', flexDirection: 'row', width: '100%', marginTop: 10 }}>
-              <div style={{ width: '100%' }}>
-                <Button
-                  onPress={this.handleClearCanvas}
-                  color="red"
-                  withFeedback
-                  style={{ marginTop: '10px' }}
-                >
-                  Reset
-                </Button>
-              </div>
-              <div style={{ width: '100%' }}>
-                <Button
-                  onPress={this.handleSignatureSubmitOnDraw}
-                  color="green"
-                  withFeedback
-                  style={{ marginTop: '10px' }}
-                >
-                  Submit
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div style={{ width: '100%', marginTop: 20 ,backgroundColor: '#fff', padding: 20 }}>
-            <InputText
+
+            <Touchable
+              onPress={this.handleClearCanvas}
+              withFeedback
+              padding={10}
+              position="absolute"
+              top={0}
+              right={0}
+              zIndex={10}
+            >
+              <Icon
+                name="undo"
+                color="white"
+              />
+            </Touchable>
+          </Box>
+
+          <Box
+            width="100%"
+            backgroundColor="white"
+            padding={20}
+          >
+            <Input
               type="text"
               size="lg"
               textSize="sm"
@@ -140,10 +157,12 @@ class InputSignature extends Component {
               onChange={this.handleTextSignatureChange}
               value={this.state.textSignatureValue}
             />
+
             <p style={{ fontFamily: 'satisfy', fontSize: 20 }}>
               {' '}
               {this.state.textSignatureValue}
             </p>
+
             <Button
               onPress={this.handleSignatureSubmitOnText}
               color="green"
@@ -152,12 +171,9 @@ class InputSignature extends Component {
             >
               Submit
             </Button>
-          </div>
-          <div style={{ width: '100%', height: '100%', padding: '20px', backgroundColor: '#fff' }}>
-            <Input type="upload" />
-          </div>
+          </Box>
         </Tabs>
-      </div>
+      </Box>
     );
   }
 }

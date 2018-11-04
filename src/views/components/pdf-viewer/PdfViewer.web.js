@@ -1,21 +1,25 @@
 import React from 'react';
-import PDF from 'react-pdf-js';
-import { string, object } from 'prop-types';
+import { string } from 'prop-types';
+import { Box } from '../index';
 
-const PdfViewer = ({ file, style }) => {
+const PdfViewer = ({ file, emptyProps }) => {
+  if ( !file ) {
+    return (
+      <Box {...emptyProps} />
+    );
+  }
+
   return (
-    file ? (
-      <PDF
-        style={style}
-        file={file}
-      />
-    ) : 'File Not Found'
+    <iframe
+      src={file}
+      width="100%"
+      height="100%"
+    />
   );
 };
 
 PdfViewer.propTypes = {
-  file: string,
-  style: object,
+  file: string.isRequired,
 };
 
 export default PdfViewer;

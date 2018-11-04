@@ -226,6 +226,20 @@ class Form extends Component {
   }
 
   doValidate = values => {
+    const { questionGroups } = this.state;
+
+    console.warn( 'validation', { values }, { questionGroups }, isArray( questionGroups, { ofExactLength: 1 }) &&
+    questionGroups[0].childAsks.length === 1 &&
+    questionGroups[0].childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean' );
+
+    if (
+      isArray( questionGroups, { ofExactLength: 1 }) &&
+      questionGroups[0].childAsks.length === 1 &&
+      questionGroups[0].childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+    ) {
+      return {};
+    }
+
     if ( !values )
       return {};
 
