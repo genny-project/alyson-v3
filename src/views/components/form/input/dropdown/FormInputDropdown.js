@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { object } from 'prop-types';
 import { connect } from 'react-redux';
+import dlv from 'dlv';
 import { Input } from '../../../index';
+import { isArray, isObject } from '../../../../../utils';
 
 class FormInputDropdown extends Component {
   static propTypes = {
@@ -42,21 +44,22 @@ class FormInputDropdown extends Component {
             const linkGroup = links[baseEntity];
 
             if (
-              linkGroup &&
-              linkGroup.links &&
-              linkGroup.links instanceof Array &&
-              linkGroup.links.length > 0
+              isObject( linkGroup )
             ) {
-              linkGroup.links.forEach( link => {
-                const linkData = data[link];
+              const linkValues = Object.keys( linkGroup ).map( x => x );
 
-                if (
-                  linkData &&
-                  linkData.name
-                ) {
-                  items.push({
-                    label: linkData.name,
-                    value: linkData.code,
+              linkValues.forEach( linkValue => {
+                if ( isArray( linkGroup[linkValue] )) {
+                  linkGroup[linkValue].forEach( link => {
+                    const baseEntity = dlv( data, link.link.targetCode );
+
+                    if ( isObject( baseEntity )) {
+                      items.push({
+                        label: baseEntity.name,
+                        value: baseEntity.code,
+                        weight: link.weight || 1,
+                      });
+                    }
                   });
                 }
               });
@@ -66,8 +69,10 @@ class FormInputDropdown extends Component {
       });
     }
 
-    if ( items.length > 0 )
+    if ( items.length > 0 ) {
+      items.sort(( x, y ) => x.weight > y.weight ? 1 : -1 );
       this.setState({ items });
+    }
   }
 
   focus() {
