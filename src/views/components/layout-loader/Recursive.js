@@ -3,9 +3,8 @@ import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
 import { connect } from 'react-redux';
-import { object, any, string, array, oneOfType, oneOf } from 'prop-types';
-import { doesValueMatch, isOperatorObject } from '../../../utils/data-query/operators/find';
-import { isObject, isArray, isString } from '../../../utils';
+import { object, any, string, array, oneOfType, shape, arrayOf } from 'prop-types';
+import { isObject, isArray, isString, ifConditionsPass } from '../../../utils';
 import { store } from '../../../redux';
 import * as Components from '../index';
 
@@ -22,7 +21,10 @@ class Recursive extends Component {
     variant: string,
     theme: object,
     useThemeFrom: string,
-    sort: oneOf( ['reverse'] ),
+    sort: shape({
+      by: string,
+    }),
+    dontInjectContextIntoProps: arrayOf( string ),
   };
 
   handleMapCurlyTemplate = template => {
@@ -41,13 +43,48 @@ class Recursive extends Component {
     return `${resolved}${textAfterTemplate}`;
   };
 
-  handleSortRepeatedChildren = () => {
+  handleSortRepeatedChildren = ( a, b ) => {
     const { sort } = this.props;
 
-    switch ( sort ) {
-      case 'reverse': return 1; // Place the current element after the next one (i.e. reverse order)
-      default: return 0;
+    if ( typeof sort === 'string' ) {
+      switch ( sort ) {
+        case 'reverse': return 1; // Place the current element after the next one (i.e. reverse order)
+        default: return 0;
+      }
     }
+
+    if ( !isObject( sort ))
+      return 0;
+
+    const aContext = a && a.context;
+    const bContext = b && b.context;
+
+    const {
+      order = 'ascending',
+      by,
+      isDate,
+    } = sort;
+
+    if ( by ) {
+      let first;
+      let second;
+
+      if ( isDate ) {
+        first = new Date( dlv( aContext, sort.by )).valueOf();
+        second = new Date( dlv( bContext, sort.by )).valueOf();
+      }
+      else {
+        first = dlv( aContext, sort.by );
+        second = dlv( bContext, sort.by );
+      }
+
+      switch ( order ) {
+        case 'descending': return first - second;
+        default: return second - first;
+      }
+    }
+
+    return 0;
   }
 
   curlyBracketParse = string => {
@@ -206,6 +243,7 @@ class Recursive extends Component {
   injectContextIntoProps( props ) {
     if ( !isObject( props )) return {};
 
+    const { dontInjectContextIntoProps } = this.props;
     const propsCopy = copy( props );
     let afterProps;
 
@@ -213,6 +251,13 @@ class Recursive extends Component {
       afterProps = Object.keys( propsCopy ).reduce( this.handleReducePropInjection, propsCopy );
     } catch ( e ) {
       console.error( 'FOUND IT' );
+    }
+
+    if ( isArray( dontInjectContextIntoProps )) {
+      dontInjectContextIntoProps.forEach( key => {
+        /* Revert the keys. */
+        afterProps[key] = props[key];
+      });
     }
 
     return afterProps;
@@ -229,65 +274,11 @@ class Recursive extends Component {
       ...context,
     };
 
-    /**
-     * Loop through all of the keys in the condition query and see whether
-     * any of them don't match
-     */
-    if ( !isObject( condition ) && !isArray( condition )) {
-      console.error( condition );
-    }
-
-    if ( isOperatorObject( condition )) {
-      return doesValueMatch( true, condition, dataPool );
-    }
-
-    const fields = Object.keys( condition );
-
-    for ( let i = 0; i < fields.length; i++ ) {
-      const field = fields[i];
-      let contextedField = field;
-      let contextedValue = condition[field];
-
-      if ( field.includes( '{{' )) {
-        contextedField = this.curlyBracketParse( field );
-      }
-
-      if ( isString( contextedValue )) {
-        if ( contextedValue.includes( '{{' )) {
-          contextedValue = this.curlyBracketParse( contextedValue );
-        }
-        else if ( contextedValue.startsWith( '_' )) {
-          contextedValue = dlv( dataPool, contextedValue.substring( 1 ));
-        }
-      }
-
-      /**
-       * Each key is actually a path to a field in the context, so use dlv to
-       * get the actual value */
-      const actualValue = dlv( dataPool, contextedField );
-
-      if ( !actualValue ) {
-        return false;
-      }
-
-      /**
-       * Use the doesValueMatch function from the find data query operator to ensure
-       * that the value, inside the context at the specified path, matches against
-       * either:
-       * - An explict value, like another string, or alternatively against a condition
-       * - Or an object based on the MongoDB query syntax.
-       */
-      if ( !doesValueMatch( actualValue, contextedValue, dataPool )) {
-        return false;
-      }
-    }
-
-    return true;
+    return ifConditionsPass( condition, dataPool );
   }
 
   render() {
     const {
-      component,
       props,
       variant,
       useThemeFrom,
@@ -299,6 +290,26 @@ class Recursive extends Component {
       conditional,
       theme,
     } = this.props;
+
+    let componentProps = this.injectContextIntoProps({
+      ...props,
+      ...this.calculateConditionalProps( conditional, context ),
+    });
+
+    const component = componentProps.component || this.props.component;
+
+    if ( variant ) {
+      componentProps = {
+        ...this.injectContextIntoProps({
+          ...(
+            theme.components[useThemeFrom || component] &&
+            theme.components[useThemeFrom || component][variant] &&
+            theme.components[useThemeFrom || component][variant].props
+          ),
+        }),
+        ...componentProps,
+      };
+    }
 
     if ( !component || !Components[component] ) {
       return (
@@ -352,17 +363,6 @@ class Recursive extends Component {
     ) : (
       this.injectContextIntoChildren( context, children )
     );
-
-    const componentProps = this.injectContextIntoProps({
-      ...(
-        variant &&
-        theme.components[useThemeFrom || component] &&
-        theme.components[useThemeFrom || component][variant] &&
-        theme.components[useThemeFrom || component][variant].props
-      ),
-      ...props,
-      ...this.calculateConditionalProps( conditional, context ),
-    });
 
     return createElement(
       Components[component],

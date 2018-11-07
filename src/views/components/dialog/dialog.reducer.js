@@ -6,7 +6,11 @@ const reducer = ( state = initialState, { type, payload }) => {
       return {
         ...state,
         [payload.layoutName]: {
-          show: payload.show,
+          params: {},
+          ...state[payload.layoutName],
+          show: payload.show != null
+            ? payload.show
+            : ( state[payload.layoutName] && !state[payload.layoutName].show ),
         },
       };
 
@@ -15,6 +19,7 @@ const reducer = ( state = initialState, { type, payload }) => {
 
       return keys.reduce(( dialogs, dialog ) => {
         dialogs[dialog] = {
+          params: {},
           ...dialogs[dialog],
           show: false,
         };
@@ -22,6 +27,15 @@ const reducer = ( state = initialState, { type, payload }) => {
         return dialogs;
       }, { ...state });
     }
+
+    case 'DIALOG_PARAMS_SET':
+      return {
+        ...state,
+        [payload.layoutName]: {
+          ...state[payload.layoutName],
+          params: payload.params,
+        },
+      };
 
     case 'USER_LOGOUT':
       return { ...initialState };

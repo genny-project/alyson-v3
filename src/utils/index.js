@@ -10,6 +10,10 @@ export { default as navigator } from './navigator';
 export { default as shallowCompare } from './shallow-compare';
 export { default as NavigationActions } from './navigation-actions';
 
+export { default as ifConditionsPass } from './ifConditionsPass';
+export { default as curlyBracketParse } from './curlyBracketParse';
+export { default as injectDataIntoProps } from './injectDataIntoProps';
+
 export * from './vertx';
 export * from './format';
 export * from './page';

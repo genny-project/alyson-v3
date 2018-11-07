@@ -2,7 +2,7 @@
  * Adapted from https://codesandbox.io/s/j47zv28xkw
  */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { string, func, oneOfType, object } from 'prop-types';
 import Downshift from 'downshift';
 import Kalendaryo from 'kalendaryo';
@@ -17,11 +17,12 @@ const daysOfTheWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const years = range( NUMBER_OF_DOB_YEARS ).map( year => currentYear - year );
 
-class InputDatePicker extends Component {
+class InputDatePicker extends PureComponent {
   static defaultProps = {
     displayFormat: 'MMMM Do, YYYY',
     calendarHeaderColor: 'crimson',
     calendarHeaderTextColor: 'white',
+    placeholder: 'Please select a date...', // eslint-disable-line
   }
 
   static propTypes = {
@@ -206,7 +207,7 @@ class InputDatePicker extends Component {
                             <Input
                               type="dropdown"
                               items={years}
-                              value={years[getYear( date )]}
+                              value={years[years.findIndex( year => year === getYear( date ))]}
                               onChangeValue={year => {
                                 const newDate = setYear( date, year );
 

@@ -268,7 +268,7 @@ class Touchable extends Component {
       borderWidth,
       borderColor,
       borderStyle,
-      borderRadius: borderRadius,
+      borderRadius,
       overflow,
       overflowX,
       overflowY,
