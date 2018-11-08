@@ -136,11 +136,11 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
     }
   };
 
-  console.log( resultant );
+  // console.log( resultant );
 
   if ( shouldReplace === true ) {
     current.links.forEach( removeMatchingExistingKeys );
-    console.log( resultant );
+    // console.log( resultant );
   }
 
   current.links.forEach( handleCombineLinkValues );
@@ -163,7 +163,7 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
     }
   }
    */
-  console.log( resultant );
+  // console.log( resultant );
 
   return resultant;
 };

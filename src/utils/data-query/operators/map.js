@@ -1,7 +1,8 @@
 import dlv from 'dlv';
 import { injectContext } from './helpers';
+import * as operators from './';
 
-export default ( data, options ) => {
+export default ( data, options, allData, theContext ) => {
   if ( !data ) {
     return data;
   }
@@ -24,7 +25,14 @@ export default ( data, options ) => {
     ...( append ? item : {}),
     ...( Object.keys( fields ).reduce(( result, current ) => {
       const key = injectContext( current, { ...context, ...item });
-      const value = fields[current] === '.' ? item : dlv( item, fields[current] ) || [];
+      let value = null;
+
+      if ( fields[key] && fields[key].operator ) {
+        /* Run the operator on the path data */
+        value = operators[fields[key].operator]( item, fields[key], allData, theContext );
+      } else {
+        value = fields[current] === '.' ? item : dlv( item, fields[current] ) || [];
+      }
 
       return {
         ...result,

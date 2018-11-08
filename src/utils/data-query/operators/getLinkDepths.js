@@ -29,15 +29,26 @@ export default ( data, options, allData ) => {
 
   /* Store the root beg as depth 0 */
   /* Store the root beg as depth 0 */
-  result[beg.code] = 0;
+  // result[beg.code] = 0;
+
+  result = [
+    ...result,
+    {
+      beCode: beg.code,
+      value: 0,
+    },
+  ];
 
   /* Calculate the depth of all the children */
   result = getChildrenLinks(
     beg,
     0,
-    {
-      [beg.code]: 0,
-    },
+    [
+      {
+        beCode: beg.code,
+        value: 0,
+      },
+    ],
     onlyIncludeIf,
     allData
   );
@@ -51,38 +62,47 @@ function getChildrenLinks( beg, depth, existing, onlyIncludeIf, allData ) {
   if ( !beg )
     return existing;
 
-  const links = beg.links;
+  let links = beg.links;
+  const result = existing;
 
   if (
     isArray( onlyIncludeIf )
   )  {
-    links.filter( link => {
+    links = links.filter( link => {
       return onlyIncludeIf.every( x => {
-        // console.log( 'checkeach', link[x.path], x.value );
-
         return link[x.path] === x.value;
       });
     });
   }
 
   links.forEach(({ link }) => {
-    if ( !existing[link.targetCode] && existing[link.targetCode] !== 0 ) {
-      existing[link.targetCode] = depth + 1;
+    if (
+      result.filter( x => x.beCode === link.targetCode ) < 1 &&
+      result.filter( x => x.beCode === link.targetCode && x.value === 0 ) < 1
+    ) {
+      result.push(
+        {
+          beCode: link.targetCode,
+          value: depth + 1,
+        }
+      );
 
       /* Get the link for the linked entity */
       const linkedBeg = allData.baseEntities.data[link.targetCode];
 
       if ( linkedBeg ) {
+        console.log( result );
         getChildrenLinks(
           linkedBeg,
           depth + 1,
-          existing,
+          result,
           onlyIncludeIf,
           allData
         );
+        console.log( result );
       }
     }
   });
 
-  return existing;
+  return result;
 }
