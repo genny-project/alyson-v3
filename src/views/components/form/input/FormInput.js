@@ -55,6 +55,7 @@ class FormInput extends Component {
 
       case 'segmentedcontrol':
       case 'dropdown':
+      case 'dropdownmultiple':
       case 'tag':
         return (
           <FormInputDropdown
