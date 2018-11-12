@@ -35,14 +35,6 @@ class InputTag extends Component {
 
   state = { preSelected: [] }
 
-  shouldComponentUpdate( nextProps ) {
-    // console.warn( 'input tag should component update' );
-    if ( nextProps.items !== this.props.items )
-      return true;
-
-    return false;
-  }
-
   itemToString = ( item ) => {
     return isObject( item ) ? item[this.props.itemStringKey] : item;
   }
@@ -187,8 +179,6 @@ class InputTag extends Component {
               {selectedItems.length > 0 && (
                 selectedItems.map( item => {
                   const itemString = isObject( item ) ? item[itemStringKey] : item;
-
-                  console.warn({ itemString });
                   const itemId = isObject( item ) ? item[itemValueKey] : item;
                   const itemObject = isObject( item )
                     ? item
@@ -269,8 +259,6 @@ class InputTag extends Component {
                         ).length > 0
                       )
                       : selectedItems && selectedItems.includes( itemString );
-
-                    console.warn({ itemObject });
 
                     return (
                       // RENDER SUGGESTION
