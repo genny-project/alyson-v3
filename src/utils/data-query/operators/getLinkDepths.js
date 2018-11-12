@@ -76,22 +76,36 @@ function getChildrenLinks( beg, depth, existing, onlyIncludeIf, allData ) {
   }
 
   links.forEach(({ link }) => {
-    if (
-      result.filter( x => x.beCode === link.targetCode ) < 1 &&
-      result.filter( x => x.beCode === link.targetCode && x.value === 0 ) < 1
-    ) {
-      result.push(
-        {
-          beCode: link.targetCode,
-          value: depth + 1,
-        }
-      );
+    const existingLink = result.filter( x => x.beCode === link.targetCode )[0];
 
+    if (
+      !existingLink ||
+      existingLink.value > depth + 1
+    ) {
+      if ( !existingLink ) {
+        result.push(
+          {
+            beCode: link.targetCode,
+            value: depth + 1,
+          }
+        );
+      }
+      else if ( existingLink.value > depth + 1 ) {
+        const existingIndex = result.findIndex( x => x.beCode === link.targetCode );
+
+        result.splice(
+          existingIndex,
+          1,
+          {
+            beCode: link.targetCode,
+            value: depth + 1,
+          }
+        );
+      }
       /* Get the link for the linked entity */
       const linkedBeg = allData.baseEntities.data[link.targetCode];
 
       if ( linkedBeg ) {
-        console.log( result );
         getChildrenLinks(
           linkedBeg,
           depth + 1,
@@ -99,7 +113,6 @@ function getChildrenLinks( beg, depth, existing, onlyIncludeIf, allData ) {
           onlyIncludeIf,
           allData
         );
-        console.log( result );
       }
     }
   });
