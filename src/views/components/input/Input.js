@@ -306,6 +306,14 @@ class Input extends Component {
         );
 
       case 'dropdownmultiple':
+        return (
+          <InputTag
+            
+            {...inputProps}
+            allowMultipleSelection
+            ref={input => this.input = input}
+          />
+        );
       case 'tag':
         return (
           <InputTag

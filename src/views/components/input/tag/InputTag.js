@@ -35,6 +35,13 @@ class InputTag extends Component {
 
   state = { preSelected: [] }
 
+  shouldComponentUpdate( nextProps ) {
+    if ( nextProps.items !== this.props.items )
+      return true;
+
+    return false;
+  }
+
   itemToString = ( item ) => {
     return isObject( item ) ? item[this.props.itemStringKey] : item;
   }
