@@ -53,7 +53,7 @@ class Sidebar extends Component {
       if ( !link.link )
         return items;
 
-      const { targetCode } = link.link;
+      const { targetCode, weight } = link.link;
       const baseEntityName = dlv( baseEntities, `data.${targetCode}.name` );
       let itemData = {};
 
@@ -78,6 +78,7 @@ class Sidebar extends Component {
               icon,
               name: baseEntityName,
               code: targetCode,
+              weight,
               items: linkedBaseEntities,
               isDropdown: true,
             });
@@ -90,6 +91,7 @@ class Sidebar extends Component {
           icon,
           name: baseEntityName,
           code: targetCode,
+          weight,
           onPress: this.handlePress( link.link ),
         });
       }
