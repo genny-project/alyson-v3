@@ -184,7 +184,6 @@ class InputTag extends Component {
               {selectedItems.length > 0 && (
                 selectedItems.map( item => {
                   const itemString = isObject( item ) ? item[itemStringKey] : item;
-
                   const itemId = isObject( item ) ? item[itemValueKey] : item;
                   const itemObject = isObject( item )
                     ? item
