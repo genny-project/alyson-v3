@@ -140,6 +140,8 @@ Sidebar.propTypes = {
   closedProps: object,
   side: oneOf( ['left','right'] ),
   backdropProps: object,
+  sortDirection: oneOf( ['asc','desc'] ),
+  sortBy: string,
 };
 
 export { Sidebar };
