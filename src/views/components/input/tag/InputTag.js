@@ -36,7 +36,6 @@ class InputTag extends Component {
   state = { preSelected: [] }
 
   shouldComponentUpdate( nextProps ) {
-    // console.warn( 'input tag should component update' );
     if ( nextProps.items !== this.props.items )
       return true;
 
@@ -116,8 +115,6 @@ class InputTag extends Component {
       ...restProps
     } = this.props;
 
-    console.warn({ items }, 'input tag' );
-
     return (
        // STATE HOLDER
       <MultiDownshift
@@ -188,7 +185,6 @@ class InputTag extends Component {
                 selectedItems.map( item => {
                   const itemString = isObject( item ) ? item[itemStringKey] : item;
 
-                  console.warn({ itemString });
                   const itemId = isObject( item ) ? item[itemValueKey] : item;
                   const itemObject = isObject( item )
                     ? item
@@ -269,8 +265,6 @@ class InputTag extends Component {
                         ).length > 0
                       )
                       : selectedItems && selectedItems.includes( itemString );
-
-                    console.warn({ itemObject });
 
                     return (
                       // RENDER SUGGESTION
