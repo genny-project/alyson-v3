@@ -146,17 +146,19 @@ class TableView extends Component {
     
     return (
       <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
-        <ReactTable
-          className="react-tbl table -striped -highlight"
-          style={[tableStyleProps]}
-          showPageSizeOptions={false}
-          noDataText="No data to Display."
-          filterable={filterable}
-          data={data}
-          columns={this.modifiedTableColumns()}
-          pageSize={itemsPerPage}
-          showPagination={data.length > itemsPerPage ? true : false}
-        />
+        { isArray( data ) ? (
+          <ReactTable
+            className="react-tbl table -striped -highlight"
+            style={[tableStyleProps]}
+            showPageSizeOptions={false}
+            noDataText="No data to Display."
+            filterable={filterable}
+            data={data}
+            columns={this.modifiedTableColumns()}
+            pageSize={itemsPerPage}
+            showPagination={data.length > itemsPerPage ? true : false}
+          />
+        ) : null}
       </div>
     );
   }

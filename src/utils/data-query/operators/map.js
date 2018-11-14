@@ -24,7 +24,7 @@ export default ( data, options ) => {
     ...( append ? item : {}),
     ...( Object.keys( fields ).reduce(( result, current ) => {
       const key = injectContext( current, { ...context, ...item });
-      const value = fields[current] === '.' ? item : dlv( item, fields[current] ) || [];
+      const value = fields[current] === '.' ? item : dlv( item, fields[current] ) != null ? dlv( item, fields[current] ) : [];
 
       return {
         ...result,
