@@ -386,6 +386,24 @@ class Form extends Component {
     }
   }
 
+  handleKeyPress = ( submitForm, index, questionGroupCode ) => ( e ) => {
+    const key = e.key;
+    const formLength = (
+      this.inputRefs[questionGroupCode] &&
+      Object.keys( this.inputRefs[questionGroupCode] ).length
+    );
+
+    switch ( key ) {
+      case 'Enter':
+        if ( formLength === index + 1 ) {
+          submitForm();
+        }
+        break;
+      default:
+        return null;
+    }
+  }
+
   renderButton( buttonProps ) {
     const { renderSubmitButton, renderSubmitButtonWrapper, hideButtonIfDisabled } = this.props;
     const { disabled } = buttonProps;
@@ -446,7 +464,8 @@ class Form extends Component {
     setTouched,
     isSubmitting,
     questionGroupCode,
-    submitCount
+    submitCount,
+    submitForm,
   ) => ( ask, index ) => {
     const {
       renderFormInput,
@@ -518,6 +537,7 @@ class Form extends Component {
       )
         ? 'next'
         : 'default',
+      onKeyPress: this.handleKeyPress( submitForm, index, questionGroupCode ),
     };
 
     const context = {
@@ -708,6 +728,7 @@ class Form extends Component {
                             isSubmitting,
                             questionGroup.questionCode,
                             submitCount,
+                            submitForm,
                           )
                         )
                       )
