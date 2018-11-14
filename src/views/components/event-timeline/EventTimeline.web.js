@@ -1,14 +1,10 @@
-import React, { Component , Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { Timeline, Event } from 'react-timeline-scribble';
 import { array } from 'prop-types';
 
-class  EventTimeline  extends Component {
-  static propTypes = { 
-    data: array,
-  }
-
-  renderEvents = () => { 
-    const { data } = this.props;
+const   EventTimeline  = ( props ) => {
+  const renderEvents = () => {
+    const { data } = props;
 
     return data.map( dd => (
       <Event
@@ -17,17 +13,19 @@ class  EventTimeline  extends Component {
         key={dd.key}
       />
     ));
-  }
+  };
 
-  render() {
-    return (
-      <Fragment>
-        <Timeline>
-          {this.renderEvents()}
-        </Timeline>
-      </Fragment>
-    );
-  }
-}
+  return (
+    <Fragment>
+      <Timeline>
+        {renderEvents()}
+      </Timeline>
+    </Fragment>
+  );
+};
+
+EventTimeline.propTypes = { 
+  data: array,
+};
 
 export default EventTimeline;

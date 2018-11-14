@@ -70,6 +70,7 @@ export { default as PdfViewer } from './pdf-viewer';
 export { default as Table } from './table';
 export { default as DisplayMarkdown } from './display-markdown';
 export { default as Marker } from './marker';
+export { default as EventTimeline } from './event-timeline';
 
 export * from './keycloak';
 export * from './vertx';
