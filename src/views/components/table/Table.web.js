@@ -44,7 +44,7 @@ class TableView extends Component {
 
     this.sendMessageToBridge = debounce( this.sendMessageToBridge, 500 );
   }
- 
+
   handleCellDataChange = cellInfo1 => event => {
     const { value } = event.target;
 
@@ -65,7 +65,7 @@ class TableView extends Component {
     /* make all the columns searchable  this is used for searching oneach column */
     const addFilterMethodsToColumn =  () => {
       const { columns  } = this.props;
-      
+
       if ( columns.length < 1 ) return null;
       const modifiedCells = columns.map( column => {
         return ({ ...column, ...{ filterMethod: utilMethod }, ...{ filterAll: true } });
@@ -77,14 +77,12 @@ class TableView extends Component {
     const renderCell = ( cellInfo, data ) => {
       const { renderButton } = data;
 
-      if ( renderButton ) { 
+      if ( renderButton ) {
         const context = {
           ...this.props.context, // eslint-disable-line
           ...this.props.data[cellInfo.index],
         };
 
-        console.warn({ context });
-            
         return (
           <Box
             justifyContent="space-around"
@@ -111,7 +109,7 @@ class TableView extends Component {
           </Box>
         );
       }
-           
+
       return (
         <Fragment>
           {this.props.data[cellInfo.index][cellInfo.column.id]}
@@ -120,7 +118,7 @@ class TableView extends Component {
     };
 
     return addFilterMethodsToColumn().map(
-      data => console.warn({ data }) || 
+      data => console.warn({ data }) ||
       ({ ...data, Cell: cellInfo => renderCell( cellInfo, data ) })
     );
   }
@@ -138,12 +136,12 @@ class TableView extends Component {
 
     const tableStyleProps = [];
 
-    tableStyleProps.push( 
+    tableStyleProps.push(
       tableHeight,
       tableWidth,
       tableBackgroundColor,
       containerBackgroundColor );
-    
+
     return (
       <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
         { isArray( data ) ? (
