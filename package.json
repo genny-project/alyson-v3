@@ -114,6 +114,7 @@
     "react-router-redux": "5.0.0-alpha.9",
     "react-signature-canvas": "^1.0.0-alpha.1",
     "react-table": "6.8.6",
+    "react-timeline-scribble": "^1.0.14",
     "redux": "^4.0.0",
     "redux-batched-subscribe": "^0.1.6",
     "redux-devtools-extension": "^2.13.5",
