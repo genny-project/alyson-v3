@@ -1,6 +1,7 @@
 import React, { Component, Fragment, isValidElement } from 'react';
 import { string, array, number, bool, oneOfType } from 'prop-types';
 import ReactTable from 'react-table';
+
 import matchSorter from 'match-sorter';
 import  debounce  from 'lodash.debounce';
 
@@ -74,6 +75,21 @@ class TableView extends Component {
       return modifiedCells;
     };
 
+    const sendTableSelectEventMessage = ( dd, fullData ) => {
+      console.warn( this.props.data, 'DATA IN EVENT MSG' );
+      console.warn({ dd });
+      console.warn({ fullData });
+      Bridge.sendEvent({
+        event: 'BTN',
+        eventType: 'BTN_CLICK',
+        sendWithToken: true,
+        data: {
+          code: 'BTN_TABLE_SELECT',
+          value: JSON.stringify({ itemCode: '' , hint: 'GRP_EDU_PROVIDERS', userCode: 'PER_AGENT_AT_AGENTCOM' }),
+        },
+      });
+    };
+
     const renderCell = ( cellInfo, data ) => {
       const { renderButton } = data;
 
@@ -114,15 +130,21 @@ class TableView extends Component {
            
       return (
         <Fragment>
-          {this.props.data[cellInfo.index][cellInfo.column.id]}
+          <div
+            style={{ backgroundColor: 'red' }}
+            onClick={() => sendTableSelectEventMessage( cellInfo , 1 )}
+          >
+            {this.props.data[cellInfo.index][cellInfo.column.id]}
+          </div>
         </Fragment>
       );
     };
 
-    return addFilterMethodsToColumn().map(
-      data => console.warn({ data }) || 
-      ({ ...data, Cell: cellInfo => renderCell( cellInfo, data ) })
+    const aa =  addFilterMethodsToColumn().map(
+      data => ({ ...data, Cell: cellInfo => renderCell( cellInfo, data ) })
     );
+    
+    return aa;
   }
 
   render() {
