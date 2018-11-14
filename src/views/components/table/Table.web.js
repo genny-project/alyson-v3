@@ -131,7 +131,7 @@ class TableView extends Component {
       return (
         <Fragment>
           <div
-            style={{ backgroundColor: 'red' }}
+            style={{ backgroundColor: 'red', cursor: 'pointer' }}
             onClick={() => sendTableSelectEventMessage( cellInfo , 1 )}
           >
             {this.props.data[cellInfo.index][cellInfo.column.id]}
