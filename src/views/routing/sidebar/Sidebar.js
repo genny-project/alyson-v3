@@ -83,6 +83,7 @@ class Sidebar extends Component {
               code: targetCode,
               weight,
               items: linkedBaseEntities,
+              onPress: this.handlePress( link.link ),
               isDropdown: true,
             });
 
