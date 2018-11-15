@@ -33,6 +33,36 @@ class Dialog extends Component {
               key={key}
               isOpen={modal && modal.show}
               onDismiss={this.handleDismiss( key )}
+              ref={r => {
+                /*
+                * This is an override to allow the Uppy plugin to bypass the focus-trap.
+                * The focus-trap that is part of the Reach Dialog prevents the dialog
+                * from being unfocused by preventing clicks from occuring on elements
+                * that are outside the Reach Dialog overlay. This however stops elements
+                * that are rendered outside of the Reach Dialog in a portal (like Uppy)
+                * from receiving clicks events.
+                *
+                * We bypass this by overwriting the .contains function to allow the
+                * focus-trap to think that the Uppy dialog is rendered inside it
+                * when in reality it isn't.
+                *
+                * Ideally this should be removed when a fix for the following issue
+                * is implemented: https://github.com/reach/reach-ui/issues/83
+                */
+                if ( !r ) {
+                  return;
+                }
+
+                const original = r.contains.bind( r );
+
+                r.contains = ( element ) => {
+                  if ( element.className.startsWith( 'uppy-' )) {
+                    return true;
+                  }
+
+                  return original( element );
+                };
+              }}
             >
               <DialogContent>
                 <Touchable
