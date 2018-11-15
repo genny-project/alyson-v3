@@ -56,7 +56,10 @@ class Dialog extends Component {
                 const original = r.contains.bind( r );
 
                 r.contains = ( element ) => {
-                  if ( element.className.startsWith( 'uppy-' )) {
+                  if (
+                    element.className &&
+                    element.className.startsWith( 'uppy-' )
+                  ) {
                     return true;
                   }
 

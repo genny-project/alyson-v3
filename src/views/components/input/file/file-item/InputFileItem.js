@@ -75,12 +75,14 @@ class InputFileItem extends Component {
           flexDirection="column"
           alignItems="flex-start"
           paddingX={10}
+          flex={1}
         >
           <Text
             // href={file.uploadURL}
             target="_blank"
             rel="noopener"
             size="sm"
+            width="100%"
           >
             {name}
             {uploaded
