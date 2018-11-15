@@ -1,5 +1,5 @@
-import React, { Component, Fragment, isValidElement } from 'react';
-import { string, array, number, bool, oneOfType } from 'prop-types';
+import React, { Component, isValidElement } from 'react';
+import { string, array, number, bool, oneOfType, object } from 'prop-types';
 import ReactTable from 'react-table';
 
 import matchSorter from 'match-sorter';
@@ -38,6 +38,7 @@ class TableView extends Component {
     tableWidth: oneOfType( [number, string] ),
     containerBackgroundColor: string,
     buttonTextColor: string,
+    renderWrapper: object,
   };
 
   constructor( props ) {
@@ -75,31 +76,15 @@ class TableView extends Component {
       return modifiedCells;
     };
 
-    const sendTableSelectEventMessage = ( dd, fullData ) => {
-      console.warn( this.props.data, 'DATA IN EVENT MSG' );
-      console.warn({ dd });
-      console.warn({ fullData });
-      Bridge.sendEvent({
-        event: 'BTN',
-        eventType: 'BTN_CLICK',
-        sendWithToken: true,
-        data: {
-          code: 'BTN_TABLE_SELECT',
-          value: JSON.stringify({ itemCode: '' , hint: 'GRP_EDU_PROVIDERS', userCode: 'PER_AGENT_AT_AGENTCOM' }),
-        },
-      });
-    };
-
     const renderCell = ( cellInfo, data ) => {
+      const { renderWrapper } = this.props;
       const { renderButton } = data;
 
-      if ( renderButton ) { 
+      if ( renderButton ) {
         const context = {
           ...this.props.context, // eslint-disable-line
           ...this.props.data[cellInfo.index],
         };
-
-        console.warn({ context });
             
         return (
           <Box
@@ -127,16 +112,18 @@ class TableView extends Component {
           </Box>
         );
       }
-           
+      const celld = this.props.data[cellInfo.index][cellInfo.column.id];
+      const rowd = this.props.data[cellInfo.index];
+
       return (
-        <Fragment>
-          <div
-            style={{ backgroundColor: 'red', cursor: 'pointer' }}
-            onClick={() => sendTableSelectEventMessage( cellInfo , 1 )}
-          >
-            {this.props.data[cellInfo.index][cellInfo.column.id]}
-          </div>
-        </Fragment>
+        <Recursive
+          {...renderWrapper}
+          context={{
+            celld: rowd,
+          }}
+        >
+          {celld}
+        </Recursive>
       );
     };
 
@@ -171,12 +158,12 @@ class TableView extends Component {
         <ReactTable
           className="react-tbl table -striped -highlight"
           style={[tableStyleProps]}
-          showPageSizeOptions={false}
+          showPageSizeOptions
+          pageSizeOptions={[5, 10, 20, 25, 50, 100]}
           noDataText="No data to Display."
           filterable={filterable}
           data={data}
           columns={this.modifiedTableColumns()}
-          pageSize={itemsPerPage}
           showPagination={data.length > itemsPerPage ? true : false}
         />
       </div>
