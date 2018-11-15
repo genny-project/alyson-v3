@@ -1,6 +1,7 @@
-import React, { Component, Fragment, isValidElement } from 'react';
-import { string, array, number, bool, oneOfType } from 'prop-types';
+import React, { Component, isValidElement } from 'react';
+import { string, array, number, bool, oneOfType, object } from 'prop-types';
 import ReactTable from 'react-table';
+
 import matchSorter from 'match-sorter';
 import  debounce  from 'lodash.debounce';
 
@@ -37,6 +38,7 @@ class TableView extends Component {
     tableWidth: oneOfType( [number, string] ),
     containerBackgroundColor: string,
     buttonTextColor: string,
+    renderWrapper: object,
   };
 
   constructor( props ) {
@@ -75,6 +77,7 @@ class TableView extends Component {
     };
 
     const renderCell = ( cellInfo, data ) => {
+      const { renderWrapper } = this.props;
       const { renderButton } = data;
 
       if ( renderButton ) {
@@ -82,7 +85,7 @@ class TableView extends Component {
           ...this.props.context, // eslint-disable-line
           ...this.props.data[cellInfo.index],
         };
-
+            
         return (
           <Box
             justifyContent="space-around"
@@ -109,11 +112,18 @@ class TableView extends Component {
           </Box>
         );
       }
+      const celld = this.props.data[cellInfo.index][cellInfo.column.id];
+      const rowd = this.props.data[cellInfo.index];
 
       return (
-        <Fragment>
-          {this.props.data[cellInfo.index][cellInfo.column.id]}
-        </Fragment>
+        <Recursive
+          {...renderWrapper}
+          context={{
+            celld: rowd,
+          }}
+        >
+          {celld}
+        </Recursive>
       );
     };
 
@@ -144,11 +154,13 @@ class TableView extends Component {
 
     return (
       <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
+
         { isArray( data ) ? (
           <ReactTable
             className="react-tbl table -striped -highlight"
             style={[tableStyleProps]}
-            showPageSizeOptions={false}
+            pageSizeOptions={[5, 10, 20, 25, 50, 100]}
+            showPageSizeOptions
             noDataText="No data to Display."
             filterable={filterable}
             data={data}

@@ -54,6 +54,8 @@ class DataQuery {
           { ...queryContext, ...currentContext }
         );
 
+        console.warn( result, 'result' );
+
         if ( this.path ) {
           dset( output, this.path, result );
         } else {
@@ -68,7 +70,7 @@ class DataQuery {
     /* Apply each of the operators to the data */
     checkQuery( query );
 
-    // console.warn( output );
+    // console.warn( output , 'QUERY OUTPUT' );
 
     return output;
   }
