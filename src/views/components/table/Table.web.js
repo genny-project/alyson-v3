@@ -160,7 +160,7 @@ class TableView extends Component {
             className="react-tbl table -striped -highlight"
             style={[tableStyleProps]}
             pageSizeOptions={[5, 10, 20, 25, 50, 100]}
-            showPageSizeOptions={false}
+            showPageSizeOptions
             noDataText="No data to Display."
             filterable={filterable}
             data={data}
