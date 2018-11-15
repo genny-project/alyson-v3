@@ -7,6 +7,7 @@ import capitalize from 'lodash.capitalize';
 import lowercase from 'lodash.lowercase';
 import { isArray, isObject, isString } from '../../../utils';
 import { Bridge } from '../../../utils/vertx';
+import shallowCompare from '../../../utils/shallow-compare';
 import { Box, Text, Button, KeyboardAwareScrollView, ScrollView } from '../index';
 import Recursive from '../layout-loader/Recursive';
 import FormInput from './input';
@@ -20,6 +21,11 @@ class Form extends Component {
     loadingText: 'Loading form...',
     shouldSetInitialValues: true,
     formWrapperProps: {},
+    alwaysActiveButtonTypes: [
+      'CANCEL',
+      'NO',
+      'YES',
+    ],
   }
 
   static propTypes = {
@@ -41,6 +47,7 @@ class Form extends Component {
     hideButtonIfDisabled: bool,
     loadingText: string,
     shouldSetInitialValues: bool,
+    alwaysActiveButtonTypes: array,
   }
 
   state = {
@@ -247,6 +254,14 @@ class Form extends Component {
 
       if ( !isArray( validationArray, { ofMinLength: 1 })) {
         return;
+      }
+
+      if (
+        isArray( Object.keys( values ), { ofExactLength: 1 }) &&
+        types[dataType] &&
+        types[dataType].typeName === 'java.lang.Boolean'
+      ) {
+        return {};
       }
 
       if (
@@ -607,6 +622,7 @@ class Form extends Component {
       displayInline,
       loadingText,
       formWrapperProps,
+      alwaysActiveButtonTypes,
     } = this.props;
     const { questionGroups } = this.state;
 
@@ -656,7 +672,7 @@ class Form extends Component {
     return (
       <Formik
         initialValues={initialValues}
-        validate={this.doValidate}
+        validate={( values ) => this.doValidate( values )}
         onSubmit={this.handleSubmit}
         validateOnBlur
         enableReinitialize
@@ -671,98 +687,105 @@ class Form extends Component {
           setFieldValue,
           setFieldTouched,
           handleSubmit,
-        }) => (
-          <WrapperComponent
-            scrollEnabled={!displayInline}
-            style={{
-              width: '100%',
-            }}
-          >
-            {createElement( Platform.OS === 'web' ? 'form' : View, {
-              style: {
-                flexDirection: displayInline ? 'row' : 'column',
-                width: '100%',
-                flex: 1,
-                ...formWrapperProps,
-              },
-              onSubmit: handleSubmit,
-            }, (
-              <Fragment>
-                {questionGroups.map(( questionGroup, index ) => (
-                  <Box
-                    flexDirection={displayInline ? 'row' : 'column'}
-                    zIndex={150 - index}
-                    position="relative"
-                    flex={1}
-                    key={questionGroup.name}
-                  >
-                    {renderHeading ? (
-                      <Recursive
-                        {...renderHeading}
-                        key={questionGroup.name}
-                        context={{
-                          heading:
-                            questionGroup.childAsks.length === 1 &&
-                            questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
-                              ? questionGroup.childAsks[0].question.name
-                              : questionGroup.name,
-                        }}
-                      />
-                    ) : null}
+        }) => {
+          const isFormValid = shallowCompare( this.doValidate( values ), {});
 
-                    {(
-                      /* If there is only one child ask and it's a Boolean question,
-                        * don't show it - the 'YES'/'NO' buttons underneath this will suffice. */
-                      questionGroup.childAsks.length === 1 &&
-                      questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
-                    )
-                      ? null
-                      : (
-                        questionGroup.childAsks.map(
-                          this.renderInput(
-                            values,
-                            errors,
-                            touched,
-                            setFieldValue,
-                            setFieldTouched,
-                            isSubmitting,
-                            questionGroup.questionCode,
-                            submitCount,
-                            submitForm,
+          return (
+            <WrapperComponent
+              scrollEnabled={!displayInline}
+              style={{
+                width: '100%',
+              }}
+            >
+              {createElement( Platform.OS === 'web' ? 'form' : View, {
+                style: {
+                  flexDirection: displayInline ? 'row' : 'column',
+                  width: '100%',
+                  flex: 1,
+                  ...formWrapperProps,
+                },
+                onSubmit: handleSubmit,
+              }, (
+                <Fragment>
+                  {questionGroups.map(( questionGroup, index ) => (
+                    <Box
+                      flexDirection={displayInline ? 'row' : 'column'}
+                      zIndex={150 - index}
+                      position="relative"
+                      flex={1}
+                      key={questionGroup.name}
+                    >
+                      {renderHeading ? (
+                        <Recursive
+                          {...renderHeading}
+                          key={questionGroup.name}
+                          context={{
+                            heading:
+                              questionGroup.childAsks.length === 1 &&
+                              questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                                ? questionGroup.childAsks[0].question.name
+                                : questionGroup.name,
+                          }}
+                        />
+                      ) : null}
+
+                      {(
+                        /* If there is only one child ask and it's a Boolean question,
+                          * don't show it - the 'YES'/'NO' buttons underneath this will suffice. */
+                        questionGroup.childAsks.length === 1 &&
+                        questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                      )
+                        ? null
+                        : (
+                          questionGroup.childAsks.map(
+                            this.renderInput(
+                              values,
+                              errors,
+                              touched,
+                              setFieldValue,
+                              setFieldTouched,
+                              isSubmitting,
+                              questionGroup.questionCode,
+                              submitCount,
+                              submitForm,
+                            )
                           )
                         )
-                      )
-                    }
-                  </Box>
+                      }
+                    </Box>
+                  ))}
+
+                  {questionGroups.reduce(( buttons, { attributeCode }) => {
+                    buttonTypes.forEach( type => {
+                      if ( attributeCode.includes( type )) {
+                        buttons.push(
+                          this.renderButton({
+                            disabled: (
+                              !isFormValid &&
+                              !alwaysActiveButtonTypes.includes( type )
+                            ) || isSubmitting,
+                            onPress: () => {
+                              this.setState({
+                                formStatus: lowercase( type ),
+                              }, () => {
+                                submitForm();
+                              });
+                            },
+                            key: type,
+                            text: capitalize( type ),
+                            showSpinnerOnClick: true,
+                          })
+                        );
+                      }
+                    });
+
+                    return buttons;
+                  }, [] )}
+                </Fragment>
                 ))}
-
-                {questionGroups.reduce(( buttons, { attributeCode }) => {
-                  buttonTypes.forEach( type => {
-                    if ( attributeCode.includes( type )) {
-                      buttons.push(
-                        this.renderButton({
-                          disabled: isSubmitting,
-                          onPress: () => {
-                            this.setState({
-                              formStatus: lowercase( type ),
-                            }, () => {
-                              submitForm();
-                            });
-                          },
-                          key: type,
-                          text: capitalize( type ),
-                          showSpinnerOnClick: true,
-                        })
-                      );
-                    }
-                  });
-
-                  return buttons;
-                }, [] )}
-              </Fragment>
-              ))}
-          </WrapperComponent>
-        )}
+            </WrapperComponent>
+          );
+        }}
       </Formik>
     );
   }

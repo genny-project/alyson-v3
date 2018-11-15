@@ -78,8 +78,6 @@ class InputFile extends Component {
   componentDidMount() {
     let files = [];
 
-    console.warn( this.props );
-
     try {
       files = ( this.props.value && this.props.value !== 'null' )
         ? JSON.parse( this.props.value )
@@ -110,7 +108,7 @@ class InputFile extends Component {
           : 'any file type allowed',
         hideProgressAfterFinish: true,
       })
-      .use( AwsS3, { host: config.uppy.url })
+      .use( AwsS3, { serverUrl: config.uppy.url })
       .use( Webcam, { target: Dashboard })
       .run();
 
@@ -120,8 +118,6 @@ class InputFile extends Component {
   componentWillUnmount() {
     if ( this.uppy )
       this.uppy.close();
-
-    removeEventListener( 'hashchange', this.handleHashChange, false );
   }
 
   get modalName() {
@@ -171,12 +167,6 @@ class InputFile extends Component {
     if ( this.props.onChange ) {
       this.props.onChange({ target: { value: files } });
     }
-
-    // console.warn( this.props, files );
-
-    // if ( this.props.onChangeValue ) {
-    //   this.props.onChangeValue( files );
-    // }
   }
 
   handleError = error => {
@@ -185,30 +175,6 @@ class InputFile extends Component {
 
   handleOpenModal = () => {
     this.uppy.getPlugin( 'Dashboard' ).openModal();
-
-    /* Append some text in the location hash so that when the user
-    * navigates backwards in browser history, the modal closes. */
-    if ( !window.location.hash.includes( this.modalName )) {
-      if ( window.location.hash ) {
-        window.location.hash += `,${this.modalName}`;
-      } else {
-        window.location.hash = this.modalName;
-      }
-    }
-
-    /* Listen for if the user presses the back button. */
-    addEventListener( 'hashchange', this.handleHashChange, false );
-  }
-
-  handleHashChange = () => {
-    /* If the location hash no longer contains our text, the user has
-    * pressed back in their browser and we should close the modal. */
-    if (  !window.location.hash.includes( this.modalName )) {
-      this.uppy.getPlugin( 'Dashboard' ).closeModal();
-
-      /* Clean up the event listener. */
-      removeEventListener( 'hashchange', this.handleHashChange, false );
-    }
   }
 
   handleRemoveFile = fileId => () => {
