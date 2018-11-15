@@ -184,33 +184,31 @@ class InputFile extends Component {
   }
 
   handleOpenModal = () => {
-    console.log( 'openinput' );
     this.uppy.getPlugin( 'Dashboard' ).openModal();
-    console.log( !window.location.hash.includes( this.modalName ));
 
     /* Append some text in the location hash so that when the user
     * navigates backwards in browser history, the modal closes. */
-    // if ( !window.location.hash.includes( this.modalName )) {
-    //   if ( window.location.hash ) {
-    //     window.location.hash += `,${this.modalName}`;
-    //   } else {
-    //     window.location.hash = this.modalName;
-    //   }
-    // }
+    if ( !window.location.hash.includes( this.modalName )) {
+      if ( window.location.hash ) {
+        window.location.hash += `,${this.modalName}`;
+      } else {
+        window.location.hash = this.modalName;
+      }
+    }
 
-    // /* Listen for if the user presses the back button. */
-    // addEventListener( 'hashchange', this.handleHashChange, false );
+    /* Listen for if the user presses the back button. */
+    addEventListener( 'hashchange', this.handleHashChange, false );
   }
 
   handleHashChange = () => {
-    // /* If the location hash no longer contains our text, the user has
-    // * pressed back in their browser and we should close the modal. */
-    // if (  !window.location.hash.includes( this.modalName )) {
-    //   this.uppy.getPlugin( 'Dashboard' ).closeModal();
+    /* If the location hash no longer contains our text, the user has
+    * pressed back in their browser and we should close the modal. */
+    if (  !window.location.hash.includes( this.modalName )) {
+      this.uppy.getPlugin( 'Dashboard' ).closeModal();
 
-    //   /* Clean up the event listener. */
-    //   removeEventListener( 'hashchange', this.handleHashChange, false );
-    // }
+      /* Clean up the event listener. */
+      removeEventListener( 'hashchange', this.handleHashChange, false );
+    }
   }
 
   handleRemoveFile = fileId => () => {
