@@ -46,7 +46,7 @@ class TableView extends Component {
 
     this.sendMessageToBridge = debounce( this.sendMessageToBridge, 500 );
   }
- 
+
   handleCellDataChange = cellInfo1 => event => {
     const { value } = event.target;
 
@@ -67,7 +67,7 @@ class TableView extends Component {
     /* make all the columns searchable  this is used for searching oneach column */
     const addFilterMethodsToColumn =  () => {
       const { columns  } = this.props;
-      
+
       if ( columns.length < 1 ) return null;
       const modifiedCells = columns.map( column => {
         return ({ ...column, ...{ filterMethod: utilMethod }, ...{ filterAll: true } });
@@ -127,11 +127,10 @@ class TableView extends Component {
       );
     };
 
-    const aa =  addFilterMethodsToColumn().map(
-      data => ({ ...data, Cell: cellInfo => renderCell( cellInfo, data ) })
+    return addFilterMethodsToColumn().map(
+      data => console.warn({ data }) ||
+      ({ ...data, Cell: cellInfo => renderCell( cellInfo, data ) })
     );
-    
-    return aa;
   }
 
   render() {
@@ -147,25 +146,29 @@ class TableView extends Component {
 
     const tableStyleProps = [];
 
-    tableStyleProps.push( 
+    tableStyleProps.push(
       tableHeight,
       tableWidth,
       tableBackgroundColor,
       containerBackgroundColor );
-    
+
     return (
       <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
-        <ReactTable
-          className="react-tbl table -striped -highlight"
-          style={[tableStyleProps]}
-          showPageSizeOptions
-          pageSizeOptions={[5, 10, 20, 25, 50, 100]}
-          noDataText="No data to Display."
-          filterable={filterable}
-          data={data}
-          columns={this.modifiedTableColumns()}
-          showPagination={data.length > itemsPerPage ? true : false}
-        />
+
+        { isArray( data ) ? (
+          <ReactTable
+            className="react-tbl table -striped -highlight"
+            style={[tableStyleProps]}
+            pageSizeOptions={[5, 10, 20, 25, 50, 100]}
+            showPageSizeOptions={false}
+            noDataText="No data to Display."
+            filterable={filterable}
+            data={data}
+            columns={this.modifiedTableColumns()}
+            pageSize={itemsPerPage}
+            showPagination={data.length > itemsPerPage ? true : false}
+          />
+        ) : null}
       </div>
     );
   }

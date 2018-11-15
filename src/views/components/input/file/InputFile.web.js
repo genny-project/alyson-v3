@@ -1,10 +1,10 @@
-import 'uppy/dist/uppy.min.css';
+import '@uppy/dashboard/dist/style.css';
 import React, { Component } from 'react';
 import { bool, number, func, object, array, string, oneOf, oneOfType } from 'prop-types';
-import Uppy from 'uppy/lib/core';
-import AwsS3 from 'uppy/lib/plugins/AwsS3';
-import Webcam from 'uppy/lib/plugins/Webcam';
-import Dashboard from 'uppy/lib/plugins/Dashboard';
+import Uppy from '@uppy/core';
+import AwsS3 from '@uppy/aws-s3';
+import Webcam from '@uppy/webcam';
+import Dashboard from '@uppy/dashboard';
 import { Box, Recursive } from '../../../components';
 import InputFileItem from './file-item';
 import InputFileTouchable from './file-touchable';

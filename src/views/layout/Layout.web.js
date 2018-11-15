@@ -4,7 +4,12 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import LayoutConsumer from './consumer';
 import { Header, Box, Dialog } from '../components';
-import { shallowCompare, ifConditionsPass, injectDataIntoProps } from '../../utils';
+import {
+  shallowCompare,
+  ifConditionsPass,
+  injectDataIntoProps,
+  curlyBracketParse,
+} from '../../utils';
 import { Sidebar } from '../routing';
 
 class Layout extends PureComponent {
@@ -24,6 +29,7 @@ class Layout extends PureComponent {
     backgroundColor: string,
     layouts: object,
     variant: string,
+    context: object,
   }
 
   state = {
@@ -59,7 +65,12 @@ class Layout extends PureComponent {
       this.props.title !== prevProps.title &&
       this.props.title != null
     ) {
-      this.props.layout.setTitle( this.props.title );
+      let title = this.props.title;
+      
+      if ( this.props.title.startsWith( '{{' )) {
+        title = curlyBracketParse( title, this.props.context );
+      }
+      this.props.layout.setTitle( title );
     }
 
     if ( !shallowCompare( this.props.header, prevProps.header )) {
@@ -101,7 +112,7 @@ class Layout extends PureComponent {
 
   setLayoutProperties() {
     const { layout, title, appColor, hideSidebar, hideSidebarRight, backgroundColor } = this.props;
-
+    
     if (
       typeof title === 'string' &&
       title.length > 0
@@ -296,7 +307,7 @@ class Layout extends PureComponent {
       sidebarRightProps,
       showSidebarRight,
     } = layout;
-
+        
     return (
       <Box
         height="100%"
