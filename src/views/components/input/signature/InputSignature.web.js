@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { string, number, oneOfType, func } from 'prop-types';
 import axios from 'axios';
 import SignatureCanvas from 'react-signature-canvas';
-import { SIGNATURE_URL } from '../../../../config';
+import config from '../../../../config/config.web';
 import { Tabs, InputText , Input, Button } from '../..';
+
+const SIGNATURE_URL = config.SIGNATURE_URL;
 
 class InputSignature extends Component {
   static defaultProps = {
@@ -48,14 +50,14 @@ class InputSignature extends Component {
   /* Helper method for submitting */
   submitSignature = async ( dataFromDrawingPad ) => {
     try {
-      const { data } = await axios({
-        method: 'POST',
+      axios({
+        method: 'post',
         url: SIGNATURE_URL,
         data: dataFromDrawingPad,
+      }).then( data => {
+        if ( this.props.onChangeValue )
+          this.props.onChangeValue( data.data.signatureURL );
       });
-
-      if ( this.props.onChangeValue )
-        this.props.onChangeValue( data.signatureURL );
     }
     catch ( error ) {
       // eslint-disable-next-line no-console
@@ -110,7 +112,7 @@ class InputSignature extends Component {
                   onPress={this.handleClearCanvas}
                   color="red"
                   withFeedback
-                  style={{ marginTop: '10px' }}
+                  style={{ marginTop: '10px', width: '100%' }}
                 >
                   Reset
                 </Button>
@@ -122,7 +124,7 @@ class InputSignature extends Component {
                   withFeedback
                   style={{ marginTop: '10px' }}
                 >
-                  Submit
+                  Validate
                 </Button>
               </div>
             </div>
