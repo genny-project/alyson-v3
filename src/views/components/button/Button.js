@@ -417,6 +417,7 @@ class Button extends Component {
           )
             ? paddingSize.paddingY
             : paddingY}
+          width={width}
         >
           {child}
         </Box>
