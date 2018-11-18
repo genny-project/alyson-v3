@@ -54,8 +54,6 @@ class DataQuery {
           { ...queryContext, ...currentContext }
         );
 
-        console.warn( result, 'result' );
-
         if ( this.path ) {
           dset( output, this.path, result );
         } else {
