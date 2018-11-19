@@ -235,6 +235,13 @@ class Button extends Component {
       themeConfig.textSizes[size]
     );
 
+    const child = text || (
+      children != null &&
+      typeof children === 'number'
+        ? children.toString()
+        : children
+    );
+
     return (
       <Text
         color={actualColor}
@@ -245,7 +252,7 @@ class Button extends Component {
         bold={!fontWeight}
         fontWeight={fontWeight}
       >
-        {text || children}
+        {child}
       </Text>
     );
   }
@@ -373,7 +380,7 @@ class Button extends Component {
     /* TODO: mixed icon and text children */
     const child =
       isIconOnly ? this.renderIconChild()
-      : ( text || typeof children === 'string' ) ? this.renderTextChild()
+      : ( text || typeof children === 'string' || typeof children === 'number' ) ? this.renderTextChild()
       : children || null;
 
     return (
