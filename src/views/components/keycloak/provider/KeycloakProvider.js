@@ -189,11 +189,10 @@ class KeycloakProvider extends Component {
       client_id,
       client_secret,
       grant_type,
-      username: options.username,
+      username: options.username || options.email,
       password: options.password,
     });
 
-    // return new Promise(( resolve, reject ) => {
     try {
       const response = await Api.promiseCall({
         method: 'post',
@@ -220,14 +219,21 @@ class KeycloakProvider extends Component {
     const { baseUrl, realm } = this.props;
     const apiUrl = store.getState().keycloak.data.api_url;
     const endpoint = `${apiUrl}/keycloak/register`;
+    const registrationData = { ...data };
+
+    if (
+      !registrationData.username &&
+      registrationData.email
+    ) {
+      registrationData.username = registrationData.email;
+    }
 
     const body = {
-      ...data,
+      ...registrationData,
       keycloakUrl: baseUrl,
       realm,
     };
 
-    // return new Promise(( resolve, reject ) => {
     try {
       await Api.promiseCall({
         method: 'post',

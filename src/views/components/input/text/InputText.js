@@ -1,8 +1,20 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { TextInput, Platform } from 'react-native';
 import { string, oneOf, number, shape, bool, func, oneOfType, node, object } from 'prop-types';
-import { objectClean } from '../../../../utils';
-import { Box, Icon, Text } from '../../../components';
+// import memoize from 'memoize-one';
+import { Box, Icon, Text, Recursive } from '../../../components';
+
+/** Ensure the props we're going to use were indeed passed through. */
+const filterOutUnspecifiedProps = props => {
+  const keys = Object.keys( props );
+
+  return keys.reduce(( filteredProps, prop ) => {
+    if ( props[prop] != null )
+      filteredProps[prop] = props[prop];
+
+    return filteredProps;
+  }, {});
+};
 
 const textSizes = {
   xs: 14,
@@ -46,7 +58,7 @@ const successStyle = {
 
 };
 
-class Input extends Component {
+class Input extends PureComponent {
   static defaultProps = {
     autoCapitalize: 'sentences',
     autoComplete: 'no',
@@ -168,11 +180,22 @@ class Input extends Component {
     placeholderColor: string,
     activeProps: string,
     color: string,
+    characterCountWrapperProps: object,
+    characterCountTextProps: object,
+    showCharacterCount: bool,
+    context: object,
+    renderCharacterCount: object,
   }
 
   state = {
     isFocused: false,
     // isHovering: false,
+    valueLength: 0,
+  }
+
+  componentDidMount() {
+    if ( this.props.value )
+      this.setState({ valueLength: String( this.props.value ).length });
   }
 
   getStatusColor() {
@@ -189,14 +212,16 @@ class Input extends Component {
     this.input = input;
   }
 
-  handleChangeText = event => {
-    if ( this.props.onChangeText ) {
-      this.props.onChangeText( event );
-    }
+  handleChangeText = value => {
+    this.setState({
+      valueLength: value.length,
+    });
 
-    if ( this.props.onChangeValue ) {
-      this.props.onChangeValue( event );
-    }
+    if ( this.props.onChangeText )
+      this.props.onChangeText( value );
+
+    if ( this.props.onChangeValue )
+      this.props.onChangeValue( value );
   }
 
   handleFocus = event => {
@@ -355,9 +380,14 @@ class Input extends Component {
       placeholderColor,
       activeProps,
       color,
+      showCharacterCount,
+      characterCountWrapperProps,
+      characterCountTextProps,
+      context,
+      renderCharacterCount,
     } = this.props;
 
-    const { isFocused } = this.state;
+    const { isFocused, valueLength } = this.state;
 
     const statusStyle =
       error ? errorStyle
@@ -366,7 +396,7 @@ class Input extends Component {
       : {};
 
     /* TODO: performance optimisation? */
-    const inputStyle = objectClean({
+    const inputStyle = filterOutUnspecifiedProps({
       margin,
       marginHorizontal: marginX,
       marginVertical: marginY,
@@ -474,6 +504,27 @@ class Input extends Component {
         )
           ? this.renderSuffix()
           : null}
+
+        {!showCharacterCount ? null : (
+          renderCharacterCount ? (
+            <Recursive
+              {...renderCharacterCount}
+              context={{
+                ...context,
+                characterCount: valueLength,
+                maxLength,
+              }}
+            />
+          ) : (
+            <Box {...characterCountWrapperProps}>
+              <Text {...characterCountTextProps}>
+                {valueLength}
+                {' / '}
+                {maxLength}
+              </Text>
+            </Box>
+          )
+        )}
       </Box>
     );
   }

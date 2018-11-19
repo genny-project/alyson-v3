@@ -136,7 +136,8 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
     }
   };
 
-  // console.log( resultant );
+  if ( isArray( current.links ))
+    current.links.forEach( handleCombineLinkValues );
 
   if ( shouldReplace === true ) {
     current.links.forEach( removeMatchingExistingKeys );
@@ -182,6 +183,9 @@ const deleteLinkedBaseEntities = ( data, resultant, depth = 1 ) => {
 
   const { shouldDeleteLinkedBaseEntities, code } = data;
   const links = resultant[code] ? resultant[code].links : data.links;
+
+  if ( !isArray( links ))
+    return;
 
   links.forEach(({ link }) => {
     if ( depth >= shouldDeleteLinkedBaseEntities ) {
@@ -360,21 +364,21 @@ function handleReduceDataTwo( message, state ) {
 // function handleReduceLinksTwo( message, state ) {
 //   const newState = copy( state );
 
-//   if ( message.parentCode ) {
-//     delete newState[message.parentCode];
-//   }
-//   else if ( isArray( message.items )) {
-//     message.items.forEach( item => {
-//       delete newState[item.code];
-//     });
-//   }
+// if ( message.parentCode ) {
+//   delete newState[message.parentCode];
+// }
+// else if ( isArray( message.items )) {
+//   message.items.forEach( item => {
+//     delete newState[item.code];
+//   });
+// }
 
-//   if (
-//     message.delete &&
+// if (
+//   message.delete &&
 //     !message.shouldDeleteLinkedBaseEntities
-//   ) {
-//     return newState;
-//   }
+// ) {
+//   return newState;
+// }
 
 //   return message.items.reduce( handleReduceLinks, newState );
 // }

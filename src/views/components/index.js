@@ -66,6 +66,10 @@ export { default as BackButton } from './back-button';
 export { default as Join } from './join';
 export { default as FlatList } from './flat-list';
 export { default as Fragment } from './fragment';
+export { default as PdfViewer } from './pdf-viewer';
+export { default as Table } from './table';
+export { default as DisplayMarkdown } from './display-markdown';
+export { default as Marker } from './marker';
 
 export * from './keycloak';
 export * from './vertx';

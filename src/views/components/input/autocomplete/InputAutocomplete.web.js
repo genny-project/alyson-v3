@@ -150,6 +150,7 @@ class InputAutocomplete extends Component {
                               key={idom}
                               onPress={() => selectItem( item )}
                               withFeedback
+                              width="100%"
                             >
                               <Box
                                 {...( highlightedIndex === index ) && {
@@ -157,6 +158,7 @@ class InputAutocomplete extends Component {
                                 }}
                                 paddingX={15}
                                 paddingY={10}
+                                width="100%"
                                 {...(
                                   borderBetweenItems &&
                                   index > 0

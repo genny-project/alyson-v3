@@ -14,6 +14,7 @@ import {
   LAYOUT_QUERY_DIRECTORY,
   GUEST_USERNAME,
   GUEST_PASSWORD,
+  SIGNATURE_URL,
 } from 'react-native-dotenv';
 
 export default {
@@ -32,4 +33,5 @@ export default {
   LAYOUT_QUERY_DIRECTORY,
   GUEST_USERNAME,
   GUEST_PASSWORD,
+  SIGNATURE_URL,
 };

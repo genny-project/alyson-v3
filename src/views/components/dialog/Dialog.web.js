@@ -13,50 +13,59 @@ class Dialog extends Component {
     hideDialog: func,
   }
 
-  state = {
-    show: [],
-  }
-
-  componentDidUpdate( prevProps ) {
-    const keys = Object.keys( this.props.dialog );
-
-    keys.forEach( key => {
-      const dialog = this.props.dialog[key];
-
-      if ( !this.state.show.includes( key )) {
-        this.setState( state => ({
-          show: [...state.show, key],
-        }));
-      }
-      else if (
-        this.state.show.includes( key ) &&
-        ( !prevProps.dialog[key] || !prevProps.dialog[key].show ) !== ( !dialog || !dialog.show )
-      ) {
-        this.setState( state => ({
-          show: state.show.filter( x => x !== key ),
-        }));
-      }
-    });
-  }
-
   handleDismiss = layoutName => () => {
     this.props.hideDialog({ layoutName });
   }
 
   render() {
     const { dialog } = this.props;
-    const { show } = this.state;
 
     return (
       <Fragment>
-        {show.map( key => {
+        {Object.keys( dialog ).reduce(( result, key ) => {
           const modal = dialog[key];
+
+          if ( !modal || !modal.show )
+            return result;
 
           return (
             <DialogOverlay
               key={key}
               isOpen={modal && modal.show}
               onDismiss={this.handleDismiss( key )}
+              ref={r => {
+                /*
+                * This is an override to allow the Uppy plugin to bypass the focus-trap.
+                * The focus-trap that is part of the Reach Dialog prevents the dialog
+                * from being unfocused by preventing clicks from occuring on elements
+                * that are outside the Reach Dialog overlay. This however stops elements
+                * that are rendered outside of the Reach Dialog in a portal (like Uppy)
+                * from receiving clicks events.
+                *
+                * We bypass this by overwriting the .contains function to allow the
+                * focus-trap to think that the Uppy dialog is rendered inside it
+                * when in reality it isn't.
+                *
+                * Ideally this should be removed when a fix for the following issue
+                * is implemented: https://github.com/reach/reach-ui/issues/83
+                */
+                if ( !r ) {
+                  return;
+                }
+
+                const original = r.contains.bind( r );
+
+                r.contains = ( element ) => {
+                  if (
+                    element.className &&
+                    element.className.startsWith( 'uppy-' )
+                  ) {
+                    return true;
+                  }
+
+                  return original( element );
+                };
+              }}
             >
               <DialogContent>
                 <Touchable
@@ -81,13 +90,14 @@ class Dialog extends Component {
                     <LayoutLoader
                       isDialog
                       layout={layout}
+                      context={{ dialog: modal }}
                     />
                   )}
                 </LayoutFetcher>
               </DialogContent>
             </DialogOverlay>
           );
-        })}
+        }, [] )}
       </Fragment>
     );
   }

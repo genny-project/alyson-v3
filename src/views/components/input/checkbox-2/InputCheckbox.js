@@ -3,7 +3,7 @@ import { array, func } from 'prop-types';
 import { isArray } from '../../../../utils';
 import { Box, Text, Input } from '../../index';
 
-class Checkbox extends Component {
+class InputCheckbox extends Component {
   static defaultProps = {
     value: [],
   }
@@ -12,17 +12,6 @@ class Checkbox extends Component {
     items: array,
     value: array,
     onChangeValue: func,
-  }
-
-  static getDerivedStateFromProps( nextProps, nextState ) {
-    if (
-      nextProps.value != null &&
-      nextProps.value !== nextState.selected
-    ) {
-      return { selected: nextProps.value };
-    }
-
-    return null;
   }
 
   state = {
@@ -35,10 +24,8 @@ class Checkbox extends Component {
         return { selected: state.selected.filter( item => item !== value ) };
       }
 
-      return { selected: [value, ...state.selected] };
+      return { selected: [...state.selected, value] };
     }, () => {
-      console.warn( 'hello', this.state.selected, this.props );
-
       if ( this.props.onChangeValue ) {
         this.props.onChangeValue( this.state.selected );
       }
@@ -48,8 +35,6 @@ class Checkbox extends Component {
   render() {
     const { items } = this.props;
     const { selected } = this.state;
-
-    console.warn({ selected, items });
 
     return (
       <Box
@@ -88,4 +73,4 @@ class Checkbox extends Component {
   }
 }
 
-export default Checkbox;
+export default InputCheckbox;

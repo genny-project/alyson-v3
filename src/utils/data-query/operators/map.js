@@ -31,7 +31,7 @@ export default ( data, options, allData, theContext ) => {
         /* Run the operator on the path data */
         value = operators[fields[key].operator]( item, fields[key], allData, theContext );
       } else {
-        value = fields[current] === '.' ? item : dlv( item, fields[current] ) || [];
+        value = fields[current] === '.' ? item : dlv( item, fields[current] ) != null ? dlv( item, fields[current] ) : [];
       }
 
       return {

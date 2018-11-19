@@ -17,6 +17,7 @@ class Collapsible extends Component {
     showHeader: bool,
     header: any,
     // open: bool,
+    headerWithoutTouchable: bool,
     onToggle: func,
     wrapperProps: object,
     headerWrapperProps: object,
@@ -49,6 +50,7 @@ class Collapsible extends Component {
       children,
       showHeader,
       header,
+      headerWithoutTouchable,
       wrapperProps,
       headerWrapperProps,
       headerIconProps,
@@ -62,39 +64,51 @@ class Collapsible extends Component {
         flexDirection="column"
         {...wrapperProps}
       >
-        {showHeader ? (
-          <TouchableOpacity
-            onPress={this.handlePress}
-          >
-            {
-              header
-                ? (
-                  <Recursive
-                    {...header}
-                    props={{
-                      ...header.props,
-                      isOpen: isOpen,
-                    }}
-                  />
-                )
-                : (
-                  <Box
-                    justifyContent="center"
-                    transform={[
-                      { rotate: isOpen ? '180deg' : '0deg' },
-                    ]}
-                    {...headerWrapperProps}
-                  >
-                    <Icon
-                      name="keyboard_arrow_down"
-                      color="black"
-                      {...headerIconProps}
-                    />
-                  </Box>
-                )
-            }
-          </TouchableOpacity>
-        ) : null}
+        {showHeader
+          ? headerWithoutTouchable && header
+            ? (
+              <Recursive
+                {...header}
+                props={{
+                  ...header.props,
+                  isOpen: isOpen,
+                  onPress: this.handlePress,
+                }}
+              />
+            )
+            : (
+              <TouchableOpacity
+                onPress={this.handlePress}
+              >
+                {
+                  header
+                    ? (
+                      <Recursive
+                        {...header}
+                        props={{
+                          ...header.props,
+                          isOpen: isOpen,
+                        }}
+                      />
+                    )
+                    : (
+                      <Box
+                        justifyContent="center"
+                        transform={[
+                          { rotate: isOpen ? '180deg' : '0deg' },
+                        ]}
+                        {...headerWrapperProps}
+                      >
+                        <Icon
+                          name="keyboard_arrow_down"
+                          color="black"
+                          {...headerIconProps}
+                        />
+                      </Box>
+                    )
+                }
+              </TouchableOpacity>
+            ) : null}
         {isOpen ? (
           React.Children.map( children, child => (
             React.cloneElement( child, {

@@ -1,0 +1,73 @@
+body {
+  font-family: Roboto;
+  font-size: 14px;
+}
+.ReactTable {
+  line-height: 1.6em;
+  font-family: Roboto;
+}
+.react-tbl {
+  font-family: Roboto;
+  font-family: inherit !important;
+}
+.rt-td {
+  font-family: inherit;
+  border: solid 2px white;
+  border-top: solid 1px white;
+  border-bottom: solid 1px white;
+  border: 0;
+  background: whitesmoke;
+  color: #333;
+}
+.-odd .rt-td {
+  background: #fff;
+}
+.rt-noData {
+  margin-top: 30px;
+}
+.-previous, .-center, .-next {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.list-item-total {
+  text-align: left;
+  color: #222;
+}
+.table-prev, .table-next {
+  cursor: pointer;
+}
+
+.pagination-bottom {
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+}
+
+.pagination-bottom .-pagination {
+  border-top-color: rgba(0, 0, 0, 0.25);
+}
+
+.pagination-bottom .-pageJump > input {
+  background-color: #ddd;
+}
+
+.list-pagination {
+  background: #ddd;
+  border-radius: 5px;
+  padding: 5px !important;
+  border: none !important;
+  justify-content: center !important;
+}
+.list-pagination .-previous, .list-pagination .-next {
+  display: flex;
+  align-items: center;
+  flex: 0 !important;
+}
+.list-pagination .-center {
+  flex: 0 !important;
+}
+.list-pagination i {
+  color: #222;
+}

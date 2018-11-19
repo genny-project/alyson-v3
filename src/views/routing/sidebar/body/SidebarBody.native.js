@@ -16,6 +16,8 @@ class Sidebar extends Component {
     sidebarLayout: string,
     headerLayout: string,
     footerLayout: string,
+    sortDirection: string,
+    sortBy: string,
   }
 
   handleCloseSidebar = () => {
@@ -31,14 +33,23 @@ class Sidebar extends Component {
       headerLayout,
       footerLayout,
       renderBody,
+      sortDirection,
+      sortBy,
     } = this.props;
+
+    const sortedItems = [...items];
+
+    /* If both a sort direction and sort by are provided then sort the items */
+    if ( sortDirection && sortBy ) {
+      sortDirection === 'desc' ? sortedItems.sort(( a, b ) => b[sortBy] > a[sortBy] ? 1 : -1 ) : sortedItems.sort(( a, b ) => a[sortBy] > b[sortBy] ? 1 : -1 );
+    }
 
     return (
       <LayoutConsumer>
         {layout => {
           if ( renderBody ) {
             const context = {
-              items,
+              items: sortedItems,
               layout,
               onClose: this.handleCloseSidebar,
               onToggle: this.handleCloseSidebar,

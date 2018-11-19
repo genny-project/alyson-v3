@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { object, string, bool, oneOf, func } from 'prop-types';
+import { object, string, bool, oneOf, func, number } from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dlv from 'dlv';
@@ -20,6 +20,7 @@ class Sidebar extends Component {
     layout: object,
     rootCode: string,
     getItemDataFromStore: bool,
+    depthLimit: number,
     side: oneOf( ['left', 'right'] ),
     closeSidebar: func,
     toggleSidebar: func,
@@ -34,8 +35,8 @@ class Sidebar extends Component {
     itemAttributes: attributes from attribute field
   */
 
-  getLinkedBaseEntities = ( root, isRecursive ) => {
-    const { baseEntities, getItemDataFromStore } = this.props;
+  getLinkedBaseEntities = ( root, isRecursive, index ) => {
+    const { baseEntities, getItemDataFromStore, depthLimit } = this.props;
     const links = dlv( baseEntities, `data.${root}.links` );
 
     if ( !isArray( links, { ofMinLength: 1 }))
@@ -53,7 +54,7 @@ class Sidebar extends Component {
       if ( !link.link )
         return items;
 
-      const { targetCode } = link.link;
+      const { targetCode, weight } = link.link;
       const baseEntityName = dlv( baseEntities, `data.${targetCode}.name` );
       let itemData = {};
 
@@ -67,10 +68,12 @@ class Sidebar extends Component {
       if ( isString( baseEntityName, { ofMinLength: 1 })) {
         const icon = dlv( baseEntities, `attributes.${targetCode}.PRI_IMAGE_URL.valueString` );
 
-        if ( isRecursive ) {
-          let linkedBaseEntities = this.getLinkedBaseEntities( targetCode );
-
-          linkedBaseEntities = linkedBaseEntities.filter( x => x.linkValue === 'LNK_CORE' );
+        if ( isRecursive && ( !depthLimit || depthLimit < index )) {
+          const linkedBaseEntities = this.getLinkedBaseEntities(
+            targetCode,
+            isRecursive,
+            index + 1
+          );
 
           if ( isArray( linkedBaseEntities, { ofMinLength: 1 })) {
             items.push({
@@ -78,7 +81,9 @@ class Sidebar extends Component {
               icon,
               name: baseEntityName,
               code: targetCode,
+              weight,
               items: linkedBaseEntities,
+              onPress: this.handlePress( link.link ),
               isDropdown: true,
             });
 
@@ -87,9 +92,11 @@ class Sidebar extends Component {
         }
 
         items.push({
+          ...itemData,
           icon,
           name: baseEntityName,
           code: targetCode,
+          weight,
           onPress: this.handlePress( link.link ),
         });
       }
@@ -111,7 +118,7 @@ class Sidebar extends Component {
   }
 
   handleFilterLinks = link => {
-    return link.weight !== 0;
+    return link.weight !== 0 && dlv( link, 'link.attributeCode' ) === 'LNK_CORE';
   }
 
   handlePress = ({ sourceCode, targetCode }) => () => {
@@ -152,7 +159,7 @@ class Sidebar extends Component {
       )
     );
 
-    const items = this.getLinkedBaseEntities( root, true );
+    const items = this.getLinkedBaseEntities( root, true, 0 );
     const logo = this.getSidebarImage();
 
     return (

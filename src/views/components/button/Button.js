@@ -417,6 +417,7 @@ class Button extends Component {
           )
             ? paddingSize.paddingY
             : paddingY}
+          width={width}
         >
           {child}
         </Box>
@@ -460,22 +461,18 @@ class Button extends Component {
       themeConfig.textColors[color]
     );
 
-    const style = {
-      height,
-      width,
-      marginTop,
-      marginBottom,
-      marginLeft,
-      marginRight,
-      marginX,
-      borderWidth,
-      borderColor,
-    };
-
     return (
       <Touchable
         withFeedback={withFeedback}
-        style={style}
+        height={height}
+        width={width}
+        marginTop={marginTop}
+        marginBottom={marginBottom}
+        marginLeft={marginLeft}
+        marginRight={marginRight}
+        marginX={marginX}
+        borderWidth={borderWidth}
+        borderColor={borderColor}
         disabled={(
           disabled ||
           isSpinning ||

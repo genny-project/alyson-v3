@@ -1,0 +1,6 @@
+[data-appearance-none] {
+  appearance: none;
+  -moz-appearance: none;
+  -ms-progress-appearance: none;
+  -webkit-appearance: none;
+}

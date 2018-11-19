@@ -97,7 +97,7 @@ class InputFile extends Component {
     const fileParts = /\.(\w+)$/.exec( fileName );
     const mimeType = fileParts ? mime.contentType( fileParts[1] ).split( ';' )[0] : 'file';
     const formData = new FormData();
-    const url = config.uppy.url;
+    const url = `${config.uppy.url}/s3/`;
 
     const responseGet = await axios({
       method: 'get',

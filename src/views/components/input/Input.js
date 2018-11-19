@@ -20,6 +20,8 @@ import InputPayment from './payment';
 import AudioRecord from './audio-record';
 import SegmentedControl from './segmented-control';
 import InputTag from './tag';
+import Signature from './signature';
+import RichTextEditor from './rich-text-editor';
 
 class Input extends Component {
   static propTypes = {
@@ -85,6 +87,7 @@ class Input extends Component {
           />
         );
 
+      case 'htmlarea':
       case 'textarea':
         return (
           <InputText
@@ -98,6 +101,8 @@ class Input extends Component {
 
       case 'number':
       case 'java.lang.integer':
+      case 'java.lang.long':
+      case 'java.lang.Long':
       case 'java.lang.Integer':
       case 'mobile':
       case 'landline':
@@ -300,6 +305,15 @@ class Input extends Component {
           />
         );
 
+      case 'dropdownmultiple':
+        return (
+          <InputTag
+            
+            {...inputProps}
+            allowMultipleSelection
+            ref={input => this.input = input}
+          />
+        );
       case 'tag':
         return (
           <InputTag
@@ -307,7 +321,20 @@ class Input extends Component {
             ref={input => this.input = input}
           />
         );
+      case 'signature': 
+        return (
+          <Signature
+            {...this.props}
+          />
+        );
 
+      case 'rich-text-editor':
+        return (
+          <RichTextEditor 
+            {...this.props}
+          />
+        );
+        
       default:
         return (
           <Text>

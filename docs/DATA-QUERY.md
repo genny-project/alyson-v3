@@ -161,6 +161,43 @@ TODO - Detailed usage instructions.
 - `findOne`
 - `get`
 - `getBE`
+
+### `getLinks`
+
+Get links of a base entity.
+
+#### `id` [ string ]
+
+The code of the Base Entity to use as the starting point.
+
+#### `onlyIncludeIf` [ array of objects ]
+
+Optional inclusive filter criteria for each link. Each link will only be included if ALL criteria pass.
+
+#### `onlyIncludeIf` [ array of objects ]
+
+Optional exclusive filter criteria for each link. Each link will be excluded if ANY criteria match.
+
+```json
+{
+  "operator": "getLinks",
+  "id": "PER_USER1",
+  "onlyIncludeIf": [
+    {
+      "path": "valueString",
+      "value": "FRIEND"
+    }
+  ],
+  "excludeIf": [
+    {
+      "path": "valueString",
+      "value": "HOUSE"
+    }
+  ],
+  "as": "items"
+}
+```
+
 - `getFromAlias`
 ### `getLinkDepths`
 
@@ -172,7 +209,7 @@ The code of the Base Entity to use as the starting point.
 
 #### `onlyIncludeIf` [ array of objects ]
 
-Optional filter criteria for each link.
+Optional filter criteria for each link. Each link will only be included if ALL criteria pass.
 
 ```json
 {
