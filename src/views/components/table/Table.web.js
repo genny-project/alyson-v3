@@ -9,6 +9,7 @@ import 'react-table/react-table.css';
 import { Bridge, isArray } from '../../../utils';
 import {   Box, Recursive } from '../../components';
 
+/* testing table for rendering the number of items */
 import './table.css';
 
 const utilMethod = ( filter, rows ) =>  {
@@ -46,8 +47,9 @@ class TableView extends Component {
 
     this.sendMessageToBridge = debounce( this.sendMessageToBridge, 500 );
   }
-
+ 
   handleCellDataChange = cellInfo1 => event => {
+    this.renderNumberOfItems();
     const { value } = event.target;
 
     /* Send data to the bridge */
@@ -128,8 +130,7 @@ class TableView extends Component {
     };
 
     return addFilterMethodsToColumn().map(
-      data => console.warn({ data }) ||
-      ({ ...data, Cell: cellInfo => renderCell( cellInfo, data ) })
+      data => ({ ...data, Cell: cellInfo => renderCell( cellInfo, data ) })
     );
   }
 
@@ -154,8 +155,19 @@ class TableView extends Component {
 
     return (
       <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
+        <div
+          className="table-custom-footer"
+          style={customFooterStyle}
+        > 
+          <p>
+            Number of Records: 
+            {' '}
+            {data && data.length}
+          </p>
+        </div>
 
         { isArray( data ) ? (
+
           <ReactTable
             className="react-tbl table -striped -highlight"
             style={[tableStyleProps]}
@@ -173,5 +185,11 @@ class TableView extends Component {
     );
   }
 }
+
+const customFooterStyle = { 
+  height: '30px',
+  padding: '10px',
+  paddingLeft: '20px',
+};
 
 export default TableView;
