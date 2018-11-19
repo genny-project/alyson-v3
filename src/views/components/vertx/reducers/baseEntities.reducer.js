@@ -136,6 +136,22 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
     }
   };
 
+  const createLink = be => {
+    return {
+      created: be.created,
+      link: {
+        attributeCode: 'LNK_CORE',
+        linkValue: 'LINK',
+        sourceCode: be.parentCode,
+        targetCode: be.code,
+        weight: 1,
+      },
+      valueString: 'LINK',
+      weight: 1,
+      fakeLink: true,
+    };
+  };
+
   if ( isArray( current.links ))
     current.links.forEach( handleCombineLinkValues );
 
@@ -145,26 +161,36 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
   }
 
   current.links.forEach( handleCombineLinkValues );
-  /*
+
+  /* If creating the links from children without a Parent entity. */
   if ( current.parentCode ) {
+    /* if the parent doesnt exist, create key BEG to store children. */
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
-        links: [current.code],
+        LINK: [createLink( current )],
       };
     }
     else {
-      /* Group all the parent codes inside a links array. *//*
-      resultant[current.parentCode] = {
-        ...resultant[current.parentCode],
-        links: [
-          ...resultant[current.parentCode].links.filter( code => code !== current.code ),
-          current.code,
-        ],
-      };
+      /* If parent code already exists, check to see if BEG is already there.
+      If yes, we add the new link. If no, we dont do anything, because it means
+      there is already another key which has been obtained from a parent to child
+      link, so it is more accurate. */
+      const existingLinkKeys = Object.keys( resultant[current.parentCode] );
+
+      if ( existingLinkKeys.includes( 'LINK' )) {
+        resultant[current.parentCode] = {
+          ...resultant[current.parentCode],
+          LINK: [
+            ...resultant[current.parentCode].LINK
+              ? resultant[current.parentCode].LINK
+                .filter( link => link.link.targetCode !== current.code )
+              : {},
+            createLink( current ),
+          ],
+        };
+      }
     }
   }
-   */
-  // console.log( resultant );
 
   return resultant;
 };
