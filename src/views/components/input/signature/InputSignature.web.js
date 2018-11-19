@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { string, number, oneOfType, func } from 'prop-types';
+import { string, number, oneOfType } from 'prop-types';
 import axios from 'axios';
-import SignatureCanvas from 'react-signature-canvas';
+import SignaturePad from 'react-signature-pad-wrapper';
 import config from '../../../../config/config.web';
 import { Tabs, InputText , Input, Button } from '../..';
 
@@ -9,30 +9,19 @@ const SIGNATURE_URL = config.SIGNATURE_URL;
 
 class InputSignature extends Component {
   static defaultProps = {
-    height: '250px',
-    width: '400px',
+    height: '350',
+    width: '800px',
   }
-
-  static propTypes = {
-    height: oneOfType( [number, string] ),
-    width: oneOfType( [number, string] ),
-    onChangeValue: func,
-  }
+ 
+   static propTypes = {
+     width: oneOfType( [string, number] ),
+     height: oneOfType( [string, number] ),
+   }
 
   state = {
     textSignatureValue: '',
   }
-
-  componentDidMount() {
-    this.signaturePad.height = this.props.height;
-    this.signaturePad.width = this.props.width;
-  }
-
-  /* clears out the signature canvas drawing pad */
-  handleClearCanvas = () => {
-    this.signaturePad.clear();
-  }
-
+ 
   /* submit thw signature data  from canvas */
   handleSignatureSubmitOnDraw = () => {
     const dataFromDrawingPad = this.signaturePad.toDataURL();
@@ -47,6 +36,11 @@ class InputSignature extends Component {
     this.submitSignature({ type: 'draw', data: textSignatureValue });
   }
 
+  // clear the canvas
+  handleClearCanvas = () => { 
+    this.signaturePad.clear();
+  }
+
   /* Helper method for submitting */
   submitSignature = async ( dataFromDrawingPad ) => {
     try {
@@ -55,7 +49,7 @@ class InputSignature extends Component {
         url: SIGNATURE_URL,
         data: dataFromDrawingPad,
       }).then( data => {
-        if ( this.props.onChangeValue )
+        if ( this.props.onChangeValue ) //eslint-disable-line
           this.props.onChangeValue( data.data.signatureURL );
       });
     }
@@ -73,14 +67,17 @@ class InputSignature extends Component {
   }
 
   render() {
+    const { width, height } = this.props;
+
     return (
-      <div className="custom-signature">
+      <div
+        className="custom-signature"
+        style={{ width: '100%', height: '100%' }}
+      >
         <Tabs
           tabBackground="#f5f5f5"
           activeTabbackground="teal"
           width="100%"
-          padding={30}
-          paddingTop={40}
           tabBarBackground="#f1f1f1"
           tabBarSize="md"
           textColor="black"
@@ -92,23 +89,17 @@ class InputSignature extends Component {
           ]
           }
         >
-          <div>
-            <SignatureCanvas
+          <div style={{ width: width, height: height }}>
+            <SignaturePad
               ref={ref => this.signaturePad = ref}
-              backgroundColor="#f5f5f5"
-              canvasProps={
-                {
-                  height: '250px',
-                  width: '400px',
-                  marginTop: 0,
-                  className: 'sigCanvas',
-                }
-                }
-              onend={this.handleSignatureSubmitOnDraw} /* eslint-disable-line  */
+              backgroundColor="red"
+              redrawOnResize
+              onend={this.handleSignatureSubmitOnDraw} // eslint-disable-line
             />
-            <div style={{ display: 'flex', flexDirection: 'row', width: '100%', marginTop: 10 }}>
+            <div style={{ display: 'flex', flexDirection: 'row', width: '100%', backgroundColor: 'whitesmoke' }}>
               <div style={{ width: '100%' }}>
                 <Button
+                  width="100%"
                   onPress={this.handleClearCanvas}
                   color="red"
                   withFeedback
@@ -119,13 +110,14 @@ class InputSignature extends Component {
               </div>
               <div style={{ width: '100%' }}>
                 <Button
+                  width="100%"
                   onPress={this.handleSignatureSubmitOnDraw}
                   color="green"
                   withFeedback
-                  style={{ marginTop: '10px' }}
                 >
                   Validate
                 </Button>
+
               </div>
             </div>
           </div>
