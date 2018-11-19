@@ -161,14 +161,104 @@ TODO - Detailed usage instructions.
 - `findOne`
 - `get`
 - `getBE`
+
+### `getLinks`
+
+Get links of a base entity.
+
+#### `id` [ string ]
+
+The code of the Base Entity to use as the starting point.
+
+#### `onlyIncludeIf` [ array of objects ]
+
+Optional inclusive filter criteria for each link. Each link will only be included if ALL criteria pass.
+
+#### `onlyIncludeIf` [ array of objects ]
+
+Optional exclusive filter criteria for each link. Each link will be excluded if ANY criteria match.
+
+```json
+{
+  "operator": "getLinks",
+  "id": "PER_USER1",
+  "onlyIncludeIf": [
+    {
+      "path": "valueString",
+      "value": "FRIEND"
+    }
+  ],
+  "excludeIf": [
+    {
+      "path": "valueString",
+      "value": "HOUSE"
+    }
+  ],
+  "as": "items"
+}
+```
+
 - `getFromAlias`
-- `getLinkDepths`
+### `getLinkDepths`
+
+Get the links of a base entity and iterate over the links of those base entities and so on, until all posible unique links have been found, and get the number of links between each of those base entities and the root base entity.
+
+#### `code` [ string ]
+
+The code of the Base Entity to use as the starting point.
+
+#### `onlyIncludeIf` [ array of objects ]
+
+Optional filter criteria for each link. Each link will only be included if ALL criteria pass.
+
+```json
+{
+  "operator": "getLinkDepths",
+  "code": "{{baseEntity.code}}",
+  "onlyIncludeIf": [
+    {
+      "path": "linkValue",
+      "value": "LNK_CORE"
+    }
+  ],
+  "as": "depths"
+}
+```
+
 - `map`
 - `populateAttributes`
 - `populateBEGAttributes`
 - `populateLinkValues`
 - `scope`
-- `sort`
+
+### `sort`
+
+Sort an array of data by a specified field.
+
+#### `by` [ array, string ]
+
+Fields to use for sorting. Will start with the first field, and if the result is a match, then will move to the next field, and so on.
+
+The fields used must match paths found in each data object.
+
+#### `direction` [ "asc", "desc" ]
+
+Determines direction of sort.
+
+```json
+{
+  "operator": "scope",
+  "path": "data",
+  "scope": {
+    "operator": "sort",
+    "by": [
+      "attributes.PRI_BIRTHDAY.value",
+      "attributes.PRI_FIRSTNAME.value"
+    ],
+    "direction": "asc"
+  }
+}
+```
 
 ## external operator
 

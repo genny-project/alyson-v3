@@ -105,22 +105,47 @@ const handleReduceAttributes = ( resultant, current ) => {
   return resultant;
 };
 
-const handleReduceLinks = ( resultant, current ) => {
+const handleReplaceLinks = ( resultant, current ) => {
+  return handleReduceLinks( resultant, current, true );
+};
+
+const handleReduceLinks = ( resultant, current, shouldReplace ) => {
   if ( !isArray( current.links ))
     return resultant;
 
+  const removeMatchingExistingKeys = link => {
+    if (
+      link.link.linkValue &&
+      resultant[current.code]
+    ) {
+      delete resultant[current.code];
+    }
+  };
+
   const handleCombineLinkValues = link => {
     if ( link.link.linkValue ) {
-      resultant[link.link.linkValue] = ({
-        ...resultant[link.link.linkValue],
-        [link.link.targetCode]: link,
-      });
+      resultant[current.code] = {
+        ...resultant[current.code],
+        [link.link.linkValue]: [
+          ...( resultant[current.code] && isArray( resultant[current.code][link.link.linkValue] ))
+            ? resultant[current.code][link.link.linkValue]
+            : [],
+          link,
+        ],
+      };
     }
   };
 
   if ( isArray( current.links ))
     current.links.forEach( handleCombineLinkValues );
 
+  if ( shouldReplace === true ) {
+    current.links.forEach( removeMatchingExistingKeys );
+    // console.log( resultant );
+  }
+
+  current.links.forEach( handleCombineLinkValues );
+  /*
   if ( current.parentCode ) {
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
@@ -128,7 +153,7 @@ const handleReduceLinks = ( resultant, current ) => {
       };
     }
     else {
-      /* Group all the parent codes inside a links array. */
+      /* Group all the parent codes inside a links array. *//*
       resultant[current.parentCode] = {
         ...resultant[current.parentCode],
         links: [
@@ -138,6 +163,8 @@ const handleReduceLinks = ( resultant, current ) => {
       };
     }
   }
+   */
+  // console.log( resultant );
 
   return resultant;
 };
@@ -334,27 +361,27 @@ function handleReduceDataTwo( message, state ) {
   return message.items.reduce( handleReduceData, newState );
 }
 
-function handleReduceLinksTwo( message, state ) {
-  const newState = copy( state );
+// function handleReduceLinksTwo( message, state ) {
+//   const newState = copy( state );
 
-  if ( message.parentCode ) {
-    delete newState[message.parentCode];
-  }
-  else if ( isArray( message.items )) {
-    message.items.forEach( item => {
-      delete newState[item.code];
-    });
-  }
+// if ( message.parentCode ) {
+//   delete newState[message.parentCode];
+// }
+// else if ( isArray( message.items )) {
+//   message.items.forEach( item => {
+//     delete newState[item.code];
+//   });
+// }
 
-  if (
-    message.delete &&
-    !message.shouldDeleteLinkedBaseEntities
-  ) {
-    return newState;
-  }
+// if (
+//   message.delete &&
+//     !message.shouldDeleteLinkedBaseEntities
+// ) {
+//   return newState;
+// }
 
-  return message.items.reduce( handleReduceLinks, newState );
-}
+//   return message.items.reduce( handleReduceLinks, newState );
+// }
 
 const reducer = ( state = initialState, { type, payload }) => {
   switch ( type ) {
@@ -375,11 +402,14 @@ const reducer = ( state = initialState, { type, payload }) => {
         payload.replace ||
         payload.delete
       ) {
+        console.log( payload.replace );
+
         return {
           ...state,
           data: handleReduceDataTwo( payload, state.data ),
           attributes: payload.items.reduce( handleReduceAttributes, state.attributes ),
-          links: handleReduceLinksTwo( payload, state.links ),
+          links: payload.items.reduce( handleReplaceLinks, state.links ),
+          // links: handleReduceLinksTwo( payload, state.links ),
         };
       }
 

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { object } from 'prop-types';
 import { connect } from 'react-redux';
-import { isArray } from '../../../../../utils';
+import dlv from 'dlv';
 import { Input } from '../../../index';
+import { isArray, isObject } from '../../../../../utils';
 
 class FormInputDropdown extends Component {
   static propTypes = {
@@ -37,26 +38,37 @@ class FormInputDropdown extends Component {
       return items;
 
     validationList.forEach( validation => {
-      if ( !isArray( validation.selectionBaseEntityGroupList, { ofMinLength: 1 }))
-        return;
+      if (
+        validation.selectionBaseEntityGroupList &&
+        validation.selectionBaseEntityGroupList instanceof Array &&
+        validation.selectionBaseEntityGroupList.length > 0
+      ) {
+        validation.selectionBaseEntityGroupList.forEach( baseEntity => {
+          const linkGroup = links[baseEntity];
 
-      validation.selectionBaseEntityGroupList.forEach( baseEntity => {
-        const linkGroup = links[baseEntity];
+          if (
+            isObject( linkGroup )
+          ) {
+            const linkValues = Object.keys( linkGroup ).map( x => x );
 
-        if ( !linkGroup || !isArray( linkGroup.links, { ofMinLength: 1 }))
-          return;
+            linkValues.forEach( linkValue => {
+              if ( isArray( linkGroup[linkValue] )) {
+                linkGroup[linkValue].forEach( link => {
+                  const baseEntity = dlv( data, link.link.targetCode );
 
-        linkGroup.links.forEach( link => {
-          const linkData = data[link];
-
-          if ( linkData && linkData.name ) {
-            items.push({
-              label: linkData.name,
-              value: linkData.code,
+                  if ( isObject( baseEntity )) {
+                    items.push({
+                      label: baseEntity.name,
+                      value: baseEntity.code,
+                      weight: link.weight || 1,
+                    });
+                  }
+                });
+              }
             });
           }
         });
-      });
+      }
     });
 
     return items;

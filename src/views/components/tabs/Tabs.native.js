@@ -5,7 +5,7 @@ import { PagerScroll, PagerPan, TabView, TabBar } from 'react-native-tab-view';
 import { Box, Text, Icon, Timeout, Recursive } from '../../components';
 import { LayoutConsumer } from '../../layout';
 import TabDots from './tab-dots';
-import { isArray } from '../../../utils';
+import { isArray, Bridge } from '../../../utils';
 
 class Tabs extends Component {
   static defaultProps = {
@@ -16,6 +16,7 @@ class Tabs extends Component {
     dotProps: {},
     tabBarProps: {},
     tabsPosition: 'bottom',
+    numberOfAdjacentRoutesToRender: 1,
   }
 
   static propTypes = {
@@ -53,6 +54,8 @@ class Tabs extends Component {
       ['top', 'bottom']
     ),
     dotProps: object,
+    parentRoute: string,
+    numberOfAdjacentRoutesToRender: number,
   }
 
   static getDerivedStateFromProps( nextProps, nextState ) {
@@ -73,6 +76,18 @@ class Tabs extends Component {
   }
 
   handleIndexChange = index => {
+    const routeObject = this.state.routes.filter( x => x.key === index )[0];
+
+    Bridge.sendEvent({
+      event: 'BTN',
+      eventType: 'ROUTE_CHANGE',
+      sendWithToken: true,
+      data: {
+        code: `${this.props.parentRoute}${routeObject ? `/${routeObject.route}` : ''}`,
+        value: routeObject ? `${routeObject.key}` : '',
+      },
+    });
+
     this.setState({ index });
   }
 
@@ -259,12 +274,12 @@ class Tabs extends Component {
   };
 
   renderScene = ({ route }) => {
-    const { sceneProps, restrictSceneHeights } = this.props;
+    const { sceneProps, restrictSceneHeights, numberOfAdjacentRoutesToRender } = this.props;
     const { sceneHeights, index, routes } = this.state;
     let { children } = this.props;
 
     /* Only render the scene if it's within 2 routes either side of the current route. */
-    if ( Math.abs( index - routes.indexOf( route )) > 2 ) {
+    if ( Math.abs( index - routes.indexOf( route )) > numberOfAdjacentRoutesToRender ) {
       return <Box />;
     }
 

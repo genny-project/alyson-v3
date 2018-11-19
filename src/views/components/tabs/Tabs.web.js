@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { string, oneOfType, array, number, any, func, oneOf, object } from 'prop-types';
 import { TouchableOpacity } from 'react-native';
 import { withRouter } from 'react-router-dom';
-import { isArray } from '../../../utils';
+import { isArray, Bridge } from '../../../utils';
 import { Icon, Box, Text } from '../../components';
 
 const tabBarLocation = {
@@ -63,6 +63,7 @@ class Tabs extends PureComponent {
     activeTabIconProps: object,
     inactiveTabIconProps: object,
     childProps: object,
+    parentRoute: string,
     history: object,
     location: object,
   }
@@ -94,6 +95,17 @@ class Tabs extends PureComponent {
   }
 
   handlePress = ( index ) => {
+    const routeObject = this.props.tabs.filter( x => x.key === index )[0];
+
+    Bridge.sendEvent({
+      event: 'BTN',
+      eventType: 'ROUTE_CHANGE',
+      sendWithToken: true,
+      data: {
+        code: `${this.props.parentRoute}${routeObject ? `/${routeObject.route}` : ''}`,
+        value: routeObject ? `${routeObject.key}` : '',
+      },
+    });
     this.setState({ currentChild: index });
     if ( this.props.onPress ) this.props.onPress();
 
@@ -158,7 +170,7 @@ class Tabs extends PureComponent {
               >
                 <TouchableOpacity
                   onPress={() => this.handlePress( index )}
-                  style={{ flexDirection: 'row' }}
+                  style={{ flexDirection: 'row', flex: 1 }}
                 >
                   {tab.icon ? (
                     <Icon

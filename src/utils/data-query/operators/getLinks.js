@@ -28,18 +28,58 @@ const lookupLink = ( data, options, allData ) => {
   if ( !isObject( data ))
     return;
 
+  const { id, as, onlyIncludeIf, excludeIf, filterOutEmpty } = options;
+  const newPath = as;
+
   /* Create the path to the base entity */
-  const be = copy( allData.baseEntities.links[injectContext( options.id, data )] );
-  const links = be ? be.links : be;
+  const be = copy( allData.baseEntities.links[injectContext( id, data )] );
+
+  let baseEntityLinks = undefined;
+
+  if ( be != null ) {
+    baseEntityLinks = Object.keys( be ).reduce(( result, item ) => {
+      let keyData = be[item];
+
+      if (
+        isArray( onlyIncludeIf )
+      )  {
+        keyData = keyData.filter( link => {
+          return onlyIncludeIf.every( x => {
+            return link[x.path] === x.value;
+          });
+        });
+      }
+
+      if (
+        isArray( excludeIf )
+      )  {
+        keyData = keyData.filter( link => {
+          return !excludeIf.some( x => {
+            return link[x.path] === x.value;
+          });
+        });
+      }
+
+      keyData.forEach( item  => {
+        if ( result.filter( x => x.link.targetCode === item.link.targetCode ) < 1 ) {
+          result.push( item );
+        }
+      });
+
+      return result;
+    }, [] );
+  }
+
+  const links = baseEntityLinks ? baseEntityLinks : be;
 
   if (
-    options.filterOutEmpty && (
+    filterOutEmpty && (
       !be ||
-      !be.links
+      !baseEntityLinks
     )
   ) {
     return undefined;
   }
 
-  return options.as ? { ...data, [options.as]: links } : links;
+  return newPath ? { ...data, [newPath]: links } : links;
 };
