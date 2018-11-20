@@ -10,11 +10,9 @@ const SIGNATURE_URL = config.SIGNATURE_URL;
 class InputSignature extends Component {
   static defaultProps = {
     height: '350',
-    width: '800px',
   }
  
    static propTypes = {
-     width: oneOfType( [string, number] ),
      height: oneOfType( [string, number] ),
    }
 
@@ -54,7 +52,6 @@ class InputSignature extends Component {
       });
     }
     catch ( error ) {
-      // eslint-disable-next-line no-console
       console.log( 'Error while sending the signature', error );
     }
   };
@@ -67,7 +64,7 @@ class InputSignature extends Component {
   }
 
   render() {
-    const { width, height } = this.props;
+    const { height } = this.props;
 
     return (
       <div
@@ -89,7 +86,7 @@ class InputSignature extends Component {
           ]
           }
         >
-          <div style={{ width: width, height: height }}>
+          <div style={{ width: '100%', height: height }}>
             <SignaturePad
               ref={ref => this.signaturePad = ref}
               backgroundColor="red"
