@@ -16,6 +16,7 @@ class  PdfViewer extends Component  {
         style={{
           background: '#6b6b6b',
           height: 'auto',
+          width: '100%',
           overflow: 'scroll',
           padding: '5% 8%',
           marginBottom: '30px',

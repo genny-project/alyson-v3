@@ -52,7 +52,7 @@ class InputSignature extends Component {
       });
     }
     catch ( error ) {
-      console.log( 'Error while sending the signature', error );
+      console.error( 'Error while sending the signature', error );
     }
   };
 
