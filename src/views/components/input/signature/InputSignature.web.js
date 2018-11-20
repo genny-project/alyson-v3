@@ -9,13 +9,13 @@ const SIGNATURE_URL = config.SIGNATURE_URL;
 
 class InputSignature extends Component {
   static defaultProps = {
-    height: '350',
-    width: '800px',
+    height: '100%',
+    width: '100%',
   }
  
    static propTypes = {
-     width: oneOfType( [string, number] ),
      height: oneOfType( [string, number] ),
+     width: oneOfType( [string, number] ),
    }
 
   state = {
@@ -54,8 +54,7 @@ class InputSignature extends Component {
       });
     }
     catch ( error ) {
-      // eslint-disable-next-line no-console
-      console.log( 'Error while sending the signature', error );
+      console.error( 'Error while sending the signature', error );
     }
   };
 
@@ -67,16 +66,16 @@ class InputSignature extends Component {
   }
 
   render() {
-    const { width, height } = this.props;
+    const { height, width } = this.props;
 
     return (
       <div
         className="custom-signature"
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: width, height: height }}
       >
         <Tabs
           tabBackground="#f5f5f5"
-          activeTabbackground="teal"
+          activeTabBackground="#afafaf"
           width="100%"
           tabBarBackground="#f1f1f1"
           tabBarSize="md"
@@ -89,7 +88,9 @@ class InputSignature extends Component {
           ]
           }
         >
-          <div style={{ width: width, height: height }}>
+          <div style={{ width: '100%', height: height, margin: '20px', 
+            background: '#f9f9f9' }}
+          >
             <SignaturePad
               ref={ref => this.signaturePad = ref}
               backgroundColor="red"
