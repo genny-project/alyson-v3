@@ -2,6 +2,7 @@ import React, { isValidElement, createElement } from 'react';
 import { Platform } from 'react-native';
 import { any, bool, string, object } from 'prop-types';
 import { Formik } from 'formik';
+import dlv from 'dlv';
 import { isArray, isString, Bridge } from '../../../utils';
 import { Recursive, Box } from '../index';
 
@@ -52,8 +53,19 @@ const FormGeneric = ({
 
     if ( resetFormOnSubmit ) {
       form.resetForm();
-      console.warn({ ref, form });
       ref && ref.reset && ref.reset();
+    }
+  };
+
+  const handleKeyPress = (  values, form ) => ( e ) => {
+    const key = e.key;
+
+    switch ( key ) {
+      case 'Enter':
+        sendEvent( values, form );
+        break;
+      default:
+        return null;
     }
   };
 
@@ -74,8 +86,10 @@ const FormGeneric = ({
             isValidElement( children ) ? children
             : isString( children ) ? children
             : isArray( children )
-              ? children.map(( child, i ) => (
-                isValidElement( child )
+              ? children.map(( child, i ) => {
+                if ( dlv( child, 'props.props.submitOnEnterPress' )) child.props.props.onKeyPress = handleKeyPress( formik.values, formik );
+
+                return isValidElement( child )
                   ? child
                   : (
                     <Recursive
@@ -86,8 +100,8 @@ const FormGeneric = ({
                         ...formik,
                       }}
                     />
-                  )
-              ))
+                  );
+              })
               : (
                 <Recursive
                   {...children}

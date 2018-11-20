@@ -35,6 +35,10 @@ This is a list of all the components that can be used when creating [Layouts](LA
 
 ### [Form](../src/views/components/form/FORM.md)
 
+### [Form Generic](../src/views/components/form-generic/FORM_GENERIC.md)
+
+### [Form Generic Input](../src/views/components/form-generic/iput/FORM_GENERIC_INPUT.md)
+
 ### [Heading](../src/views/components/heading/HEADING.md)
 
 ### [Icon](../src/views/components/icon/ICON.md)

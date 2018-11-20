@@ -428,8 +428,6 @@ const reducer = ( state = initialState, { type, payload }) => {
         payload.replace ||
         payload.delete
       ) {
-        console.log( payload.replace );
-
         return {
           ...state,
           data: handleReduceDataTwo( payload, state.data ),
