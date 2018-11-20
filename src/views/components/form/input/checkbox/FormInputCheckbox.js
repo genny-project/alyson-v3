@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { object, oneOfType, string, array } from 'prop-types';
 import { connect } from 'react-redux';
-import { isArray, isString } from '../../../../../utils';
+import dlv from 'dlv';
+import { isArray, isString, isObject } from '../../../../../utils';
 import { Input } from '../../../index';
 
 class FormInputCheckbox extends Component {
@@ -74,21 +75,22 @@ class FormInputCheckbox extends Component {
             const linkGroup = links[baseEntity];
 
             if (
-              linkGroup &&
-              linkGroup.links &&
-              linkGroup.links instanceof Array &&
-              linkGroup.links.length > 0
+              isObject( linkGroup ) 
             ) {
-              linkGroup.links.forEach( link => {
-                const linkData = data[link];
+              const linkValues = Object.keys( linkGroup ).map( x => x );
 
-                if (
-                  linkData &&
-                  linkData.name
-                ) {
-                  items.push({
-                    label: linkData.name,
-                    value: linkData.code,
+              linkValues.forEach( linkValue => {
+                if ( isArray( linkGroup[linkValue] )) {
+                  linkGroup[linkValue].forEach( link => {
+                    const baseEntity = dlv( data, link.link.targetCode );
+
+                    if ( isObject( baseEntity )) {
+                      items.push({
+                        label: baseEntity.name,
+                        value: baseEntity.code,
+                        weight: link.weight || 1,
+                      });
+                    }
                   });
                 }
               });
