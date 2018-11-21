@@ -175,20 +175,16 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
       If yes, we add the new link. If no, we dont do anything, because it means
       there is already another key which has been obtained from a parent to child
       link, so it is more accurate. */
-      const existingLinkKeys = Object.keys( resultant[current.parentCode] );
-
-      if ( existingLinkKeys.includes( 'LINK' )) {
-        resultant[current.parentCode] = {
-          ...resultant[current.parentCode],
-          LINK: [
-            ...resultant[current.parentCode].LINK
-              ? resultant[current.parentCode].LINK
-                .filter( link => link.link.targetCode !== current.code )
-              : {},
-            createLink( current ),
-          ],
-        };
-      }
+      resultant[current.parentCode] = {
+        ...resultant[current.parentCode],
+        LINK: [
+          ...resultant[current.parentCode].LINK
+            ? resultant[current.parentCode].LINK
+              .filter( link => link.link.targetCode !== current.code )
+            : {},
+          createLink( current ),
+        ],
+      };
     }
   }
 
@@ -255,10 +251,12 @@ const handleReduceData = ( resultant, current ) => {
   }
 
   resultant[current.code] = wantedData;
+
   /* If the current has a parentCode, ensure there is an accompanying base entity. */
   if ( current.parentCode ) {
     /* If the parent base entity does not exist, simply create a basic one with a link
      * back to the current base entity. */
+
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
         links: [
@@ -273,6 +271,7 @@ const handleReduceData = ( resultant, current ) => {
       const noLinksExist = !isArray( resultant[current.parentCode].links, { ofMinLength: 1 });
 
       /* If no links exist yet, simply set the links to be array of the new link (current). */
+
       const newLinks = noLinksExist ? [
         createLink( current ),
       ] : (
@@ -281,6 +280,7 @@ const handleReduceData = ( resultant, current ) => {
           /* If the current link is in the existing links, update the
            * existing link with the new link data (current). */
           if ( link.link.targetCode === current.code ) {
+            // if ( current.parentCode === 'GRP_NEW_ITEMS' ) console.log( '3a code match', links );
             links[index] = {
               ...link,
               updated: current.updated,
@@ -293,7 +293,8 @@ const handleReduceData = ( resultant, current ) => {
             };
           }
           /* If the new link (current) isn't already in the existing links, add it. */
-          else if ( !links.find( link => link.link.targetCode === current.code )) {
+          else if ( !links.find( existingLink => existingLink.link.targetCode === current.code )) {
+            // if ( current.parentCode === 'GRP_NEW_ITEMS' ) console.log( '3b links', links );
             links.push(
               createLink( current )
             );
