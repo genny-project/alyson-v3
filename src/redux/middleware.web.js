@@ -21,7 +21,12 @@ const productionMiddleware = [
   epicMiddleware,
   vertxMiddleware,
   router,
+
 ];
+
+if ( window.localStorage && window.localStorage.getItem( 'DISPLAY_LOGS' ) != null ) { 
+  productionMiddleware.push( logger );
+}
 
 /* Batches redux actions by frames to increase performance */
 const debounceNotify = notify => {
