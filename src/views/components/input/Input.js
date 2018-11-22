@@ -198,16 +198,8 @@ class Input extends Component {
           />
         );
 
-      case 'upload':
-        return (
-          <InputFile
-            imageOnly
-            {...inputProps}
-            ref={input => this.input = input}
-          />
-        );
-
       case 'file':
+      case 'upload':
         return (
           <InputFile
             {...inputProps}
@@ -216,6 +208,7 @@ class Input extends Component {
         );
 
       case 'image':
+      case 'Image':
         return (
           <InputFile
             {...inputProps}
@@ -308,7 +301,7 @@ class Input extends Component {
       case 'dropdownmultiple':
         return (
           <InputTag
-            
+
             {...inputProps}
             allowMultipleSelection
             ref={input => this.input = input}
@@ -321,7 +314,7 @@ class Input extends Component {
             ref={input => this.input = input}
           />
         );
-      case 'signature': 
+      case 'signature':
         return (
           <Signature
             {...this.props}
@@ -330,11 +323,11 @@ class Input extends Component {
 
       case 'rich-text-editor':
         return (
-          <RichTextEditor 
+          <RichTextEditor
             {...this.props}
           />
         );
-        
+
       default:
         return (
           <Text>

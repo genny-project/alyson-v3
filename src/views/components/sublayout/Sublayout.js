@@ -28,6 +28,9 @@ class Sublayout extends Component {
 
     if ( layout )
       this.setState({ layout });
+    else {
+      console.warn( 'layout not found', { layoutName });
+    }
   }
 
   render() {
