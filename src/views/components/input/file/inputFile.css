@@ -1,0 +1,31 @@
+/* Built off https://github.com/CodeSeven/toastr/blob/master/build/toastr.css */
+
+#uppy-DashboardContent-panel--Webcam > div {
+  height: 100% !important;
+  display: flex !important;
+}
+
+.uppy-Webcam-container {
+  flex: 1 !important;
+  flex-direction: column !important;
+}
+
+.uppy-Webcam-videoContainer {
+  height: calc( 100% - 100px ) !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.uppy-Webcam-video {
+  height: 100% !important;
+}
+
+.uppy-Webcam-buttonContainer {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.uppy-Webcam-button--video {
+  display: none !important;
+}
