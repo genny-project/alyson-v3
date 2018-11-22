@@ -71,7 +71,9 @@ class FormInputDropdown extends Component {
       }
     });
 
-    items.sort(( x, y ) => ( x !== null && x !== null ) ? x.weight > y.weight ? 1 : -1 : 0 );
+    // items.sort(( x, y ) => ( x !== null && x !== null ) ? x.weight > y.weight ? 1 : -1 : 0 );
+
+    items.sort(( x, y ) => ( x !== null && x !== null ) ? x.name > y.name ? 1 : -1 : 0 );
 
     return items;
   }
