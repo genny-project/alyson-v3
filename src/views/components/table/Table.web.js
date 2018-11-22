@@ -3,18 +3,14 @@ import { string, array, number, bool, oneOfType, object } from 'prop-types';
 import ReactTable from 'react-table';
 
 import matchSorter from 'match-sorter';
-import  debounce  from 'lodash.debounce';
+import debounce from 'lodash.debounce';
 
 import 'react-table/react-table.css';
 import { Bridge, isArray } from '../../../utils';
-import {   Box, Recursive } from '../../components';
+import { Box, Recursive } from '../../components';
 
 /* testing table for rendering the number of items */
 import './table.css';
-
-const utilMethod = ( filter, rows ) =>  {
-  return matchSorter( rows, filter.value, { keys: [filter.id] });
-};
 
 class TableView extends Component {
   static defaultProps = {
@@ -46,8 +42,9 @@ class TableView extends Component {
     super( props );
 
     this.sendMessageToBridge = debounce( this.sendMessageToBridge, 500 );
+    this.handleFilteredChange = debounce( this.handleFilteredChange, 1000 );
   }
- 
+
   handleCellDataChange = cellInfo1 => event => {
     this.renderNumberOfItems();
     const { value } = event.target;
@@ -65,14 +62,43 @@ class TableView extends Component {
     return Bridge.sendAnswer( [message] );
   };
 
+  utilMethod = ( filter, rows ) => {
+    const result = matchSorter( rows, filter.value, { keys: [filter.id] });
+
+    const codes = result.map( row => {
+      return row._original.code;
+    });
+
+    this.handleFilteredChange( codes );
+
+    return result;
+  };
+
+  handleFilteredChange = items => {
+    if (
+      isArray( items )
+    ) {
+      const filteredCodes = JSON.stringify( items );
+
+      Bridge.sendEvent({
+        event: 'SEARCH',
+        sendWithToken: true,
+        data: {
+          code: 'TABLE_SEARCH',
+          value: filteredCodes,
+        },
+      });
+    }
+  };
+
   modifiedTableColumns = () => {
     /* make all the columns searchable  this is used for searching oneach column */
-    const addFilterMethodsToColumn =  () => {
-      const { columns  } = this.props;
+    const addFilterMethodsToColumn = () => {
+      const { columns } = this.props;
 
       if ( columns.length < 1 ) return null;
       const modifiedCells = columns.map( column => {
-        return ({ ...column, ...{ filterMethod: utilMethod }, ...{ filterAll: true } });
+        return ({ ...column, ...{ filterMethod: this.utilMethod }, ...{ filterAll: true } });
       });
 
       return modifiedCells;
@@ -87,7 +113,7 @@ class TableView extends Component {
           ...this.props.context, // eslint-disable-line
           ...this.props.data[cellInfo.index],
         };
-            
+
         return (
           <Box
             justifyContent="space-around"
@@ -99,7 +125,7 @@ class TableView extends Component {
                 ? renderButton.map(( element, i ) => (
                   isValidElement( element ) ? element : (
                     <Recursive
-                          key={i} // eslint-disable-line
+                      key={i} // eslint-disable-line
                       {...element}
                       context={context}
                     />
@@ -158,15 +184,15 @@ class TableView extends Component {
         <div
           className="table-custom-footer"
           style={customFooterStyle}
-        > 
+        >
           <p>
-            Number of Records: 
+            Number of Records:
             {' '}
             {data && data.length}
           </p>
         </div>
 
-        { isArray( data ) ? (
+        {isArray( data ) ? (
 
           <ReactTable
             className="react-tbl table -striped -highlight"
@@ -186,7 +212,7 @@ class TableView extends Component {
   }
 }
 
-const customFooterStyle = { 
+const customFooterStyle = {
   height: '30px',
   padding: '10px',
   paddingLeft: '20px',
