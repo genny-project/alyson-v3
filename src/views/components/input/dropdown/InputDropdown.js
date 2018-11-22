@@ -219,6 +219,21 @@ class InputDropdown extends Component {
 
     const validItems = isArray( items, { ofMinLength: 1 });
 
+    validItems.sort(( a, b ) => {
+      var nameA = a.name.toLowerCase(); // ignore upper and lowercase
+      var nameB = b.name.toLowerCase(); // ignore upper and lowercase
+
+      if ( nameA < nameB ) {
+        return -1;
+      }
+      if ( nameA > nameB ) {
+        return 1;
+      }
+
+      // names must be equal
+      return 0;
+    });
+
     return (
       <Picker
         {...restProps}
