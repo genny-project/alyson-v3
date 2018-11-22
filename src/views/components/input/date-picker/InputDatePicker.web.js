@@ -15,7 +15,7 @@ const NUMBER_OF_DOB_YEARS = 125;
 const currentYear = new Date().getFullYear();
 const daysOfTheWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const years = range( NUMBER_OF_DOB_YEARS ).map( year => currentYear - year );
+const years = range( NUMBER_OF_DOB_YEARS ).map( year => currentYear + 2 - year );
 
 class InputDatePicker extends PureComponent {
   static defaultProps = {
