@@ -74,16 +74,11 @@ class Tabs extends PureComponent {
   }
 
   static getDerivedStateFromProps( props, state ) {
-    console.log( 'getDerivedStateFromProps' );
     const newState = { ...state };
     const hash = dlv( props, 'history.location.hash' );
     const newIndex = parseInt( hash.slice( 1 ), 10 );
 
-    console.log( 'hash', hash, 'newIndex', newIndex, typeof newIndex );
-
-    console.log( 'currentChild', newState.currentChild );
     if ( newIndex && typeof newIndex === 'number' ) {
-      console.log( 'shouldUpdate?', newIndex !== newState.currentChild );
       if ( newIndex !== newState.currentChild ) {
         newState.currentChild = newIndex;
       }
@@ -93,7 +88,6 @@ class Tabs extends PureComponent {
   }
 
   componentDidMount() {
-    console.log( 'mount ' );
     this.setInitialTab();
   }
 
@@ -165,8 +159,6 @@ class Tabs extends PureComponent {
     const {
       currentChild,
     } = this.state;
-
-    console.log( 'currentChild', currentChild );
 
     return (
       <Box
