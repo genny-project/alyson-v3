@@ -3,7 +3,7 @@ import { string, oneOfType, array, number, any, func, oneOf, object } from 'prop
 import { TouchableOpacity } from 'react-native';
 import { withRouter } from 'react-router-dom';
 import dlv from 'dlv';
-import { isArray, isString, Bridge } from '../../../utils';
+import { isArray, Bridge } from '../../../utils';
 import { Icon, Box, Text } from '../../components';
 
 const tabBarLocation = {
@@ -79,10 +79,10 @@ class Tabs extends PureComponent {
     const hash = dlv( props, 'history.location.hash' );
     const newIndex = parseInt( hash.slice( 1 ), 10 );
 
-    console.log( 'hash', hash, 'newIndex', newIndex );
+    console.log( 'hash', hash, 'newIndex', newIndex, typeof newIndex );
 
     console.log( 'currentChild', newState.currentChild );
-    if ( isString( newIndex )) {
+    if ( newIndex && typeof newIndex === 'number' ) {
       console.log( 'shouldUpdate?', newIndex !== newState.currentChild );
       if ( newIndex !== newState.currentChild ) {
         newState.currentChild = newIndex;
