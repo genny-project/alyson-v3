@@ -2,7 +2,8 @@ import React, { PureComponent } from 'react';
 import { string, oneOfType, array, number, any, func, oneOf, object } from 'prop-types';
 import { TouchableOpacity } from 'react-native';
 import { withRouter } from 'react-router-dom';
-import { isArray, Bridge } from '../../../utils';
+import dlv from 'dlv';
+import { isArray, isString, Bridge } from '../../../utils';
 import { Icon, Box, Text } from '../../components';
 
 const tabBarLocation = {
@@ -72,7 +73,27 @@ class Tabs extends PureComponent {
     currentChild: 0,
   }
 
+  static getDerivedStateFromProps( props, state ) {
+    console.log( 'getDerivedStateFromProps' );
+    const newState = { ...state };
+    const hash = dlv( props, 'history.location.hash' );
+    const newIndex = parseInt( hash.slice( 1 ), 10 );
+
+    console.log( 'hash', hash, 'newIndex', newIndex );
+
+    console.log( 'currentChild', newState.currentChild );
+    if ( isString( newIndex )) {
+      console.log( 'shouldUpdate?', newIndex !== newState.currentChild );
+      if ( newIndex !== newState.currentChild ) {
+        newState.currentChild = newIndex;
+      }
+    }
+
+    return newState;
+  }
+
   componentDidMount() {
+    console.log( 'mount ' );
     this.setInitialTab();
   }
 
@@ -144,6 +165,8 @@ class Tabs extends PureComponent {
     const {
       currentChild,
     } = this.state;
+
+    console.log( 'currentChild', currentChild );
 
     return (
       <Box
