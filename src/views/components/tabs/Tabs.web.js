@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { string, oneOfType, array, number, any, func, oneOf, object } from 'prop-types';
 import { TouchableOpacity } from 'react-native';
 import { withRouter } from 'react-router-dom';
+import dlv from 'dlv';
 import { isArray, Bridge } from '../../../utils';
 import { Icon, Box, Text } from '../../components';
 
@@ -70,6 +71,20 @@ class Tabs extends PureComponent {
 
   state = {
     currentChild: 0,
+  }
+
+  static getDerivedStateFromProps( props, state ) {
+    const newState = { ...state };
+    const hash = dlv( props, 'history.location.hash' );
+    const newIndex = parseInt( hash.slice( 1 ), 10 );
+
+    if ( newIndex && typeof newIndex === 'number' ) {
+      if ( newIndex !== newState.currentChild ) {
+        newState.currentChild = newIndex;
+      }
+    }
+
+    return newState;
   }
 
   componentDidMount() {
