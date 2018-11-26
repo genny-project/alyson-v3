@@ -7,6 +7,7 @@ import { Recursive } from '../../components';
 class Selection extends Component {
   static defaultProps = {
     mode: 'single',
+    useSelectableComponents: false,
   }
 
   static propTypes = {
@@ -19,7 +20,7 @@ class Selection extends Component {
       payload: any,
     }),
     onChange: func,
-    useItemForIsSelectedCheck: bool,
+    useSelectableComponents: bool,
   }
 
   state = {
@@ -61,18 +62,16 @@ class Selection extends Component {
     }
   }
 
-  handleSelectableSelect = () => ( item ) => {
-    this.handleSelect( item, item );
+  handleSelectableSelect = ( id, item ) => {
+    this.selectItem( id, item );
   }
 
-  handleSelect = ( selectedIndex, item ) => () => {
-    console.log( 'handle select', selectedIndex, item,  );
-    const { mode } = this.props;
+  handleChildSelect = ( selectedIndex, item ) => () => {
+    this.selectItem( selectedIndex, item );
+  }
 
-    /* If using the selectable component, the second set of props
-    * will contain data sent from that component.
-    * Otherwise, will be an event object, and isSelectable will
-    * be undefined */
+  selectItem = ( selectedIndex, item ) => {
+    const { mode, useSelectableComponents } = this.props;
 
     switch ( mode ) {
       case 'single': {
@@ -81,7 +80,11 @@ class Selection extends Component {
       }
 
       case 'toggle': {
-        if ( this.state.selected === selectedIndex ) {
+        if (
+          ( useSelectableComponents
+            ? this.state.selectedIndex
+            : this.state.selected ) === selectedIndex
+        ) {
           this.setState({ selectedIndex: null, selectedItem: null });
         }
         else {
@@ -104,7 +107,7 @@ class Selection extends Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, useSelectableComponents } = this.props;
     const { selectedIndex } = this.state;
 
     /**
@@ -120,19 +123,25 @@ class Selection extends Component {
       );
     }
 
-    console.log( this.state );
-
     return children.map(( child, index ) => (
       <Recursive
         {...child.props}
         key={index} // eslint-disable-line react/no-array-index-key
         context={{
           ...child.props.context,
-          selection: {
-            onSelect: this.handleSelect( index, child ),
-            isSelected: selectedIndex === index,
-            currentSelected: selectedIndex,
-          },
+          ...useSelectableComponents
+            ? {
+              selection: {
+                onSelect: this.handleSelectableSelect,
+                selectedItem: selectedIndex,
+              },
+            }
+            : {
+              selection: {
+                onSelect: this.handleChildSelect( index, child ),
+                isSelected: selectedIndex === index,
+              },
+            },
         }}
       />
     ));

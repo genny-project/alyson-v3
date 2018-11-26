@@ -1,7 +1,7 @@
 import React, { Component, isValidElement } from 'react';
-import { object, array, bool, func, string, any, shape } from 'prop-types';
+import { object, array, string, any } from 'prop-types';
 import { isArray } from '../../../utils';
-import { Recursive, Touchable } from '..';
+import { Recursive, EventButton } from '..';
 
 class Selectable extends Component {
   static defaultProps = {
@@ -9,87 +9,21 @@ class Selectable extends Component {
 
   static propTypes = {
     context: object,
+    selectionProps: object.isRequired,
     children: array,
-    selectFirstItemOnMount: bool,
-    dispatchActionOnChange: shape({
-      type: string.isRequired,
-      payload: any,
-    }),
-    onChange: func,
-    item: any,
-    onPress: func,
+    id: string.isRequired,
+    item: any.isRequired,
   }
 
-  // componentDidMount() {
-  //   if ( this.props.selectFirstItemOnMount )
-  //     this.selectFirstItem();
-  // }
+  handlePress = () => {
+    const { selectionProps, id, item } = this.props;
+    const { onSelect } = selectionProps;
 
-  // componentDidUpdate( prevProps, prevState ) {
-  //   if (
-  //     this.props.selectFirstItemOnMount &&
-  //     !this.state.selectedFirstItemOnMount
-  //   ) {
-  //     this.selectFirstItem();
-  //   }
-
-  //   if ( prevState.selectedIndex !== this.state.selectedIndex ) {
-  //     const { dispatchActionOnChange } = this.props;
-  //     const { selectedItem, selectedIndex } = this.state;
-
-  //     if ( dispatchActionOnChange ) {
-  //       store.dispatch(
-  //         injectDataIntoProps(
-  //           dispatchActionOnChange,
-  //           isValidElement( selectedItem )
-  //             ? selectedItem.props
-  //             : selectedItem
-  //         )
-  //       );
-  //     }
-
-  //     if ( this.props.onChange )
-  //       this.props.onChange( selectedIndex );
-  //   }
-  // }
-
-  // handleSelect = ( selectedIndex, item ) => () => {
-  //   const { mode } = this.props;
-
-  //   switch ( mode ) {
-  //     case 'single': {
-  //       this.setState({ selectedIndex, selectedItem: item });
-  //       break;
-  //     }
-
-  //     case 'toggle': {
-  //       if ( this.state.selected === selectedIndex ) {
-  //         this.setState({ selectedIndex: null, selectedItem: null });
-  //       }
-  //       else {
-  //         this.setState({ selectedIndex, selectedItem: item });
-  //       }
-  //       break;
-  //     }
-
-  //     default: break;
-  //   }
-  // }
-
-  // selectFirstItem() {
-  //   const { children } = this.props;
-
-  //   if ( isArray( children, { ofMinLength: 1 })) {
-  //     this.handleSelect( 0, children[0] )();
-  //     this.setState({ selectedFirstItemOnMount: true });
-  //   }
-  // }
+    if ( onSelect ) onSelect( id, item );
+  }
 
   render() {
-    const { children, onPress, item } = this.props;
-    // const { selectedIndex } = this.state;
-
-    console.log( this.props );
+    const { children, selectionProps, id, ...restProps } = this.props;
 
     if ( !isArray( children )) {
       if ( isValidElement )
@@ -100,21 +34,22 @@ class Selectable extends Component {
       );
     }
 
-    console.log( 'array' );
-
     return children.map(( child, index ) => (
-      <Touchable
+      <EventButton
+        {...restProps}
         key={index} // eslint-disable-line react/no-array-index-key
-        withFeedback
-        onPress={onPress ? () => onPress( item, true  ) : null}
+        onPress={this.handlePress}
       >
         <Recursive
           {...child.props}
           context={{
             ...child.props.context,
+            selectable: {
+              isSelected: selectionProps.selectedItem === id,
+            },
           }}
         />
-      </Touchable>
+      </EventButton>
     ));
   }
 }
