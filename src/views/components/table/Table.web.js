@@ -26,6 +26,7 @@ class TableView extends Component {
   };
 
   static propTypes = {
+    cellContext: object,
     columns: array,
     data: array,
     itemsPerPage: number,
@@ -105,7 +106,7 @@ class TableView extends Component {
     };
 
     const renderCell = ( cellInfo, data ) => {
-      const { renderWrapper } = this.props;
+      const { renderWrapper, cellContext } = this.props;
       const { renderButton } = data;
 
       if ( renderButton ) {
@@ -140,19 +141,26 @@ class TableView extends Component {
           </Box>
         );
       }
-      const celld = this.props.data[cellInfo.index][cellInfo.column.id];
-      const rowd = this.props.data[cellInfo.index];
+      const cellData = this.props.data[cellInfo.index][cellInfo.column.id];
+      const rowData = this.props.data[cellInfo.index];
 
-      return (
-        <Recursive
-          {...renderWrapper}
-          context={{
-            celld: rowd,
-          }}
-        >
-          {celld}
-        </Recursive>
-      );
+      if ( renderWrapper ) {
+        return (
+          <Recursive
+            {...renderWrapper}
+            context={{
+              ...cellContext,
+              celld: rowData,
+              cellData,
+              rowData,
+            }}
+          >
+            {cellData}
+          </Recursive>
+        );
+      }
+
+      return cellData;
     };
 
     return addFilterMethodsToColumn().map(
