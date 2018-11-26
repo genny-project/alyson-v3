@@ -19,6 +19,7 @@ class Selection extends Component {
       payload: any,
     }),
     onChange: func,
+    useItemForIsSelectedCheck: bool,
   }
 
   state = {
@@ -60,8 +61,18 @@ class Selection extends Component {
     }
   }
 
+  handleSelectableSelect = () => ( item ) => {
+    this.handleSelect( item, item );
+  }
+
   handleSelect = ( selectedIndex, item ) => () => {
+    console.log( 'handle select', selectedIndex, item,  );
     const { mode } = this.props;
+
+    /* If using the selectable component, the second set of props
+    * will contain data sent from that component.
+    * Otherwise, will be an event object, and isSelectable will
+    * be undefined */
 
     switch ( mode ) {
       case 'single': {
@@ -109,6 +120,8 @@ class Selection extends Component {
       );
     }
 
+    console.log( this.state );
+
     return children.map(( child, index ) => (
       <Recursive
         {...child.props}
@@ -118,6 +131,7 @@ class Selection extends Component {
           selection: {
             onSelect: this.handleSelect( index, child ),
             isSelected: selectedIndex === index,
+            currentSelected: selectedIndex,
           },
         }}
       />
