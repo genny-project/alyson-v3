@@ -7,6 +7,7 @@ import { Recursive } from '../../components';
 class Selection extends Component {
   static defaultProps = {
     mode: 'single',
+    useSelectableComponents: false,
   }
 
   static propTypes = {
@@ -19,6 +20,7 @@ class Selection extends Component {
       payload: any,
     }),
     onChange: func,
+    useSelectableComponents: bool,
   }
 
   state = {
@@ -60,8 +62,16 @@ class Selection extends Component {
     }
   }
 
-  handleSelect = ( selectedIndex, item ) => () => {
-    const { mode } = this.props;
+  handleSelectableSelect = ( id, item ) => {
+    this.selectItem( id, item );
+  }
+
+  handleChildSelect = ( selectedIndex, item ) => () => {
+    this.selectItem( selectedIndex, item );
+  }
+
+  selectItem = ( selectedIndex, item ) => {
+    const { mode, useSelectableComponents } = this.props;
 
     switch ( mode ) {
       case 'single': {
@@ -70,7 +80,11 @@ class Selection extends Component {
       }
 
       case 'toggle': {
-        if ( this.state.selected === selectedIndex ) {
+        if (
+          ( useSelectableComponents
+            ? this.state.selectedIndex
+            : this.state.selected ) === selectedIndex
+        ) {
           this.setState({ selectedIndex: null, selectedItem: null });
         }
         else {
@@ -93,7 +107,7 @@ class Selection extends Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, useSelectableComponents } = this.props;
     const { selectedIndex } = this.state;
 
     /**
@@ -115,10 +129,19 @@ class Selection extends Component {
         key={index} // eslint-disable-line react/no-array-index-key
         context={{
           ...child.props.context,
-          selection: {
-            onSelect: this.handleSelect( index, child ),
-            isSelected: selectedIndex === index,
-          },
+          ...useSelectableComponents
+            ? {
+              selection: {
+                onSelect: this.handleSelectableSelect,
+                selectedItem: selectedIndex,
+              },
+            }
+            : {
+              selection: {
+                onSelect: this.handleChildSelect( index, child ),
+                isSelected: selectedIndex === index,
+              },
+            },
         }}
       />
     ));

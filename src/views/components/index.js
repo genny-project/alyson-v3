@@ -62,6 +62,7 @@ export { default as DisplayHTML } from './display-html';
 export { default as Recursive } from './layout-loader/Recursive';
 export { default as Dialog } from './dialog';
 export { default as Selection } from './selection';
+export { default as Selectable } from './selectable';
 export { default as BackButton } from './back-button';
 export { default as Join } from './join';
 export { default as FlatList } from './flat-list';
