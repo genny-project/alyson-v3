@@ -133,6 +133,21 @@ class InputDropdown extends Component {
       this.props.onChangeValue( value );
   }
 
+  handleSort = ( a, b ) => {
+    var nameA = a.name.toLowerCase(); // ignore upper and lowercase
+    var nameB = b.name.toLowerCase(); // ignore upper and lowercase
+
+    if ( nameA < nameB ) {
+      return -1;
+    }
+    if ( nameA > nameB ) {
+      return 1;
+    }
+
+    // names must be equal
+    return 0;
+  }
+
   injectNativeProps( nativeProps ) {
     if ( !this.picker ) return;
     if ( !this.picker.setNativeProps ) return;
@@ -219,21 +234,6 @@ class InputDropdown extends Component {
 
     const validItems = isArray( items, { ofMinLength: 1 });
 
-    validItems.sort(( a, b ) => {
-      var nameA = a.name.toLowerCase(); // ignore upper and lowercase
-      var nameB = b.name.toLowerCase(); // ignore upper and lowercase
-
-      if ( nameA < nameB ) {
-        return -1;
-      }
-      if ( nameA > nameB ) {
-        return 1;
-      }
-
-      // names must be equal
-      return 0;
-    });
-
     return (
       <Picker
         {...restProps}
@@ -253,21 +253,24 @@ class InputDropdown extends Component {
               />
             ) : null}
 
-            {items.map( item => {
-              const isItemObject = isObject( item );
+            {items
+              .sort( this.handleSort )
+              .map( item => {
+                const isItemObject = isObject( item );
 
-              return (
-                <Picker.Item
-                  key={(
-                    isItemObject
-                      ? ( item[itemIdKey] || item[itemStringKey] )
-                      : item
-                  )}
-                  label={isItemObject ? item[itemStringKey] : item}
-                  value={isItemObject ? item[itemValueKey] : item}
-                />
-              );
-            })}
+                return (
+                  <Picker.Item
+                    key={(
+                      isItemObject
+                        ? ( item[itemIdKey] || item[itemStringKey] )
+                        : item
+                    )}
+                    label={isItemObject ? item[itemStringKey] : item}
+                    value={isItemObject ? item[itemValueKey] : item}
+                  />
+                );
+              })
+            }
           </Fragment>
         ) : (
           <Picker.Item
