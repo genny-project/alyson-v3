@@ -4,10 +4,12 @@ import ReactTable from 'react-table';
 
 import matchSorter from 'match-sorter';
 import debounce from 'lodash.debounce';
+import dlv from 'dlv';
 
 import 'react-table/react-table.css';
-import { Bridge, isArray } from '../../../utils';
-import { Box, Recursive } from '../../components';
+import { Bridge, isArray, injectDataIntoProps } from '../../../utils';
+import { store } from '../../../redux';
+import { Box, Recursive, Touchable, Text } from '../../components';
 
 /* testing table for rendering the number of items */
 import './table.css';
@@ -37,6 +39,10 @@ class TableView extends Component {
     containerBackgroundColor: string,
     buttonTextColor: string,
     renderWrapper: object,
+    isSelectable: bool,
+    selectFirstItemOnMount: bool,
+    dispatchActionOnChange: object,
+    itemToSelectFirst: object,
   };
 
   constructor( props ) {
@@ -44,6 +50,39 @@ class TableView extends Component {
 
     this.sendMessageToBridge = debounce( this.sendMessageToBridge, 500 );
     this.handleFilteredChange = debounce( this.handleFilteredChange, 1000 );
+  }
+
+  state = {
+    selectedItem: null,
+    selectedFirstItemOnMount: false,
+  }
+
+  componentDidMount() {
+    if ( this.props.selectFirstItemOnMount )
+      this.selectFirstItem();
+  }
+
+  componentDidUpdate( prevProps, prevState ) {
+    if (
+      this.props.selectFirstItemOnMount &&
+      !this.state.selectedFirstItemOnMount
+    ) {
+      this.selectFirstItem();
+    }
+
+    if ( prevState.selectedItem !== this.state.selectedItem ) {
+      const { dispatchActionOnChange } = this.props;
+      const { selectedItem } = this.state;
+
+      if ( dispatchActionOnChange ) {
+        store.dispatch(
+          injectDataIntoProps(
+            dispatchActionOnChange,
+            { code: selectedItem },
+          )
+        );
+      }
+    }
   }
 
   handleCellDataChange = cellInfo1 => event => {
@@ -106,7 +145,7 @@ class TableView extends Component {
     };
 
     const renderCell = ( cellInfo, data ) => {
-      const { renderWrapper, cellContext } = this.props;
+      const { renderWrapper, cellContext, isSelectable } = this.props;
       const { renderButton } = data;
 
       if ( renderButton ) {
@@ -153,10 +192,26 @@ class TableView extends Component {
               celld: rowData,
               cellData,
               rowData,
+              onPress: isSelectable
+                ? () => this.handleSelect( rowData )
+                : null,
             }}
           >
             {cellData}
           </Recursive>
+        );
+      }
+
+      if ( isSelectable ) {
+        return (
+          <Touchable
+            withFeedback
+            onPress={() => this.handleSelect( rowData )}
+          >
+            <Text
+              text={cellData}
+            />
+          </Touchable>
         );
       }
 
@@ -168,6 +223,28 @@ class TableView extends Component {
     );
   }
 
+  handleSelect = ( item ) => {
+    if ( item.code ) {
+      if ( this.state.selectedItem === item.code ) {
+        this.setState({ selectedItem: null });
+      }
+      else {
+        this.setState({ selectedItem: item.code });
+      }
+    }
+  }
+
+  selectFirstItem() {
+    const { data, itemToSelectFirst } = this.props;
+
+    if ( isArray( data, { ofMinLength: 1 })) {
+      const item = itemToSelectFirst ? itemToSelectFirst : data[0];
+
+      this.handleSelect( item );
+      this.setState({ selectedFirstItemOnMount: true });
+    }
+  }
+
   render() {
     const {
       data,
@@ -177,7 +254,10 @@ class TableView extends Component {
       tableWidth,
       containerBackgroundColor,
       tableHeight,
+      isSelectable,
     } = this.props;
+
+    const { selectedItem } = this.state;
 
     const tableStyleProps = [];
 
@@ -201,7 +281,6 @@ class TableView extends Component {
         </div>
 
         {isArray( data ) ? (
-
           <ReactTable
             className="react-tbl table -striped -highlight"
             style={[tableStyleProps]}
@@ -213,6 +292,24 @@ class TableView extends Component {
             columns={this.modifiedTableColumns()}
             pageSize={itemsPerPage}
             showPagination={data.length > itemsPerPage ? true : false}
+            getTrProps={( state, rowInfo ) => {
+              if ( !rowInfo || !isSelectable ) return {};
+
+              return {
+                style: {
+                  background: selectedItem === dlv( rowInfo, 'original.code' ) ? '#fffbd7' : '',
+                },
+              };
+            }}
+            getTdProps={( state, rowInfo ) => {
+              if ( !rowInfo || !isSelectable ) return {};
+
+              return {
+                style: {
+                  background: selectedItem === dlv( rowInfo, 'original.code' ) ? 'none' : '',
+                },
+              };
+            }}
           />
         ) : null}
       </div>
