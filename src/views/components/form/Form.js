@@ -11,6 +11,8 @@ import shallowCompare from '../../../utils/shallow-compare';
 import { Box, Text, Button, KeyboardAwareScrollView, ScrollView } from '../index';
 import Recursive from '../layout-loader/Recursive';
 import FormInput from './input';
+import { store } from '../../../redux';
+import { hideDialog } from '../../../redux/actions';
 
 const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE'];
 
@@ -765,6 +767,11 @@ class Form extends Component {
                               !alwaysActiveButtonTypes.includes( type )
                             ) || isSubmitting,
                             onPress: () => {
+                              buttons && buttons.map( button => {
+                                if ( button.key === 'CANCEL' )
+                                  store.dispatch( hideDialog({ layoutName: `questions/${questionGroupCode}` }));
+                              }
+                              );
                               this.setState({
                                 formStatus: lowercase( type ),
                               }, () => {
