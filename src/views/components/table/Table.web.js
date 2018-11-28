@@ -1,4 +1,4 @@
-import React, { Component, isValidElement } from 'react';
+import React, { PureComponent, isValidElement } from 'react';
 import { string, array, number, bool, oneOfType, object } from 'prop-types';
 import ReactTable from 'react-table';
 
@@ -12,7 +12,7 @@ import { Box, Recursive } from '../../components';
 /* testing table for rendering the number of items */
 import './table.css';
 
-class TableView extends Component {
+class TableView extends PureComponent {
   static defaultProps = {
     columns: [],
     data: [],
@@ -74,6 +74,10 @@ class TableView extends Component {
     return result;
   };
 
+   sorting = ( cellInfo, data ) => {
+     console.warn( cellInfo,data , 'DEFAULT SORT METHOD' );
+   };
+
   handleFilteredChange = items => {
     if (
       isArray( items )
@@ -96,9 +100,12 @@ class TableView extends Component {
     const addFilterMethodsToColumn = () => {
       const { columns } = this.props;
 
-      if ( columns.length < 1 ) return null;
+      if ( columns && columns.length < 1 ) return null;
       const modifiedCells = columns.map( column => {
-        return ({ ...column, ...{ filterMethod: this.utilMethod }, ...{ filterAll: true } });
+        return (
+          { ...column, 
+            ...{ filterMethod: this.utilMethod },
+            ...{ filterAll: true }, sortMethod: ( a,b ) => this.sorting( a,b  ) });
       });
 
       return modifiedCells;
@@ -156,7 +163,8 @@ class TableView extends Component {
     };
 
     return addFilterMethodsToColumn().map(
-      data => ({ ...data, Cell: cellInfo => renderCell( cellInfo, data ) })
+      data => ({ ...data, Cell: cellInfo => renderCell( cellInfo, data ),
+        sortMethod: ( a,b ) => this.sorting( a,b  ) })
     );
   }
 
@@ -171,6 +179,7 @@ class TableView extends Component {
       tableHeight,
     } = this.props;
 
+    console.warn( 'PROPS IN THE TABLE', this.props );
     const tableStyleProps = [];
 
     tableStyleProps.push(
@@ -197,14 +206,15 @@ class TableView extends Component {
           <ReactTable
             className="react-tbl table -striped -highlight"
             style={[tableStyleProps]}
-            pageSizeOptions={[5, 10, 20, 25, 50, 100]}
+            pageSizeOptions={[10, 20, 30, 50, 100]}
             showPageSizeOptions
             noDataText="No data to Display."
             filterable={filterable}
+            defaultSortDesc
             data={data}
             columns={this.modifiedTableColumns()}
             pageSize={itemsPerPage}
-            showPagination={data.length > itemsPerPage ? true : false}
+            showPagination={data && data.length > itemsPerPage ? true : false}
           />
         ) : null}
       </div>

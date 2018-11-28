@@ -110,7 +110,7 @@ const handleReplaceLinks = ( resultant, current ) => {
 };
 
 const handleReduceLinks = ( resultant, current, shouldReplace ) => {
-  if ( !isArray( current.links ))
+  if ( !current || !isArray( current.links ))
     return resultant;
 
   const removeMatchingExistingKeys = link => {
@@ -160,7 +160,7 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
     // console.log( resultant );
   }
 
-  current.links.forEach( handleCombineLinkValues );
+  // current.links.forEach( handleCombineLinkValues );
 
   /* If creating the links from children without a Parent entity. */
   if ( current.parentCode ) {

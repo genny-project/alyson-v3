@@ -59,7 +59,7 @@ class DataQuery {
         } else {
           output = result;
         }
-
+        console.warn({ q,output });
         // set the currentContext to be the most recent output object of the query array
         currentContext = output;
       });
