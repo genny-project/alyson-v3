@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { string, object } from 'prop-types';
 import { connect } from 'react-redux';
 import { LayoutLoader } from '../';
+import { isString } from '../../../utils';
 
 class Sublayout extends Component {
   static propTypes = {
@@ -17,17 +18,23 @@ class Sublayout extends Component {
     this.getLayout();
   }
 
-  componentDidUpdate() {
-    if ( !this.state.layout )
+  componentDidUpdate( prevProps ) {
+    if (
+      isString( this.props.layoutName ) &&
+      isString( prevProps.layoutName ) &&
+      this.props.layoutName !== prevProps.layoutName
+    ) {
       this.getLayout();
+    }
   }
 
   getLayout() {
     const { layouts, layoutName } = this.props;
     const layout = layouts.sublayouts[layoutName];
 
-    if ( layout )
+    if ( layout ) {
       this.setState({ layout });
+    }
     else {
       console.warn( 'layout not found', { layoutName });
     }
