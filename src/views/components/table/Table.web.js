@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce';
 import dlv from 'dlv';
 
 import 'react-table/react-table.css';
-import { Bridge, isArray, injectDataIntoProps } from '../../../utils';
+import { Bridge, isArray, isObject, injectDataIntoProps } from '../../../utils';
 import { store } from '../../../redux';
 import { Box, Recursive, Touchable, Text } from '../../components';
 
@@ -238,7 +238,13 @@ class TableView extends Component {
     const { data, itemToSelectFirst } = this.props;
 
     if ( isArray( data, { ofMinLength: 1 })) {
-      const item = itemToSelectFirst ? itemToSelectFirst : data[0];
+      const isItemInData = ( item ) => {
+        if ( !isObject( item )) return false;
+
+        return data.filter( row => row.code === item.code ) > 0;
+      };
+
+      const item = isItemInData( itemToSelectFirst ) ? itemToSelectFirst : data[0];
 
       this.handleSelect( item );
       this.setState({ selectedFirstItemOnMount: true });
