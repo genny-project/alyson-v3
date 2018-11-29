@@ -1,6 +1,6 @@
-# PdfViewer
+# PdfViewer Component
 
-## Usgae 
+## Usgae
 
 
 ```json
@@ -9,7 +9,8 @@
   "props": {
     "file": "name of a file , random file will not      work and also check for the CORS Policy",
     "style": {
-      "color": "whitesmoke"
+      "color": "whitesmoke",
+      "padding": "0px"
     }
   }
 }
