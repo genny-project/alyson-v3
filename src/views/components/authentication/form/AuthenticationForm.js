@@ -1,5 +1,4 @@
-import React, { Component, Fragment } from 'react';
-import { Platform } from 'react-native';
+import React, { Component } from 'react';
 import { object, node, oneOf } from 'prop-types';
 import { Formik } from 'formik';
 import { location } from '../../../../utils';
@@ -84,19 +83,7 @@ class AuthenticationForm extends Component {
         validateOnBlur
         enableReinitialize
       >
-        {({ handleSubmit }) => (
-          Platform.OS === 'web'
-            ? (
-              <form onSubmit={handleSubmit}>
-                {children}
-              </form>
-            )
-            : (
-              <Fragment>
-                {children}
-              </Fragment>
-            )
-        )}
+        {children}
       </Formik>
     );
   }

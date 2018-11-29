@@ -1,5 +1,4 @@
-import React, { isValidElement, createElement } from 'react';
-import { Platform } from 'react-native';
+import React, { isValidElement } from 'react';
 import { any, bool, string, object } from 'prop-types';
 import { Formik } from 'formik';
 import dlv from 'dlv';
@@ -75,44 +74,42 @@ const FormGeneric = ({
     <Formik
       onSubmit={handleSubmit}
     >
-      {formik => {
-        const element = Platform.OS === 'web' ? 'form' : Box;
+      {formik => (
+        <Box
+          {...restProps}
+          ref={box => ref = box}
+          accessibilityRole="role"
+        >
+          {isValidElement( children ) ? children
+          : isString( children ) ? children
+          : isArray( children )
+            ? children.map(( child, i ) => {
+              if ( dlv( child, 'props.props.submitOnEnterPress' )) child.props.props.onKeyPress = handleKeyPress( formik.values, formik );
 
-        return createElement( element, {
-          ...restProps,
-          ref: node => ref = node,
-          onSubmit: formik.handleSubmit,
-        }, (
-            isValidElement( children ) ? children
-            : isString( children ) ? children
-            : isArray( children )
-              ? children.map(( child, i ) => {
-                if ( dlv( child, 'props.props.submitOnEnterPress' )) child.props.props.onKeyPress = handleKeyPress( formik.values, formik );
-
-                return isValidElement( child )
-                  ? child
-                  : (
-                    <Recursive
-                      key={i} // eslint-disable-line react/no-array-index-key
-                      {...child}
-                      context={{
-                        ...context,
-                        ...formik,
-                      }}
-                    />
-                  );
-              })
-              : (
-                <Recursive
-                  {...children}
-                  context={{
-                    ...context,
-                    ...formik,
-                  }}
-                />
-              )
-          ));
-      }}
+              return isValidElement( child )
+                ? child
+                : (
+                  <Recursive
+                    key={i} // eslint-disable-line react/no-array-index-key
+                    {...child}
+                    context={{
+                      ...context,
+                      ...formik,
+                    }}
+                  />
+                );
+            })
+            : (
+              <Recursive
+                {...children}
+                context={{
+                  ...context,
+                  ...formik,
+                }}
+              />
+            )}
+        </Box>
+      )}
     </Formik>
   );
 };
