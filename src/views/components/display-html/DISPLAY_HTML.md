@@ -9,3 +9,14 @@ This component displays HTML data.
 ```
 html: string,
 ```
+
+## Layouts Usage
+
+```json
+  {
+    "component": "DisplayHTML",
+    "props": {
+      "html": "html string goes here"
+    }
+  }
+```
