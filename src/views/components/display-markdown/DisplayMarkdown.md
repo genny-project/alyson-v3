@@ -1,6 +1,8 @@
-# props 
+# Display Markdown
 
-```
+## props
+
+```json
 style: object
 source: string
 ```
