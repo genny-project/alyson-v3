@@ -2,7 +2,7 @@
 
 ## Description
 
-This component displays HTML data.
+This component renders html out of provided string
 
 ## Props
 

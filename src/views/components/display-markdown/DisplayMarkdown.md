@@ -1,8 +1,12 @@
 # Display Markdown
 
-## props
+## Description
 
-```json
+Renders Markdown from the string provided
+
+## Props
+
+```
 style: object
 source: string
 ```

@@ -1,12 +1,15 @@
 # Table component
 
+## Description
+
+Displays data in the Table from provided data
+
 ## Prop Types
 
 ```sh
 data: Array
 columns: Array
 ```
-
 
 ### Updated Example from internmatch
 

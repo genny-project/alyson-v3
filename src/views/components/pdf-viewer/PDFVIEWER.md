@@ -1,7 +1,14 @@
 # PdfViewer Component
 
-## Usgae
+## Description
 
+PdfViewer allows to render a pdf on the screen
+
+## Gotchas
+
+Some Documents may not be rendered because of CORS policy please see the console if such things happen
+
+## Usgae for Layouts
 
 ```json
 {
