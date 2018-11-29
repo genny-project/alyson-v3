@@ -1,4 +1,10 @@
-# props 
+# Display Markdown
+
+## Description
+
+Renders Markdown from the string provided
+
+## Props
 
 ```
 style: object
