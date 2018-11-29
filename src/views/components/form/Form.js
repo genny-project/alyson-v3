@@ -767,6 +767,7 @@ class Form extends Component {
                               !alwaysActiveButtonTypes.includes( type )
                             ) || isSubmitting,
                             onPress: () => {
+                              // when clicked on cancel button on the form => close the Popup
                               buttons && buttons.map( button => {
                                 if ( button.key === 'CANCEL' )
                                   store.dispatch( hideDialog({ layoutName: `questions/${questionGroupCode}` }));
