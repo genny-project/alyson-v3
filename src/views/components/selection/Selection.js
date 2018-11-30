@@ -101,7 +101,7 @@ class Selection extends Component {
     const { children } = this.props;
 
     if ( isArray( children, { ofMinLength: 1 })) {
-      this.handleSelect( 0, children[0] )();
+      this.selectItem( 0, children[0] )();
       this.setState({ selectedFirstItemOnMount: true });
     }
   }
