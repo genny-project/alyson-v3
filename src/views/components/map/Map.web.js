@@ -10,6 +10,10 @@ class MapView extends Component {
     height: 300,
     width: window.innerWidth,
   };
+  
+  static defaultProps = {
+    zoom: 3,
+  }
 
   static propTypes = {
     height: oneOfType( [string, number] ),
@@ -17,10 +21,6 @@ class MapView extends Component {
     children: node,
     zoom: number,
   };
-
-  static defaultProps = {
-    zoom: 3,
-  }
 
   render() {
     const { height, width , zoom } = this.props;
