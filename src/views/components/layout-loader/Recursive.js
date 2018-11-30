@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
 import { connect } from 'react-redux';
-import { object, any, string, array, oneOfType, shape, arrayOf } from 'prop-types';
+import { object, any, string, array, oneOfType, shape, arrayOf, bool } from 'prop-types';
 import { isObject, isArray, isString, ifConditionsPass } from '../../../utils';
 import { store } from '../../../redux';
 import * as Components from '../index';
@@ -25,6 +25,7 @@ class Recursive extends Component {
       by: string,
     }),
     dontInjectContextIntoProps: arrayOf( string ),
+    repeatCopiesPropsOntoRecursive: bool,
   };
 
   handleMapCurlyTemplate = template => {
@@ -289,6 +290,7 @@ class Recursive extends Component {
       dontShowIf,
       conditional,
       theme,
+      repeatCopiesPropsOntoRecursive,
     } = this.props;
 
     let componentProps = this.injectContextIntoProps({
@@ -380,6 +382,9 @@ class Recursive extends Component {
                   key={index}
                   theme={theme}
                   {...child}
+                  {...repeatCopiesPropsOntoRecursive
+                    ? this.injectContextIntoProps( child.props, child.context )
+                    : {}}
                 />
               )
           ))
