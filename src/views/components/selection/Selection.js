@@ -97,7 +97,7 @@ class Selection extends Component {
     }
   }
 
-  selectFirstItem() {
+  selectFirstItem = () => {
     const { children } = this.props;
 
     if ( isArray( children, { ofMinLength: 1 })) {
