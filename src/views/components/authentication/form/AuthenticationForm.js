@@ -1,5 +1,7 @@
-import React, { Component } from 'react';
+
 import { object, node, oneOf, string } from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { Platform } from 'react-native';
 import { Formik } from 'formik';
 import { location } from '../../../../utils';
 import { withKeycloak, Redirect } from '../../index';
@@ -89,7 +91,19 @@ class AuthenticationForm extends Component {
         enableReinitialize
         testID={testID}
       >
-        {() => children}
+        {({ handleSubmit }) => (
+          Platform.OS === 'web'
+            ? (
+              <form onSubmit={handleSubmit}>
+                {children}
+              </form>
+            )
+            : (
+              <Fragment>
+                {children}
+              </Fragment>
+            )
+        )}
       </Formik>
     );
   }

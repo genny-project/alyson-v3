@@ -23,9 +23,18 @@ const Sidebar = ({
   headerImageHeight = 200,
   side = 'left',
   backdropProps,
+  sortDirection,
+  sortBy,
 }) => {
+  const sortedItems = [...items];
+
+  /* If both a sort direction and sort by are provided then sort the items */
+  if ( sortDirection && sortBy ) {
+    sortDirection === 'desc' ? sortedItems.sort(( a, b ) => b[sortBy] > a[sortBy] ? 1 : -1 ) : sortedItems.sort(( a, b ) => a[sortBy] > b[sortBy] ? 1 : -1 );
+  }
+
   const context = {
-    items,
+    items: sortedItems,
     sidebar,
     onClose,
     onToggle,
@@ -132,6 +141,8 @@ Sidebar.propTypes = {
   closedProps: object,
   side: oneOf( ['left','right'] ),
   backdropProps: object,
+  sortDirection: oneOf( ['asc','desc'] ),
+  sortBy: string,
 };
 
 export { Sidebar };

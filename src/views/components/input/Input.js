@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { string } from 'prop-types';
+import { string, object } from 'prop-types';
 import { Text } from '../index';
 import InputAddress from './address';
 import InputAutocomplete from './autocomplete';
@@ -20,10 +20,13 @@ import InputPayment from './payment';
 import AudioRecord from './audio-record';
 import SegmentedControl from './segmented-control';
 import InputTag from './tag';
+import Signature from './signature';
+import RichTextEditor from './rich-text-editor';
 
 class Input extends Component {
   static propTypes = {
     type: string.isRequired,
+    typeOnlyProps: object,
   }
 
   blur() {
@@ -45,7 +48,13 @@ class Input extends Component {
   }
 
   render() {
-    const { type } = this.props;
+    const { type, typeOnlyProps, ...restProps } = this.props;
+
+    const inputProps = {
+      ...restProps,
+      ...typeOnlyProps && typeOnlyProps[type] || {},
+      type,
+    };
 
     switch ( type ) {
       case 'text':
@@ -54,7 +63,7 @@ class Input extends Component {
       case 'double':
         return (
           <InputText
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -62,7 +71,7 @@ class Input extends Component {
       case 'password':
         return (
           <InputText
-            {...this.props}
+            {...inputProps}
             type="text"
             secureTextEntry
             ref={input => this.input = input}
@@ -73,31 +82,34 @@ class Input extends Component {
         return (
           <InputText
             keyboardType="email-address"
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
 
+      case 'htmlarea':
       case 'textarea':
         return (
           <InputText
             multiline
             numberOfLines={3}
             height={100}
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
 
       case 'number':
       case 'java.lang.integer':
+      case 'java.lang.long':
+      case 'java.lang.Long':
       case 'java.lang.Integer':
       case 'mobile':
       case 'landline':
         return (
           <InputText
             keyboardType="phone-pad"
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -106,7 +118,7 @@ class Input extends Component {
       case 'org.javamoney.moneta.money':
         return (
           <InputCurrency
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -115,7 +127,7 @@ class Input extends Component {
       case 'switch':
         return (
           <Switch
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -124,7 +136,7 @@ class Input extends Component {
       case 'termsandconditions':
         return (
           <InputRead
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -132,7 +144,7 @@ class Input extends Component {
       case 'scroll':
         return (
           <InputScroll
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -140,7 +152,7 @@ class Input extends Component {
       case 'rating':
         return (
           <InputRating
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -148,7 +160,7 @@ class Input extends Component {
       case 'autocomplete':
         return (
           <InputAutocomplete
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -156,7 +168,7 @@ class Input extends Component {
       case 'address':
         return (
           <InputAddress
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -164,7 +176,7 @@ class Input extends Component {
       case 'dropdown':
         return (
           <InputDropdown
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -172,7 +184,7 @@ class Input extends Component {
       case 'checkbox':
         return (
           <CheckBox
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -180,33 +192,26 @@ class Input extends Component {
       case 'radio':
         return (
           <CheckBox
-            {...this.props}
+            {...inputProps}
             radio
             ref={input => this.input = input}
           />
         );
 
+      case 'file':
       case 'upload':
         return (
           <InputFile
-            imageOnly
-            {...this.props}
-            ref={input => this.input = input}
-          />
-        );
-
-      case 'file':
-        return (
-          <InputFile
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
 
       case 'image':
+      case 'Image':
         return (
           <InputFile
-            {...this.props}
+            {...inputProps}
             imageOnly
             ref={input => this.input = input}
           />
@@ -216,7 +221,7 @@ class Input extends Component {
       case 'java.time.localdate':
         return (
           <InputDatePicker
-            {...this.props}
+            {...inputProps}
             date
             ref={input => this.input = input}
           />
@@ -226,7 +231,7 @@ class Input extends Component {
       case 'java.time.localdatetime':
         return (
           <InputDatePicker
-            {...this.props}
+            {...inputProps}
             date
             time
             ref={input => this.input = input}
@@ -236,7 +241,7 @@ class Input extends Component {
       case 'mobileverification':
         return (
           <Passcode
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -245,7 +250,7 @@ class Input extends Component {
       case 'codeVerificationFive':
         return (
           <Passcode
-            {...this.props}
+            {...inputProps}
             numberOfInputs={5}
             keyboardType="default"
             ref={input => this.input = input}
@@ -255,7 +260,7 @@ class Input extends Component {
       case 'credit-card':
         return (
           <InputCreditCard
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -263,7 +268,7 @@ class Input extends Component {
       case 'checkboxmultiple':
         return (
           <InputCheckbox
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -271,7 +276,7 @@ class Input extends Component {
       case 'payment':
         return (
           <InputPayment
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -280,7 +285,7 @@ class Input extends Component {
       case 'audiorecord':
         return (
           <AudioRecord
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
@@ -288,16 +293,38 @@ class Input extends Component {
       case 'segmentedcontrol':
         return (
           <SegmentedControl
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
           />
         );
 
+      case 'dropdownmultiple':
+        return (
+          <InputTag
+
+            {...inputProps}
+            allowMultipleSelection
+            ref={input => this.input = input}
+          />
+        );
       case 'tag':
         return (
           <InputTag
-            {...this.props}
+            {...inputProps}
             ref={input => this.input = input}
+          />
+        );
+      case 'signature':
+        return (
+          <Signature
+            {...this.props}
+          />
+        );
+
+      case 'rich-text-editor':
+        return (
+          <RichTextEditor
+            {...this.props}
           />
         );
 

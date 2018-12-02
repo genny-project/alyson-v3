@@ -1,79 +1,66 @@
-import React, { Component, Fragment } from 'react';
-import { TouchableOpacity, TouchableWithoutFeedback, Animated } from 'react-native';
-import { array, string, bool, number, node } from 'prop-types';
-import { Box, Text, Icon } from '../../components';
-import DropdownItem from './item';
+import React, { Component, isValidElement } from 'react';
+import { array, bool, object, any, string } from 'prop-types';
+import { Menu, MenuButton, MenuItem, MenuList, MenuLink } from '@reach/menu-button';
+import { withRouter } from 'react-router-dom';
+import { isArray, isString, Bridge } from '../../../utils';
+import { Recursive } from '../../components';
+import './Dropdown.css';
 
 class Dropdown extends Component {
-  static defaultProps = {
-    padding: 20,
-    backgroundColor: '#FFF',
-    textColor: '#000',
-    testID: 'dropdown',
-  }
-
   static propTypes = {
     items: array.isRequired,
-    text: node.isRequired,
+    text: any,
     facingRight: bool,
-    padding: number,
-    paddingX: number,
-    paddingY: number,
-    backgroundColor: string,
-    textColor: string,
     disabled: bool,
     testID: string,
+    menuButtonStyle: object,
+    menuListStyle: object,
+    menuLinkStyle: object,
+    menuItemStyle: object,
+    children: any,
+    history: object,
   }
 
-  state = {
-    isOpen: false,
-    fadeAnim: new Animated.Value( 0 ),
-    dropdownScaleY: new Animated.Value( 0 ),
+  handleSelect = item => () => {
+    if ( item.buttonCode ) {
+      const {
+        value,
+        buttonCode = '',
+        messageType = 'BTN',
+        eventType = 'BTN_CLICK',
+      } = item;
+
+      const valueString = (
+        value &&
+        typeof value === 'string'
+      )
+        ? value
+        : JSON.stringify( value );
+
+      Bridge.sendEvent({
+        event: messageType,
+        eventType,
+        sendWithToken: true,
+        data: {
+          code: buttonCode,
+          value: valueString || null,
+        },
+      });
+    }
   }
 
-  handleOpen = () => {
-    if ( this.props.disabled )
-      return;
+  handleNavigate = item => event => {
+    event.preventDefault();
 
-    this.setState({ isOpen: true });
+    const href = (
+      item.href === 'home' ? '/'
+      : item.href.startsWith( '/' ) ? item.href
+      : `/${item.href}`
+    );
 
-    Animated.parallel( [
-      Animated.timing(
-        this.state.fadeAnim,
-        {
-          toValue: 1,
-          duration: 100,
-        }
-      ),
-      Animated.timing(
-        this.state.dropdownScaleY,
-        {
-          toValue: 1,
-          duration: 120,
-        }
-      ),
-    ] ).start();
-  }
+    this.props.history.push( href );
 
-  handleClose = () => {
-    Animated.parallel( [
-      Animated.timing(
-        this.state.fadeAnim,
-        {
-          toValue: 0,
-          duration: 250,
-        }
-      ),
-      Animated.timing(
-        this.state.dropdownScaleY,
-        {
-          toValue: 0,
-          duration: 300,
-        }
-      ),
-    ] ).start(() => {
-      this.setState({ isOpen: false });
-    });
+    return false;
   }
 
   render() {
@@ -81,126 +68,86 @@ class Dropdown extends Component {
       items,
       text,
       facingRight,
-      padding,
-      paddingX,
-      paddingY,
-      textColor,
-      backgroundColor,
+      menuButtonStyle,
+      menuListStyle,
+      menuLinkStyle,
+      menuItemStyle,
+      disabled,
+      children,
       testID,
     } = this.props;
 
-    const { isOpen, fadeAnim, dropdownScaleY } = this.state;
-
     return (
-      <Fragment>
-        {isOpen && (
-          <Animated.View
+      <Menu>
+        <MenuButton
+          disabled={disabled || !isArray( items, { ofMinLength: 1 })}
+          style={menuButtonStyle}
+        >
+          {isValidElement( children ) ? children
+          : isString( text ) ? text
+          : isArray( children )
+            ? children.map(( child, i ) => (
+              isValidElement( child )
+                ? child
+                : <Recursive key={i} {...child} /> // eslint-disable-line
+            ))
+            : <Recursive {...children} />
+          }
+        </MenuButton>
+
+        {isArray( items, { ofMinLength: 1 }) && (
+          <MenuList
             style={{
-              opacity: fadeAnim,
+              position: 'absolute',
+              top: '100%',
+              ...facingRight
+                ? { right: 0 }
+                : { left: 0 },
+              ...menuListStyle,
             }}
           >
-            <TouchableWithoutFeedback
-              onPress={this.handleClose}
-            >
-              <Box
-                position="fixed"
-                top={0}
-                left={0}
-                height="100%"
-                width="100%"
-                zIndex={74}
-                backgroundColor="#000"
-                opacity={0.1}
-              />
-            </TouchableWithoutFeedback>
-          </Animated.View>
-        )}
-
-        <Box
-          position="relative"
-          zIndex={755}
-          testID={testID}
-        >
-          <TouchableOpacity
-            onPress={this.handleOpen}
-          >
-            <Box
-              justifyContent="space-between"
-              alignItems="center"
-              padding={padding}
-              paddingX={paddingX}
-              paddingY={paddingY}
-            >
-              {typeof text === 'string' ? (
-                <Text
-                  color={textColor}
-                >
-                  {text}
-                </Text>
-              ) : text}
-
-              <Box width={5} />
-
-              <Icon
-                name="expand-more"
-                color={textColor}
-              />
-            </Box>
-          </TouchableOpacity>
-
-          {isOpen && (
-            <Animated.View
-              style={{
-                transform: [
-                  { scaleY: dropdownScaleY },
-                  { scaleX: dropdownScaleY },
-                ],
-                opacity: fadeAnim,
-                position: 'absolute',
-                height: '100%',
-                width: '100%',
-              }}
-            >
-              <Box
-                position="absolute"
-                top="100%"
-                backgroundColor={backgroundColor}
-                flexDirection="column"
-                minWidth={170}
-                {...facingRight
-                  ? { right: 0 }
-                  : { left: 0 }
-              }
-              >
-                {(
-                  items &&
-                  items instanceof Array &&
-                  items.length > 0
-                ) ? (
-                    items.map( item => (
-                      <DropdownItem
-                        text={item.text}
-                        icon={item.icon}
-                        key={item.text}
-                        href={item.href}
-                        onPress={this.handleClose}
-                        textColor={textColor}
-                      />
-                    ))
-                  ) : (
-                    <DropdownItem
-                      text="No items to show."
-                      onPress={this.handleClose}
-                      textColor={textColor}
-                    />
+            {items.map( item => (
+              item.href ? (
+                <MenuLink
+                  key={item.text}
+                  testID={testID}
+                  to={(
+                    item.href === 'home' ? '/'
+                    : item.href.startsWith( '/' ) ? item.href
+                    : `/${item.href}`
                   )}
-              </Box>
-            </Animated.View>
-          )}
-        </Box>
-      </Fragment>
+                  style={{
+                    ...menuItemStyle,
+                    ...menuLinkStyle,
+                  }}
+                  onClick={this.handleNavigate( item )}
+                >
+                  {item.text}
+                </MenuLink>
+              ) : (
+                <MenuItem
+                  key={item.text}
+                  style={menuItemStyle}
+                  onSelect={this.handleSelect( item )}
+                >
+                  {isValidElement( item.children ) ? item.children
+                  : isString( item.text ) ? item.text
+                  : isArray( item.children )
+                    ? item.children.map(( child, i ) => (
+                      isValidElement( child )
+                        ? child
+                        : <Recursive key={i} {...child} /> // eslint-disable-line
+                    ))
+                    : <Recursive {...item.children} />
+                  }
+                </MenuItem>
+              )
+            ))}
+          </MenuList>
+        )}
+      </Menu>
     );
   }
 }
 
-export default Dropdown;
+export default withRouter( Dropdown );

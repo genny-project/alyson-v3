@@ -19,6 +19,9 @@ export default {
       },
     },
   },
+  signature: {
+    url: Config.SIGNATURE_URL,
+  },  
   google: {
     apiKey: Config.GOOGLE_MAPS_APIKEY,
     maps: {

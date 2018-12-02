@@ -57,6 +57,10 @@ class InputAddress extends Component {
     items: [],
   }
 
+  componentDidMount() {
+    console.warn( this.props );
+  }
+
   autocompleteAddress = async address => {
     const { google } = this.props;
 
@@ -143,7 +147,9 @@ class InputAddress extends Component {
     const { place_id } = item;
 
     try {
-      const places = await google.geocodeAddress({ place_id });
+      const places = await google.geocodeAddress({
+        placeId: place_id,
+      });
 
       if (
         !places ||

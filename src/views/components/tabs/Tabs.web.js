@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
 import { string, oneOfType, array, number, any, func, oneOf, object } from 'prop-types';
 import { TouchableOpacity } from 'react-native';
-import { isArray } from '../../../utils';
+import { withRouter } from 'react-router-dom';
+import { isArray, Bridge } from '../../../utils';
 import { Icon, Box, Text } from '../../components';
 
 const tabBarLocation = {
@@ -64,15 +65,55 @@ class Tabs extends PureComponent {
     inactiveTabIconProps: object,
     childProps: object,
     testID: string,
+    parentRoute: string,
+    history: object,
+    location: object,
   }
 
   state = {
     currentChild: 0,
   }
 
+  componentDidMount() {
+    this.setInitialTab();
+  }
+
+  setInitialTab() {
+    const { tabs, location } = this.props;
+
+    if ( !isArray( tabs, { ofMinLength: 1 }))
+      return;
+
+    if ( location.hash ) {
+      const hashIndex = parseInt( location.hash.slice( 1 ), 10 );
+
+      if (
+        Number.isInteger( hashIndex ) &&
+        hashIndex < tabs.length
+      ) {
+        this.setState({ currentChild: hashIndex });
+      }
+    }
+  }
+
   handlePress = ( index ) => {
+    const routeObject = this.props.tabs.filter( x => x.key === index )[0];
+
+    Bridge.sendEvent({
+      event: 'BTN',
+      eventType: 'ROUTE_CHANGE',
+      sendWithToken: true,
+      data: {
+        code: `${this.props.parentRoute}${routeObject ? `/${routeObject.route}` : ''}`,
+        value: routeObject ? `${routeObject.key}` : '',
+      },
+    });
     this.setState({ currentChild: index });
     if ( this.props.onPress ) this.props.onPress();
+
+    const { location, replace } = this.props.history;
+
+    replace( `${location.pathname}#${index}` );
   }
 
   render() {
@@ -133,7 +174,7 @@ class Tabs extends PureComponent {
               >
                 <TouchableOpacity
                   onPress={() => this.handlePress( index )}
-                  style={{ flexDirection: 'row' }}
+                  style={{ flexDirection: 'row', flex: 1 }}
                 >
                   {tab.icon ? (
                     <Icon
@@ -174,4 +215,4 @@ class Tabs extends PureComponent {
   }
 }
 
-export default Tabs;
+export default withRouter( Tabs );

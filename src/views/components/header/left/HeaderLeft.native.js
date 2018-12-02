@@ -96,6 +96,7 @@ class HeaderLeft extends Component {
           <Box
             alignItems="center"
             testID={testID}
+            height="100%"
           >
             {(
               showLogo &&
@@ -109,9 +110,14 @@ class HeaderLeft extends Component {
                 {...logoOpensMenu && {
                   withFeedback: true,
                   onPress: this.handleToggleMenu,
+                  height: '100%',
                 }}
               >
-                <Box paddingX={10}>
+                <Box
+                  paddingX={15}
+                  height="100%"
+                  alignItems="center"
+                >
                   <Image
                     height={50}
                     width={50}
@@ -126,7 +132,7 @@ class HeaderLeft extends Component {
               ) ? (
                 <Button
                   onPress={this.handleBack}
-                  size={backIconSize}
+                  size={backIconSize || logoProps.size}
                   color="transparent"
                   textColor={backIconColor || layout.textColor}
                   icon={backIcon}
@@ -144,13 +150,20 @@ class HeaderLeft extends Component {
                 ) : showMenu ? (
                   <Button
                     onPress={this.handleToggleMenu}
-                    size="md"
+                    size={logoProps.size || 'md'}
                     color="transparent"
                     textColor={layout.textColor}
-                    icon="menu"
-                    width={50}
-                    marginLeft={5}
-                    marginRight={5}
+                    icon={logoProps.menuIcon || 'menu'}
+                    width={(
+                      logoProps &&
+                      logoProps.width
+                    ) || 50}
+                    height={(
+                      logoProps &&
+                      logoProps.height
+                    ) || 50}
+                    marginLeft={10}
+                    marginRight={10}
                   />
                 ) : null}
 

@@ -95,7 +95,7 @@ const reducer = ( state = initialState, { type, payload }) => {
         }
         catch ( error ) {
           // eslint-disable-next-line no-console
-          console.warn( 'Unable to add layout to reducer state', error );
+          console.warn( 'Unable to add layout to reducer state', error, item.code );
         }
 
         return newState;

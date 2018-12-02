@@ -1,6 +1,7 @@
 import React, { Component, isValidElement } from 'react';
-import { object, array, oneOf } from 'prop-types';
-import { isArray } from '../../../utils';
+import { object, array, oneOf, bool, func, string, any, shape } from 'prop-types';
+import { isArray, injectDataIntoProps } from '../../../utils';
+import { store } from '../../../redux';
 import { Recursive } from '../../components';
 
 class Selection extends Component {
@@ -12,28 +13,68 @@ class Selection extends Component {
     context: object,
     children: array,
     mode: oneOf( ['single','toggle'] ),
+    selectFirstItemOnMount: bool,
+    dispatchActionOnChange: shape({
+      type: string.isRequired,
+      payload: any,
+    }),
+    onChange: func,
   }
 
   state = {
-    selected: null,
-    // selectedArray: [],
+    selectedIndex: null,
+    selectedItem: null,
+    selectedFirstItemOnMount: false,
   }
 
-  handleSelect = selected => () => {
+  componentDidMount() {
+    if ( this.props.selectFirstItemOnMount )
+      this.selectFirstItem();
+  }
+
+  componentDidUpdate( prevProps, prevState ) {
+    if (
+      this.props.selectFirstItemOnMount &&
+      !this.state.selectedFirstItemOnMount
+    ) {
+      this.selectFirstItem();
+    }
+
+    if ( prevState.selectedIndex !== this.state.selectedIndex ) {
+      const { dispatchActionOnChange } = this.props;
+      const { selectedItem, selectedIndex } = this.state;
+
+      if ( dispatchActionOnChange ) {
+        store.dispatch(
+          injectDataIntoProps(
+            dispatchActionOnChange,
+            isValidElement( selectedItem )
+              ? selectedItem.props
+              : selectedItem
+          )
+        );
+      }
+
+      if ( this.props.onChange )
+        this.props.onChange( selectedIndex );
+    }
+  }
+
+  handleSelect = ( selectedIndex, item ) => () => {
     const { mode } = this.props;
 
     switch ( mode ) {
       case 'single': {
-        this.setState({ selected });
+        this.setState({ selectedIndex, selectedItem: item });
         break;
       }
 
       case 'toggle': {
-        if ( this.state.selected === selected ) {
-          this.setState({ selected: null });
+        if ( this.state.selected === selectedIndex ) {
+          this.setState({ selectedIndex: null, selectedItem: null });
         }
         else {
-          this.setState({ selected });
+          this.setState({ selectedIndex, selectedItem: item });
         }
         break;
       }
@@ -42,9 +83,18 @@ class Selection extends Component {
     }
   }
 
+  selectFirstItem() {
+    const { children } = this.props;
+
+    if ( isArray( children, { ofMinLength: 1 })) {
+      this.handleSelect( 0, children[0] )();
+      this.setState({ selectedFirstItemOnMount: true });
+    }
+  }
+
   render() {
     const { children } = this.props;
-    const { selected } = this.state;
+    const { selectedIndex } = this.state;
 
     /**
      * TODO: Make this component much safer to use and more versatile
@@ -66,8 +116,8 @@ class Selection extends Component {
         context={{
           ...child.props.context,
           selection: {
-            onSelect: this.handleSelect( index ),
-            isSelected: selected === index,
+            onSelect: this.handleSelect( index, child ),
+            isSelected: selectedIndex === index,
           },
         }}
       />

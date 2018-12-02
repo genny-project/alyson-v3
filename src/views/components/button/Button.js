@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, ActivityIndicator, TouchableNativeFeedback } from 'react-native';
-import { string, bool, func, oneOf, number, oneOfType, shape, arrayOf, object, any } from 'prop-types';
+import { array, string, bool, func, oneOf, number, oneOfType, shape, arrayOf, object, any } from 'prop-types';
 import { Text, Icon, Box, Touchable, alert } from '../index';
 import { withTheme } from '../theme';
 import defaultThemeConfig from './defaultThemeConfig.json';
@@ -16,7 +16,9 @@ class Button extends Component {
   }
 
   static propTypes = {
-    children: string,
+    children: oneOfType(
+      [array, string]
+    ),
     text: string,
     testID: string,
     disabled: bool,
@@ -235,6 +237,13 @@ class Button extends Component {
       themeConfig.textSizes[size]
     );
 
+    const child = text || (
+      children != null &&
+      typeof children === 'number'
+        ? children.toString()
+        : children
+    );
+
     return (
       <Text
         color={actualColor}
@@ -245,7 +254,7 @@ class Button extends Component {
         bold={!fontWeight}
         fontWeight={fontWeight}
       >
-        {text || children}
+        {child}
       </Text>
     );
   }
@@ -374,7 +383,7 @@ class Button extends Component {
     /* TODO: mixed icon and text children */
     const child =
       isIconOnly ? this.renderIconChild()
-      : ( text || typeof children === 'string' ) ? this.renderTextChild()
+      : ( text || typeof children === 'string' || typeof children === 'number' ) ? this.renderTextChild()
       : children || null;
 
     return (
@@ -419,6 +428,7 @@ class Button extends Component {
           )
             ? paddingSize.paddingY
             : paddingY}
+          width={width}
         >
           {child}
         </Box>
@@ -462,22 +472,18 @@ class Button extends Component {
       themeConfig.textColors[color]
     );
 
-    const style = {
-      height,
-      width,
-      marginTop,
-      marginBottom,
-      marginLeft,
-      marginRight,
-      marginX,
-      borderWidth,
-      borderColor,
-    };
-
     return (
       <Touchable
         withFeedback={withFeedback}
-        style={style}
+        height={height}
+        width={width}
+        marginTop={marginTop}
+        marginBottom={marginBottom}
+        marginLeft={marginLeft}
+        marginRight={marginRight}
+        marginX={marginX}
+        borderWidth={borderWidth}
+        borderColor={borderColor}
         disabled={(
           disabled ||
           isSpinning ||

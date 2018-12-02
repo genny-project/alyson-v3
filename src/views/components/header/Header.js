@@ -42,16 +42,16 @@ class Header extends Component {
     title: string,
     headerLeft: shape({
       showMenu: oneOfType(
-        [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
+        [bool, arrayOf( oneOf( ['ios', 'native', 'android', 'web'] ))]
       ),
       showTitle: oneOfType(
-        [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
+        [bool, arrayOf( oneOf( ['ios', 'native', 'android', 'web'] ))]
       ),
       showLogo: oneOfType(
-        [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
+        [bool, arrayOf( oneOf( ['ios', 'native', 'android', 'web'] ))]
       ),
       showBack: oneOfType(
-        [bool, arrayOf( oneOf( 'ios', 'native', 'android', 'web' ))]
+        [bool, arrayOf( oneOf( ['ios', 'native', 'android', 'web'] ))]
       ),
     }),
     headerRight: shape({

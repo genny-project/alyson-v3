@@ -220,7 +220,9 @@ Box.propTypes = {
     ['nowrap', 'wrap', 'wrap-reverse']
   ),
   flex: number,
-  flexBasis: number,
+  flexBasis: oneOfType(
+    [string, number]
+  ),
   flexGrow: number,
   flexShrink: number,
   padding: number,

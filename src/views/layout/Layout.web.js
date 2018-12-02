@@ -1,13 +1,18 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { any, string, bool, object } from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import LayoutConsumer from './consumer';
 import { Header, Box, Dialog } from '../components';
-import { shallowCompare } from '../../utils';
+import {
+  shallowCompare,
+  ifConditionsPass,
+  injectDataIntoProps,
+  curlyBracketParse,
+} from '../../utils';
 import { Sidebar } from '../routing';
 
-class Layout extends Component {
+class Layout extends PureComponent {
   static propTypes = {
     children: any,
     title: string,
@@ -19,17 +24,19 @@ class Layout extends Component {
     layout: object,
     appColor: string,
     appName: string,
-    baseEntities: object,
+    vertx: object,
     headerProps: object,
     backgroundColor: string,
     layouts: object,
     variant: string,
+    context: object,
   }
 
   state = {
     unableToFindHeader: false,
     unableToFindSidebar: false,
     unableToFindSidebarRight: false,
+    sidebarRightHiddenByCondition: false,
   }
 
   componentDidMount() {
@@ -58,7 +65,12 @@ class Layout extends Component {
       this.props.title !== prevProps.title &&
       this.props.title != null
     ) {
-      this.props.layout.setTitle( this.props.title );
+      let title = this.props.title;
+      
+      if ( this.props.title.startsWith( '{{' )) {
+        title = curlyBracketParse( title, this.props.context );
+      }
+      this.props.layout.setTitle( title );
     }
 
     if ( !shallowCompare( this.props.header, prevProps.header )) {
@@ -95,21 +107,12 @@ class Layout extends Component {
         this.setSidebarProperties();
     }
 
-    if (
-      this.state.unableToFindSidebarRight &&
-      this.props.sidebarRight &&
-      this.props.sidebarRight.variant
-    ) {
-      const variant = `sidebar-right/sidebar-right.${this.props.sidebarRight.variant}`;
-
-      if ( this.props.layouts.sublayouts[variant] )
-        this.setSidebarRightProperties();
-    }
+    this.checkSidebarRight( prevProps );
   }
 
   setLayoutProperties() {
     const { layout, title, appColor, hideSidebar, hideSidebarRight, backgroundColor } = this.props;
-
+    
     if (
       typeof title === 'string' &&
       title.length > 0
@@ -190,15 +193,41 @@ class Layout extends Component {
   }
 
   setSidebarRightProperties() {
-    const { sidebarRight, layouts } = this.props;
+    const { sidebarRight, layouts, vertx } = this.props;
 
-    if ( sidebarRight && sidebarRight.variant ) {
-      const variant = `sidebar-right/sidebar-right.${sidebarRight.variant}`;
-      const sidebarRightProps = layouts.sublayouts[variant];
+    if ( !sidebarRight ) {
+      this.props.layout.setSidebarRightVisibility( false );
 
-      if ( sidebarRightProps ) {
-        this.props.layout.setSidebarRightProps( sidebarRightProps );
+      return;
+    }
+
+    const { variant, onlyShowIf, dontShowIf, ...restProps } = sidebarRight;
+
+    if (
+      ( onlyShowIf && !ifConditionsPass( onlyShowIf, vertx )) ||
+      ( dontShowIf && ifConditionsPass( dontShowIf, vertx ))
+    ) {
+      if ( this.props.layout.showSidebarRight )
+        this.props.layout.setSidebarRightVisibility( false );
+
+      this.setState({ sidebarRightHiddenByCondition: true });
+
+      return;
+    }
+
+    if ( this.state.sidebarRightHiddenByCondition )
+      this.setState({ sidebarRightHiddenByCondition: false });
+
+    if ( variant ) {
+      const path = `sidebar-right/sidebar-right.${variant}`;
+      const sidebarRightProps = injectDataIntoProps({
+        ...layouts.sublayouts[path],
+        ...restProps,
+      }, vertx );
+
+      if ( sidebarRightProps && Object.keys( sidebarRightProps ).length > 0 ) {
         this.props.layout.setSidebarRightVisibility( true );
+        this.props.layout.setSidebarRightProps( sidebarRightProps );
 
         if ( this.state.unableToFindSidebarRight )
           this.setState({ unableToFindSidebarRight: false });
@@ -237,6 +266,36 @@ class Layout extends Component {
     return `calc(100vw - ${sidebarLeftWidth}px - ${sidebarRightWidth}px`;
   }
 
+  checkSidebarRight() {
+    if ( !this.props.sidebarRight ) return;
+
+    const { variant, onlyShowIf, dontShowIf } = this.props.sidebarRight;
+    const { unableToFindSidebarRight } = this.state;
+
+    if (
+      variant &&
+      unableToFindSidebarRight
+    ) {
+      const variant = `sidebar-right/sidebar-right.${this.props.sidebarRight.variant}`;
+
+      if ( this.props.layouts.sublayouts[variant] ) {
+        this.setSidebarRightProperties();
+
+        return;
+      }
+    }
+
+    if ( onlyShowIf || dontShowIf ) {
+      const { sidebarRightHiddenByCondition } = this.state;
+
+      if ( sidebarRightHiddenByCondition ) {
+        this.setSidebarRightProperties();
+
+        return;
+      }
+    }
+  }
+
   render() {
     const { children, title, layout, appName } = this.props;
 
@@ -248,7 +307,7 @@ class Layout extends Component {
       sidebarRightProps,
       showSidebarRight,
     } = layout;
-
+        
     return (
       <Box
         height="100%"
@@ -330,7 +389,7 @@ export { Layout };
 const mapStateToProps = state => ({
   appName: state.layout.appName,
   layouts: state.vertx.layouts,
-  baseEntities: state.vertx.baseEntities,
+  vertx: state.vertx,
 });
 
 export default connect( mapStateToProps )(

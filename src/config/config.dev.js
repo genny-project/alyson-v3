@@ -14,6 +14,9 @@ export default {
       },
     },
   },
+  signature: {
+    url: 'https://signatures.outcome-hub.com/signature',
+  },
   google: {
     apiKey: 'AIzaSyC5HjeRqeoqbxHEQWieE0g9hLaN6snjorA',
     maps: {

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { object } from 'prop-types';
 import { connect } from 'react-redux';
+import dlv from 'dlv';
 import { Input } from '../../../index';
+import { isArray, isObject } from '../../../../../utils';
 
 class FormInputDropdown extends Component {
   static propTypes = {
@@ -14,12 +16,17 @@ class FormInputDropdown extends Component {
   }
 
   componentDidMount() {
-    this.getItems();
+    this.setInitialItems();
   }
 
-  componentDidUpdate( prevProps, prevState ) {
-    if ( prevState.items.length === 0 )
-      this.getItems();
+  componentDidUpdate() {
+    this.checkForUpdatedItems();
+  }
+
+  setInitialItems() {
+    const items = this.getItems();
+
+    this.setState({ items });
   }
 
   getItems() {
@@ -27,47 +34,84 @@ class FormInputDropdown extends Component {
     const { validationList } = this.props.question.attribute.dataType;
     const items = [];
 
+    if ( !isArray( validationList, { ofMinLength: 1 }))
+      return items;
+
+    validationList.forEach( validation => {
+      if (
+        validation.selectionBaseEntityGroupList &&
+        validation.selectionBaseEntityGroupList instanceof Array &&
+        validation.selectionBaseEntityGroupList.length > 0
+      ) {
+        validation.selectionBaseEntityGroupList.forEach( baseEntity => {
+          const linkGroup = links[baseEntity];
+
+          if (
+            isObject( linkGroup )
+          ) {
+            const linkValues = Object.keys( linkGroup ).map( x => x );
+
+            linkValues.forEach( linkValue => {
+              if ( isArray( linkGroup[linkValue] )) {
+                linkGroup[linkValue].forEach( link => {
+                  const baseEntity = dlv( data, link.link.targetCode );
+
+                  if ( isObject( baseEntity )) {
+                    items.push({
+                      label: baseEntity.name,
+                      value: baseEntity.code,
+                      weight: link.weight || 1,
+                    });
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+
+    return items;
+  }
+
+  checkForUpdatedItems() {
+    const { items } = this.state;
+    const newItems = this.getItems();
+
     if (
-      validationList &&
-      validationList instanceof Array &&
-      validationList.length > 0
+      items.length === 0 &&
+      newItems.length > 0
     ) {
-      validationList.forEach( validation => {
-        if (
-          validation.selectionBaseEntityGroupList &&
-          validation.selectionBaseEntityGroupList instanceof Array &&
-          validation.selectionBaseEntityGroupList.length > 0
-        ) {
-          validation.selectionBaseEntityGroupList.forEach( baseEntity => {
-            const linkGroup = links[baseEntity];
+      this.setState({ items: newItems });
 
-            if (
-              linkGroup &&
-              linkGroup.links &&
-              linkGroup.links instanceof Array &&
-              linkGroup.links.length > 0
-            ) {
-              linkGroup.links.forEach( link => {
-                const linkData = data[link];
-
-                if (
-                  linkData &&
-                  linkData.name
-                ) {
-                  items.push({
-                    label: linkData.name,
-                    value: linkData.code,
-                  });
-                }
-              });
-            }
-          });
-        }
-      });
+      return;
     }
 
-    if ( items.length > 0 )
-      this.setState({ items });
+    if (
+      items.length > 0 &&
+      newItems.length === 0
+    ) {
+      this.setState({ items: newItems });
+
+      return;
+    }
+
+    for ( let i = 0; i < items.length; i++ ) {
+      const item = items[i];
+      const newItem = newItems[i];
+
+      if ( !newItem ) {
+        this.setState({ items: newItems });
+
+        return;
+      }
+
+      if ( item.value !== newItem.value ) {
+        this.setState({ items: newItems });
+
+        return;
+      }
+    }
   }
 
   focus() {

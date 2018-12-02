@@ -20,19 +20,21 @@ class FormGenericInput extends Component {
 
     return (
       <Field>
-        {({ form }) => (
-          <Input
-            {...restProps}
-            name={name}
-            disabled={disabled || form.isSubmitting}
-            value={form.values[name]}
-            onChangeValue={value => {
-              form.setFieldTouched( name, true );
-              form.setFieldValue( name, value );
-            }}
-            testID={testID}
-          />
-        )}
+        {({ form }) => {
+          return (
+            <Input
+              {...restProps}
+              name={name}
+              disabled={disabled || form.isSubmitting}
+              value={form.values ? form.values[name] : ''}
+              onChangeValue={value => {
+                form.setFieldTouched( name, true );
+                form.setFieldValue( name, value );
+              }}
+              testID={testID}
+            />
+          );
+        }}
       </Field>
     );
   }

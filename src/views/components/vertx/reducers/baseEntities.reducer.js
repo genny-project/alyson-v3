@@ -105,34 +105,84 @@ const handleReduceAttributes = ( resultant, current ) => {
   return resultant;
 };
 
-const handleReduceLinks = ( resultant, current ) => {
+const handleReplaceLinks = ( resultant, current ) => {
+  return handleReduceLinks( resultant, current, true );
+};
+
+const handleReduceLinks = ( resultant, current, shouldReplace ) => {
   if ( !isArray( current.links ))
     return resultant;
 
-  const handleCombineLinkValues = link => {
-    if ( link.link.linkValue ) {
-      resultant[link.link.linkValue] = ({
-        ...resultant[link.link.linkValue],
-        [link.link.targetCode]: link,
-      });
+  const removeMatchingExistingKeys = link => {
+    if (
+      link.link.linkValue &&
+      resultant[current.code]
+    ) {
+      delete resultant[current.code];
     }
   };
 
+  const handleCombineLinkValues = link => {
+    if ( link.link.linkValue ) {
+      resultant[current.code] = {
+        ...resultant[current.code],
+        [link.link.linkValue]: [
+          ...( resultant[current.code] && isArray( resultant[current.code][link.link.linkValue] ))
+            ? resultant[current.code][link.link.linkValue]
+            : [],
+          link,
+        ],
+      };
+    }
+  };
+
+  const createLink = be => {
+    return {
+      created: be.created,
+      link: {
+        attributeCode: 'LNK_CORE',
+        linkValue: 'LINK',
+        sourceCode: be.parentCode,
+        targetCode: be.code,
+        weight: 1,
+      },
+      valueString: 'LINK',
+      weight: 1,
+      fakeLink: true,
+    };
+  };
+
+  if ( isArray( current.links ))
+    current.links.forEach( handleCombineLinkValues );
+
+  if ( shouldReplace === true ) {
+    current.links.forEach( removeMatchingExistingKeys );
+    // console.log( resultant );
+  }
+
   current.links.forEach( handleCombineLinkValues );
 
+  /* If creating the links from children without a Parent entity. */
   if ( current.parentCode ) {
+    /* if the parent doesnt exist, create key BEG to store children. */
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
-        links: [current.code],
+        LINK: [createLink( current )],
       };
     }
     else {
-      /* Group all the parent codes inside a links array. */
+      /* If parent code already exists, check to see if BEG is already there.
+      If yes, we add the new link. If no, we dont do anything, because it means
+      there is already another key which has been obtained from a parent to child
+      link, so it is more accurate. */
       resultant[current.parentCode] = {
         ...resultant[current.parentCode],
-        links: [
-          ...resultant[current.parentCode].links.filter( code => code !== current.code ),
-          current.code,
+        LINK: [
+          ...resultant[current.parentCode].LINK
+            ? resultant[current.parentCode].LINK
+              .filter( link => link.link.targetCode !== current.code )
+            : {},
+          createLink( current ),
         ],
       };
     }
@@ -155,6 +205,9 @@ const deleteLinkedBaseEntities = ( data, resultant, depth = 1 ) => {
 
   const { shouldDeleteLinkedBaseEntities, code } = data;
   const links = resultant[code] ? resultant[code].links : data.links;
+
+  if ( !isArray( links ))
+    return;
 
   links.forEach(({ link }) => {
     if ( depth >= shouldDeleteLinkedBaseEntities ) {
@@ -198,10 +251,12 @@ const handleReduceData = ( resultant, current ) => {
   }
 
   resultant[current.code] = wantedData;
+
   /* If the current has a parentCode, ensure there is an accompanying base entity. */
   if ( current.parentCode ) {
     /* If the parent base entity does not exist, simply create a basic one with a link
      * back to the current base entity. */
+
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
         links: [
@@ -216,6 +271,7 @@ const handleReduceData = ( resultant, current ) => {
       const noLinksExist = !isArray( resultant[current.parentCode].links, { ofMinLength: 1 });
 
       /* If no links exist yet, simply set the links to be array of the new link (current). */
+
       const newLinks = noLinksExist ? [
         createLink( current ),
       ] : (
@@ -224,6 +280,7 @@ const handleReduceData = ( resultant, current ) => {
           /* If the current link is in the existing links, update the
            * existing link with the new link data (current). */
           if ( link.link.targetCode === current.code ) {
+            // if ( current.parentCode === 'GRP_NEW_ITEMS' ) console.log( '3a code match', links );
             links[index] = {
               ...link,
               updated: current.updated,
@@ -236,7 +293,8 @@ const handleReduceData = ( resultant, current ) => {
             };
           }
           /* If the new link (current) isn't already in the existing links, add it. */
-          else if ( !links.find( link => link.link.targetCode === current.code )) {
+          else if ( !links.find( existingLink => existingLink.link.targetCode === current.code )) {
+            // if ( current.parentCode === 'GRP_NEW_ITEMS' ) console.log( '3b links', links );
             links.push(
               createLink( current )
             );
@@ -320,24 +378,37 @@ function handleReduceDataTwo( message, state ) {
 
   delete newState[message.parentCode];
 
-  if ( message.delete ) {
+  if (
+    message.delete &&
+    !message.shouldDeleteLinkedBaseEntities
+  ) {
     return newState;
   }
 
   return message.items.reduce( handleReduceData, newState );
 }
 
-function handleReduceLinksTwo( message, state ) {
-  const newState = copy( state );
+// function handleReduceLinksTwo( message, state ) {
+//   const newState = copy( state );
 
-  delete newState[message.parentCode];
+// if ( message.parentCode ) {
+//   delete newState[message.parentCode];
+// }
+// else if ( isArray( message.items )) {
+//   message.items.forEach( item => {
+//     delete newState[item.code];
+//   });
+// }
 
-  if ( message.delete ) {
-    return newState;
-  }
+// if (
+//   message.delete &&
+//     !message.shouldDeleteLinkedBaseEntities
+// ) {
+//   return newState;
+// }
 
-  return message.items.reduce( handleReduceLinks, newState );
-}
+//   return message.items.reduce( handleReduceLinks, newState );
+// }
 
 const reducer = ( state = initialState, { type, payload }) => {
   switch ( type ) {
@@ -362,7 +433,8 @@ const reducer = ( state = initialState, { type, payload }) => {
           ...state,
           data: handleReduceDataTwo( payload, state.data ),
           attributes: payload.items.reduce( handleReduceAttributes, state.attributes ),
-          links: handleReduceLinksTwo( payload, state.links ),
+          links: payload.items.reduce( handleReplaceLinks, state.links ),
+          // links: handleReduceLinksTwo( payload, state.links ),
         };
       }
 
