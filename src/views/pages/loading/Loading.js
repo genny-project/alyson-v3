@@ -41,6 +41,7 @@ class Loading extends Component {
             alignItems="center"
             flex={1}
             flexDirection="column"
+            testID="page-loading"
           >
             <ActivityIndicator />
             <Text>

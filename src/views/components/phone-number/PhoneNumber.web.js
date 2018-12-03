@@ -4,11 +4,16 @@ import { formatPhoneNumber } from '../../../utils';
 import { Text } from '../index';
 
 class PhoneNumber extends Component {
+  static defaultProps = {
+    testID: 'phone-number',
+  }
+
   static propTypes = {
     mobile: bool,
     landline: bool,
     children: string,
     number: string,
+    testID: string,
   }
 
   render() {
@@ -17,11 +22,15 @@ class PhoneNumber extends Component {
       mobile,
       landline,
       number,
+      testID,
       ...restProps
     } = this.props;
 
     return (
-      <Text {...restProps}>
+      <Text
+        {...restProps}
+        testID={testID}
+      >
         {formatPhoneNumber( number || children, {
           mobile,
           landline,

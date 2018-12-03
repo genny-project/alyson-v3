@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import  { bool, func } from 'prop-types';
+import  { bool, func, string } from 'prop-types';
 import { Modal } from 'react-native';
 
 class NativeModalWrapper extends Component {
   static defaultProps = {
+    testID: 'native-modal-wrapper',
   }
 
   static propTypes = {
     visible: bool,
     onDismiss: func,
+    testID: string,
   }
 
   componentDidUpdate( prevProps ) {
@@ -22,10 +24,13 @@ class NativeModalWrapper extends Component {
   }
 
   render() {
+    const { visible, testID, ...restProps } = this.props;
+
     return (
       <Modal
-        {...this.props}
-        visible={this.props.visible}
+        {...restProps}
+        visible={visible}
+        testID={testID}
       />
     );
   }

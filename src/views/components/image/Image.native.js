@@ -17,6 +17,7 @@ const Image = ({
   fallbackIcon = 'photo',
   fallbackIconSize = 'lg',
   fallbackColor = 'gray',
+  testID = 'image',
   ...restProps
 }) => {
   const borderRadius = {
@@ -33,6 +34,7 @@ const Image = ({
       <NativeImage
         {...restProps}
         source={{ uri: source }}
+        testID={testID}
         style={{
           height,
           width,
@@ -61,6 +63,7 @@ const Image = ({
       justifyContent="center"
       alignItems="center"
       borderRadius={borderRadius[shape]}
+      testID={testID}
     >
       <Icon
         name={fallbackIcon}
@@ -100,6 +103,7 @@ Image.propTypes = {
   fallbackIconSize: string,
   fallbackColor: string,
   flex: number,
+  testID: string,
 };
 
 export default Image;

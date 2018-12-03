@@ -11,6 +11,7 @@ class HeaderLeft extends Component {
   static defaultProps = {
     backIcon: 'arrow-back',
     backIconSize: 'md',
+    testID: 'header-left',
   }
 
   static propTypes = {
@@ -33,6 +34,7 @@ class HeaderLeft extends Component {
     logoOpensMenu: bool,
     titleProps: object,
     logoProps: object,
+    testID: string,
   }
 
   handleToggleMenu = () => {
@@ -70,6 +72,7 @@ class HeaderLeft extends Component {
       logoOpensMenu,
       titleProps,
       logoProps,
+      testID,
     } = this.props;
 
     const { index, routes } = navigationReducer;
@@ -92,6 +95,7 @@ class HeaderLeft extends Component {
         {layout => (
           <Box
             alignItems="center"
+            testID={testID}
             height="100%"
           >
             {(

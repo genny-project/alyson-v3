@@ -12,6 +12,7 @@ class Button extends Component {
     isSpinning: false,
     size: 'md',
     withFeedback: true,
+    testID: 'button',
   }
 
   static propTypes = {
@@ -19,6 +20,7 @@ class Button extends Component {
       [array, string]
     ),
     text: string,
+    testID: string,
     disabled: bool,
     onPress: func,
     color: string,
@@ -330,6 +332,7 @@ class Button extends Component {
       boxShadow,
       submitting,
       inverted,
+      testID,
     } = this.getProps();
 
     const { isSpinning } = this.state;
@@ -385,6 +388,7 @@ class Button extends Component {
 
     return (
       <Box
+        testID={testID}
         cleanStyleObject
         position="relative"
         shape={shape}

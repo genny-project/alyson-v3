@@ -13,6 +13,7 @@ const textSizes = {
 
 class Checkbox extends Component {
   static defaultProps = {
+    testID: 'input-segmented-control',
     color: 'grey',
     textSize: 'xs',
   }
@@ -21,6 +22,7 @@ class Checkbox extends Component {
     items: array,
     value: array,
     onChangeValue: func,
+    testID: string,
     color: string,
     textSize: oneOf(
       ['xs','sm','md','lg','xl']
@@ -123,6 +125,7 @@ class Checkbox extends Component {
     const {
       items,
       color,
+      testID,
       borderRadius,
       textSize,
       activeStyling,
@@ -136,6 +139,7 @@ class Checkbox extends Component {
         {...wrapperProps}
         flexDirection="row"
         width="100%"
+        testID={testID}
       >
         {
           selected &&

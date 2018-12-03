@@ -1,14 +1,19 @@
 import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
-import { object, func } from 'prop-types';
+import { object, func, string } from 'prop-types';
 import { connect, assemblyHtmlBridge } from 'react-redux';
 import { isArray } from '../../../../utils';
 import { Box, Touchable, Text, WebView, LinkButton } from '../../../components';
 
 class InputPayment extends Component {
+  static defaultProps = {
+    testID: 'input-payment',
+  }
+
   static propTypes = {
     user: object,
     onChangeValue: func,
+    testID: string,
   }
 
   state = {
@@ -90,12 +95,14 @@ class InputPayment extends Component {
   }
 
   render() {
+    const { testID } = this.props;
     const { paymentMethods, selected, deviceId } = this.state;
 
     return (
       <Box
         flexDirection="column"
         justifyContent="center"
+        testID={testID}
       >
         {!deviceId ? (
           <Box

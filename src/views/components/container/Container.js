@@ -6,6 +6,7 @@ const Container = ({
   children,
   size = 'sm',
   fullWidth = false,
+  testID = 'container',
   ...restProps
 }) => {
   const containerWidth = {
@@ -21,6 +22,7 @@ const Container = ({
       width="100%"
       marginX="auto"
       cleanStyleObject
+      testID={testID}
     >
       {children}
     </Box>
@@ -31,6 +33,7 @@ Container.propTypes = {
   children: any,
   size: string,
   fullWidth: bool,
+  testID: string,
 };
 
 export default Container;
