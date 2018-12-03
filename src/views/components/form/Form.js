@@ -11,6 +11,8 @@ import shallowCompare from '../../../utils/shallow-compare';
 import { Box, Text, Button, KeyboardAwareScrollView, ScrollView } from '../index';
 import Recursive from '../layout-loader/Recursive';
 import FormInput from './input';
+import { store } from '../../../redux';
+import { hideDialog } from '../../../redux/actions';
 
 const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE'];
 
@@ -696,108 +698,104 @@ class Form extends Component {
 
           return (
             <WrapperComponent
+              testID={testID}
               scrollEnabled={!displayInline}
               style={{
                 width: '100%',
               }}
             >
-              <Box
-                flexDirection={displayInline
-                  ? 'row'
-                  : 'column'
-                }
-                width="100%"
-                flex={1}
-                padding={20}
-                testID={testID}
-              >
-                {createElement( Platform.OS === 'web' ? 'form' : View, {
-                  style: {
-                    flexDirection: displayInline ? 'row' : 'column',
-                    width: '100%',
-                    flex: 1,
-                    ...formWrapperProps,
-                  },
-                  onSubmit: handleSubmit,
-                }, (
-                  <Fragment>
-                    {questionGroups.map(( questionGroup, index ) => (
-                      <Box
-                        flexDirection={displayInline ? 'row' : 'column'}
-                        zIndex={150 - index}
-                        position="relative"
-                        flex={1}
-                        key={questionGroup.name}
-                      >
-                        {renderHeading ? (
-                          <Recursive
-                            {...renderHeading}
-                            key={questionGroup.name}
-                            context={{
-                              heading:
-                                questionGroup.childAsks.length === 1 &&
-                                questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
-                                  ? questionGroup.childAsks[0].question.name
-                                  : questionGroup.name,
-                            }}
-                          />
-                        ) : null}
+              {createElement( Platform.OS === 'web' ? 'form' : View, {
+                style: {
+                  flexDirection: displayInline ? 'row' : 'column',
+                  width: '100%',
+                  flex: 1,
+                  ...formWrapperProps,
+                },
+                onSubmit: handleSubmit,
+              }, (
+                <Fragment>
+                  {questionGroups.map(( questionGroup, index ) => (
+                    <Box
+                      flexDirection={displayInline ? 'row' : 'column'}
+                      zIndex={150 - index}
+                      position="relative"
+                      flex={1}
+                      key={questionGroup.name}
+                    >
+                      {renderHeading ? (
+                        <Recursive
+                          {...renderHeading}
+                          key={questionGroup.name}
+                          context={{
+                            heading:
+                              questionGroup.childAsks.length === 1 &&
+                              questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                                ? questionGroup.childAsks[0].question.name
+                                : questionGroup.name,
+                          }}
+                        />
+                      ) : null}
 
-                        {(
-                          /* If there is only one child ask and it's a Boolean question,
+                      {(
+                        /* If there is only one child ask and it's a Boolean question,
                           * don't show it - the 'YES'/'NO' buttons underneath this will suffice. */
-                          questionGroup.childAsks.length === 1 &&
-                          questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
-                        )
-                          ? null
-                          : (
-                            questionGroup.childAsks.map(
-                              this.renderInput(
-                                values,
-                                errors,
-                                touched,
-                                setFieldValue,
-                                setFieldTouched,
-                                isSubmitting,
-                                questionGroup.questionCode,
-                                submitCount,
-                                submitForm,
-                              )
+                        questionGroup.childAsks.length === 1 &&
+                        questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                      )
+                        ? null
+                        : (
+                          questionGroup.childAsks.map(
+                            this.renderInput(
+                              values,
+                              errors,
+                              touched,
+                              setFieldValue,
+                              setFieldTouched,
+                              isSubmitting,
+                              questionGroup.questionCode,
+                              submitCount,
+                              submitForm,
                             )
                           )
-                        }
-                      </Box>
-                    ))}
-
-                    {questionGroups.reduce(( buttons, { attributeCode }) => {
-                      buttonTypes.forEach( type => {
-                        if ( attributeCode.includes( type )) {
-                          buttons.push(
-                            this.renderButton({
-                              disabled: (
-                                !isFormValid &&
-                                !alwaysActiveButtonTypes.includes( type )
-                              ) || isSubmitting,
-                              onPress: () => {
-                                this.setState({
-                                  formStatus: lowercase( type ),
-                                }, () => {
-                                  submitForm();
-                                });
-                              },
-                              key: type,
-                              text: capitalize( type ),
-                              showSpinnerOnClick: true,
-                            })
-                          );
-                        }
-                      });
-
-                      return buttons;
-                    }, [] )}
-                  </Fragment>
+                        )
+                      }
+                    </Box>
                   ))}
-              </Box>
+
+                  {questionGroups.reduce(( buttons, { attributeCode }) => {
+                    buttonTypes.forEach( type => {
+                      if ( attributeCode.includes( type )) {
+                        buttons.push(
+                          this.renderButton({
+                            disabled: (
+                              !isFormValid &&
+                              !alwaysActiveButtonTypes.includes( type )
+                            ) || isSubmitting,
+                            onPress: () => {
+                              // when clicked on cancel button on the form => close the Popup
+                              buttons && buttons.map( button => {
+                                if ( button.key === 'CANCEL' )
+                                  store.dispatch( hideDialog({ layoutName: `questions/${questionGroupCode}` }));
+                              }
+                              );
+                              this.setState({
+                                formStatus: lowercase( type ),
+                              }, () => {
+                                submitForm();
+                              });
+                            },
+                            key: type,
+                            text: capitalize( type ),
+                            showSpinnerOnClick: true,
+                          })
+                        );
+                      }
+                    });
+
+                    return buttons;
+                  }, [] )}
+                </Fragment>
+                ))}
             </WrapperComponent>
           );
         }}

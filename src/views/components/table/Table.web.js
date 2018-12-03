@@ -4,10 +4,12 @@ import ReactTable from 'react-table';
 
 import matchSorter from 'match-sorter';
 import debounce from 'lodash.debounce';
+import dlv from 'dlv';
 
 import 'react-table/react-table.css';
-import { Bridge, isArray } from '../../../utils';
-import { Box, Recursive } from '../../components';
+import { Bridge, isArray, isObject, injectDataIntoProps } from '../../../utils';
+import { store } from '../../../redux';
+import { Box, Recursive, Touchable, Text } from '../../components';
 
 /* testing table for rendering the number of items */
 import './table.css';
@@ -26,6 +28,7 @@ class TableView extends Component {
   };
 
   static propTypes = {
+    cellContext: object,
     columns: array,
     data: array,
     itemsPerPage: number,
@@ -36,6 +39,10 @@ class TableView extends Component {
     containerBackgroundColor: string,
     buttonTextColor: string,
     renderWrapper: object,
+    isSelectable: bool,
+    selectFirstItemOnMount: bool,
+    dispatchActionOnChange: object,
+    itemToSelectFirst: object,
   };
 
   constructor( props ) {
@@ -43,6 +50,39 @@ class TableView extends Component {
 
     this.sendMessageToBridge = debounce( this.sendMessageToBridge, 500 );
     this.handleFilteredChange = debounce( this.handleFilteredChange, 1000 );
+  }
+
+  state = {
+    selectedItem: null,
+    selectedFirstItemOnMount: false,
+  }
+
+  componentDidMount() {
+    if ( this.props.selectFirstItemOnMount )
+      this.selectFirstItem();
+  }
+
+  componentDidUpdate( prevProps, prevState ) {
+    if (
+      this.props.selectFirstItemOnMount &&
+      !this.state.selectedFirstItemOnMount
+    ) {
+      this.selectFirstItem();
+    }
+
+    if ( prevState.selectedItem !== this.state.selectedItem ) {
+      const { dispatchActionOnChange } = this.props;
+      const { selectedItem } = this.state;
+
+      if ( dispatchActionOnChange ) {
+        store.dispatch(
+          injectDataIntoProps(
+            dispatchActionOnChange,
+            { code: selectedItem },
+          )
+        );
+      }
+    }
   }
 
   handleCellDataChange = cellInfo1 => event => {
@@ -105,7 +145,7 @@ class TableView extends Component {
     };
 
     const renderCell = ( cellInfo, data ) => {
-      const { renderWrapper } = this.props;
+      const { renderWrapper, cellContext, isSelectable } = this.props;
       const { renderButton } = data;
 
       if ( renderButton ) {
@@ -140,24 +180,75 @@ class TableView extends Component {
           </Box>
         );
       }
-      const celld = this.props.data[cellInfo.index][cellInfo.column.id];
-      const rowd = this.props.data[cellInfo.index];
+      const cellData = this.props.data[cellInfo.index][cellInfo.column.id];
+      const rowData = this.props.data[cellInfo.index];
 
-      return (
-        <Recursive
-          {...renderWrapper}
-          context={{
-            celld: rowd,
-          }}
-        >
-          {celld}
-        </Recursive>
-      );
+      if ( renderWrapper ) {
+        return (
+          <Recursive
+            {...renderWrapper}
+            context={{
+              ...cellContext,
+              celld: rowData,
+              cellData,
+              rowData,
+              onPress: isSelectable
+                ? () => this.handleSelect( rowData )
+                : null,
+            }}
+          >
+            {cellData}
+          </Recursive>
+        );
+      }
+
+      if ( isSelectable ) {
+        return (
+          <Touchable
+            withFeedback
+            onPress={() => this.handleSelect( rowData )}
+          >
+            <Text
+              text={cellData}
+            />
+          </Touchable>
+        );
+      }
+
+      return cellData;
     };
 
     return addFilterMethodsToColumn().map(
       data => ({ ...data, Cell: cellInfo => renderCell( cellInfo, data ) })
     );
+  }
+
+  handleSelect = ( item ) => {
+    if ( item.code ) {
+      if ( this.state.selectedItem === item.code ) {
+        this.setState({ selectedItem: null });
+      }
+      else {
+        this.setState({ selectedItem: item.code });
+      }
+    }
+  }
+
+  selectFirstItem() {
+    const { data, itemToSelectFirst } = this.props;
+
+    if ( isArray( data, { ofMinLength: 1 })) {
+      const isItemInData = ( item ) => {
+        if ( !isObject( item )) return false;
+
+        return data.filter( row => row.code === item.code ) > 0;
+      };
+
+      const item = isItemInData( itemToSelectFirst ) ? itemToSelectFirst : data[0];
+
+      this.handleSelect( item );
+      this.setState({ selectedFirstItemOnMount: true });
+    }
   }
 
   render() {
@@ -169,7 +260,10 @@ class TableView extends Component {
       tableWidth,
       containerBackgroundColor,
       tableHeight,
+      isSelectable,
     } = this.props;
+
+    const { selectedItem } = this.state;
 
     const tableStyleProps = [];
 
@@ -193,7 +287,6 @@ class TableView extends Component {
         </div>
 
         {isArray( data ) ? (
-
           <ReactTable
             className="react-tbl table -striped -highlight"
             style={[tableStyleProps]}
@@ -205,6 +298,24 @@ class TableView extends Component {
             columns={this.modifiedTableColumns()}
             pageSize={itemsPerPage}
             showPagination={data.length > itemsPerPage ? true : false}
+            getTrProps={( state, rowInfo ) => {
+              if ( !rowInfo || !isSelectable ) return {};
+
+              return {
+                style: {
+                  background: selectedItem === dlv( rowInfo, 'original.code' ) ? '#fffbd7' : '',
+                },
+              };
+            }}
+            getTdProps={( state, rowInfo ) => {
+              if ( !rowInfo || !isSelectable ) return {};
+
+              return {
+                style: {
+                  background: selectedItem === dlv( rowInfo, 'original.code' ) ? 'none' : '',
+                },
+              };
+            }}
           />
         ) : null}
       </div>
