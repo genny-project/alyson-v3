@@ -83,7 +83,7 @@ class AuthenticationForm extends Component {
         validateOnBlur
         enableReinitialize
       >
-        {children}
+        {() => children}
       </Formik>
     );
   }
