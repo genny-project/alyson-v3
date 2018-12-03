@@ -1,5 +1,5 @@
-import React, { Component, Fragment, createElement } from 'react';
-import { ActivityIndicator, View, Platform } from 'react-native';
+import React, { Component, Fragment } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { string, object, oneOfType, array, bool } from 'prop-types';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
@@ -699,15 +699,14 @@ class Form extends Component {
                 width: '100%',
               }}
             >
-              {createElement( Platform.OS === 'web' ? 'form' : View, {
-                style: {
-                  flexDirection: displayInline ? 'row' : 'column',
-                  width: '100%',
-                  flex: 1,
-                  ...formWrapperProps,
-                },
-                onSubmit: handleSubmit,
-              }, (
+              <Box
+                accessibilityRole="form"
+                flexDirection={displayInline ? 'row' : 'column'}
+                flex={1}
+                width="100%"
+                {...formWrapperProps}
+                onSubmit={handleSubmit}
+              >
                 <Fragment>
                   {questionGroups.map(( questionGroup, index ) => (
                     <Box
@@ -790,7 +789,7 @@ class Form extends Component {
                     return buttons;
                   }, [] )}
                 </Fragment>
-                ))}
+              </Box>
             </WrapperComponent>
           );
         }}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { string, object } from 'prop-types';
+import { string, object, func } from 'prop-types';
 import { connect } from 'react-redux';
 import { LayoutLoader } from '../';
 import { isString } from '../../../utils';
@@ -8,6 +8,7 @@ class Sublayout extends Component {
   static propTypes = {
     layoutName: string,
     layouts: object,
+    dispatch: func,
   };
 
   state = {
@@ -36,17 +37,20 @@ class Sublayout extends Component {
       this.setState({ layout });
     }
     else {
+      // eslint-disable-next-line no-console
       console.warn( 'layout not found', { layoutName });
     }
   }
 
   render() {
+    // eslint-disable-next-line no-unused-vars
+    const { layouts, dispatch, layoutName, ...restProps } = this.props;
     const { layout } = this.state;
 
     return (
       <LayoutLoader
         layout={layout}
-        sublayoutProps={this.props}
+        sublayoutProps={restProps}
         sublayout
       />
     );

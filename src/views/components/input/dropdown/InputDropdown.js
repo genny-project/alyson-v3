@@ -134,17 +134,32 @@ class InputDropdown extends Component {
   }
 
   handleSort = ( a, b ) => {
-    // Currently only supporting sorting of strings by name
-    if ( !a || !isString( a.name )) return 0;
-    if ( !b || !isString( b.name )) return 0;
+    let stringA; let stringB;
 
-    var nameA = a.name.toLowerCase(); // ignore upper and lowercase
-    var nameB = b.name.toLowerCase(); // ignore upper and lowercase
+    if ( isObject( a ) && isObject( b )) {
+      if ( isString( a.name ) && isString( b.name )) {
+        stringA = a.name.toLowerCase();
+        stringB = b.name.toLowerCase();
+      }
+      else if ( isString( a.label ) && isString( b.label )) {
+        stringA = a.label.toLowerCase();
+        stringB = b.label.toLowerCase();
+      }
+    }
+    else if ( isString( a ) && isString( b )) {
+      stringA = a.toLowerCase();
+      stringB = b.toLowerCase();
+    }
 
-    if ( nameA < nameB ) return -1;
-    if ( nameA > nameB ) return 1;
+    // console.warn({ a, b, stringA, stringB });
 
-    // names must be equal
+    if ( !stringA && !stringB ) return 0;
+    if ( !stringA ) return 1;
+    if ( !stringB ) return -1;
+
+    if ( stringA < stringB ) return -1;
+    if ( stringA > stringB ) return 1;
+
     return 0;
   }
 

@@ -1,4 +1,4 @@
-import React, { createElement, cloneElement, Component, isValidElement } from 'react';
+import React, { createElement, cloneElement, PureComponent, isValidElement } from 'react';
 import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
@@ -8,7 +8,7 @@ import { isObject, isArray, isString, ifConditionsPass } from '../../../utils';
 import { store } from '../../../redux';
 import * as Components from '../index';
 
-class Recursive extends Component {
+class Recursive extends PureComponent {
   static propTypes = {
     component: string,
     props: object,

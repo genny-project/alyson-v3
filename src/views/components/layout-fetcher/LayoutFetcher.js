@@ -27,7 +27,7 @@ class LayoutFetcher extends Component {
     this.getLayout();
   }
 
-  shouldComponentUpdate( nextProps ) {
+  shouldComponentUpdate( nextProps, nextState ) {
     if ( !this.state.layout )
       return true;
 
@@ -44,7 +44,16 @@ class LayoutFetcher extends Component {
       return strippedCurrentUrl === strippedLastRoute;
     }
 
-    return true;
+    if ( this.props.currentUrl !== nextProps.currentUrl )
+      return true;
+
+    if ( !this.state.layout && this.props.layouts !== nextProps.layouts )
+      return true;
+
+    if ( this.state.layout !== nextState.layout )
+      return true;
+
+    return false;
   }
 
   componentDidUpdate( prevProps ) {
