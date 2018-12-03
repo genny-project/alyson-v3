@@ -14,6 +14,7 @@ class Settings extends Component {
           alignItems="center"
           flex={1}
           flexDirection="column"
+          testID="page-settings"
         >
           <Text>
 Settings

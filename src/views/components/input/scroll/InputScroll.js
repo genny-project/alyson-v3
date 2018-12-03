@@ -5,6 +5,7 @@ import { ScrollView } from '../../../components';
 class InputScroll extends Component {
   static defaultProps = {
     scrollEventThrottle: 50,
+    testID: 'input-scroll',
   }
 
   static propTypes = {
@@ -21,6 +22,7 @@ class InputScroll extends Component {
     ),
     scrollEventThrottle: number,
     flex: number,
+    testID: string,
   }
 
   state = {
@@ -60,7 +62,15 @@ class InputScroll extends Component {
   }
 
   render() {
-    const { children, height, minHeight, maxHeight, scrollEventThrottle, flex } = this.props;
+    const {
+      children,
+      height,
+      minHeight,
+      maxHeight,
+      scrollEventThrottle,
+      flex,
+      testID,
+    } = this.props;
 
     return (
       <ScrollView
@@ -71,6 +81,7 @@ class InputScroll extends Component {
         maxHeight={maxHeight}
         onScroll={this.handleScroll}
         scrollEventThrottle={scrollEventThrottle}
+        testID={testID}
       >
         {children}
       </ScrollView>

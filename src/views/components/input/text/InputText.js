@@ -79,6 +79,7 @@ class Input extends PureComponent {
     textAlign: 'left',
     prefixColor: 'grey',
     editable: true,
+    testID: 'input',
   }
 
   static propTypes = {
@@ -180,6 +181,7 @@ class Input extends PureComponent {
     placeholderColor: string,
     activeProps: string,
     color: string,
+    testID: string,
     characterCountWrapperProps: object,
     characterCountTextProps: object,
     showCharacterCount: bool,
@@ -380,6 +382,7 @@ class Input extends PureComponent {
       placeholderColor,
       activeProps,
       color,
+      testID,
       showCharacterCount,
       characterCountWrapperProps,
       characterCountTextProps,
@@ -446,6 +449,7 @@ class Input extends PureComponent {
         position="relative"
         flex={1}
         width={width}
+        testID={testID}
       >
         <TextInput
           autoCapitalize={autoCapitalize}

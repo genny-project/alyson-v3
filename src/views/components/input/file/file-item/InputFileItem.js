@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
-import { func, any } from 'prop-types';
+import { func, any, string } from 'prop-types';
 import prettierBytes from 'prettier-bytes';
 import { Box, Text, Icon, Image, Touchable } from '../../../../components';
 
 class InputFileItem extends Component {
+  static defaultProps = {
+    testID: 'input-file-item',
+  }
+
   static propTypes = {
     id: any,
     size: any,
@@ -14,6 +18,7 @@ class InputFileItem extends Component {
     uploadURL: any,
     error: any,
     onRemove: func,
+    testID: string,
   }
 
   getIconName() {
@@ -39,6 +44,7 @@ class InputFileItem extends Component {
       uploadURL,
       error,
       onRemove,
+      testID,
     } = this.props;
 
     const hasImagePreview = (
@@ -54,6 +60,7 @@ class InputFileItem extends Component {
         alignItems="center"
         padding={10}
         paddingBottom={15}
+        testID={testID}
       >
         {hasImagePreview ? (
           <Image

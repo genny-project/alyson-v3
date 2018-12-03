@@ -17,7 +17,7 @@ const handleFilterItem = item => {
   return true;
 };
 
-const HeaderRight = ({ items }) => {
+const HeaderRight = ({ items, testID = 'header-right' }) => {
   const filteredItems = isArray( items ) && items.filter( handleFilterItem );
 
   return (
@@ -26,6 +26,7 @@ const HeaderRight = ({ items }) => {
         <Box
           marginRight={10}
           alignItems="center"
+          testID={testID}
         >
           {isArray( filteredItems, { ofMinLength: 1 }) ? (
             filteredItems.map( item => (
@@ -56,6 +57,7 @@ const headerItemPropTypes = shape({
 
 HeaderRight.propTypes = {
   items: arrayOf( headerItemPropTypes ),
+  testID: string,
 };
 
 export default HeaderRight;

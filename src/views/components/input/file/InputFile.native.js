@@ -16,6 +16,7 @@ class InputFile extends Component {
     multiple: false,
     imageOnly: false,
     config: {},
+    testID: 'input-file',
   }
 
   static propTypes = {
@@ -62,6 +63,7 @@ class InputFile extends Component {
         okTitle: string,
       }),
     }),
+    testID: string,
   }
 
   state = {
@@ -230,7 +232,7 @@ class InputFile extends Component {
   }
 
   render() {
-    const { imageOnly, multiple } = this.props;
+    const { imageOnly, multiple, testID } = this.props;
     const { files } = this.state;
 
     const multipleFiles = (
@@ -242,6 +244,7 @@ class InputFile extends Component {
       <Box
         width="100%"
         flexDirection="column"
+        testID={testID}
       >
         {isArray( files, { ofMinLength: 1 }) ? (
           files.map( file => (

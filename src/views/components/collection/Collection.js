@@ -5,12 +5,14 @@ import { Box } from '../../components';
 const Collection = ({
   children,
   width,
+  testID = 'collection',
   ...restProps
 }) => {
   return (
     <Box
       {...restProps}
       width={width}
+      testID={testID}
     >
       {children}
     </Box>
@@ -22,6 +24,7 @@ Collection.propTypes = {
   width: oneOfType(
     [string, number]
   ),
+  testID: string,
 };
 
 export default Collection;

@@ -1,5 +1,5 @@
 import React, { Component, isValidElement } from 'react';
-import { array, bool, object, any } from 'prop-types';
+import { array, bool, object, any, string } from 'prop-types';
 import { Menu, MenuButton, MenuItem, MenuList, MenuLink } from '@reach/menu-button';
 import { withRouter } from 'react-router-dom';
 import { isArray, isString, Bridge } from '../../../utils';
@@ -12,6 +12,7 @@ class Dropdown extends Component {
     text: any,
     facingRight: bool,
     disabled: bool,
+    testID: string,
     menuButtonStyle: object,
     menuListStyle: object,
     menuLinkStyle: object,
@@ -73,6 +74,7 @@ class Dropdown extends Component {
       menuItemStyle,
       disabled,
       children,
+      testID,
     } = this.props;
 
     return (
@@ -108,6 +110,7 @@ class Dropdown extends Component {
               item.href ? (
                 <MenuLink
                   key={item.text}
+                  testID={testID}
                   to={(
                     item.href === 'home' ? '/'
                     : item.href.startsWith( '/' ) ? item.href

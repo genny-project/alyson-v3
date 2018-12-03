@@ -212,6 +212,7 @@ class Layout extends Component {
           left={0}
           zIndex={0}
           backgroundColor={layout.backgroundColor}
+          testID={layout && layout.layout ? layout.layout.id : 'layout'}
         />
 
         {children}

@@ -11,6 +11,7 @@ const Heading = ({
   align,
   width,
   bold = true,
+  testID = 'heading',
   ...restProps
 }) => {
   return (
@@ -23,6 +24,7 @@ const Heading = ({
       onPress={onPress}
       align={align}
       width={width}
+      testID={testID}
     >
       {children}
     </Text>
@@ -44,6 +46,7 @@ Heading.propTypes = {
   width: oneOfType(
     [string, number]
   ),
+  testID: string,
 };
 
 export default Heading;

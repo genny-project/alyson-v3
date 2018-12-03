@@ -8,6 +8,7 @@ const Image = ({
   source,
   shape,
   children,
+  testID = 'image',
 }) => {
   const borderRadius = {
     square: 0,
@@ -23,6 +24,7 @@ const Image = ({
   ) {
     return (
       <img
+        testID={testID}
         src={source}
         style={{ width, height, borderRadius: borderRadius[shape] }}
       />
@@ -37,6 +39,7 @@ const Image = ({
       justifyContent="center"
       alignItems="center"
       borderRadius={borderRadius[shape]}
+      testID={testID}
     >
       <Icon
         name="photo"
@@ -61,6 +64,7 @@ Image.propTypes = {
   shape: oneOf(
     ['square', 'rounded', 'circle']
   ),
+  testID: string,
 };
 
 export default Image;

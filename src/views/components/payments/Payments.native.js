@@ -9,6 +9,10 @@ import { Bridge, assemblyHtmlBridge } from '../../../utils';
 import { Box, Button, Heading, KeyboardAwareScrollView, WebView, Text, Icon, alert, BlurView } from '../../components';
 
 class Payments extends Component {
+  static defaultProps = {
+    testID: 'payments',
+  }
+
   static propTypes = {
     children: node,
     initialValues: object,
@@ -18,6 +22,7 @@ class Payments extends Component {
     type: oneOf(
       ['bank', 'card']
     ),
+    testID: string,
   }
 
   bankFields = {
@@ -351,7 +356,7 @@ class Payments extends Component {
   }
 
   render() {
-    const { children, initialValues, title, type } = this.props;
+    const { children, initialValues, title, type, testID } = this.props;
     const { miscErrors, isSubmitting, isSubmitted } = this.state;
 
     return (
@@ -363,6 +368,7 @@ class Payments extends Component {
             flex={1}
             flexDirection="column"
             padding={20}
+            testID={testID}
           >
             <Formik
               initialValues={initialValues}

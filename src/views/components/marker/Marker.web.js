@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
-import { number, string, oneOf } from 'prop-types';
+import { number, string, oneOfType } from 'prop-types';
 
 class Marker extends Component {
-  static propTypes = {
-    lat: oneOf( [string, number] ),
-    lng: oneOf( [string, number] ),
-    markerColor: string,
-    markerSize: number,
-  }
-
   static defaultProps = {
     markerColor: 'red',
     markerSize: 30,
+  }
+
+  static propTypes = {
+    lat: oneOfType( [string, number] ),
+    lng: oneOfType( [string, number] ),
+    markerColor: string,
+    markerSize: number,
   }
 
   render() {

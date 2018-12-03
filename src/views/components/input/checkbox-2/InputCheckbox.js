@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
-import { array, func } from 'prop-types';
+import { array, func, string } from 'prop-types';
 import { isArray } from '../../../../utils';
 import { Box, Text, Input } from '../../index';
 
 class InputCheckbox extends Component {
   static defaultProps = {
     value: [],
+    testID: 'input-checkbox',
   }
 
   static propTypes = {
     items: array,
     value: array,
     onChangeValue: func,
+    testID: string,
   }
 
   state = {
@@ -33,13 +35,14 @@ class InputCheckbox extends Component {
   }
 
   render() {
-    const { items } = this.props;
+    const { items, testID } = this.props;
     const { selected } = this.state;
 
     return (
       <Box
         flexDirection="column"
         marginTop={10}
+        testID={testID}
       >
         {isArray( items, { ofMinLength: 1 }) ? (
           items.map( item => (
