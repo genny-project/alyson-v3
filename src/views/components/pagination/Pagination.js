@@ -14,7 +14,7 @@ class Pagination extends Component {
   }
 
   state = {
-    currentPage: 1,
+    currentPage: 0,
   }
 
   handleScrollForMore = ( event ) => {
@@ -30,8 +30,6 @@ class Pagination extends Component {
     const isBottom = scrollHeight - scrollTop === clientHeight;
 
     if ( isBottom ) {
-      console.log( 'END OF SCROLL' );
-
       const value = {
         pageSize: 10,
         pageIndex: this.state.currentPage,
@@ -54,7 +52,7 @@ class Pagination extends Component {
       });
 
       this.setState( state => ({
-        currentPage: state.currentPage++,
+        currentPage: state.currentPage + 1,
       }));
     }
   }

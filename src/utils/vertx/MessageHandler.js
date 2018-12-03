@@ -114,7 +114,8 @@ class MessageHandler {
       );
 
       this.lastBe = new Date().getTime();
-    } else {
+    } 
+    else {
       const payload = message;
 
       if ( isArray( payload.items )) {

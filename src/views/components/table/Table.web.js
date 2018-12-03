@@ -43,6 +43,7 @@ class TableView extends Component {
     selectFirstItemOnMount: bool,
     dispatchActionOnChange: object,
     itemToSelectFirst: object,
+    code: string,
   };
 
   constructor( props ) {
@@ -55,6 +56,8 @@ class TableView extends Component {
   state = {
     selectedItem: null,
     selectedFirstItemOnMount: false,
+    currentPage: 0,
+    totalPages: 1,
   }
 
   componentDidMount() {
@@ -234,6 +237,51 @@ class TableView extends Component {
     }
   }
 
+  handlePreviousPress = () => {
+    if ( this.state.currentPage > 0 ) {
+      this.setState( state => ({
+        currentPage: state.currentPage - 1,
+      }));
+    }
+  }
+  
+  handleNextPress = () => {
+    if ( this.state.currentPage + 1 < this.state.totalPages ) {
+      this.setState( state => ({
+        currentPage: state.currentPage + 1,
+      }));
+    }
+    else {
+      const value = {
+        pageSize: this.props.itemsPerPage,
+        pageIndex: this.state.currentPage,
+      };
+
+      console.log( 'pagesize', this.props.itemsPerPage );
+  
+      const valueString = (
+        value &&
+        typeof value === 'string'
+      )
+        ? value
+        : JSON.stringify( value );
+  
+      Bridge.sendEvent({
+        event: 'PAGINATION',
+        sendWithToken: true,
+        data: {
+          code: this.props.code || null,
+          value: valueString || null,
+        },
+      });
+  
+      this.setState( state => ({
+        currentPage: state.currentPage + 1,
+        totalPages: state.totalPages + 1,
+      }));
+    }
+  }
+
   selectFirstItem() {
     const { data, itemToSelectFirst } = this.props;
 
@@ -263,7 +311,7 @@ class TableView extends Component {
       isSelectable,
     } = this.props;
 
-    const { selectedItem } = this.state;
+    const { selectedItem, currentPage } = this.state;
 
     const tableStyleProps = [];
 
@@ -288,16 +336,38 @@ class TableView extends Component {
 
         {isArray( data ) ? (
           <ReactTable
+            page={currentPage}
             className="react-tbl table -striped -highlight"
             style={[tableStyleProps]}
-            pageSizeOptions={[5, 10, 20, 25, 50, 100]}
-            showPageSizeOptions
             noDataText="No data to Display."
             filterable={filterable}
             data={data}
+            showPageSizeOptions={false}
             columns={this.modifiedTableColumns()}
             pageSize={itemsPerPage}
-            showPagination={data.length > itemsPerPage ? true : false}
+            showPagination
+            PreviousComponent={( props ) => (
+              <Touchable
+                withFeedback
+                onPress={this.handlePreviousPress}
+              >
+                <Text
+                  {...props}
+                  text="Previous"
+                />
+              </Touchable>
+            )}
+            NextComponent={( props ) => (
+              <Touchable
+                withFeedback
+                onPress={this.handleNextPress}
+              >
+                <Text
+                  {...props}
+                  text="Next"
+                />
+              </Touchable>
+            )}
             getTrProps={( state, rowInfo ) => {
               if ( !rowInfo || !isSelectable ) return {};
 
