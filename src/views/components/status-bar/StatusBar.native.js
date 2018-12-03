@@ -3,6 +3,10 @@ import { StatusBar as ReactNativeStatusBar, View } from 'react-native';
 import { string, bool, any } from 'prop-types';
 
 class StatusBar extends Component {
+  static defaultProps = {
+    testID: 'status-bar',
+  }
+
   static propTypes = {
     animated: bool,
     barStyle: string,
@@ -12,6 +16,7 @@ class StatusBar extends Component {
     networkActivityIndicatorVisible: bool,
     showHideTransition: bool,
     children: any,
+    testID: string,
   }
 
   render() {
@@ -24,11 +29,15 @@ class StatusBar extends Component {
       networkActivityIndicatorVisible,
       showHideTransition,
       children,
+      testID,
     } = this.props;
 
     return (
       <Fragment>
-        <View style={{ backgroundColor }}>
+        <View
+          style={{ backgroundColor }}
+          testID={testID}
+        >
           <ReactNativeStatusBar
             animated={animated}
             barStyle={barStyle}

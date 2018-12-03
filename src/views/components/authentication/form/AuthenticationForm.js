@@ -1,17 +1,22 @@
 import React, { Component, Fragment } from 'react';
 import { Platform } from 'react-native';
-import { object, node, oneOf } from 'prop-types';
+import { object, node, oneOf, string } from 'prop-types';
 import { Formik } from 'formik';
 import { location } from '../../../../utils';
 import { withKeycloak, Redirect } from '../../index';
 
 class AuthenticationForm extends Component {
+  static defaultProps = {
+    testID: 'authentication-form',
+  }
+
   static propTypes = {
     keycloak: object,
     children: node,
     type: oneOf(
       ['register', 'login']
     ),
+    testID: string,
   }
 
   state = {
@@ -63,7 +68,7 @@ class AuthenticationForm extends Component {
   }
 
   render() {
-    const { children, keycloak } = this.props;
+    const { children, keycloak, testID } = this.props;
 
     if ( keycloak.isAuthenticated ) {
       const { redirectUri } = this.state;
@@ -83,6 +88,7 @@ class AuthenticationForm extends Component {
         onSubmit={this.handleSubmit}
         validateOnBlur
         enableReinitialize
+        testID={testID}
       >
         {({ handleSubmit }) => (
           Platform.OS === 'web'

@@ -14,6 +14,7 @@ class Chat extends Component {
     },
     messages: [],
     users: [],
+    testID: 'chat',
   };
 
   static propTypes = {
@@ -27,6 +28,7 @@ class Chat extends Component {
     users: array,
     messages: array,
     itemCode: string,
+    testID: string,
     // alwaysShowSend: bool, prop not working in package
   };
 
@@ -170,7 +172,7 @@ class Chat extends Component {
   }
 
   render() {
-    const { user } = this.props;
+    const { user, testID } = this.props;
 
     return (
       <SafeAreaView
@@ -183,6 +185,7 @@ class Chat extends Component {
       >
         <Box
           flex={1}
+          testID={testID}
         >
           <GiftedChat
             messages={this.state.messages}

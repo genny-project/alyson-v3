@@ -9,6 +9,7 @@ ReactModal.setAppElement( '#root' );
 class Modal extends Component {  
   static defaultProps = {
     size: 'sm',
+    testID: 'modal',
   }
 
   static propTypes = {
@@ -17,6 +18,7 @@ class Modal extends Component {
     header: node,
     footer: node,
     onPress: func,
+    testID: string,
   }
 
   handlePress = () => {
@@ -35,6 +37,7 @@ class Modal extends Component {
       size,
       header,
       footer,
+      testID,
     } = this.props;
 
     const containerWidth = {
@@ -64,6 +67,7 @@ class Modal extends Component {
         style={style}
         onRequestClose={this.handleClose}
         shouldCloseOnOverlayClick
+        testID={testID}
       >
         <Box
           position="absolute"

@@ -21,6 +21,7 @@ class Form extends Component {
 
   static defaultProps = {
     loadingText: 'Loading form...',
+    testID: 'form',
     shouldSetInitialValues: true,
     formWrapperProps: {},
     alwaysActiveButtonTypes: [
@@ -48,6 +49,7 @@ class Form extends Component {
     displayInline: bool,
     hideButtonIfDisabled: bool,
     loadingText: string,
+    testID: string,
     shouldSetInitialValues: bool,
     alwaysActiveButtonTypes: array,
   }
@@ -623,6 +625,7 @@ class Form extends Component {
       renderLoading,
       displayInline,
       loadingText,
+      testID,
       formWrapperProps,
       alwaysActiveButtonTypes,
     } = this.props;
@@ -646,6 +649,7 @@ class Form extends Component {
           justifyContent="center"
           alignItems="center"
           flexShrink={0}
+          testID={testID}
         >
           <ActivityIndicator size="large" />
           {
@@ -694,6 +698,7 @@ class Form extends Component {
 
           return (
             <WrapperComponent
+              testID={testID}
               scrollEnabled={!displayInline}
               style={{
                 width: '100%',

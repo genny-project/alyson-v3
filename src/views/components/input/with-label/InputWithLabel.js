@@ -6,6 +6,7 @@ const InputWithLabel = ({
   label,
   error,
   valid,
+  testID = 'input-input-with-label',
   ...restProps
 }) => {
   return (
@@ -13,6 +14,7 @@ const InputWithLabel = ({
       alignItems="center"
       flexDirection="column"
       marginBottom={20}
+      testID={testID}
     >
       <Box
         alignItems="center"
@@ -88,6 +90,7 @@ InputWithLabel.propTypes = {
   label: string,
   error: bool,
   valid: bool,
+  testID: string,
 };
 
 export default InputWithLabel;

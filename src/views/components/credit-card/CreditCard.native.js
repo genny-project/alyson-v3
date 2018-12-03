@@ -15,6 +15,7 @@ const CreditCard = ({
   imageFront,
   imageBack,
   customIcons,
+  testID = 'credit-card-view',
 }) => (
   <CardView
     focused={focused}
@@ -29,6 +30,7 @@ const CreditCard = ({
     imageFront={imageFront}
     imageBack={imageBack}
     customIcons={customIcons}
+    testID={testID}
   />
 );
 
@@ -45,6 +47,7 @@ CreditCard.propTypes = {
   imageFront: number,
   imageBack: number,
   customIcons: object,
+  testID: string,
 };
 
 export default CreditCard;

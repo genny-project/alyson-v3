@@ -9,11 +9,8 @@ class MapView extends Component {
   static defaultProps = {
     height: 300,
     width: window.innerWidth,
-  };
-  
-  static defaultProps = {
     zoom: 3,
-  }
+  };
 
   static propTypes = {
     height: oneOfType( [string, number] ),
@@ -28,19 +25,19 @@ class MapView extends Component {
     return (
       <div>
         <div
-          style={{ 
+          style={{
             position: 'relative',
             top: '80px',
             left: '10px',
             backgroundColor: 'whitesmoke',
-            zIndex: 100, 
+            zIndex: 100,
             width: '200px',
             padding: '8px',
           }}
         >
           <h2>
             Markers available:
-            <span style={{ color: 'blue' }}> 
+            <span style={{ color: 'blue' }}>
               {this.props.children && this.props.children.length - 1}
             </span>
           </h2>

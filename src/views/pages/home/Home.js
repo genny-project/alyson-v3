@@ -27,6 +27,7 @@ class Home extends Component {
           justifyContent="center"
           flex={1}
           height="100%"
+          testID="page-home"
         >
           <Text>
             Home

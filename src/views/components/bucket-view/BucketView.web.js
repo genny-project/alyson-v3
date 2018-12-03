@@ -4,6 +4,10 @@ import { isArray } from '../../../utils';
 import { Box, Text } from '../../components';
 
 class BucketView extends PureComponent {
+  static defaultProps = {
+    testID: 'bucket-view',
+  }
+
   static propTypes = {
     children: any,
     padding: number,
@@ -11,6 +15,7 @@ class BucketView extends PureComponent {
     backgroundColor: string,
     alternateBackgroundColor: string,
     contentProps: object,
+    testID: string,
   }
 
   render() {
@@ -21,6 +26,7 @@ class BucketView extends PureComponent {
       alternateBackgroundColor,
       children,
       contentProps,
+      testID,
       ...restProps
     } = this.props;
 
@@ -31,6 +37,7 @@ class BucketView extends PureComponent {
         height="100%"
         padding={padding}
         backgroundColor={backgroundColor}
+        testID={testID}
       >
         <Box
           width="100%"

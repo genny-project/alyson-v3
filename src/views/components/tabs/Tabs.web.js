@@ -31,6 +31,7 @@ class Tabs extends PureComponent {
     activeTabTextColor: 'white',
     textColor: 'white',
     tabBarSide: 'top',
+    testID: 'tabs',
   }
 
   static propTypes = {
@@ -64,6 +65,7 @@ class Tabs extends PureComponent {
     activeTabIconProps: object,
     inactiveTabIconProps: object,
     childProps: object,
+    testID: string,
     parentRoute: string,
     history: object,
     location: object,
@@ -153,6 +155,7 @@ class Tabs extends PureComponent {
       inactiveTabIconProps,
       tabIconProps,
       childProps,
+      testID,
       ...restProps
     } = this.props;
 
@@ -167,6 +170,7 @@ class Tabs extends PureComponent {
         flex={1}
         height={height}
         width={width}
+        testID={testID}
       >
         <Box
           {...tabWrapperProps}

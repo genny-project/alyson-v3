@@ -16,6 +16,7 @@ class Tabs extends Component {
     dotProps: {},
     tabBarProps: {},
     tabsPosition: 'bottom',
+    testID: 'tabs',
     numberOfAdjacentRoutesToRender: 1,
   }
 
@@ -54,6 +55,7 @@ class Tabs extends Component {
       ['top', 'bottom']
     ),
     dotProps: object,
+    testID: string,
     parentRoute: string,
     numberOfAdjacentRoutesToRender: number,
   }
@@ -360,7 +362,7 @@ class Tabs extends Component {
   }
 
   render() {
-    const { tabsPosition } = this.props;
+    const { tabsPosition, testID } = this.props;
     const { index, routes } = this.state;
     const initialLayout = {
       height: 20,
@@ -377,6 +379,7 @@ class Tabs extends Component {
         height="100%"
         width="100%"
         flexDirection="column"
+        testID={testID}
       >
         {
           this.shouldRenderDots( 'top', 'bottom' )

@@ -7,9 +7,13 @@ const Address = ({
   children,
   format,
   options,
+  testID = 'address',
   ...restProps
 }) => (
-  <Text {...restProps}>
+  <Text
+    testID={testID}
+    {...restProps}
+  >
     {formatAddress(
       children,
       format,
@@ -24,6 +28,7 @@ Address.propTypes = {
   ),
   format: string,
   options: object,
+  testID: string,
 };
 
 export default Address;

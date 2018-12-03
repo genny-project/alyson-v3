@@ -19,6 +19,7 @@ class Header extends Component {
   static defaultProps = {
     paddingX: 5,
     height: 60,
+    testID: 'header',
   }
 
   static propTypes = {
@@ -59,6 +60,7 @@ class Header extends Component {
     navigation: object,
     renderHeader: object,
     user: object,
+    testID: string,
   }
 
   render() {
@@ -76,6 +78,7 @@ class Header extends Component {
       layout,
       title,
       user,
+      testID,
       ...restProps
     } = this.props;
 
@@ -105,6 +108,7 @@ class Header extends Component {
         paddingY={paddingY}
         padding={padding}
         boxShadow={boxShadow}
+        testID={testID}
       >
         <HeaderLeft
           {...headerLeft}

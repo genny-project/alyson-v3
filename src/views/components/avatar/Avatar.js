@@ -8,6 +8,7 @@ const Avatar = ({
   showOnline = false,
   size,
   src,
+  testID = 'avatar',
 }) => {
   const sizes = {
     sm: 30,
@@ -94,6 +95,7 @@ const Avatar = ({
             borderColor="white"
             backgroundColor={onlineColor[showOnline]}
             cleanStyleObject
+            testID={testID}
           /> 
           )
       }
@@ -111,6 +113,7 @@ Avatar.propTypes = {
   showOnline: oneOf(
     ['online', 'offline'] 
   ),
+  testID: string,
 };
 
 export default Avatar;
