@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PDF from 'react-pdf-js';
 import { string, object } from 'prop-types';
 
-class  PdfViewer extends Component  {
+class  PdfViewer extends PureComponent  {
   static propTypes = { 
     file: string,
     style: object,
@@ -30,52 +30,37 @@ class  PdfViewer extends Component  {
     this.setState( prevState => ({ page: prevState.page + 1 }));
   }
 
-  renderPagination = ( page, pages ) => {
-    let previousButton = (
-      <li
-        className="previous"
-        onClick={this.handlePrevious}
-      >
-        <i className="fa fa-arrow-left" />
-          Previous
-      </li>
-    );
-
-    if ( page === 1 ) {
-      previousButton = (
-        <li className="previous disabled">
-          <i className="fa fa-arrow-left" />
-          Previous
-        </li>
-      );
-    }
-    let nextButton = (
-      <li
-        className="next"
-        onClick={this.handleNext}
-      >
-        Next
-        <i className="fa fa-arrow-right" />
-      </li>
-    );
-
-    if ( page === pages ) {
-      nextButton = (
-        <li className="next disabled">
-Next
-          {' '}
-          <i className="fa fa-arrow-right" />
-        </li>
-      );
-    }
-
+  renderPagination = () => {
     return (
-      <nav>
-        <ul className="pager">
-          {previousButton}
-          {nextButton}
+      <div style={{
+        width: '50%',
+        backgroundColor: 'whitesmoke',
+        height: '60px',
+        border: '1px solid #bdbdbd;',
+        position: 'absolute',
+        bottom: '10px',
+      }}
+      >
+        <ul style={ulStyle}>
+          <li
+            onClick={this.handlePrev}
+            style={liStyle}
+          >
+        Previous page
+          </li>
+          <li>
+          Current Page: 
+            {' '}
+            {this.state.page}
+          </li>
+          <li
+            onClick={this.handleNext}
+            style={liStyle}
+          >
+        Next page
+          </li>
         </ul>
-      </nav>
+      </div>
     );
   }
 
@@ -86,11 +71,10 @@ Next
     return (
       <div
         style={{
-          background: 'black',
+          background: 'whitesmoke',
           height: '100%',
           width: '100%',
           overflow: 'scroll',
-          marginBottom: '30px',
           border: '6px solid #e4e4e4',
           display: 'flex',
           flexDirection: 'column',
@@ -108,26 +92,8 @@ Next
           />
         ) : 'File Loading'}
 
-        <div style={{ width: '50%', backgroundColor: 'whitesmoke', height: '60px' }}>
-          <ul style={ulStyle}>
-            <li
-              onClick={this.handlePrev}
-              style={liStyle}
-            >
-          Previous page
-            </li>
-            <li>
-            Current Page:
-              {this.state.page}
-            </li>
-            <li
-              onClick={this.handleNext}
-              style={liStyle}
-            >
-          Next page
-            </li>
-          </ul>
-        </div>
+        {file !== 'undefined' && file != null ? this.renderPagination() : null}
+       
       </div>
     );
   }
