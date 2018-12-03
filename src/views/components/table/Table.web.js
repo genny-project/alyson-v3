@@ -246,18 +246,11 @@ class TableView extends Component {
   }
   
   handleNextPress = () => {
-    if ( this.state.currentPage + 1 < this.state.totalPages ) {
-      this.setState( state => ({
-        currentPage: state.currentPage + 1,
-      }));
-    }
-    else {
+    if ( this.state.currentPage + 1 >= this.state.totalPages ) {
       const value = {
         pageSize: this.props.itemsPerPage,
         pageIndex: this.state.currentPage,
       };
-
-      console.log( 'pagesize', this.props.itemsPerPage );
   
       const valueString = (
         value &&
@@ -276,8 +269,15 @@ class TableView extends Component {
       });
   
       this.setState( state => ({
-        currentPage: state.currentPage + 1,
+        currentPage: isArray( this.props.data, { ofMinLength: this.props.itemsPerPage })
+          ? state.currentPage + 1
+          : state.currentPage,
         totalPages: state.totalPages + 1,
+      }));
+    }
+    else {
+      this.setState( state => ({
+        currentPage: state.currentPage + 1,
       }));
     }
   }

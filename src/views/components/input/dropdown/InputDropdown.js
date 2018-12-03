@@ -248,6 +248,13 @@ class InputDropdown extends Component {
     });
 
     const validItems = isArray( items, { ofMinLength: 1 });
+    const uniqueItems = [];
+
+    items.forEach( item => {
+      if ( uniqueItems.filter( x => x.label === item.label ).length === 0 ) {
+        uniqueItems.push( item );
+      }
+    });
 
     return (
       <Picker
@@ -268,7 +275,7 @@ class InputDropdown extends Component {
               />
             ) : null}
 
-            {items
+            {uniqueItems
               .sort( this.handleSort )
               .map( item => {
                 const isItemObject = isObject( item );

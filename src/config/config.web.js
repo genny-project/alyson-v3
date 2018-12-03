@@ -16,11 +16,6 @@ import {
   GUEST_PASSWORD,
   SIGNATURE_URL,
 } from 'react-native-dotenv';
-import { fetchKeycloakConfig } from '../redux/actions';
-
-const config = fetchKeycloakConfig();
-
-console.log( config ); 
 
 export default {
   APP_NAME,
