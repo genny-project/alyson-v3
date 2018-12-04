@@ -64,6 +64,8 @@ class TableView extends Component {
   componentDidMount() {
     if ( this.props.selectFirstItemOnMount )
       this.selectFirstItem();
+
+    this.resetTableData();
   }
 
   componentDidUpdate( prevProps, prevState ) {
@@ -93,12 +95,18 @@ class TableView extends Component {
     }
   }
 
+  setTotalPages = () => {
+    const { data, itemsPerPage } = this.props;
+
+    return isArray( data, { ofMinLength: 1 }) ? Math.round( data.length / itemsPerPage ) : 1;
+  }
+
   resetTableData = () => {
     this.setState({
       selectedItem: null,
       selectedFirstItemOnMount: false,
       currentPage: 0,
-      totalPages: 1,
+      totalPages: this.setTotalPages(),
       isLoadingNextPage: false,
     });
   }
@@ -301,7 +309,7 @@ class TableView extends Component {
           totalPages: state.totalPages + 1,
           isLoadingNextPage: false,
         }));
-      }, 5000 );
+      }, 3000 );
     }
     else {
       this.setState( state => ({

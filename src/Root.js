@@ -11,10 +11,10 @@ import './utils/layouts-dev';
 console.disableYellowBox = true; // eslint-disable-line no-console
 
 /* --- ADDED FOR LOCAL LAYOUT DEV --- */
-// if ( !this.f ) {
-//   this.f = true;
-//   global.LayoutsDev.load( 'internmatch-new' );
-// }
+if ( !this.f ) {
+  this.f = true;
+  global.LayoutsDev.load( 'internmatch-new' );
+}
 /* ------------------------ */
 
 const Root = () => (
