@@ -29,8 +29,7 @@ In `sublayout.json`
 
 ## Props
 
-```
-layoutName: string,
-layouts: object,
-```
+| Prop Name | Prop Type | Description |
+| :-------- | :-------: | :---------- |
+| layoutName | string | Name of the sublayout to be rendered |
 

@@ -2,17 +2,11 @@
 
 ## Description
 
-Displays data in the Table from provided data
+Component to display data as a table. Uses the react-table package.
 
-## Prop Types
+## Example
 
-```sh
-data: Array
-columns: Array
-```
-
-### Updated Example from internmatch
-
+`parent.json`
 ```json
 {
   "layout": {
@@ -202,4 +196,26 @@ columns: Array
     }
   ]
 }
+```
+
+## Props
+
+| Prop Name | Prop Type | Description |
+| :-------- | :-------: | :---------- |
+| data | array | data to be displayed in the table |
+| columns | array | specifies the headers of the columns and which data field is used for each row cell in that column |
+| filterable | bool | displays filter fields at the top of each column |
+| itemsPerPage | number | number of rows to display per page |
+| tableBackgroundColor | string | colour of the table |
+| tableHeight | oneOfType( [number, string] ) | height of the table |
+| tableWidth | oneOfType( [number, string] ) | width of the table |
+| containerBackgroundColor | string | colour of the table container |
+| buttonTextColor | string | colour of buttons in the table |
+| isSelectable | bool | table rows are selectable, which highlights the row |
+| selectFirstItemOnMount | bool | selects the first row when the table is mounted |
+| itemToSelectFirst | object | specify an item to load first. if not in the data, will default to the first |
+| dispatchActionOnChange | object | an action to dispatch to the store when an item is changed |
+| renderWrapper | object | element that can be rendered as a wrapper around each of the cells in the table |
+| cellContext | object | data to be passed to the context of each cell |
+=======
 ```
