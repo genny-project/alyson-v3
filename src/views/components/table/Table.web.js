@@ -70,7 +70,7 @@ class TableView extends Component {
     if ( this.props.code !== prevProps.code ) {
       this.resetTableData();
     }
-    
+
     if (
       this.props.selectFirstItemOnMount &&
       !this.state.selectedFirstItemOnMount
