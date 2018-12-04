@@ -58,6 +58,7 @@ class TableView extends Component {
     selectedFirstItemOnMount: false,
     currentPage: 0,
     totalPages: 1,
+    isLoadingNextPage: false,
   }
 
   componentDidMount() {
@@ -66,6 +67,10 @@ class TableView extends Component {
   }
 
   componentDidUpdate( prevProps, prevState ) {
+    if ( this.props.code !== prevProps.code ) {
+      this.resetTableData();
+    }
+    
     if (
       this.props.selectFirstItemOnMount &&
       !this.state.selectedFirstItemOnMount
@@ -88,6 +93,16 @@ class TableView extends Component {
     }
   }
 
+  resetTableData = () => {
+    this.setState({
+      selectedItem: null,
+      selectedFirstItemOnMount: false,
+      currentPage: 0,
+      totalPages: 1,
+      isLoadingNextPage: false,
+    });
+  }
+
   handleCellDataChange = cellInfo1 => event => {
     this.renderNumberOfItems();
     const { value } = event.target;
@@ -105,33 +120,30 @@ class TableView extends Component {
     return Bridge.sendAnswer( [message] );
   };
 
-  utilMethod = ( filter, rows ) => {
+  utilMethod = ( filter, rows, column ) => {
     const result = matchSorter( rows, filter.value, { keys: [filter.id] });
 
-    const codes = result.map( row => {
-      return row._original.code;
-    });
-
-    this.handleFilteredChange( codes );
+    this.handleFilteredChange( column.attributeCode, filter.value );
 
     return result;
   };
 
-  handleFilteredChange = items => {
-    if (
-      isArray( items )
-    ) {
-      const filteredCodes = JSON.stringify( items );
+  handleFilteredChange = ( attributeCode, value ) => {
+    // const filteredCodes = JSON.stringify( items );
+    const json = JSON.stringify({
+      attributeCode: attributeCode,
+      value: value,
+    });
 
-      Bridge.sendEvent({
-        event: 'SEARCH',
-        sendWithToken: true,
-        data: {
-          code: 'TABLE_SEARCH',
-          value: filteredCodes,
-        },
-      });
-    }
+    Bridge.sendEvent({
+      event: 'SEARCH',
+      sendWithToken: true,
+      data: {
+        code: this.props.code,
+        // value: filteredCodes,
+        value: json,
+      },
+    });
   };
 
   modifiedTableColumns = () => {
@@ -141,7 +153,11 @@ class TableView extends Component {
 
       if ( columns.length < 1 ) return null;
       const modifiedCells = columns.map( column => {
-        return ({ ...column, ...{ filterMethod: this.utilMethod }, ...{ filterAll: true } });
+        return ({
+          ...column,
+          ...{ filterMethod: ( filter, rows ) => this.utilMethod( filter, rows, column ) },
+          ...{ filterAll: true },
+        });
       });
 
       return modifiedCells;
@@ -246,6 +262,10 @@ class TableView extends Component {
   }
   
   handleNextPress = () => {
+    /* if we are already loading the next page, we do nothing */
+    if ( this.state.isLoadingNextPage ) return;
+
+    /* we check if we are going to a page we currently don't have */
     if ( this.state.currentPage + 1 >= this.state.totalPages ) {
       const value = {
         pageSize: this.props.itemsPerPage,
@@ -258,7 +278,8 @@ class TableView extends Component {
       )
         ? value
         : JSON.stringify( value );
-  
+        
+      /* we ask backend for data */
       Bridge.sendEvent({
         event: 'PAGINATION',
         sendWithToken: true,
@@ -267,13 +288,20 @@ class TableView extends Component {
           value: valueString || null,
         },
       });
-  
-      this.setState( state => ({
-        currentPage: isArray( this.props.data, { ofMinLength: this.props.itemsPerPage })
-          ? state.currentPage + 1
-          : state.currentPage,
-        totalPages: state.totalPages + 1,
-      }));
+      
+      /* we show the loading indicator */
+      this.setState({
+        isLoadingNextPage: true,
+      });
+
+      /* after 5 seconds, we jump to the next page */
+      setTimeout(() => {
+        this.setState( state => ({
+          currentPage: state.currentPage + 1,
+          totalPages: state.totalPages + 1,
+          isLoadingNextPage: false,
+        }));
+      }, 5000 );
     }
     else {
       this.setState( state => ({
@@ -311,7 +339,7 @@ class TableView extends Component {
       isSelectable,
     } = this.props;
 
-    const { selectedItem, currentPage } = this.state;
+    const { selectedItem, currentPage, isLoadingNextPage } = this.state;
 
     const tableStyleProps = [];
 
@@ -364,7 +392,7 @@ class TableView extends Component {
               >
                 <Text
                   {...props}
-                  text="Next"
+                  text={isLoadingNextPage ? 'Loading...' : 'Next'}
                 />
               </Touchable>
             )}
