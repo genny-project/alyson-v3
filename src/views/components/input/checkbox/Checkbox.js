@@ -12,6 +12,7 @@ class CheckBox extends Component {
     value: [],
     horizontal: false,
     radio: false,
+    testID: 'input-checkbox',
   };
 
   static propTypes = {
@@ -20,6 +21,7 @@ class CheckBox extends Component {
     horizontal: bool,
     onChangeValue: func,
     radio: bool,
+    testID: string,
   };
 
   static getDerivedStateFromProps( nextProps, prevState ) {
@@ -61,11 +63,14 @@ class CheckBox extends Component {
   };
 
   render() {
-    const { items, horizontal } = this.props;
+    const { items, horizontal, testID } = this.props;
     const { value } = this.state;
 
     return (
-      <Box flexDirection={horizontal ? 'row' : 'column'}>
+      <Box
+        flexDirection={horizontal ? 'row' : 'column'}
+        testID={testID}
+      >
         {items && items instanceof Array && items.length > 0
           ? items.map( item => {
             return (

@@ -10,6 +10,7 @@
   - [onlyShowIf](#onlyshowif)
   - [dontShowIf](#dontshowif)
   - [conditional](#conditional)
+- [Testing](#testing)
 
 ## Overview
 
@@ -393,3 +394,26 @@ Additionally there is also support for using an array of conditionals as follows
 ```
 
 This allows individual props to have their own conditions.
+
+## Testing
+Testing layouts in V3 can be accomplished in a number of ways:
+- Robot Framework
+- Puppeteer
+- Any other DOM tree based testing framework
+
+The way we accomplish testing is through the use of the `testID` attribute. In web this attribute is mapped to the `data-testid` attribute on DOM elements. On a native device it can also be used to locate a particular view ([https://facebook.github.io/react-native/docs/view#testid](https://facebook.github.io/react-native/docs/view#testid)).
+
+By default the majority of components have default testIDs (button, sidebar, header etc), however this isn't hugely useful for efficient testing. As we can use the layouts functionality to create our own components it is important to take the following steps to ensure that testing can be easily accomplished.
+
+- Make sure that you have the testID prop set on any new components that are created.
+- Make sure that you set the layout ID inside any layouts and sublayouts that you create (example below). This automatically sets a testID on the box that wraps that whole layout when rendered.
+- Additionally making sure that you set the testID prop on any Box components inside your layouts where the box represents a section of UI. For example if you had two boxes inside a layout, 1 containing core user details and another containing contact infomation it would be important to set a testID on both reflecting the purpose.
+
+### Setting a layout ID (Example)
+```json
+"layout": {
+  "id":"my-special-layout"
+},
+"children": [],
+"context": [],
+```

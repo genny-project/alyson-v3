@@ -54,6 +54,7 @@ class Register extends Component {
           alignItems="center"
           flex={1}
           flexDirection="column"
+          testID="page-register"
         >
           <ActivityIndicator
             size="large"

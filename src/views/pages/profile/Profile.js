@@ -13,6 +13,7 @@ class Profile extends Component {
           justifyContent="center"
           alignItems="center"
           flex={1}
+          testID="page-profile"
         >
           <Text>
 Profile

@@ -3,6 +3,10 @@ import { func, oneOfType, string, number } from 'prop-types';
 import { Box, Text } from '../../';
 
 class InputCreditCard extends Component {
+  static defaultProps = {
+    testID: 'input-credit-card',
+  }
+
   static propTypes = {
     onChangeValue: func,
     margin: oneOfType(
@@ -26,6 +30,7 @@ class InputCreditCard extends Component {
     marginLeft: oneOfType(
       [number, string]
     ),
+    testID: string,
   }
 
   handleChange = form => {
@@ -42,6 +47,7 @@ class InputCreditCard extends Component {
       marginRight,
       marginBottom,
       marginLeft,
+      testID,
     } = this.props;
 
     return (
@@ -53,6 +59,7 @@ class InputCreditCard extends Component {
         marginRight={marginRight}
         marginBottom={marginBottom}
         marginLeft={marginLeft}
+        testID={testID}
       >
         <Text>
           TODO Credit Card Input

@@ -3,6 +3,10 @@ import { RefreshControl as ReactNativeRefreshControl } from 'react-native';
 import { string, func, bool, array, number } from 'prop-types';
 
 class RefreshControl extends Component {
+  static defaultProps = {
+    testID: 'refresh-control',
+  }
+
   static propTypes = {
     refreshing: bool,
     colors: array,
@@ -14,6 +18,7 @@ class RefreshControl extends Component {
     titleColor: string,
     onRefresh: func,
     enabled: bool,
+    testID: string,
   }
 
   render() {
@@ -28,6 +33,7 @@ class RefreshControl extends Component {
       titleColor,
       onRefresh,
       enabled,
+      testID,
     } = this.props;
 
     return (
@@ -42,6 +48,7 @@ class RefreshControl extends Component {
         title={title}
         titleColor={titleColor}
         progressViewOffset={progressViewOffset}
+        testID={testID}
       />
     );
   }

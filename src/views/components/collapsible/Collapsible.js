@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { any, bool, func, object } from 'prop-types';
+import { any, bool, func, string, object } from 'prop-types';
 import { TouchableOpacity } from 'react-native';
 import { Box, Icon }  from '../../components';
 import Recursive from '../layout-loader/Recursive';
@@ -7,6 +7,7 @@ import Recursive from '../layout-loader/Recursive';
 class Collapsible extends Component {
   static defaultProps = {
     showHeader: true,
+    testID: 'collapsible',
     wrapperProps: {},
     headerWrapperProps: {},
     headerIconProps: {},
@@ -19,6 +20,7 @@ class Collapsible extends Component {
     // open: bool,
     headerWithoutTouchable: bool,
     onToggle: func,
+    testID: string,
     wrapperProps: object,
     headerWrapperProps: object,
     headerIconProps: object,
@@ -50,6 +52,7 @@ class Collapsible extends Component {
       children,
       showHeader,
       header,
+      testID,
       headerWithoutTouchable,
       wrapperProps,
       headerWrapperProps,
@@ -62,6 +65,7 @@ class Collapsible extends Component {
       <Box
         justifyContent="center"
         flexDirection="column"
+        testID={testID}
         {...wrapperProps}
       >
         {showHeader

@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
-import { any, array } from 'prop-types';
+import { any, array, string } from 'prop-types';
 import { Tabs } from '../../components';
 
 class BucketView extends Component {
   static defaultProps = {
     tabs: [],
+    testID: 'bucket-view',
   }
 
   static propTypes = {
     children: any,
     tabs: array,
+    testID: string,
   }
 
   render() {
     const {
       children,
       tabs,
+      testID,
       ...restProps
     } = this.props;
 
@@ -46,6 +49,7 @@ class BucketView extends Component {
         bottomTabs
         {...restProps}
         tabs={tabData}
+        testID={testID}
       >
         {children}
       </Tabs>

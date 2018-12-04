@@ -10,6 +10,7 @@ class Dropdown extends Component {
   static defaultProps = {
     padding: 20,
     textColor: '#000',
+    testID: 'dropdown',
   }
 
   static propTypes = {
@@ -21,6 +22,7 @@ class Dropdown extends Component {
     onSelect: func,
     textColor: string,
     disabled: bool,
+    testID: string,
   }
 
   handleSelect = item => {
@@ -44,13 +46,14 @@ class Dropdown extends Component {
   }
 
   render() {
-    const { items, text, padding, paddingX, paddingY, textColor, disabled } = this.props;
+    const { items, text, padding, paddingX, paddingY, textColor, disabled, testID } = this.props;
 
     return (
       <PopupMenu
         items={items}
         deriveTextFromItems={item => item.text}
         onSelect={this.handleSelect}
+        testID={testID}
       >
         {({ showPopupMenu, setAnchorRef }) => (
           <TouchableOpacity

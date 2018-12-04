@@ -4,9 +4,14 @@ import { Linking } from 'react-native';
 import { Text, Touchable } from '../index';
 
 class EmailAddress extends Component {
+  static defaultProps = {
+    testID: 'email-address',
+  }
+
   static propTypes = {
     email: string,
     children: node,
+    testID: string,
   }
 
   handlePress = () => {
@@ -27,6 +32,7 @@ class EmailAddress extends Component {
     const {
       children,
       email,
+      testID,
       ...restProps
     } = this.props;
 
@@ -34,6 +40,7 @@ class EmailAddress extends Component {
       <Touchable
         onPress={this.handlePress}
         withFeedback
+        testID={testID}
       >
         {
           children

@@ -20,6 +20,7 @@ class InputFile extends Component {
     defaultValue: [],
     imageOnly: false,
     multiple: false,
+    testID: 'input-file',
   }
 
   static propTypes = {
@@ -30,6 +31,7 @@ class InputFile extends Component {
     value: array,
     imageOnly: bool,
     multiple: bool,
+    testID: string,
     renderItem: object,
     renderInput: object,
     margin: number,
@@ -228,6 +230,7 @@ class InputFile extends Component {
     const {
       imageOnly,
       multiple,
+      testID,
       renderItem,
       renderInput,
       ...restProps
@@ -240,6 +243,7 @@ class InputFile extends Component {
       <Box
         width="100%"
         flexDirection="column"
+        testID={testID}
       >
         {isArray( validFiles, { ofMinLength: 1 }) && (
           validFiles.map( file => {

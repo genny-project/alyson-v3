@@ -8,12 +8,17 @@ Component to display data as a table. Uses the react-table package.
 
 `parent.json`
 ```json
-
 {
   "layout": {
-    "title": "Table View",
+    "title": "Give a Nice title",
     "appColor": "white",
-    "backgroundColor": "#0d0d0d"
+    "backgroundColor": "whitesmoke",
+    "header": {
+      "variant": "default"
+    },
+    "sidebar": {
+      "variant": "default"
+    }
   },
   "children": [
     {
@@ -22,22 +27,84 @@ Component to display data as a table. Uses the react-table package.
         {
           "component": "Table",
           "props": {
+            "renderWrapper": {
+              "component": "EventButton",
+              "props": {
+                "height": "20px",
+                "fontWeight": "300",
+                "fontSize": 10,
+                "eventType": "BTN_CLICK",
+                "buttonCode": "BTN_TABLE_SELECT",
+                "value": {
+                  "itemCode": "_celld.attributeCode",
+                  "hint": "GRP_EDU_PROVIDER_REPRESENTATIVES",
+                  "userCode": "{{user.data.code}}"
+                }
+              }
+            },
             "columns": [
               {
-                "Header": "Full Name",
-                "accessor": "firstName"
+                "Header": "Actions",
+                "accessor": "actions",
+                "renderButton": [
+                  {
+                    "component": "EventButton",
+                    "props": {
+                      "height": "30px",
+                      "width": "80px",
+                      "backgroundColor": "red",
+                      "color": "#5173c6",
+                      "textColor": "#fff",
+                      "text": "Edit",
+                      "buttonCode": "BTN_EDIT_EDU_PROVIDER_STAFF",
+                      "value": {
+                        "itemCode": "{{attributeCode}}"
+                      }
+                    }
+                  },
+                  {
+                    "component": "EventButton",
+                    "props": {
+                      "height": "30px",
+                      "width": "80px",
+                      "backgroundColor": "red",
+                      "color": "#5173c6",
+                      "textColor": "#fff",
+                      "text": "View",
+                      "buttonCode": "BTN_VIEW_EDU_PROVIDER_STAFF",
+                      "value": {
+                        "itemCode": "{{attributeCode}}"
+                      },
+                      "dispatchActionOnClick": {
+                        "type": "ALIAS_ADD",
+                        "payload": {
+                          "alias": "CURRENT_NOTE",
+                          "value": "{{attributeCode}}"
+                        }
+                      }
+                    }
+                  }
+              ]
               },
               {
-                "Header": "Edu Provider",
-                "accessor": "eduProvider"
+                "Header": "First Name",
+                "accessor": "firstName",
+                "filterType": "string"
               },
               {
-                "Header": "Mobile Phone",
-                "accessor": "mobilePhone"
+                "Header": "Email",
+                "accessor": "email",
+                "filterType": "string"
               },
               {
-                "Header": "Username",
-                "accessor": "uname"
+                "Header": "Phone Number",
+                "accessor": "mobilePhone",
+                "filterType": "string"
+              },
+              {
+                "Header": "University ",
+                "accessor": "university",
+                "filterType": "string"
               }
             ],
             "tableBackgroundColor": "#cccccc",
@@ -53,63 +120,85 @@ Component to display data as a table. Uses the react-table package.
   "query": [
     {
       "operator": "getBE",
-      "id": "GRP_INTERNS",
-      "as": "internList"
+      "id": "GRP_EDU_PROVIDER_REPRESENTATIVES",
+      "as": "hostCompanies"
     },
     {
       "operator": "scope",
-      "path": "internList.links",
-      "as": "internList",
+      "path": "hostCompanies",
       "scope": {
-        "operator": "getBE",
-        "basePath": "baseEntities.data",
-        "id": "{{link.targetCode}}",
-        "as": "be"
+        "operator": "populateLinkValues",
+        "withAttributes": true,
+        "multiple": true,
+        "as": "items"
       }
     },
     {
       "operator": "scope",
-      "path": "internList",
+      "path": "hostCompanies",
       "scope": {
         "operator": "scope",
-        "path": "be",
+        "path": "items",
         "scope": {
-          "operator": "populateBEGAttributes",
-          "as": "attributes"
+          "operator": "getBE",
+          "as" : "company",
+          "id": "{{attributes.LNK_EDU_PROVIDER.value}}"
         }
       }
     },
     {
       "operator": "scope",
-      "path": "internList",
+      "path": "hostCompanies",
       "scope": {
-        "operator": "getBE",
-        "as" : "company",
-        "basePath": "baseEntities.data",
-        "id": "{{be.attributes.LNK_EDU_PROVIDER.value}}"
+        "operator": "scope",
+        "path": "items",
+        "scope": {
+          "operator": "scope",
+          "path": "company",
+          "scope": {
+            "operator": "populateAttributes",
+            "as" : "attributes",
+            "code": "{{code}}"
+          }
+        }
       }
     },
     {
       "operator": "scope",
-      "path": "internList",
+      "path": "hostCompanies",
+      "scope": {
+        "operator": "scope",
+        "path": "items",
+        "scope": {
+          "operator": "getBE",
+          "as" : "currentUser",
+          "id": "{{user.data.code}}"
+        }
+      }
+    },
+    {
+      "operator": "scope",
+      "path": "hostCompanies.items",
       "as": "tableData",
       "scope": {
         "operator": "map",
         "fields": {
-          "firstName": "be.attributes.PRI_NAME.value",
-          "eduProvider": "company.name",
-          "mobilePhone": "be.attributes.PRI_MOBILE.value",
-          "uname": "be.attributes.PRI_USERNAME.value"
+          "firstName": "attributes.PRI_FIRSTNAME.value",
+          "email": "attributes.PRI_EMAIL.value",
+          "mobilePhone": "attributes.PRI_MOBILE.value",
+          "university": "company.attributes.PRI_NAME.value",
+          "extraFields": {
+          },
+          "attributeCode": "code",
+          "currentUser": "currentUser.code"
         }
       }
     }
   ]
 }
-
 ```
 
 ## Props
-
 
 | Prop Name | Prop Type | Description |
 | :-------- | :-------: | :---------- |
@@ -128,3 +217,5 @@ Component to display data as a table. Uses the react-table package.
 | dispatchActionOnChange | object | an action to dispatch to the store when an item is changed |
 | renderWrapper | object | element that can be rendered as a wrapper around each of the cells in the table |
 | cellContext | object | data to be passed to the context of each cell |
+=======
+```
