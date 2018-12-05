@@ -123,6 +123,13 @@ class InputDropdown extends Component {
     return false;
   }
 
+  injectNativeProps( nativeProps ) {
+    if ( !this.picker ) return;
+    if ( !this.picker.setNativeProps ) return;
+
+    this.picker.setNativeProps( nativeProps );
+  }
+
   handleChange = value => {
     const { placeholder } = this.props;
 
@@ -161,13 +168,6 @@ class InputDropdown extends Component {
     if ( stringA > stringB ) return 1;
 
     return 0;
-  }
-
-  injectNativeProps( nativeProps ) {
-    if ( !this.picker ) return;
-    if ( !this.picker.setNativeProps ) return;
-
-    this.picker.setNativeProps( nativeProps );
   }
 
   render() {

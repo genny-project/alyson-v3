@@ -26,7 +26,7 @@ class RichTextEditor extends React.Component {
     height: 'auto',
     width: '100%',
   }
-  
+
   static propTypes = {
     backgroundColor: string,
     editorBackgroundColor: string,
@@ -49,6 +49,82 @@ class RichTextEditor extends React.Component {
     const { value } = this.state;
 
     return value.blocks.some( node => node.type === type );
+  };
+
+  onClickMark = ( event, type ) => {
+    event.preventDefault();
+    const { value } = this.state;
+    const change = value.change().toggleMark( type );
+
+    this.handleChange( change );
+  };
+
+  onClickBlock = ( event, type ) => {
+    event.preventDefault();
+    const { value } = this.state;
+    const change = value.change();
+    const { document } = value;
+
+    // Handle everything but list buttons.
+    if ( type !== 'bulleted-list' && type !== 'numbered-list' ) {
+      const isActive = this.hasBlock( type );
+      const isList = this.hasBlock( 'list-item' );
+
+      if ( isList ) {
+        change
+          .setBlocks( isActive ? DEFAULT_NODE : type )
+          .unwrapBlock( 'bulleted-list' )
+          .unwrapBlock( 'numbered-list' );
+      } else {
+        change.setBlocks( isActive ? DEFAULT_NODE : type );
+      }
+    } else {
+      // Handle the extra wrapping required for list buttons.
+      const isList = this.hasBlock( 'list-item' );
+      const isType = value.blocks.some( block => {
+        return !!document.getClosest( block.key, parent => parent.type === type );
+      });
+
+      if ( isList && isType ) {
+        change
+          .setBlocks( DEFAULT_NODE )
+          .unwrapBlock( 'bulleted-list' )
+          .unwrapBlock( 'numbered-list' );
+      } else if ( isList ) {
+        change
+          .unwrapBlock(
+            type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list'
+          )
+          .wrapBlock( type );
+      } else {
+        change.setBlocks( 'list-item' ).wrapBlock( type );
+      }
+    }
+    this.handleChange( change );
+  };
+
+  handleChange = ({ value }) => {
+    this.setState({ value });
+  };
+
+  handleKeyDown = ( event, change ) => {
+    let mark;
+
+    if ( isBoldHotkey( event )) {
+      mark = 'bold';
+    } else if ( isItalicHotkey( event )) {
+      mark = 'italic';
+    } else if ( isUnderlinedHotkey( event )) {
+      mark = 'underlined';
+    } else if ( isCodeHotkey( event )) {
+      mark = 'code';
+    } else {
+      return;
+    }
+    event.preventDefault();
+    change.toggleMark( mark );
+
+    return true;
   };
 
   renderMarkButton = ( type, icon ) => {
@@ -82,7 +158,7 @@ class RichTextEditor extends React.Component {
         active={isActive}
         onMouseDown={event => this.onClickBlock( event, type )}
       >
-        <Icon 
+        <Icon
           name={icon}
           color={`${isActive ? 'black' : 'rgb(204,204,204)'}`}
         />
@@ -101,7 +177,7 @@ class RichTextEditor extends React.Component {
             {children}
           </blockquote>
         );
-      case 'paragraph': 
+      case 'paragraph':
         return (
           <p {...attributes}>
             {children}
@@ -183,82 +259,6 @@ class RichTextEditor extends React.Component {
     }
   };
 
-  handleChange = ({ value }) => {
-    this.setState({ value });
-  };
-
-  handleKeyDown = ( event, change ) => {
-    let mark;
-
-    if ( isBoldHotkey( event )) {
-      mark = 'bold';
-    } else if ( isItalicHotkey( event )) {
-      mark = 'italic';
-    } else if ( isUnderlinedHotkey( event )) {
-      mark = 'underlined';
-    } else if ( isCodeHotkey( event )) {
-      mark = 'code';
-    } else {
-      return;
-    }
-    event.preventDefault();
-    change.toggleMark( mark );
-    
-    return true;
-  };
-
-  onClickMark = ( event, type ) => {
-    event.preventDefault();
-    const { value } = this.state;
-    const change = value.change().toggleMark( type );
-
-    this.handleChange( change );
-  };
-
-  onClickBlock = ( event, type ) => {
-    event.preventDefault();
-    const { value } = this.state;
-    const change = value.change();
-    const { document } = value;
-
-    // Handle everything but list buttons.
-    if ( type !== 'bulleted-list' && type !== 'numbered-list' ) {
-      const isActive = this.hasBlock( type );
-      const isList = this.hasBlock( 'list-item' );
-
-      if ( isList ) {
-        change
-          .setBlocks( isActive ? DEFAULT_NODE : type )
-          .unwrapBlock( 'bulleted-list' )
-          .unwrapBlock( 'numbered-list' );
-      } else {
-        change.setBlocks( isActive ? DEFAULT_NODE : type );
-      }
-    } else {
-      // Handle the extra wrapping required for list buttons.
-      const isList = this.hasBlock( 'list-item' );
-      const isType = value.blocks.some( block => {
-        return !!document.getClosest( block.key, parent => parent.type === type );
-      });
-
-      if ( isList && isType ) {
-        change
-          .setBlocks( DEFAULT_NODE )
-          .unwrapBlock( 'bulleted-list' )
-          .unwrapBlock( 'numbered-list' );
-      } else if ( isList ) {
-        change
-          .unwrapBlock(
-            type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list'
-          )
-          .wrapBlock( type );
-      } else {
-        change.setBlocks( 'list-item' ).wrapBlock( type );
-      }
-    }
-    this.handleChange( change );
-  };
-
   render() {
     const { backgroundColor, width, height, editorBackgroundColor } = this.props;
 
@@ -288,7 +288,7 @@ class RichTextEditor extends React.Component {
           style={
             { backgroundColor: 'white',
               height: 400, margin: 0,
-              padding: 10, 
+              padding: 10,
             }
             }
           autoFocus

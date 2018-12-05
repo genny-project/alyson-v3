@@ -210,6 +210,16 @@ class Input extends PureComponent {
       : 'grey';
   }
 
+  focus() {
+    if ( this.input )
+      this.input.focus();
+  }
+
+  blur() {
+    if ( this.input )
+      this.input.blur();
+  }
+
   handleRef = input => {
     this.input = input;
   }
@@ -242,16 +252,6 @@ class Input extends PureComponent {
 
     if ( this.props.onBlur )
       this.props.onBlur( event );
-  }
-
-  focus() {
-    if ( this.input )
-      this.input.focus();
-  }
-
-  blur() {
-    if ( this.input )
-      this.input.blur();
   }
 
   renderPrefix() {

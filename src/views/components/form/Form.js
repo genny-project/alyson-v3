@@ -17,8 +17,6 @@ import { hideDialog } from '../../../redux/actions';
 const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE'];
 
 class Form extends Component {
-  inputRefs = {}
-
   static defaultProps = {
     loadingText: 'Loading form...',
     testID: 'form',
@@ -53,6 +51,8 @@ class Form extends Component {
     shouldSetInitialValues: bool,
     alwaysActiveButtonTypes: array,
   }
+
+  inputRefs = {}
 
   state = {
     validationList: {},
