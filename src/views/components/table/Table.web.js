@@ -59,6 +59,7 @@ class TableView extends Component {
     currentPage: 0,
     totalPages: 1,
     isLoadingNextPage: false,
+    lastSentFilter: null,
   }
 
   componentDidMount() {
@@ -131,6 +132,8 @@ class TableView extends Component {
   utilMethod = ( filter, rows, column ) => {
     const result = matchSorter( rows, filter.value, { keys: [filter.id] });
 
+    if ( this.state.lastSentFilter === filter.value ) return result;
+
     this.handleFilteredChange( column.attributeCode, filter.value );
 
     return result;
@@ -151,6 +154,10 @@ class TableView extends Component {
         // value: filteredCodes,
         value: json,
       },
+    });
+
+    this.setState({
+      lastSentFilter: value,
     });
   };
 
@@ -302,7 +309,7 @@ class TableView extends Component {
         isLoadingNextPage: true,
       });
 
-      /* after 5 seconds, we jump to the next page */
+      /* after 3 seconds, we jump to the next page */
       setTimeout(() => {
         this.setState( state => ({
           currentPage: state.currentPage + 1,
