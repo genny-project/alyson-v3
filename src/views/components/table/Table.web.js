@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce';
 import dlv from 'dlv';
 
 import 'react-table/react-table.css';
-import { Bridge, isArray, injectDataIntoProps } from '../../../utils';
+import { Bridge, isArray, isObject, injectDataIntoProps } from '../../../utils';
 import { store } from '../../../redux';
 import { Box, Recursive, Touchable, Text } from '../../components';
 
@@ -150,6 +150,23 @@ class TableView extends Component {
     return result;
   };
 
+  selectFirstItem() {
+    const { data, itemToSelectFirst } = this.props;
+
+    if ( isArray( data, { ofMinLength: 1 })) {
+      const isItemInData = ( item ) => {
+        if ( !isObject( item )) return false;
+
+        return data.filter( row => row.code === item.code ) > 0;
+      };
+
+      const item = isItemInData( itemToSelectFirst ) ? itemToSelectFirst : data[0];
+
+      this.handleSelect( item );
+      this.setState({ selectedFirstItemOnMount: true });
+    }
+  }
+
   modifiedTableColumns = () => {
     /* make all the columns searchable  this is used for searching oneach column */
     const addFilterMethodsToColumn = () => {
@@ -246,6 +263,19 @@ class TableView extends Component {
     );
   }
 
+  handleCellDataChange = cellInfo1 => event => {
+    this.renderNumberOfItems();
+    const { value } = event.target;
+
+    /* Send data to the bridge */
+    this.sendMessageToBridge({
+      attributeCode: cellInfo1.column.attributeCode,
+      sourceCode: cellInfo1.column.sourceCode,
+      targetCode: cellInfo1.column.targetCode,
+      value: value,
+    });
+  }
+
   handleFilteredChange = ( attributeCode, value, result ) => {
     const json = JSON.stringify({
       attributeCode: attributeCode,
@@ -291,7 +321,7 @@ class TableView extends Component {
       }));
     }
   }
-
+  
   handleNextPress = () => {
     /* if we are already loading the next page, we do nothing */
     if ( this.state.isLoadingNextPage ) return;
@@ -302,14 +332,14 @@ class TableView extends Component {
         pageSize: this.props.itemsPerPage,
         pageIndex: this.state.currentPage,
       };
-
+  
       const valueString = (
         value &&
         typeof value === 'string'
       )
         ? value
         : JSON.stringify( value );
-
+        
       /* we ask backend for data */
       Bridge.sendEvent({
         event: 'PAGINATION',
@@ -319,7 +349,7 @@ class TableView extends Component {
           value: valueString || null,
         },
       });
-
+      
       /* we show the loading indicator */
       this.setState({
         isLoadingNextPage: true,
@@ -339,71 +369,6 @@ class TableView extends Component {
         currentPage: state.currentPage + 1,
       }));
     }
-  }
-
-  handleFilteredChange = items => {
-    if (
-      isArray( items )
-    ) {
-      const filteredCodes = JSON.stringify( items );
-
-      Bridge.sendEvent({
-        event: 'SEARCH',
-        sendWithToken: true,
-        data: {
-          code: 'TABLE_SEARCH',
-          value: filteredCodes,
-        },
-      });
-    }
-  };
-
-  handleFilteredChange = ( attributeCode, value ) => {
-    // const filteredCodes = JSON.stringify( items );
-    const json = JSON.stringify({
-      attributeCode: attributeCode,
-      value: value,
-    });
-
-    Bridge.sendEvent({
-      event: 'SEARCH',
-      sendWithToken: true,
-      data: {
-        code: this.props.code,
-        // value: filteredCodes,
-        value: json,
-      },
-    });
-
-    this.setState({
-      lastSentFilter: value,
-    });
-  };
-
-  handleCellDataChange = cellInfo1 => event => {
-    this.renderNumberOfItems();
-    const { value } = event.target;
-
-    /* Send data to the bridge */
-    this.sendMessageToBridge({
-      attributeCode: cellInfo1.column.attributeCode,
-      sourceCode: cellInfo1.column.sourceCode,
-      targetCode: cellInfo1.column.targetCode,
-      value: value,
-    });
-  }
-
-  handleCellDataChange = cellInfo1 => event => {
-    this.renderNumberOfItems();
-    const { value } = event.target;
-
-    /* Send data to the bridge */
-    this.sendMessageToBridge({
-      attributeCode: cellInfo1.column.attributeCode,
-      sourceCode: cellInfo1.column.sourceCode,
-      targetCode: cellInfo1.column.targetCode,
-      value: value,
-    });
   }
 
   render() {
