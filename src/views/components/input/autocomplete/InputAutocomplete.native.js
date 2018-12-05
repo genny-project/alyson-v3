@@ -71,10 +71,8 @@ class InputAutocomplete extends Component {
     const { data } = store.getState().vertx.baseEntities;
 
     if ( selectedItem && data && this.props.defaultValue !== selectedItem ) {
-      console.log( data );
       Object.keys( data ).forEach( be => {
         if ( data[be].name === selectedItem ) {
-          console.log( 'sending' );
           Bridge.sendEvent({
             event: 'BTN',
             eventType: 'BTN_CLICK',

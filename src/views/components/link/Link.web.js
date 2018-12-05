@@ -5,6 +5,11 @@ import { withKeycloak } from '../keycloak';
 import { Touchable } from '../index';
 
 class Link extends Component {
+  focus() {
+    if ( this.link )
+      this.link.focus();
+  }
+
   handleClick = event => {
     const { onPress, disabled } = this.props;
 
@@ -26,11 +31,6 @@ class Link extends Component {
       history.push( to );
 
     this.handleClick( event );
-  }
-
-  focus() {
-    if ( this.link )
-      this.link.focus();
   }
 
   render() {

@@ -39,6 +39,7 @@ class Logout extends Component {
       await attemptLogout();
     }
     catch ( e ) {
+      // eslint-disable-next-line no-console
       console.warn({ e });
     }
 
@@ -46,12 +47,8 @@ class Logout extends Component {
   }
 
   handleNavigationStateChange = event => {
-    console.warn({ event });
-
     if ( event.url.startsWith( config.keycloak.redirectUri )) {
       this.setState({ isKeycloakSessionDestroyed: true });
-
-      console.warn( 'keycloak webview done' );
     }
   }
 

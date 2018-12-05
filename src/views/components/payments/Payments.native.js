@@ -169,6 +169,53 @@ class Payments extends Component {
       this.setState({ bankToken });
   }
 
+  doValidate = values => {
+    if ( !values )
+      return {};
+
+    const { type } = this.props;
+    const errors = {};
+    const fields = type === 'bank'
+      ? this.bankFields
+      : this.cardFields;
+
+    Object.keys( values ).forEach( field => {
+      if ( !fields[field] ) {
+        errors[field] = 'Please enter this field';
+      }
+      else {
+        const value = values[field];
+        const { validation } = fields[field];
+
+        if ( validation ) {
+          let valid = true;
+
+          if ( validation.regex )
+            valid = new RegExp( validation.regex ).test( value );
+
+          if ( validation.assert )
+            valid = value === validation.assert;
+
+          if ( !valid )
+            errors[field] = validation.error || 'Please enter this field';
+        }
+      }
+    });
+
+    return errors;
+  }
+
+  sendMessageToWebView = message => {
+    this.webview.postMessage( message );
+  }
+
+  sendNewPaymentMethodToBridge( data ) {
+    Bridge.sendButtonEvent( 'PAYMENT_SUBMIT', {
+      code: 'USER_ADD_NEW_PAYMENT_METHOD',
+      value: JSON.stringify( data ),
+    });
+  }
+
   handleMessage = form => message => {
     if ( !message || !message.type )
       return;
@@ -184,6 +231,7 @@ class Payments extends Component {
       }
 
       case 'CREATE_CARD_ACCOUNT_SUCCESS': {
+        // eslint-disable-next-line no-console
         console.warn( 'success!', payload );
 
         this.setState({
@@ -203,6 +251,7 @@ class Payments extends Component {
       }
 
       case 'CREATE_BANK_ACCOUNT_SUCCESS': {
+        // eslint-disable-next-line no-console
         console.warn( 'success!', payload );
 
         this.setState({
@@ -305,53 +354,6 @@ class Payments extends Component {
         token,
         data,
       },
-    });
-  }
-
-  doValidate = values => {
-    if ( !values )
-      return {};
-
-    const { type } = this.props;
-    const errors = {};
-    const fields = type === 'bank'
-      ? this.bankFields
-      : this.cardFields;
-
-    Object.keys( values ).forEach( field => {
-      if ( !fields[field] ) {
-        errors[field] = 'Please enter this field';
-      }
-      else {
-        const value = values[field];
-        const { validation } = fields[field];
-
-        if ( validation ) {
-          let valid = true;
-
-          if ( validation.regex )
-            valid = new RegExp( validation.regex ).test( value );
-
-          if ( validation.assert )
-            valid = value === validation.assert;
-
-          if ( !valid )
-            errors[field] = validation.error || 'Please enter this field';
-        }
-      }
-    });
-
-    return errors;
-  }
-
-  sendMessageToWebView = message => {
-    this.webview.postMessage( message );
-  }
-
-  sendNewPaymentMethodToBridge( data ) {
-    Bridge.sendButtonEvent( 'PAYMENT_SUBMIT', {
-      code: 'USER_ADD_NEW_PAYMENT_METHOD',
-      value: JSON.stringify( data ),
     });
   }
 

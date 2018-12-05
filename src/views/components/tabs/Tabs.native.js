@@ -77,6 +77,28 @@ class Tabs extends Component {
     sceneHeights: {},
   }
 
+  shouldRenderDots = ( requiredDotsPosition, requiredTabsPosition ) => {
+    const { showDots, dotsPosition, tabsPosition, children, dotProps } = this.props;
+    const { index } = this.state;
+
+    if (
+      !showDots ||
+      !isArray( children, { ofMinLength: 1 }) ||
+      dotsPosition !== requiredDotsPosition ||
+      tabsPosition !== requiredTabsPosition
+    ) {
+      return null;
+    }
+
+    return (
+      <TabDots
+        {...dotProps}
+        numberOfDots={children.length}
+        currentIndex={index}
+      />
+    );
+  }
+
   handleIndexChange = index => {
     const routeObject = this.state.routes.filter( x => x.key === index )[0];
 
@@ -107,28 +129,6 @@ class Tabs extends Component {
         [route && route.key]: height,
       },
     }));
-  }
-
-  shouldRenderDots = ( requiredDotsPosition, requiredTabsPosition ) => {
-    const { showDots, dotsPosition, tabsPosition, children, dotProps } = this.props;
-    const { index } = this.state;
-
-    if (
-      !showDots ||
-      !isArray( children, { ofMinLength: 1 }) ||
-      dotsPosition !== requiredDotsPosition ||
-      tabsPosition !== requiredTabsPosition
-    ) {
-      return null;
-    }
-
-    return (
-      <TabDots
-        {...dotProps}
-        numberOfDots={children.length}
-        currentIndex={index}
-      />
-    );
   }
 
   renderPager = ( props ) => {

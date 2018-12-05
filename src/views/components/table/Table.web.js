@@ -88,22 +88,26 @@ class TableView extends Component {
     }
   }
 
-  handleCellDataChange = cellInfo1 => event => {
-    this.renderNumberOfItems();
-    const { value } = event.target;
-
-    /* Send data to the bridge */
-    this.sendMessageToBridge({
-      attributeCode: cellInfo1.column.attributeCode,
-      sourceCode: cellInfo1.column.sourceCode,
-      targetCode: cellInfo1.column.targetCode,
-      value: value,
-    });
-  }
-
   sendMessageToBridge = message => {
     return Bridge.sendAnswer( [message] );
   };
+
+  selectFirstItem() {
+    const { data, itemToSelectFirst } = this.props;
+
+    if ( isArray( data, { ofMinLength: 1 })) {
+      const isItemInData = ( item ) => {
+        if ( !isObject( item )) return false;
+
+        return data.filter( row => row.code === item.code ) > 0;
+      };
+
+      const item = isItemInData( itemToSelectFirst ) ? itemToSelectFirst : data[0];
+
+      this.handleSelect( item );
+      this.setState({ selectedFirstItemOnMount: true });
+    }
+  }
 
   utilMethod = ( filter, rows ) => {
     const result = matchSorter( rows, filter.value, { keys: [filter.id] });
@@ -115,23 +119,6 @@ class TableView extends Component {
     this.handleFilteredChange( codes );
 
     return result;
-  };
-
-  handleFilteredChange = items => {
-    if (
-      isArray( items )
-    ) {
-      const filteredCodes = JSON.stringify( items );
-
-      Bridge.sendEvent({
-        event: 'SEARCH',
-        sendWithToken: true,
-        data: {
-          code: 'TABLE_SEARCH',
-          value: filteredCodes,
-        },
-      });
-    }
   };
 
   modifiedTableColumns = () => {
@@ -244,21 +231,21 @@ class TableView extends Component {
       }));
     }
   }
-  
+
   handleNextPress = () => {
     if ( this.state.currentPage + 1 >= this.state.totalPages ) {
       const value = {
         pageSize: this.props.itemsPerPage,
         pageIndex: this.state.currentPage,
       };
-  
+
       const valueString = (
         value &&
         typeof value === 'string'
       )
         ? value
         : JSON.stringify( value );
-  
+
       Bridge.sendEvent({
         event: 'PAGINATION',
         sendWithToken: true,
@@ -267,7 +254,7 @@ class TableView extends Component {
           value: valueString || null,
         },
       });
-  
+
       this.setState( state => ({
         currentPage: isArray( this.props.data, { ofMinLength: this.props.itemsPerPage })
           ? state.currentPage + 1
@@ -282,21 +269,34 @@ class TableView extends Component {
     }
   }
 
-  selectFirstItem() {
-    const { data, itemToSelectFirst } = this.props;
+  handleFilteredChange = items => {
+    if (
+      isArray( items )
+    ) {
+      const filteredCodes = JSON.stringify( items );
 
-    if ( isArray( data, { ofMinLength: 1 })) {
-      const isItemInData = ( item ) => {
-        if ( !isObject( item )) return false;
-
-        return data.filter( row => row.code === item.code ) > 0;
-      };
-
-      const item = isItemInData( itemToSelectFirst ) ? itemToSelectFirst : data[0];
-
-      this.handleSelect( item );
-      this.setState({ selectedFirstItemOnMount: true });
+      Bridge.sendEvent({
+        event: 'SEARCH',
+        sendWithToken: true,
+        data: {
+          code: 'TABLE_SEARCH',
+          value: filteredCodes,
+        },
+      });
     }
+  };
+
+  handleCellDataChange = cellInfo1 => event => {
+    this.renderNumberOfItems();
+    const { value } = event.target;
+
+    /* Send data to the bridge */
+    this.sendMessageToBridge({
+      attributeCode: cellInfo1.column.attributeCode,
+      sourceCode: cellInfo1.column.sourceCode,
+      targetCode: cellInfo1.column.targetCode,
+      value: value,
+    });
   }
 
   render() {

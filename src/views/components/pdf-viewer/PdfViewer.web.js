@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
-import PDF from 'react-pdf-js';
+import Pdf from 'react-pdf-js';
 import { string, object } from 'prop-types';
 
 class  PdfViewer extends PureComponent  {
-  static propTypes = { 
+  static propTypes = {
     file: string,
     style: object,
   };
@@ -20,7 +20,7 @@ class  PdfViewer extends PureComponent  {
   handlePrev = () => {
     const { page } = this.state;
 
-    // dont decrease page size if the page number is 1 
+    // dont decrease page size if the page number is 1
     if ( !( page < 1 )) {
       this.setState( prevState => ({ page: prevState.page - 1 }));
     }
@@ -49,7 +49,7 @@ class  PdfViewer extends PureComponent  {
         Previous page
           </li>
           <li>
-          Current Page: 
+          Current Page:
             {' '}
             {this.state.page}
           </li>
@@ -84,7 +84,7 @@ class  PdfViewer extends PureComponent  {
         }}
       >
         {file !== 'undefined' && file != null ? (
-          <PDF
+          <Pdf
             style={{ width: '700px' }}
             onDocumentComplete={this.handleDocumentComplete}
             file={file}
@@ -93,7 +93,7 @@ class  PdfViewer extends PureComponent  {
         ) : 'File Loading'}
 
         {file !== 'undefined' && file != null ? this.renderPagination() : null}
-       
+
       </div>
     );
   }
@@ -108,7 +108,7 @@ const ulStyle = {
   justifyContent: 'space-around',
 };
 
-const liStyle = { 
+const liStyle = {
   cursor: 'pointer',
   borderBottom: '2px solid #444',
   paddingBottom: '2px',

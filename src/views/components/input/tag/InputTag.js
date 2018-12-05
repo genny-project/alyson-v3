@@ -46,6 +46,29 @@ class InputTag extends Component {
     return isObject( item ) ? item[this.props.itemStringKey] : item;
   }
 
+  addItemToPreSelection = ( item, callback ) => {
+    const { itemValueKey } = this.props;
+
+    this.setState(
+      ({ preSelected }) => ({
+        preSelected: preSelected.filter( i => i[itemValueKey] === item[itemValueKey] ).length > 0
+          ? preSelected.filter( i => i[itemValueKey] !== item[itemValueKey] )
+          : [...preSelected, item],
+      }), () => {
+        if ( callback ) callback( this.state.preSelected );
+      });
+  }
+
+  removeItemToPreSelection = ( item ) => {
+    const { itemValueKey } = this.props;
+
+    this.setState(
+      ({ preSelected }) => ({
+        preSelected: preSelected.filter( i => i[itemValueKey] !== item[itemValueKey] ),
+      })
+    );
+  }
+
   handleChange = selectedItems => {
     if ( this.props.onChangeValue ) {
       this.props.onChangeValue( selectedItems.map( i => i[this.props.itemValueKey]
@@ -76,29 +99,6 @@ class InputTag extends Component {
     }
 
     return false;
-  }
-
-  addItemToPreSelection = ( item, callback ) => {
-    const { itemValueKey } = this.props;
-
-    this.setState(
-      ({ preSelected }) => ({
-        preSelected: preSelected.filter( i => i[itemValueKey] === item[itemValueKey] ).length > 0
-          ? preSelected.filter( i => i[itemValueKey] !== item[itemValueKey] )
-          : [...preSelected, item],
-      }), () => {
-        if ( callback ) callback( this.state.preSelected );
-      });
-  }
-
-  removeItemToPreSelection = ( item ) => {
-    const { itemValueKey } = this.props;
-
-    this.setState(
-      ({ preSelected }) => ({
-        preSelected: preSelected.filter( i => i[itemValueKey] !== item[itemValueKey] ),
-      })
-    );
   }
 
   render() {
