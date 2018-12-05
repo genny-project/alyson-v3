@@ -440,9 +440,11 @@ class TableView extends Component {
                     />
                   </Box>
                 </Touchable>
-                <Text 
-                  text={`${currentPage + 1} of ${Math.round( totalItems / itemsPerPage )}`}
-                />
+                {  totalItems && itemsPerPage ?  (
+                  <Text 
+                    text={`${currentPage + 1} of ${Math.round( totalItems / itemsPerPage )}`}
+                  />
+                ) : null}
                 <Touchable
                   withFeedback
                   onPress={this.handleNextPress}
