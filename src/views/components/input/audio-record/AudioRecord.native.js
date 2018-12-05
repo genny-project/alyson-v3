@@ -26,65 +26,6 @@ class AudioRecord extends Component {
     audioRecorderPlayer: new AudioRecorderPlayer(),
   }
 
-  onStartRecord = async () => {
-    const { audioRecorderPlayer } = this.state;
-
-    audioRecorderPlayer.id = 123;
-    const path = `${RNFS.TemporaryDirectoryPath}sound.m4a`;
-
-    await audioRecorderPlayer.startRecord( path );
-    this.setState( state => ({
-      recording: !state.recording,
-    }));
-  }
-  
-  onStopRecord = async () => {
-    const { audioRecorderPlayer } = this.state;
-
-    this.setState( state => ({
-      recordSecs: 0,
-      recording: !state.recording,
-    }));
-
-    await audioRecorderPlayer.stopRecord();
-
-    const path = `${RNFS.TemporaryDirectoryPath}sound.m4a`;
-
-    if ( path && this.props.onChangeValue ) {
-      // this.props.onChangeValue('record.mp4');
-      this.uploadFile( path, 'record' );
-    }
-  }
-
-  onStartPlay = async () => {
-    const { audioRecorderPlayer } = this.state;
-
-    const path = `${RNFS.TemporaryDirectoryPath}sound.m4a`;
-
-    await audioRecorderPlayer.startPlay( path );
-
-    this.setState( state => ({
-      playback: !state.playback,
-    }));
-  }
-  
-  onPausePlay = async () => {
-    const { audioRecorderPlayer } = this.state;
-
-    await audioRecorderPlayer.pausePlay();
-  }
-  
-  onStopPlay = async () => {
-    const { audioRecorderPlayer } = this.state;
-
-    audioRecorderPlayer.stopPlay();
-    audioRecorderPlayer.removePlayBackListener();
-
-    this.setState( state => ({
-      playback: !state.playback,
-    }));
-  }
-
   uploadFile = async ( uri, fileName ) => {
     const fileParts = /\.(\w+)$/.exec( fileName );
     const mimeType = fileParts ? mime.contentType( fileParts[1] ).split( ';' )[0] : 'file';
@@ -162,6 +103,65 @@ class AudioRecord extends Component {
     if ( formattedFile && formattedFile.uploadURL && this.props.onChangeValue ) {
       this.props.onChangeValue( formattedFile.uploadURL );
     }
+  }
+
+  onStartRecord = async () => {
+    const { audioRecorderPlayer } = this.state;
+
+    audioRecorderPlayer.id = 123;
+    const path = `${RNFS.TemporaryDirectoryPath}sound.m4a`;
+
+    await audioRecorderPlayer.startRecord( path );
+    this.setState( state => ({
+      recording: !state.recording,
+    }));
+  }
+
+  onStopRecord = async () => {
+    const { audioRecorderPlayer } = this.state;
+
+    this.setState( state => ({
+      recordSecs: 0,
+      recording: !state.recording,
+    }));
+
+    await audioRecorderPlayer.stopRecord();
+
+    const path = `${RNFS.TemporaryDirectoryPath}sound.m4a`;
+
+    if ( path && this.props.onChangeValue ) {
+      // this.props.onChangeValue('record.mp4');
+      this.uploadFile( path, 'record' );
+    }
+  }
+
+  onStartPlay = async () => {
+    const { audioRecorderPlayer } = this.state;
+
+    const path = `${RNFS.TemporaryDirectoryPath}sound.m4a`;
+
+    await audioRecorderPlayer.startPlay( path );
+
+    this.setState( state => ({
+      playback: !state.playback,
+    }));
+  }
+
+  onPausePlay = async () => {
+    const { audioRecorderPlayer } = this.state;
+
+    await audioRecorderPlayer.pausePlay();
+  }
+
+  onStopPlay = async () => {
+    const { audioRecorderPlayer } = this.state;
+
+    audioRecorderPlayer.stopPlay();
+    audioRecorderPlayer.removePlayBackListener();
+
+    this.setState( state => ({
+      playback: !state.playback,
+    }));
   }
 
   handlePlayback = () => {

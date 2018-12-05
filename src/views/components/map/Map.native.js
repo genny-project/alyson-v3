@@ -10,7 +10,7 @@ class Map extends Component {
   static defaultProps = {
     testID: 'map',
   }
-  
+
   static propTypes = {
     markers: arrayOf(
       shape({
@@ -122,6 +122,7 @@ class Map extends Component {
                   strokeWidth={2}
                   onReady={this.handleReady}
                   onError={errorMessage => {
+                    // eslint-disable-next-line no-console
                     console.warn( 'MapViewDirections error occurred:', errorMessage );
                   }}
                 />

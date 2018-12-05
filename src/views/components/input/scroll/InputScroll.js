@@ -32,7 +32,6 @@ class InputScroll extends Component {
 
   componentDidMount() {
     this.props.onScrollEnd( true );
-    console.warn( 'bap' );
   }
 
   handleScroll = ( e ) => {

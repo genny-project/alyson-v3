@@ -57,10 +57,6 @@ class InputAddress extends Component {
     items: [],
   }
 
-  componentDidMount() {
-    console.warn( this.props );
-  }
-
   autocompleteAddress = async address => {
     const { google } = this.props;
 
@@ -85,6 +81,52 @@ class InputAddress extends Component {
       // eslint-disable-next-line no-console
       console.warn( error );
     }
+  }
+
+  formatPlace( place ) {
+    try {
+      const { injectCustomAddressComponents } = this.props;
+      const { formatted_address, address_components, geometry } = place;
+
+      const components =
+        address_components
+          .filter( this.handleFilterAddressComponents )
+          .reduce( this.handleReduceAddressComponent, {});
+
+      const customComponents =
+        injectCustomAddressComponents
+          ? this.createCustomAddressComponents( components )
+          : {};
+
+      return {
+        ...components,
+        full_address: formatted_address,
+        latitude: geometry.location.lat,
+        longitude: geometry.location.lng,
+        ...customComponents,
+      };
+    }
+    catch ( error ) {
+      throw new Error( 'Attempted to invoke `formatPlace` without a valid place object', error );
+    }
+  }
+
+  createCustomAddressComponents( addressComponents ) {
+    const { injectCustomAddressComponents } = this.props;
+
+    return Object
+      .keys( injectCustomAddressComponents )
+      .reduce(( resultant, customAddressComponent ) => {
+        const component =
+          injectCustomAddressComponents[customAddressComponent]
+            .split( '{{' )
+            .map( this.handleFillCustomAddressPath( addressComponents ))
+            .join( '' );
+
+        resultant[customAddressComponent] = component;
+
+        return resultant;
+      }, {});
   }
 
   handleFillCustomAddressPath = addressComponents => path => {
@@ -180,52 +222,6 @@ class InputAddress extends Component {
 
   handleType = text => {
     this.autocompleteAddress( text );
-  }
-
-  formatPlace( place ) {
-    try {
-      const { injectCustomAddressComponents } = this.props;
-      const { formatted_address, address_components, geometry } = place;
-
-      const components =
-        address_components
-          .filter( this.handleFilterAddressComponents )
-          .reduce( this.handleReduceAddressComponent, {});
-
-      const customComponents =
-        injectCustomAddressComponents
-          ? this.createCustomAddressComponents( components )
-          : {};
-
-      return {
-        ...components,
-        full_address: formatted_address,
-        latitude: geometry.location.lat,
-        longitude: geometry.location.lng,
-        ...customComponents,
-      };
-    }
-    catch ( error ) {
-      throw new Error( 'Attempted to invoke `formatPlace` without a valid place object', error );
-    }
-  }
-
-  createCustomAddressComponents( addressComponents ) {
-    const { injectCustomAddressComponents } = this.props;
-
-    return Object
-      .keys( injectCustomAddressComponents )
-      .reduce(( resultant, customAddressComponent ) => {
-        const component =
-          injectCustomAddressComponents[customAddressComponent]
-            .split( '{{' )
-            .map( this.handleFillCustomAddressPath( addressComponents ))
-            .join( '' );
-
-        resultant[customAddressComponent] = component;
-
-        return resultant;
-      }, {});
   }
 
   render() {

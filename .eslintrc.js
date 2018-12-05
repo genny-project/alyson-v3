@@ -28,7 +28,6 @@ module.exports = {
     'react/no-will-update-set-state': 'error',
     'react/prefer-es6-class': ['error', 'always'],
     'react/self-closing-comp': 'error',
-    'react/sort-comp': 'error',
     'react/void-dom-elements-no-children': 'error',
     'react/jsx-boolean-value': ['error', 'never'],
     'react/jsx-closing-bracket-location': 'error',
@@ -75,7 +74,7 @@ module.exports = {
     'new-cap': 'off',
     'react/display-name': 0,
     'no-multiple-empty-lines': ['error', { max: 1 }],
-    'no-console': ["warn", { allow: ['error'] }],
+    'no-console': ["error", { allow: ['error'] }],
     "indent": ["error", 2, {
       SwitchCase: 1,
       VariableDeclarator: 1,
@@ -162,34 +161,36 @@ module.exports = {
     'react/jsx-no-duplicate-props': ['error', { ignoreCase: true }],
     'react/jsx-no-undef': 'error',
     'react/jsx-pascal-case': ['error', {
-      allowAllCaps: true,
+      allowAllCaps: false,
       ignore: [],
     }],
     'react/no-is-mounted': 'error',
     'react/no-multi-comp': ['error', { ignoreStateless: true }],
     'react/no-string-refs': 'error',
     'react/require-render-return': 'error',
-    'react/sort-comp': [1, {
+    'react/sort-comp': ['error', {
       order: [
+        'staticVariables',
         'static-methods',
         'instance-variables',
         'lifecycle',
-        '/^on.+$/',
         'getters',
         'setters',
         '/^(get|set)(?!(InitialState$|DefaultProps$|ChildContext$)).+$/',
-        'instance-methods',
         'everything-else',
+        '/^on.+$/',
+        '/^handle.+$/',
         'rendering',
       ],
       groups: {
-        lifecycle: [
-          'displayName',
+        staticVariables: [
           'defaultProps',
           'propTypes',
           'getDerivedStateFromProps',
           'statics',
           'constructor',
+        ],
+        lifecycle: [
           'state',
           'componentDidMount',
           'shouldComponentUpdate',
