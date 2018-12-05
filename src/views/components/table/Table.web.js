@@ -44,6 +44,7 @@ class TableView extends Component {
     dispatchActionOnChange: object,
     itemToSelectFirst: object,
     code: string,
+    totalItems: number,
   };
 
   constructor( props ) {
@@ -59,6 +60,7 @@ class TableView extends Component {
     currentPage: 0,
     totalPages: 1,
     isLoadingNextPage: false,
+    isSearching: false,
     lastSentFilter: null,
   }
 
@@ -70,8 +72,18 @@ class TableView extends Component {
   }
 
   componentDidUpdate( prevProps, prevState ) {
+    /* if we are showing a different table */
     if ( this.props.code !== prevProps.code ) {
       this.resetTableData();
+    }
+    /* if table is the same but data has changed */
+    else if ( this.props.code === prevProps.code &&
+       this.props.data.length !== prevProps.data.length ) {
+      /* if table was loading */
+      if ( prevState.isLoadingNextPage ) {
+        /* we end the loading and jump to the next page */
+        this.endTableLoading( !prevState.isSearching );
+      }
     }
 
     if (
@@ -96,10 +108,21 @@ class TableView extends Component {
     }
   }
 
-  setTotalPages = () => {
+  setTotalPages = ( result ) => {
     const { data, itemsPerPage } = this.props;
 
-    return isArray( data, { ofMinLength: 1 }) ? Math.round( data.length / itemsPerPage ) : 1;
+    return isArray(( result ? result : data ), { ofMinLength: 1 }) ?
+      Math.round(( result ? result.length : data.length ) / itemsPerPage ) + 1 : 
+      1;
+  }
+
+  endTableLoading = ( incrementPage ) => {
+    this.setState( state => ({
+      currentPage: state.currentPage + ( incrementPage ? 1 : 0 ),
+      totalPages: state.totalPages + ( incrementPage ? 1 : 0 ),
+      isLoadingNextPage: false,
+      isSearching: false,
+    }));
   }
 
   resetTableData = () => {
@@ -109,6 +132,7 @@ class TableView extends Component {
       currentPage: 0,
       totalPages: this.setTotalPages(),
       isLoadingNextPage: false,
+      isSearching: false,
     });
   }
 
@@ -134,13 +158,12 @@ class TableView extends Component {
 
     if ( this.state.lastSentFilter === filter.value ) return result;
 
-    this.handleFilteredChange( column.attributeCode, filter.value );
+    this.handleFilteredChange( column.attributeCode, filter.value, result );
 
     return result;
   };
 
-  handleFilteredChange = ( attributeCode, value ) => {
-    // const filteredCodes = JSON.stringify( items );
+  handleFilteredChange = ( attributeCode, value, result ) => {
     const json = JSON.stringify({
       attributeCode: attributeCode,
       value: value,
@@ -156,8 +179,14 @@ class TableView extends Component {
       },
     });
 
+    /* we reset the table and save the latest search */
     this.setState({
       lastSentFilter: value,
+      selectedItem: null,
+      selectedFirstItemOnMount: false,
+      currentPage: 0,
+      totalPages: this.setTotalPages( result ),
+      isSearching: true,
     });
   };
 
@@ -309,14 +338,14 @@ class TableView extends Component {
         isLoadingNextPage: true,
       });
 
-      /* after 3 seconds, we jump to the next page */
+      /* after 10 seconds, we jump to the next page */
       setTimeout(() => {
-        this.setState( state => ({
-          currentPage: state.currentPage + 1,
-          totalPages: state.totalPages + 1,
-          isLoadingNextPage: false,
-        }));
-      }, 3000 );
+        /* we check if loading has finished */
+        if ( this.state.isLoadingNextPage ) {
+          /* we reset */
+          this.endTableLoading( false );
+        }
+      }, 10000 );
     }
     else {
       this.setState( state => ({
@@ -352,9 +381,10 @@ class TableView extends Component {
       containerBackgroundColor,
       tableHeight,
       isSelectable,
+      totalItems,
     } = this.props;
 
-    const { selectedItem, currentPage, isLoadingNextPage } = this.state;
+    const { selectedItem, currentPage, isLoadingNextPage, isSearching } = this.state;
 
     const tableStyleProps = [];
 
@@ -373,7 +403,7 @@ class TableView extends Component {
           <p>
             Number of Records:
             {' '}
-            {data && data.length}
+            {totalItems ? totalItems : data && data.length}
           </p>
         </div>
 
@@ -389,27 +419,45 @@ class TableView extends Component {
             columns={this.modifiedTableColumns()}
             pageSize={itemsPerPage}
             showPagination
-            PreviousComponent={( props ) => (
-              <Touchable
-                withFeedback
-                onPress={this.handlePreviousPress}
+            PaginationComponent={() => (
+              <Box
+                flex={1}
+                alignItems="center"
+                justifyContent="space-between"
+                padding={20}
               >
-                <Text
-                  {...props}
-                  text="Previous"
+                <Touchable
+                  withFeedback
+                  onPress={this.handlePreviousPress}
+                >
+                  <Box
+                    backgroundColor="#5173c6"
+                    padding={10}
+                  >
+                    <Text
+                      text="Previous"
+                      color="white"
+                    />
+                  </Box>
+                </Touchable>
+                <Text 
+                  text={`${currentPage + 1} of ${Math.round( totalItems / itemsPerPage )}`}
                 />
-              </Touchable>
-            )}
-            NextComponent={( props ) => (
-              <Touchable
-                withFeedback
-                onPress={this.handleNextPress}
-              >
-                <Text
-                  {...props}
-                  text={isLoadingNextPage ? 'Loading...' : 'Next'}
-                />
-              </Touchable>
+                <Touchable
+                  withFeedback
+                  onPress={this.handleNextPress}
+                >
+                  <Box
+                    backgroundColor="#5173c6"
+                    padding={10}
+                  >
+                    <Text
+                      text={isLoadingNextPage || isSearching ? 'Loading...' : 'Next'}
+                      color="white"
+                    />
+                  </Box>
+                </Touchable>
+              </Box>
             )}
             getTrProps={( state, rowInfo ) => {
               if ( !rowInfo || !isSelectable ) return {};
