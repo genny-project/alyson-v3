@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-handler-names */
 import React, { Component } from 'react';
-import { bool, string, node } from 'prop-types';
+import { bool, string, node, func } from 'prop-types';
 import { Field } from 'formik';
 import { Input, Box, Text } from '../../index';
 
@@ -16,7 +16,20 @@ class FormGenericInput extends Component {
     name: string,
     testID: string,
     validation: string,
+    submitOnEnterPress: func,
   }
+
+  // handleKeyPress = ( e ) => {
+  //   const key = e.key;
+
+  //   switch ( key ) {
+  //     case 'Enter':
+  //       if ( this.props.submitOnEnterPress ) this.props.submitOnEnterPress();
+  //       break;
+  //     default:
+  //       return null;
+  //   }
+  // };
 
   render() {
     const { name, disabled, testID, ...restProps } = this.props;
@@ -52,6 +65,7 @@ class FormGenericInput extends Component {
                   form.setFieldValue( name, value );
                 }}
                 testID={testID}
+                // onKeyPress={this.handleKeyPress}
               />
             </Box>
           );

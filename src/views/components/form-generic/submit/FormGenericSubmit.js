@@ -40,7 +40,6 @@ class FormGenericSubmit extends Component {
             : text
         )}
         testID={testID}
-        onKeyPress={formProps ? formProps.submitForm : null}
       />
     );
   }

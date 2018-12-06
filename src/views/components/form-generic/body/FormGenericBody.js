@@ -42,18 +42,6 @@ class FormGenericBody extends Component {
     return errors;
   }
 
-  handleKeyPress = () => ( e ) => {
-    const key = e.key;
-
-    switch ( key ) {
-      case 'Enter':
-        if ( this.props.onSubmit && this.props.submitOnEnterPress ) this.props.onSubmit();
-        break;
-      default:
-        return null;
-    }
-  };
-
   render() {
     const { children, testID, onSubmit, wrapperProps } = this.props;
 
