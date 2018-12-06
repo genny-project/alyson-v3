@@ -187,6 +187,7 @@ class Input extends PureComponent {
     showCharacterCount: bool,
     context: object,
     renderCharacterCount: object,
+    name: string,
   }
 
   state = {
@@ -464,6 +465,7 @@ class Input extends PureComponent {
           )}
           keyboardType={keyboardType}
           maxLength={maxLength}
+          name={this.props.name}
           multiline={multiline}
           onChange={onChange}
           onChangeText={this.handleChangeText}
