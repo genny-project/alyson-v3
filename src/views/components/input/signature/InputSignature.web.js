@@ -12,7 +12,7 @@ class InputSignature extends Component {
     height: '100%',
     width: '100%',
   }
- 
+
    static propTypes = {
      height: oneOfType( [string, number] ),
      width: oneOfType( [string, number] ),
@@ -20,25 +20,6 @@ class InputSignature extends Component {
 
   state = {
     textSignatureValue: '',
-  }
- 
-  /* submit thw signature data  from canvas */
-  handleSignatureSubmitOnDraw = () => {
-    const dataFromDrawingPad = this.signaturePad.toDataURL();
-
-    this.submitSignature({ type: 'draw', data: dataFromDrawingPad });
-  }
-
-  /* submit text  signature data */
-  handleSignatureSubmitOnText = () => {
-    const { textSignatureValue } = this.state;
-
-    this.submitSignature({ type: 'draw', data: textSignatureValue });
-  }
-
-  // clear the canvas
-  handleClearCanvas = () => { 
-    this.signaturePad.clear();
   }
 
   /* Helper method for submitting */
@@ -57,6 +38,25 @@ class InputSignature extends Component {
       console.error( 'Error while sending the signature', error );
     }
   };
+
+  /* submit thw signature data  from canvas */
+  handleSignatureSubmitOnDraw = () => {
+    const dataFromDrawingPad = this.signaturePad.toDataURL();
+
+    this.submitSignature({ type: 'draw', data: dataFromDrawingPad });
+  }
+
+  /* submit text  signature data */
+  handleSignatureSubmitOnText = () => {
+    const { textSignatureValue } = this.state;
+
+    this.submitSignature({ type: 'draw', data: textSignatureValue });
+  }
+
+  // clear the canvas
+  handleClearCanvas = () => {
+    this.signaturePad.clear();
+  }
 
   /* handle text signature change */
   handleTextSignatureChange = event => {
@@ -88,7 +88,7 @@ class InputSignature extends Component {
           ]
           }
         >
-          <div style={{ width: '100%', height: height, margin: '20px', 
+          <div style={{ width: '100%', height: height, margin: '20px',
             background: '#f9f9f9' }}
           >
             <SignaturePad

@@ -62,14 +62,6 @@ class Selection extends Component {
     }
   }
 
-  handleSelectableSelect = ( id, item ) => {
-    this.selectItem( id, item );
-  }
-
-  handleChildSelect = ( selectedIndex, item ) => () => {
-    this.selectItem( selectedIndex, item );
-  }
-
   selectItem = ( selectedIndex, item ) => {
     const { mode, useSelectableComponents } = this.props;
 
@@ -104,6 +96,14 @@ class Selection extends Component {
       this.selectItem( 0, children[0] )();
       this.setState({ selectedFirstItemOnMount: true });
     }
+  }
+
+  handleSelectableSelect = ( id, item ) => {
+    this.selectItem( id, item );
+  }
+
+  handleChildSelect = ( selectedIndex, item ) => () => {
+    this.selectItem( selectedIndex, item );
   }
 
   render() {

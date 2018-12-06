@@ -3,7 +3,7 @@ import { View, Platform } from 'react-native';
 import { any, oneOf, oneOfType, string, number, array, func, bool, object, shape } from 'prop-types';
 
 /** Ensure the props we're going to use were indeed passed through. */
-const filterOutUnspecifiedProps = props => {
+function filterOutUnspecifiedProps( props ) {
   const keys = Object.keys( props );
 
   return keys.reduce(( filteredProps, prop ) => {
@@ -12,9 +12,9 @@ const filterOutUnspecifiedProps = props => {
 
     return filteredProps;
   }, {});
-};
+}
 
-const Box = ({
+function Box({
   children,
   justifyContent,
   alignItems,
@@ -87,7 +87,7 @@ const Box = ({
   overscrollBehaviorY,
   onLayout,
   ...restProps
-}) => {
+}) {
   const boxStyle = filterOutUnspecifiedProps({
     padding,
     paddingTop,
@@ -185,7 +185,7 @@ const Box = ({
       {children}
     </View>
   );
-};
+}
 
 Box.propTypes = {
   children: any,

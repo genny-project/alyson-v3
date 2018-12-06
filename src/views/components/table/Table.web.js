@@ -44,6 +44,7 @@ class TableView extends Component {
     dispatchActionOnChange: object,
     itemToSelectFirst: object,
     code: string,
+    totalItems: number,
   };
 
   constructor( props ) {
@@ -59,6 +60,8 @@ class TableView extends Component {
     currentPage: 0,
     totalPages: 1,
     isLoadingNextPage: false,
+    isSearching: false,
+    lastSentFilter: null,
   }
 
   componentDidMount() {
@@ -69,8 +72,18 @@ class TableView extends Component {
   }
 
   componentDidUpdate( prevProps, prevState ) {
+    /* if we are showing a different table */
     if ( this.props.code !== prevProps.code ) {
       this.resetTableData();
+    }
+    /* if table is the same but data has changed */
+    else if ( this.props.code === prevProps.code &&
+       this.props.data.length !== prevProps.data.length ) {
+      /* if table was loading */
+      if ( prevState.isLoadingNextPage ) {
+        /* we end the loading and jump to the next page */
+        this.endTableLoading( !prevState.isSearching );
+      }
     }
 
     if (
@@ -95,10 +108,21 @@ class TableView extends Component {
     }
   }
 
-  setTotalPages = () => {
+  setTotalPages = ( result ) => {
     const { data, itemsPerPage } = this.props;
 
-    return isArray( data, { ofMinLength: 1 }) ? Math.round( data.length / itemsPerPage ) : 1;
+    return isArray(( result ? result : data ), { ofMinLength: 1 }) ?
+      Math.round(( result ? result.length : data.length ) / itemsPerPage ) + 1 : 
+      1;
+  }
+
+  endTableLoading = ( incrementPage ) => {
+    this.setState( state => ({
+      currentPage: state.currentPage + ( incrementPage ? 1 : 0 ),
+      totalPages: state.totalPages + ( incrementPage ? 1 : 0 ),
+      isLoadingNextPage: false,
+      isSearching: false,
+    }));
   }
 
   resetTableData = () => {
@@ -108,19 +132,7 @@ class TableView extends Component {
       currentPage: 0,
       totalPages: this.setTotalPages(),
       isLoadingNextPage: false,
-    });
-  }
-
-  handleCellDataChange = cellInfo1 => event => {
-    this.renderNumberOfItems();
-    const { value } = event.target;
-
-    /* Send data to the bridge */
-    this.sendMessageToBridge({
-      attributeCode: cellInfo1.column.attributeCode,
-      sourceCode: cellInfo1.column.sourceCode,
-      targetCode: cellInfo1.column.targetCode,
-      value: value,
+      isSearching: false,
     });
   }
 
@@ -131,28 +143,29 @@ class TableView extends Component {
   utilMethod = ( filter, rows, column ) => {
     const result = matchSorter( rows, filter.value, { keys: [filter.id] });
 
-    this.handleFilteredChange( column.attributeCode, filter.value );
+    if ( this.state.lastSentFilter === filter.value ) return result;
+
+    this.handleFilteredChange( column.attributeCode, filter.value, result );
 
     return result;
   };
 
-  handleFilteredChange = ( attributeCode, value ) => {
-    // const filteredCodes = JSON.stringify( items );
-    const json = JSON.stringify({
-      attributeCode: attributeCode,
-      value: value,
-    });
+  selectFirstItem() {
+    const { data, itemToSelectFirst } = this.props;
 
-    Bridge.sendEvent({
-      event: 'SEARCH',
-      sendWithToken: true,
-      data: {
-        code: this.props.code,
-        // value: filteredCodes,
-        value: json,
-      },
-    });
-  };
+    if ( isArray( data, { ofMinLength: 1 })) {
+      const isItemInData = ( item ) => {
+        if ( !isObject( item )) return false;
+
+        return data.filter( row => row.code === item.code ) > 0;
+      };
+
+      const item = isItemInData( itemToSelectFirst ) ? itemToSelectFirst : data[0];
+
+      this.handleSelect( item );
+      this.setState({ selectedFirstItemOnMount: true });
+    }
+  }
 
   modifiedTableColumns = () => {
     /* make all the columns searchable  this is used for searching oneach column */
@@ -250,6 +263,46 @@ class TableView extends Component {
     );
   }
 
+  handleCellDataChange = cellInfo1 => event => {
+    this.renderNumberOfItems();
+    const { value } = event.target;
+
+    /* Send data to the bridge */
+    this.sendMessageToBridge({
+      attributeCode: cellInfo1.column.attributeCode,
+      sourceCode: cellInfo1.column.sourceCode,
+      targetCode: cellInfo1.column.targetCode,
+      value: value,
+    });
+  }
+
+  handleFilteredChange = ( attributeCode, value, result ) => {
+    const json = JSON.stringify({
+      attributeCode: attributeCode,
+      value: value,
+    });
+
+    Bridge.sendEvent({
+      event: 'SEARCH',
+      sendWithToken: true,
+      data: {
+        code: this.props.code,
+        // value: filteredCodes,
+        value: json,
+      },
+    });
+
+    /* we reset the table and save the latest search */
+    this.setState({
+      lastSentFilter: value,
+      selectedItem: null,
+      selectedFirstItemOnMount: false,
+      currentPage: 0,
+      totalPages: this.setTotalPages( result ),
+      isSearching: true,
+    });
+  };
+
   handleSelect = ( item ) => {
     if ( item.code ) {
       if ( this.state.selectedItem === item.code ) {
@@ -302,36 +355,19 @@ class TableView extends Component {
         isLoadingNextPage: true,
       });
 
-      /* after 5 seconds, we jump to the next page */
+      /* after 10 seconds, we jump to the next page */
       setTimeout(() => {
-        this.setState( state => ({
-          currentPage: state.currentPage + 1,
-          totalPages: state.totalPages + 1,
-          isLoadingNextPage: false,
-        }));
-      }, 3000 );
+        /* we check if loading has finished */
+        if ( this.state.isLoadingNextPage ) {
+          /* we reset */
+          this.endTableLoading( false );
+        }
+      }, 10000 );
     }
     else {
       this.setState( state => ({
         currentPage: state.currentPage + 1,
       }));
-    }
-  }
-
-  selectFirstItem() {
-    const { data, itemToSelectFirst } = this.props;
-
-    if ( isArray( data, { ofMinLength: 1 })) {
-      const isItemInData = ( item ) => {
-        if ( !isObject( item )) return false;
-
-        return data.filter( row => row.code === item.code ) > 0;
-      };
-
-      const item = isItemInData( itemToSelectFirst ) ? itemToSelectFirst : data[0];
-
-      this.handleSelect( item );
-      this.setState({ selectedFirstItemOnMount: true });
     }
   }
 
@@ -345,9 +381,10 @@ class TableView extends Component {
       containerBackgroundColor,
       tableHeight,
       isSelectable,
+      totalItems,
     } = this.props;
 
-    const { selectedItem, currentPage, isLoadingNextPage } = this.state;
+    const { selectedItem, currentPage, isLoadingNextPage, isSearching } = this.state;
 
     const tableStyleProps = [];
 
@@ -366,7 +403,7 @@ class TableView extends Component {
           <p>
             Number of Records:
             {' '}
-            {data && data.length}
+            {totalItems ? totalItems : data && data.length}
           </p>
         </div>
 
@@ -382,27 +419,47 @@ class TableView extends Component {
             columns={this.modifiedTableColumns()}
             pageSize={itemsPerPage}
             showPagination
-            PreviousComponent={( props ) => (
-              <Touchable
-                withFeedback
-                onPress={this.handlePreviousPress}
+            PaginationComponent={() => (
+              <Box
+                flex={1}
+                alignItems="center"
+                justifyContent="space-between"
+                padding={20}
               >
-                <Text
-                  {...props}
-                  text="Previous"
-                />
-              </Touchable>
-            )}
-            NextComponent={( props ) => (
-              <Touchable
-                withFeedback
-                onPress={this.handleNextPress}
-              >
-                <Text
-                  {...props}
-                  text={isLoadingNextPage ? 'Loading...' : 'Next'}
-                />
-              </Touchable>
+                <Touchable
+                  withFeedback
+                  onPress={this.handlePreviousPress}
+                >
+                  <Box
+                    backgroundColor="#5173c6"
+                    padding={10}
+                  >
+                    <Text
+                      text="Previous"
+                      color="white"
+                    />
+                  </Box>
+                </Touchable>
+                {  totalItems && itemsPerPage ?  (
+                  <Text 
+                    text={`${currentPage + 1} of ${Math.round( totalItems / itemsPerPage )}`}
+                  />
+                ) : null}
+                <Touchable
+                  withFeedback
+                  onPress={this.handleNextPress}
+                >
+                  <Box
+                    backgroundColor="#5173c6"
+                    padding={10}
+                  >
+                    <Text
+                      text={isLoadingNextPage || isSearching ? 'Loading...' : 'Next'}
+                      color="white"
+                    />
+                  </Box>
+                </Touchable>
+              </Box>
             )}
             getTrProps={( state, rowInfo ) => {
               if ( !rowInfo || !isSelectable ) return {};

@@ -56,6 +56,7 @@ class WebView extends Component {
         this.props.onMessage( parsed );
     }
     catch ( error ) {
+      // eslint-disable-next-line no-console
       console.warn( 'Unable to parse WebView message', { error, data });
     }
   }

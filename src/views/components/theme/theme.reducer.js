@@ -75,6 +75,7 @@ const reducer = ( state = initialState, { type, payload }) => {
           }
         }
         catch ( error ) {
+          // eslint-disable-next-line no-console
           console.warn( 'Unable to add component to reducer state', error );
         }
 
@@ -117,6 +118,7 @@ const reducer = ( state = initialState, { type, payload }) => {
           }
         }
         catch ( error ) {
+          // eslint-disable-next-line no-console
           console.warn( 'Unable to add component to reducer state', error );
         }
 

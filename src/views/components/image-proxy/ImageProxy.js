@@ -91,6 +91,7 @@ class ImageProxy extends Component {
       const newWidth = ( screenWidth && width ) || imageWidth;
       const newHeight = ( screenHeight && height ) || imageHeight;
 
+      // eslint-disable-next-line no-console
       console.warn( `${newWidth}${newWidth && newHeight ? 'x' : ''}${newHeight}` );
 
       options.push( `${newWidth}${newWidth && newHeight ? 'x' : ''}${newHeight}` );

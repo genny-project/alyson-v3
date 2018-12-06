@@ -19,6 +19,8 @@ class Dropdown extends Component {
     menuItemStyle: object,
     children: any,
     history: object,
+    renderItem: object,
+    context: object,
   }
 
   handleSelect = item => () => {
@@ -75,6 +77,7 @@ class Dropdown extends Component {
       disabled,
       children,
       testID,
+      renderItem,
     } = this.props;
 
     return (
@@ -106,25 +109,73 @@ class Dropdown extends Component {
               ...menuListStyle,
             }}
           >
-            {items.map( item => (
-              item.href ? (
-                <MenuLink
-                  key={item.text}
-                  testID={testID}
-                  to={(
-                    item.href === 'home' ? '/'
-                    : item.href.startsWith( '/' ) ? item.href
-                    : `/${item.href}`
-                  )}
-                  style={{
-                    ...menuItemStyle,
-                    ...menuLinkStyle,
-                  }}
-                  onClick={this.handleNavigate( item )}
-                >
-                  {item.text}
-                </MenuLink>
-              ) : (
+            {items.map( item => {
+              if ( renderItem ) {
+                const context = {
+                  ...this.props.context,
+                  item,
+                };
+
+                const child = (
+                  isValidElement( renderItem ) ? renderItem
+                  : isString( renderItem ) ? renderItem
+                  : isArray( renderItem )
+                    ? renderItem.map(( item, i ) => (
+                      isValidElement( item )
+                        ? item
+                          : <Recursive key={i} {...item} context={context} /> // eslint-disable-line
+                    ))
+                    : <Recursive {...renderItem} context={context} /> // eslint-disable-line
+                );
+
+                if ( item.href ) {
+                  return (
+                    <MenuLink
+                      key={item.text}
+                      to={(
+                        item.href === 'home' ? '/'
+                        : item.href.startsWith( '/' ) ? item.href
+                        : `/${item.href}`
+                      )}
+                      onClick={this.handleNavigate( item )}
+                    >
+                      {child}
+                    </MenuLink>
+                  );
+                }
+
+                return (
+                  <MenuItem
+                    key={item.text}
+                    onSelect={this.handleSelect( item )}
+                  >
+                    {child}
+                  </MenuItem>
+                );
+              }
+
+              if ( item.href ) {
+                return (
+                  <MenuLink
+                    key={item.text}
+                    testID={testID}
+                    to={(
+                      item.href === 'home' ? '/'
+                      : item.href.startsWith( '/' ) ? item.href
+                      : `/${item.href}`
+                    )}
+                    style={{
+                      ...menuItemStyle,
+                      ...menuLinkStyle,
+                    }}
+                    onClick={this.handleNavigate( item )}
+                  >
+                    {item.text}
+                  </MenuLink>
+                );
+              }
+
+              return (
                 <MenuItem
                   key={item.text}
                   style={menuItemStyle}
@@ -141,8 +192,8 @@ class Dropdown extends Component {
                     : <Recursive {...item.children} />
                   }
                 </MenuItem>
-              )
-            ))}
+              );
+            })}
           </MenuList>
         )}
       </Menu>

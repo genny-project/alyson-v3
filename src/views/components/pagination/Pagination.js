@@ -18,7 +18,7 @@ class Pagination extends Component {
   }
 
   handleScrollForMore = ( event ) => {
-    console.log( 'scrolling' );
+    // console.log( 'scrolling' );
     const { target } = event;
 
     if ( !target ) return null;

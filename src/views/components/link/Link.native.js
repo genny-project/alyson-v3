@@ -48,8 +48,10 @@ class Link extends Component {
       Linking.canOpenURL( url )
       .then( supported => {
         if ( !supported ) {
+          // eslint-disable-next-line no-console
           console.log( `Can't handle url: ${url}`  );
         } else {
+          // eslint-disable-next-line no-console
           console.log( 'opening link' );
 
           return Linking.openURL( url );
