@@ -25,6 +25,9 @@ class InputSignature extends Component {
 
   /* Helper method for submitting */
   submitSignature = async ( dataFromDrawingPad ) => {
+    if ( !SIGNATURE_URL ) { 
+      console.error( 'No Signature URL provided' );
+    }
     try {
       axios({
         method: 'post',
