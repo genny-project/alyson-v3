@@ -9,7 +9,7 @@ const SIGNATURE_URL = config.SIGNATURE_URL;
 
 class InputSignature extends Component {
   static defaultProps = {
-    height: '100%',
+    height: 'auto',
     width: '100%',
   }
 
@@ -20,6 +20,7 @@ class InputSignature extends Component {
 
   state = {
     textSignatureValue: '',
+    validated: false,
   }
 
   /* Helper method for submitting */
@@ -30,12 +31,15 @@ class InputSignature extends Component {
         url: SIGNATURE_URL,
         data: dataFromDrawingPad,
       }).then( data => {
+        if ( data && data.data.signatureURL ) { 
+          this.setState({ validated: true });
+        }
         if ( this.props.onChangeValue ) //eslint-disable-line
           this.props.onChangeValue( data.data.signatureURL );
       });
     }
     catch ( error ) {
-      console.error( 'Error while sending the signature', error );
+      console.error( 'Error while sending the signatures', error );
     }
   };
 
@@ -65,13 +69,53 @@ class InputSignature extends Component {
     this.setState({ textSignatureValue: value });
   }
 
+  renderButtons = () => {
+    const { validated } = this.state;
+
+    if ( validated ) { 
+      return null;
+    }
+
+    return (
+      <div>
+        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', backgroundColor: 'whitesmoke' }}>
+          <div style={{ width: '100%' }}>
+            <Button
+              width="100%"
+              onPress={this.handleClearCanvas}
+              color="red"
+              withFeedback
+              style={{ marginTop: '10px', width: '100%' }}
+            >
+            Reset
+            </Button>
+          </div>
+
+          <div style={{ width: '100%' }}>
+            <Button
+              width="100%"
+              onPress={this.handleSignatureSubmitOnDraw}
+              color="green"
+              withFeedback
+            >
+            Validate
+            </Button>
+
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const { height, width } = this.props;
 
     return (
       <div
         className="custom-signature"
-        style={{ width: width, height: height }}
+        style={{ width: width,
+          height: height,
+          marginTop: '50px' }}
       >
         <Tabs
           tabBackground="#f5f5f5"
@@ -88,40 +132,21 @@ class InputSignature extends Component {
           ]
           }
         >
-          <div style={{ width: '100%', height: height, margin: '20px',
+          <div style={{ width: '100%', height: '100%', margin: '20px',
             background: '#f9f9f9' }}
           >
             <SignaturePad
               ref={ref => this.signaturePad = ref}
               backgroundColor="red"
+              height={150}
               redrawOnResize
+              options={{ height: '150px' }}
               onend={this.handleSignatureSubmitOnDraw} // eslint-disable-line
             />
-            <div style={{ display: 'flex', flexDirection: 'row', width: '100%', backgroundColor: 'whitesmoke' }}>
-              <div style={{ width: '100%' }}>
-                <Button
-                  width="100%"
-                  onPress={this.handleClearCanvas}
-                  color="red"
-                  withFeedback
-                  style={{ marginTop: '10px', width: '100%' }}
-                >
-                  Reset
-                </Button>
-              </div>
-              <div style={{ width: '100%' }}>
-                <Button
-                  width="100%"
-                  onPress={this.handleSignatureSubmitOnDraw}
-                  color="green"
-                  withFeedback
-                >
-                  Validate
-                </Button>
 
-              </div>
-            </div>
+            {this.renderButtons()}
           </div>
+            
           <div style={{ width: '100%', marginTop: 20 ,backgroundColor: '#fff', padding: 20 }}>
             <InputText
               type="text"

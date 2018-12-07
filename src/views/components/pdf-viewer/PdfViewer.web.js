@@ -1,5 +1,9 @@
 import React, { PureComponent } from 'react';
-import Pdf from 'react-pdf-js';
+
+// import Pdf from 'react-pdf-js';
+
+import Pdf from 'react-pdf-js-infinite';
+
 import { string, object } from 'prop-types';
 
 class  PdfViewer extends PureComponent  {
@@ -30,40 +34,6 @@ class  PdfViewer extends PureComponent  {
     this.setState( prevState => ({ page: prevState.page + 1 }));
   }
 
-  renderPagination = () => {
-    return (
-      <div style={{
-        width: '50%',
-        backgroundColor: 'whitesmoke',
-        height: '60px',
-        border: '1px solid #bdbdbd;',
-        position: 'absolute',
-        bottom: '10px',
-      }}
-      >
-        <ul style={ulStyle}>
-          <li
-            onClick={this.handlePrev}
-            style={liStyle}
-          >
-        Previous page
-          </li>
-          <li>
-          Current Page:
-            {' '}
-            {this.state.page}
-          </li>
-          <li
-            onClick={this.handleNext}
-            style={liStyle}
-          >
-        Next page
-          </li>
-        </ul>
-      </div>
-    );
-  }
-
   render() {
     const { file, style } = this.props;
     const componentStyle = style;
@@ -71,28 +41,20 @@ class  PdfViewer extends PureComponent  {
     return (
       <div
         style={{
-          background: 'whitesmoke',
-          height: '100%',
+          height: '700px',
           width: '100%',
           overflow: 'scroll',
-          border: '6px solid #e4e4e4',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-around',
-          alignItems: 'center',
           ...componentStyle,
         }}
       >
         {file !== 'undefined' && file != null ? (
           <Pdf
-            style={{ width: '700px' }}
+            style={{ maxWidth: '700px' }}
             onDocumentComplete={this.handleDocumentComplete}
             file={file}
             page={this.state.page}
           />
         ) : 'File Loading'}
-
-        {file !== 'undefined' && file != null ? this.renderPagination() : null}
 
       </div>
     );
@@ -101,15 +63,3 @@ class  PdfViewer extends PureComponent  {
 
 export default PdfViewer;
 
-const ulStyle = {
-  listStyleType: 'none',
-  display: 'flex',
-  padding: '5px',
-  justifyContent: 'space-around',
-};
-
-const liStyle = {
-  cursor: 'pointer',
-  borderBottom: '2px solid #444',
-  paddingBottom: '2px',
-};
