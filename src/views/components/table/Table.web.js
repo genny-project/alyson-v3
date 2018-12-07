@@ -150,7 +150,7 @@ class TableView extends Component {
     return result;
   };
 
-  selectFirstItem() {
+  selectFirstItem = () => {
     const { data, itemToSelectFirst } = this.props;
 
     if ( isArray( data, { ofMinLength: 1 })) {
