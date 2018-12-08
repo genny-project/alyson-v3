@@ -84,6 +84,10 @@ class TableView extends Component {
         /* we end the loading and jump to the next page */
         this.endTableLoading( !prevState.isSearching );
       }
+      else {
+        /* we update the total number of pages */
+        this.endTableLoading();
+      }
     }
 
     if (
@@ -111,15 +115,18 @@ class TableView extends Component {
   setTotalPages = ( result ) => {
     const { data, itemsPerPage } = this.props;
 
-    return isArray(( result ? result : data ), { ofMinLength: 1 }) ?
-      Math.round(( result ? result.length : data.length ) / itemsPerPage ) + 1 : 
+    const d = result || data;
+    const t =  isArray( d, { ofMinLength: 1 }) ?
+      Math.round( d.length / itemsPerPage ) : 
       1;
+
+    return t;
   }
 
   endTableLoading = ( incrementPage ) => {
     this.setState( state => ({
       currentPage: state.currentPage + ( incrementPage ? 1 : 0 ),
-      totalPages: state.totalPages + ( incrementPage ? 1 : 0 ),
+      totalPages: this.setTotalPages(),
       isLoadingNextPage: false,
       isSearching: false,
     }));
@@ -384,7 +391,12 @@ class TableView extends Component {
       totalItems,
     } = this.props;
 
-    const { selectedItem, currentPage, isLoadingNextPage, isSearching } = this.state;
+    const { 
+      selectedItem, 
+      currentPage, 
+      isLoadingNextPage, 
+      isSearching,
+    } = this.state;
 
     const tableStyleProps = [];
 
@@ -440,11 +452,15 @@ class TableView extends Component {
                     />
                   </Box>
                 </Touchable>
-                {  totalItems && itemsPerPage ?  (
+                <Box
+                  backgroundColor="#5173c6"
+                  padding={10}
+                >
                   <Text 
-                    text={`${currentPage + 1} of ${Math.round( totalItems / itemsPerPage )}`}
+                    color="white"
+                    text={`${currentPage + 1} of ${totalItems}`}
                   />
-                ) : null}
+                </Box>
                 <Touchable
                   withFeedback
                   onPress={this.handleNextPress}
