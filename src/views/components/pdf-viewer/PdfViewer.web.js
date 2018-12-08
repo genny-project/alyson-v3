@@ -1,15 +1,16 @@
 import React, { PureComponent } from 'react';
-
-// import Pdf from 'react-pdf-js';
-
+import { oneOfType, number, string , object }  from 'prop-types';
 import Pdf from 'react-pdf-js-infinite';
 
-import { string, object } from 'prop-types';
-
 class  PdfViewer extends PureComponent  {
+  static defaultProps = { 
+    height: '700px',
+  }
+
   static propTypes = {
     file: string,
     style: object,
+    height: oneOfType( [string, number] ),
   };
 
   state = {
@@ -35,13 +36,13 @@ class  PdfViewer extends PureComponent  {
   }
 
   render() {
-    const { file, style } = this.props;
+    const { file, style , height } = this.props;
     const componentStyle = style;
 
     return (
       <div
         style={{
-          height: '700px',
+          height: height,
           width: '100%',
           overflow: 'scroll',
           ...componentStyle,

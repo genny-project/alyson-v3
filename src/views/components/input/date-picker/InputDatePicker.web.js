@@ -183,8 +183,11 @@ class InputDatePicker extends PureComponent {
                           <Box>
                             <Input
                               type="dropdown"
-                              items={months}
+                              items={months.map(( m, index ) => (
+                                { value: m, label: m, weight: index }
+                              ))}
                               value={months[getMonth( date )]}
+                              sortByWeight
                               onChangeValue={month => {
                                 const monthIndex = months.findIndex( m => m === month );
                                 const newDate = setMonth( date, monthIndex );
@@ -206,7 +209,9 @@ class InputDatePicker extends PureComponent {
                           <Box>
                             <Input
                               type="dropdown"
-                              items={years}
+                              items={years.map(( y, index ) => (
+                                { value: y, label: y, weight: index }
+                              ))}
                               value={years[years.findIndex( year => year === getYear( date ))]}
                               onChangeValue={year => {
                                 const newDate = setYear( date, year );
