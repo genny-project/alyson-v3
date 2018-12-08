@@ -103,6 +103,7 @@ class InputDropdown extends Component {
     placeholderColor: string,
     color: string,
     appearance: string,
+    sortByWeight: bool,
   }
 
   componentDidMount() {
@@ -141,6 +142,16 @@ class InputDropdown extends Component {
   }
 
   handleSort = ( a, b ) => {
+    const { sortByWeight } = this.props;
+
+    if ( sortByWeight ) {
+      if ( isObject( a ) && isObject( b )) {
+        if ( a.weight < b.weight ) return - 1;
+        if ( a.weight === b.weight ) return 0;
+        if ( a.weight > b.weight ) return 1;
+      }
+    }
+
     let stringA; let stringB;
 
     if ( isObject( a ) && isObject( b )) {
