@@ -18,3 +18,4 @@ export { default as getLinks } from './getLinks';
 export { default as filter } from './filter';
 export { default as external } from './external';
 export { default as add } from './add';
+export { default as clean } from './clean';
