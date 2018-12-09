@@ -1,4 +1,5 @@
 /* eslint-disable import/first */
+import 'nprogress/nprogress.css';
 import './polyfills';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
