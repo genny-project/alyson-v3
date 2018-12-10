@@ -47,7 +47,7 @@ class DataQuery {
 
         // check if the operator exists if not then log error in the console
         if ( !Operators[query.operator] ) { 
-          console.error( `${query.operator} Operator Doesnt Exists` );
+          console.error( `Operator '${query.operator}' doesn't exist` );
         }
         else {
           const result = Operators[query.operator](
