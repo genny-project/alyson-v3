@@ -392,6 +392,31 @@ function handleReduceDataTwo( message, state ) {
   return message.items.reduce( handleReduceData, newState );
 }
 
+function changeLink( message, state ) {
+  const oldLink = message.oldLink;
+ // const link = current.link;
+
+  /* if we have an oldLink and it already exists in the store, we remove it */
+  if ( oldLink && 
+    state[oldLink.sourceCode] && 
+    state[oldLink.sourceCode][oldLink.linkValue] ) {
+    state[oldLink.sourceCode][oldLink.linkValue] = 
+    state[oldLink.sourceCode][oldLink.linkValue]
+    .filter( existingLink => existingLink.link.targetCode !== oldLink.targetCode );
+  }
+
+  /* we push the new link */
+  state[message.link.sourceCode] = {
+    ...state[message.link.sourceCode],
+    [message.link.linkValue]: [
+      ...state[message.link.linkValue],
+      ...message.link,
+    ],
+  };
+
+  return state;
+}
+
 // function handleReduceLinksTwo( message, state ) {
 //   const newState = copy( state );
 
@@ -448,6 +473,13 @@ const reducer = ( state = initialState, { type, payload }) => {
         data: payload.items.reduce( handleReduceData, state.data ),
         attributes: payload.items.reduce( handleReduceAttributes, state.attributes ),
         links: payload.items.reduce( handleReduceLinks, state.links ),
+      };
+    }
+
+    case 'BASE_ENTITY_LINK_CHANGE': {
+      return {
+        ...state,
+        links: changeLink( payload, state.links ),
       };
     }
 

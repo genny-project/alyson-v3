@@ -57,6 +57,8 @@ class DataQuery {
         } else {
           output = result;
         }
+
+        // console.warn({ q, output });
       }
     };
 
