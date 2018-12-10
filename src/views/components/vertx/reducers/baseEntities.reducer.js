@@ -259,7 +259,8 @@ const handleReduceData = ( resultant, current ) => {
 
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
-        totalCount: current.totalCount || resultant[current.parentCode].totalCount,
+        totalCount: current.totalCount || 
+        ( resultant[current.parentCode] ? resultant[current.parentCode].totalCount : 0 ),
         links: [
           createLink( current ),
         ],
@@ -307,7 +308,8 @@ const handleReduceData = ( resultant, current ) => {
 
       resultant[current.parentCode] = {
         ...resultant[current.parentCode],
-        totalCount: current.totalCount || resultant[current.parentCode].totalCount,
+        totalCount: current.totalCount || 
+        ( resultant[current.parentCode] ? resultant[current.parentCode].totalCount : 0 ),
         links: newLinks,
       };
     }
