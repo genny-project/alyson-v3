@@ -1,5 +1,7 @@
 import dlv from 'dlv';
 import dset from 'dset';
+import copy from 'fast-copy';
+import { isArray } from '../../utils';
 import * as Operators from './operators';
 import { injectContext, ifConditionsPass } from './operators/helpers';
 
@@ -10,48 +12,45 @@ class DataQuery {
   }
 
   /* Queries the data and returns the result */
-  query( query, queryContext ) {
+  query( query, queryContext = {}) {
+    if ( !isArray( query, { ofMinLength: 1 }))
+      return {};
+
     /* Create a copy of the data */
-    let output = this.data.length ? [...this.data] : { ...this.data };
+    let output = copy( this.data );
 
-    /* Inject the queryContext into the data passed into the operator */
-    output = JSON.parse( JSON.stringify( output ));
+    const checkQuery = q => {
+      for ( let i = 0; i < q.length; i++ ) {
+        const query = q[i];
 
-    let currentContext = {};
+        if ( query.query ) {
+          if ( query.onlyShowIf ) {
+            if ( ifConditionsPass( queryContext, query.onlyShowIf )) {
+              checkQuery( query.query );
+            }
+            else break;
+          }
+          else if ( query.dontShowIf ) {
+            if ( !ifConditionsPass( queryContext, query.dontShowIf )) {
+              checkQuery( query.query );
+            }
+            else break;
+          }
+        }
 
-    const checkQuery = ( query ) => {
-      query.forEach( q => {
-        // console.log( q );
-        if ( q.onlyShowIf ) {
-          if (
-            !ifConditionsPass({ ...queryContext, ...currentContext }, q.onlyShowIf,  ) || !q.query
-          ) return null;
-          checkQuery( q.query );
+        if ( query.operator === 'navigate' ) {
+          this.path = query.path;
 
           return;
         }
 
-        if ( q.dontShowIf ) {
-          if (
-            ifConditionsPass({ ...queryContext, ...currentContext }, q.dontShowIf,  ) || !q.query
-          ) return null;
-          checkQuery( q.query );
+        const queryData = this.injectQueryContext( query, queryContext );
 
-          return;
-        }
-
-        if ( q.operator === 'navigate' ) {
-          this.path = q.path;
-
-          return;
-        }
-        const queryData = this.injectQueryContext( q, { ...queryContext, ...currentContext });
-
-        const result = Operators[q.operator](
+        const result = Operators[query.operator](
           this.path ? dlv( output, this.path ) : output,
           queryData,
-          this.data.length ? [...this.data] : { ...this.data },
-          { ...queryContext, ...currentContext }
+          copy( this.data ),
+          queryContext
         );
 
         if ( this.path ) {
@@ -59,10 +58,7 @@ class DataQuery {
         } else {
           output = result;
         }
-
-        // set the currentContext to be the most recent output object of the query array
-        currentContext = output;
-      });
+      }
     };
 
     /* Apply each of the operators to the data */

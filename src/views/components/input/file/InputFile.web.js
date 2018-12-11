@@ -148,6 +148,38 @@ class InputFile extends Component {
     return false;
   }
 
+  close = () => {
+    this.uppy.getPlugin( 'Dashboard' ).closeModal();
+  }
+
+  isValidFile = file => {
+    if ( !file.type ) {
+      return false;
+    }
+
+    if ( !file.id ) {
+      return false;
+    }
+
+    if ( !file.uploadURL ) {
+      return false;
+    }
+
+    if ( !file.name ) {
+      return false;
+    }
+
+    if ( !file.uploaded ) {
+      return false;
+    }
+
+    if ( !file.size ) {
+      return false;
+    }
+
+    return true;
+  }
+
   handleComplete = result => {
     this.setState( state => ({
       files: [
@@ -192,38 +224,6 @@ class InputFile extends Component {
     this.uppy.setState({
       files: this.state.files,
     });
-  }
-
-  close = () => {
-    this.uppy.getPlugin( 'Dashboard' ).closeModal();
-  }
-
-  isValidFile = file => {
-    if ( !file.type ) {
-      return false;
-    }
-
-    if ( !file.id ) {
-      return false;
-    }
-
-    if ( !file.uploadURL ) {
-      return false;
-    }
-
-    if ( !file.name ) {
-      return false;
-    }
-
-    if ( !file.uploaded ) {
-      return false;
-    }
-
-    if ( !file.size ) {
-      return false;
-    }
-
-    return true;
   }
 
   render() {

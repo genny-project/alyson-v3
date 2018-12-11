@@ -11,6 +11,7 @@ const targetEnv = ( project && environment )
   : '.env';
 
 if ( fs.existsSync( targetEnv )) {
+  // eslint-disable-next-line no-console
   console.log(
     `Attempting to generate ${targetEnv} file when it already exists. ` +
     `If you wish to generate a new .${targetEnv} from your system's environment variables, ` +
@@ -47,14 +48,17 @@ const envOutput = targetVars
     .map( variable => `${variable}=${process.env[variable] || 'xxx'}` )
     .join( '\n' );
 
+// eslint-disable-next-line no-console
 console.log( envOutput );
 
 fs.writeFile( targetEnv, envOutput, err => {
   if ( err ) {
+    // eslint-disable-next-line no-console
     console.log({ err });
 
     return;
   }
 
+  // eslint-disable-next-line no-console
   console.log( `succesfully generated blank ${targetEnv}` );
 });

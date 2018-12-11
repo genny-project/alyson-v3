@@ -15,6 +15,7 @@ class Chat extends Component {
   renderParticipants = () => {
     const { users } = this.state;
 
+    // eslint-disable-next-line no-console
     console.warn({ users });
 
     return users

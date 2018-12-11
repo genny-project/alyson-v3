@@ -116,6 +116,18 @@ class Touchable extends Component {
     isHovering: false,
   }
 
+  /** Ensure the props we're going to use were indeed passed through. */
+  filterOutUnspecifiedProps( props ) {
+    const keys = Object.keys( props );
+
+    return keys.reduce(( filteredProps, prop ) => {
+      if ( props[prop] != null )
+        filteredProps[prop] = props[prop];
+
+      return filteredProps;
+    }, {});
+  }
+
   handleMouseEnter = event => {
     this.setState({ isHovering: true });
 
@@ -138,18 +150,6 @@ class Touchable extends Component {
 
     if ( this.props.onPress )
       this.props.onPress( event );
-  }
-
-  /** Ensure the props we're going to use were indeed passed through. */
-  filterOutUnspecifiedProps( props ) {
-    const keys = Object.keys( props );
-
-    return keys.reduce(( filteredProps, prop ) => {
-      if ( props[prop] != null )
-        filteredProps[prop] = props[prop];
-
-      return filteredProps;
-    }, {});
   }
 
   render() {

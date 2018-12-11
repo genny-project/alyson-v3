@@ -43,6 +43,7 @@ class TableView extends Component {
     selectFirstItemOnMount: bool,
     dispatchActionOnChange: object,
     itemToSelectFirst: object,
+    code: string,
   };
 
   constructor( props ) {
@@ -55,6 +56,8 @@ class TableView extends Component {
   state = {
     selectedItem: null,
     selectedFirstItemOnMount: false,
+    currentPage: 0,
+    totalPages: 1,
   }
 
   componentDidMount() {
@@ -85,22 +88,26 @@ class TableView extends Component {
     }
   }
 
-  handleCellDataChange = cellInfo1 => event => {
-    this.renderNumberOfItems();
-    const { value } = event.target;
-
-    /* Send data to the bridge */
-    this.sendMessageToBridge({
-      attributeCode: cellInfo1.column.attributeCode,
-      sourceCode: cellInfo1.column.sourceCode,
-      targetCode: cellInfo1.column.targetCode,
-      value: value,
-    });
-  }
-
   sendMessageToBridge = message => {
     return Bridge.sendAnswer( [message] );
   };
+
+  selectFirstItem() {
+    const { data, itemToSelectFirst } = this.props;
+
+    if ( isArray( data, { ofMinLength: 1 })) {
+      const isItemInData = ( item ) => {
+        if ( !isObject( item )) return false;
+
+        return data.filter( row => row.code === item.code ) > 0;
+      };
+
+      const item = isItemInData( itemToSelectFirst ) ? itemToSelectFirst : data[0];
+
+      this.handleSelect( item );
+      this.setState({ selectedFirstItemOnMount: true });
+    }
+  }
 
   utilMethod = ( filter, rows ) => {
     const result = matchSorter( rows, filter.value, { keys: [filter.id] });
@@ -112,23 +119,6 @@ class TableView extends Component {
     this.handleFilteredChange( codes );
 
     return result;
-  };
-
-  handleFilteredChange = items => {
-    if (
-      isArray( items )
-    ) {
-      const filteredCodes = JSON.stringify( items );
-
-      Bridge.sendEvent({
-        event: 'SEARCH',
-        sendWithToken: true,
-        data: {
-          code: 'TABLE_SEARCH',
-          value: filteredCodes,
-        },
-      });
-    }
   };
 
   modifiedTableColumns = () => {
@@ -234,21 +224,79 @@ class TableView extends Component {
     }
   }
 
-  selectFirstItem() {
-    const { data, itemToSelectFirst } = this.props;
+  handlePreviousPress = () => {
+    if ( this.state.currentPage > 0 ) {
+      this.setState( state => ({
+        currentPage: state.currentPage - 1,
+      }));
+    }
+  }
 
-    if ( isArray( data, { ofMinLength: 1 })) {
-      const isItemInData = ( item ) => {
-        if ( !isObject( item )) return false;
-
-        return data.filter( row => row.code === item.code ) > 0;
+  handleNextPress = () => {
+    if ( this.state.currentPage + 1 >= this.state.totalPages ) {
+      const value = {
+        pageSize: this.props.itemsPerPage,
+        pageIndex: this.state.currentPage,
       };
 
-      const item = isItemInData( itemToSelectFirst ) ? itemToSelectFirst : data[0];
+      const valueString = (
+        value &&
+        typeof value === 'string'
+      )
+        ? value
+        : JSON.stringify( value );
 
-      this.handleSelect( item );
-      this.setState({ selectedFirstItemOnMount: true });
+      Bridge.sendEvent({
+        event: 'PAGINATION',
+        sendWithToken: true,
+        data: {
+          code: this.props.code || null,
+          value: valueString || null,
+        },
+      });
+
+      this.setState( state => ({
+        currentPage: isArray( this.props.data, { ofMinLength: this.props.itemsPerPage })
+          ? state.currentPage + 1
+          : state.currentPage,
+        totalPages: state.totalPages + 1,
+      }));
     }
+    else {
+      this.setState( state => ({
+        currentPage: state.currentPage + 1,
+      }));
+    }
+  }
+
+  handleFilteredChange = items => {
+    if (
+      isArray( items )
+    ) {
+      const filteredCodes = JSON.stringify( items );
+
+      Bridge.sendEvent({
+        event: 'SEARCH',
+        sendWithToken: true,
+        data: {
+          code: 'TABLE_SEARCH',
+          value: filteredCodes,
+        },
+      });
+    }
+  };
+
+  handleCellDataChange = cellInfo1 => event => {
+    this.renderNumberOfItems();
+    const { value } = event.target;
+
+    /* Send data to the bridge */
+    this.sendMessageToBridge({
+      attributeCode: cellInfo1.column.attributeCode,
+      sourceCode: cellInfo1.column.sourceCode,
+      targetCode: cellInfo1.column.targetCode,
+      value: value,
+    });
   }
 
   render() {
@@ -263,7 +311,7 @@ class TableView extends Component {
       isSelectable,
     } = this.props;
 
-    const { selectedItem } = this.state;
+    const { selectedItem, currentPage } = this.state;
 
     const tableStyleProps = [];
 
@@ -288,16 +336,38 @@ class TableView extends Component {
 
         {isArray( data ) ? (
           <ReactTable
+            page={currentPage}
             className="react-tbl table -striped -highlight"
             style={[tableStyleProps]}
-            pageSizeOptions={[5, 10, 20, 25, 50, 100]}
-            showPageSizeOptions
             noDataText="No data to Display."
             filterable={filterable}
             data={data}
+            showPageSizeOptions={false}
             columns={this.modifiedTableColumns()}
             pageSize={itemsPerPage}
-            showPagination={data.length > itemsPerPage ? true : false}
+            showPagination
+            PreviousComponent={( props ) => (
+              <Touchable
+                withFeedback
+                onPress={this.handlePreviousPress}
+              >
+                <Text
+                  {...props}
+                  text="Previous"
+                />
+              </Touchable>
+            )}
+            NextComponent={( props ) => (
+              <Touchable
+                withFeedback
+                onPress={this.handleNextPress}
+              >
+                <Text
+                  {...props}
+                  text="Next"
+                />
+              </Touchable>
+            )}
             getTrProps={( state, rowInfo ) => {
               if ( !rowInfo || !isSelectable ) return {};
 

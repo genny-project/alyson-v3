@@ -424,6 +424,7 @@ const reducer = ( state = initialState, { type, payload }) => {
      *
      * TODO: explain `links`
      */
+
     case 'BASE_ENTITY_MESSAGE': {
       if (
         payload.replace ||

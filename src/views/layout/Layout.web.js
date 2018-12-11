@@ -66,7 +66,7 @@ class Layout extends PureComponent {
       this.props.title != null
     ) {
       let title = this.props.title;
-      
+
       if ( this.props.title.startsWith( '{{' )) {
         title = curlyBracketParse( title, this.props.context );
       }
@@ -112,7 +112,7 @@ class Layout extends PureComponent {
 
   setLayoutProperties() {
     const { layout, title, appColor, hideSidebar, hideSidebarRight, backgroundColor } = this.props;
-    
+
     if (
       typeof title === 'string' &&
       title.length > 0
@@ -307,7 +307,7 @@ class Layout extends PureComponent {
       sidebarRightProps,
       showSidebarRight,
     } = layout;
-        
+
     return (
       <Box
         height="100%"
