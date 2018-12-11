@@ -111,9 +111,15 @@ class Dropdown extends Component {
           >
             {items.map( item => {
               if ( renderItem ) {
-                const context = {
-                  ...this.props.context,
-                  item,
+                const recursiveProps = {
+                  ...renderItem,
+                  context: {
+                    ...this.props.context,
+                    item,
+                  },
+                  onlyShowIf: item.onlyShowIf,
+                  dontShowIf: item.dontShowIf,
+                  conditional: item.conditional,
                 };
 
                 const child = (
@@ -121,11 +127,14 @@ class Dropdown extends Component {
                   : isString( renderItem ) ? renderItem
                   : isArray( renderItem )
                     ? renderItem.map(( item, i ) => (
-                      isValidElement( item )
-                        ? item
-                          : <Recursive key={i} {...item} context={context} /> // eslint-disable-line
+                      isValidElement( item ) ? item : (
+                        <Recursive
+                          {...recursiveProps}
+                          key={i} // eslint-disable-line
+                        />
+                      )
                     ))
-                    : <Recursive {...renderItem} context={context} /> // eslint-disable-line
+                    : <Recursive {...recursiveProps} />
                 );
 
                 if ( item.href ) {
