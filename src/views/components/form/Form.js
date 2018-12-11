@@ -557,6 +557,7 @@ class Form extends Component {
         ? 'next'
         : 'default',
       onKeyPress: this.handleKeyPress( submitForm, index, questionGroupCode ),
+      testID: questionCode || '',
     };
 
     const context = {

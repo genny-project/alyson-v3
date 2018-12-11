@@ -299,6 +299,7 @@ class InputFile extends Component {
               text={(
               `Click to Upload a${isArray( validFiles, { ofMinLength: 1 }) ? 'nother' : imageOnly ? 'n' : ''} ${imageOnly ? 'image' : 'file'} `
               )}
+              testID={testID}
             />
           )
         )}

@@ -85,6 +85,7 @@ class Dropdown extends Component {
         <MenuButton
           disabled={disabled || !isArray( items, { ofMinLength: 1 })}
           style={menuButtonStyle}
+          data-testID={`dropdown ${testID}`}
         >
           {isValidElement( children ) ? children
           : isString( text ) ? text
@@ -132,6 +133,7 @@ class Dropdown extends Component {
                   return (
                     <MenuLink
                       key={item.text}
+                      data-testID={`dropdown-item ${testID}`}
                       to={(
                         item.href === 'home' ? '/'
                         : item.href.startsWith( '/' ) ? item.href
@@ -147,6 +149,7 @@ class Dropdown extends Component {
                 return (
                   <MenuItem
                     key={item.text}
+                    data-testID={`dropdown-item ${testID}`}
                     onSelect={this.handleSelect( item )}
                   >
                     {child}
@@ -158,7 +161,7 @@ class Dropdown extends Component {
                 return (
                   <MenuLink
                     key={item.text}
-                    testID={testID}
+                    data-testID={`dropdown-item ${testID}`}
                     to={(
                       item.href === 'home' ? '/'
                       : item.href.startsWith( '/' ) ? item.href
@@ -179,6 +182,7 @@ class Dropdown extends Component {
                 <MenuItem
                   key={item.text}
                   style={menuItemStyle}
+                  data-testID={`dropdown-item ${testID}`}
                   onSelect={this.handleSelect( item )}
                 >
                   {isValidElement( item.children ) ? item.children
