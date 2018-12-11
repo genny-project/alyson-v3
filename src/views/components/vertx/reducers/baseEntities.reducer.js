@@ -393,26 +393,49 @@ function handleReduceDataTwo( message, state ) {
 }
 
 function changeLink( message, state ) {
-  const oldLink = message.oldLink;
- // const link = current.link;
-
   /* if we have an oldLink and it already exists in the store, we remove it */
-  if ( oldLink && 
-    state[oldLink.sourceCode] && 
-    state[oldLink.sourceCode][oldLink.linkValue] ) {
-    state[oldLink.sourceCode][oldLink.linkValue] = 
-    state[oldLink.sourceCode][oldLink.linkValue]
-    .filter( existingLink => existingLink.link.targetCode !== oldLink.targetCode );
+  if ( message.oldLink && 
+    state[message.oldLink.sourceCode] && 
+    state[message.oldLink.sourceCode][message.oldLink.linkValue] ) {
+    state[message.oldLink.sourceCode][message.oldLink.linkValue] = 
+    state[message.oldLink.sourceCode][message.oldLink.linkValue]
+    .filter( existingLink => existingLink.link.targetCode !== message.oldLink.targetCode );
+  }
+  /* TODO: to remove. here for demo */
+  // else {
+  //   const buckets = 
+  // ['GRP_APPLIED', 'GRP_SHORTLISTED', 
+  // 'GRP_INTERVIEWS', 'GRP_OFFER', 'GRP_PLACED', 'GRP_OFFERED', 'GRP_IN_PROGRESS'];
+
+  //   buckets.forEach( bucket => {
+  //     if ( bucket !== message.link.sourceCode && 
+  //       state[bucket] && state[bucket].APPLICATION ) {
+  //       state[bucket].APPLICATION = state[bucket].APPLICATION
+  //       .filter( existingLink => existingLink.link.targetCode !== message.link.targetCode );
+  //     }
+  //   });
+  // }
+
+  if ( state[message.link.sourceCode] == null ) {
+    state[message.link.sourceCode] = {
+      [message.link.linkValue]: [],
+    };
   }
 
+  const createLink = ( current ) => ({
+    code: current.code,
+    weight: 1,
+    link: {
+      attributeCode: current.attributeCode,
+      targetCode: current.targetCode,
+      sourceCode: current.sourceCode,
+      weight: 1,
+      linkValue: current.linkValue,
+    },
+  });
+
   /* we push the new link */
-  state[message.link.sourceCode] = {
-    ...state[message.link.sourceCode],
-    [message.link.linkValue]: [
-      ...state[message.link.linkValue],
-      ...message.link,
-    ],
-  };
+  state[message.link.sourceCode][message.link.linkValue].push( createLink( message.link ));
 
   return state;
 }
