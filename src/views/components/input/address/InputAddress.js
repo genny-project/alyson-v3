@@ -42,6 +42,7 @@ class InputAddress extends Component {
     mapAddressComponentToField: object,
     injectCustomAddressComponents: object,
     getShortNameForAddressComponents: array,
+    testID: string,
   }
 
   constructor( props ) {
@@ -225,7 +226,7 @@ class InputAddress extends Component {
   }
 
   render() {
-    const { prefixIcon, placeholder, icon, ...restProps } = this.props;
+    const { prefixIcon, placeholder, icon, testID, ...restProps } = this.props;
     const { items } = this.state;
 
     return (
@@ -242,6 +243,7 @@ class InputAddress extends Component {
         onType={this.handleType}
         itemStringKey="description"
         onChange={this.handleChange}
+        testID={testID}
       />
     );
   }

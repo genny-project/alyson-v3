@@ -12,6 +12,7 @@ class InputTagInputField extends Component {
     inputValue: string,
     onChangeValue: func,
     isOpen: bool,
+    testID: string,
   }
 
   render() {
@@ -22,6 +23,7 @@ class InputTagInputField extends Component {
       onChangeValue,
       inputValue,
       shouldFocus,
+      testID,
     } = this.props;
 
     return (
@@ -43,6 +45,7 @@ class InputTagInputField extends Component {
             onChangeValue: onChangeValue,
             value: inputValue || '',
           })}
+          testID={`input-tag ${testID}`}
         />
         <Box
           position="absolute"

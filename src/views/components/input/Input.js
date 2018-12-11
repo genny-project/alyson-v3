@@ -27,6 +27,7 @@ class Input extends Component {
   static propTypes = {
     type: string.isRequired,
     typeOnlyProps: object,
+    question: object,
   }
 
   blur() {

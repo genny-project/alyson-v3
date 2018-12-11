@@ -46,8 +46,8 @@ class DataQuery {
         const queryData = this.injectQueryContext( query, queryContext );
 
         // check if the operator exists if not then log error in the console
-        if ( !Operators[query.operator] ) { 
-          console.warn( `Warning - data query operator '${query.operator}' does not exist, skipping` );
+        if ( !Operators[query.operator] ) {
+          console.error( `Warning - data query operator '${query.operator}' does not exist, skipping` );
         }
         else {
           const result = Operators[query.operator](
@@ -56,7 +56,7 @@ class DataQuery {
             this.data,
             queryContext
           );
-          
+
           if ( this.path ) {
             dset( output, this.path, result );
           } else {
