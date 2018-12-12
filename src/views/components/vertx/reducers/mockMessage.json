@@ -1,0 +1,379 @@
+{
+  "data_type": "QBulkMessage",
+  "messages": [
+    {
+      "items": [
+        {
+          "baseEntityAttributes": [
+            {
+              "baseEntityCode": "APP_PE07687867689768987967869768976876",
+              "attributeCode": "PRI_GRP_PLACED_DATE",
+              "readonly": false,
+              "created": "2018-12-08T07:15:12",
+              "valueDateTime": "2018-12-08T07:15:00",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE076876897698768967896787698678678",
+              "attributeCode": "PRI_APPLICANT_USERNAME",
+              "readonly": false,
+              "created": "2018-12-08T07:02:38",
+              "valueString": "jerry@hotmail.com",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0685688657856786578657865876578687",
+              "attributeCode": "PRI_EDU_PROVIDER_CODE",
+              "readonly": false,
+              "created": "2018-12-08T07:02:48",
+              "valueString": "CPY_OUTCOME_LIFE",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE67678867678768678768768786867786667",
+              "attributeCode": "PRI_BEG_CODE",
+              "readonly": false,
+              "created": "2018-12-08T07:02:38",
+              "valueString": "BEG_PE7686786786767886767867867776",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE089796876867986786776878786768687678",
+              "attributeCode": "​​​​​PER_PINKIE_AT_YAHOOCOM​​​​​",
+              "readonly": false,
+              "created": "2018-12-08T07:11:34",
+              "valueString": "green",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "attributeCode": "STA_GREEN",
+              "readonly": false,
+              "created": "2018-12-08T07:11:34",
+              "updated": "2018-12-08T07:11:34",
+              "valueString": "[\n  \"​​​​​PER_JORDON_AT_GMAILCOM​​​​​\",\n  \"​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​\",\n  \"​​​​​PER_ROEL_AT_YAHOOCOM​​​​​\"\n]",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "attributeCode": "PRI_GRP_APPLIED_DATE",
+              "readonly": false,
+              "created": "2018-12-08T07:02:41",
+              "valueDateTime": "2018-12-08T07:02:00",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "attributeCode": "PRI_GRP_SHORTLISTED_DATE",
+              "readonly": false,
+              "created": "2018-12-08T07:06:16",
+              "valueDateTime": "2018-12-08T07:06:00",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "attributeCode": "PRI_APPLICANT_CODE",
+              "readonly": false,
+              "created": "2018-12-08T07:02:38",
+              "valueString": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "attributeCode": "PRI_GRP_OFFERED_DATE",
+              "readonly": false,
+              "created": "2018-12-08T07:11:34",
+              "valueDateTime": "2018-12-08T07:11:00",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "attributeCode": "STA_​​​​​PER_ROEL_AT_YAHOOCOM​​​​​",
+              "readonly": false,
+              "created": "2018-12-08T07:11:34",
+              "valueString": "green",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "attributeCode": "PRI_COMPANY_CODE",
+              "readonly": false,
+              "created": "2018-12-08T07:02:41",
+              "valueString": "CPY_PE2F8031F5BA6B4E2792D39BFD09641D77",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "attributeCode": "PRI_APPLICANT_FULLNAME",
+              "readonly": false,
+              "created": "2018-12-08T07:02:38",
+              "valueString": "Jerry Seinfeld",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "attributeCode": "STA_​​​​​PER_JORDON_AT_GMAILCOM​​​​​",
+              "readonly": false,
+              "created": "2018-12-08T07:11:34",
+              "valueString": "green",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "attributeCode": "PRI_GRP_IN_PROGRESS_DATE",
+              "readonly": false,
+              "created": "2018-12-08T08:15:22",
+              "valueDateTime": "2018-12-08T08:15:00",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "attributeCode": "PRI_GRP_INTERVIEWS_DATE",
+              "readonly": false,
+              "created": "2018-12-08T07:07:48",
+              "valueDateTime": "2018-12-08T07:07:00",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "attributeCode": "PRI_APPLICATION_CODE",
+              "readonly": false,
+              "created": "2018-12-08T07:02:38",
+              "valueString": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            }
+          ],
+          "links": [
+            {
+              "link": {
+                "attributeCode": "LNK_APP",
+                "targetCode": "DOC_PE0D45F6A8BC3545D19C5DF09239CF9605",
+                "sourceCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+                "linkValue": "INT_AGMT",
+                "weight": 1
+              },
+              "created": "2018-12-08T07:11:34",
+              "valueString": "INT_AGMT",
+              "weight": 1
+            },
+            {
+              "link": {
+                "attributeCode": "LNK_APP",
+                "targetCode": "CPY_OUTCOME_LIFE",
+                "sourceCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+                "linkValue": "EDU_PROVIDER",
+                "weight": 1
+              },
+              "created": "2018-12-08T07:02:41",
+              "valueString": "EDU_PROVIDER",
+              "weight": 1
+            },
+            {
+              "link": {
+                "attributeCode": "LNK_APP",
+                "targetCode": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+                "sourceCode": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+                "linkValue": "APPLICANT",
+                "weight": 1
+              },
+              "created": "2018-12-08T07:02:41",
+              "valueString": "APPLICANT",
+              "weight": 1
+            }
+          ],
+          "code": "APP_PE0BA7075D03E94C9C8C42EEF6140FB73E",
+          "index": 0,
+          "created": "2018-12-08T07:02:38",
+          "id": 7709,
+          "name": "APPLICATION",
+          "realm": "genny"
+        }
+      ],
+      "linkCode": "LNK_BEG",
+      "linkValue": "APPLICATION",
+      "total": -1,
+      "returnCount": 1,
+      "data_type": "BaseEntity",
+      "delete": false,
+      "replace": false,
+      "msg_type": "DATA_MSG"
+    },
+    {
+      "items": [
+        {
+          "baseEntityAttributes": [
+            {
+              "baseEntityCode": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+              "attributeCode": "PRI_IMAGE_URL",
+              "attributeName": "ImageUrl",
+              "readonly": false,
+              "created": "2018-12-08T07:01:17",
+              "valueString": "https://s3.ap-southeast-2.amazonaws.com/channel40-images/jtaQozJT5HSpn3bX6P4EXSqQj3NDalkQ",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+              "attributeCode": "PRI_LASTNAME",
+              "attributeName": "LastName",
+              "readonly": false,
+              "created": "2018-12-08T07:01:17",
+              "valueString": "Seinfeld",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+              "attributeCode": "PRI_MOBILE",
+              "attributeName": "Mobile",
+              "readonly": false,
+              "created": "2018-12-08T07:01:57",
+              "valueString": "0423231333",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+              "attributeCode": "LNK_INDUSTRY",
+              "attributeName": "Industry",
+              "readonly": false,
+              "created": "2018-12-08T07:02:09",
+              "valueString": "SEL_INDUSTRY_ENGINEERING",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+              "attributeCode": "PRI_NAME",
+              "attributeName": "Name",
+              "readonly": false,
+              "created": "2018-12-08T07:01:17",
+              "valueString": "Jerry Seinfeld",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+              "attributeCode": "PRI_USERNAME",
+              "attributeName": "Username",
+              "readonly": false,
+              "created": "2018-12-08T07:01:17",
+              "valueString": "jerry@hotmail.com",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+              "attributeCode": "LNK_OCCUPATION",
+              "attributeName": "Occupation",
+              "readonly": false,
+              "created": "2018-12-08T07:02:09",
+              "updated": "2018-12-08T07:02:11",
+              "valueString": "[\"SEL_OCCUPATION_DRAFTSPERSON\"]",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+              "attributeCode": "PRI_FIRSTNAME",
+              "attributeName": "FirstName",
+              "readonly": false,
+              "created": "2018-12-08T07:01:17",
+              "valueString": "Jerry",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+              "attributeCode": "PRI_IS_BUYER",
+              "attributeName": "Buyer Role",
+              "readonly": false,
+              "created": "2018-12-08T07:01:36",
+              "valueBoolean": false,
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+              "attributeCode": "LNK_EDU_PROVIDER",
+              "attributeName": "Edu Provider",
+              "readonly": false,
+              "created": "2018-12-08T07:02:01",
+              "valueString": "CPY_OUTCOME_LIFE",
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            },
+            {
+              "baseEntityCode": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+              "attributeCode": "PRI_IS_SELLER",
+              "attributeName": "Seller Role",
+              "readonly": false,
+              "created": "2018-12-08T07:01:36",
+              "valueBoolean": true,
+              "weight": 0,
+              "inferred": false,
+              "privacyFlag": false
+            }
+          ],
+          "links": [],
+          "code": "​​​​​PER_JERRY_AT_HOTMAILCOM​​​​​",
+          "index": 0,
+          "created": "2018-12-08T07:01:17",
+          "id": 7708,
+          "name": "Jerry Seinfeld",
+          "realm": "genny"
+        }
+      ],
+      "total": -1,
+      "returnCount": 1,
+      "data_type": "BaseEntity",
+      "delete": false,
+      "replace": false,
+      "msg_type": "DATA_MSG"
+    }
+  ]
+}
