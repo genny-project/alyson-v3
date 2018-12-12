@@ -228,6 +228,18 @@ class Input extends Component {
           />
         );
 
+      case 'imagemultiple':
+      case 'Imagemultiple':
+      case 'images':
+        return (
+          <InputFile
+            {...inputProps}
+            multiple
+            imageOnly
+            ref={input => this.input = input}
+          />
+        );
+
       case 'date':
       case 'java.time.localdate':
         return (
