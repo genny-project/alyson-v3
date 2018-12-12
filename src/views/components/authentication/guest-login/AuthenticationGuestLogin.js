@@ -41,6 +41,7 @@ class AuthenticationGuestLogin extends Component {
       await keycloak.doLoginWithApi( values );
     }
     catch ( error ) {
+      // eslint-disable-next-line no-console
       console.log( error );
     }
   }

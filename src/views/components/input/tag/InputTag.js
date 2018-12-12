@@ -31,6 +31,7 @@ class InputTag extends Component {
     tagsWrapperProps: object,
     renderTag: object,
     renderSuggestion: object,
+    testID: string,
   }
 
   state = { preSelected: [] }
@@ -44,6 +45,29 @@ class InputTag extends Component {
 
   itemToString = ( item ) => {
     return isObject( item ) ? item[this.props.itemStringKey] : item;
+  }
+
+  addItemToPreSelection = ( item, callback ) => {
+    const { itemValueKey } = this.props;
+
+    this.setState(
+      ({ preSelected }) => ({
+        preSelected: preSelected.filter( i => i[itemValueKey] === item[itemValueKey] ).length > 0
+          ? preSelected.filter( i => i[itemValueKey] !== item[itemValueKey] )
+          : [...preSelected, item],
+      }), () => {
+        if ( callback ) callback( this.state.preSelected );
+      });
+  }
+
+  removeItemToPreSelection = ( item ) => {
+    const { itemValueKey } = this.props;
+
+    this.setState(
+      ({ preSelected }) => ({
+        preSelected: preSelected.filter( i => i[itemValueKey] !== item[itemValueKey] ),
+      })
+    );
   }
 
   handleChange = selectedItems => {
@@ -78,29 +102,6 @@ class InputTag extends Component {
     return false;
   }
 
-  addItemToPreSelection = ( item, callback ) => {
-    const { itemValueKey } = this.props;
-
-    this.setState(
-      ({ preSelected }) => ({
-        preSelected: preSelected.filter( i => i[itemValueKey] === item[itemValueKey] ).length > 0
-          ? preSelected.filter( i => i[itemValueKey] !== item[itemValueKey] )
-          : [...preSelected, item],
-      }), () => {
-        if ( callback ) callback( this.state.preSelected );
-      });
-  }
-
-  removeItemToPreSelection = ( item ) => {
-    const { itemValueKey } = this.props;
-
-    this.setState(
-      ({ preSelected }) => ({
-        preSelected: preSelected.filter( i => i[itemValueKey] !== item[itemValueKey] ),
-      })
-    );
-  }
-
   render() {
     const {
       items,
@@ -112,6 +113,7 @@ class InputTag extends Component {
       tagsWrapperProps,
       renderTag,
       renderSuggestion,
+      testID,
       ...restProps
     } = this.props;
 
@@ -173,6 +175,7 @@ class InputTag extends Component {
               shouldFocus={!isOpen}
               inputValue={inputValue}
               onChangeValue={onInputValueChange}
+              testID={testID}
             />
 
             {/* SELECTED TAGS CONTAINER */ }
@@ -210,6 +213,7 @@ class InputTag extends Component {
                         },
                       })}
                       onPress={onPress}
+                      testID={testID}
                     />
                   );
                 })
@@ -283,6 +287,7 @@ class InputTag extends Component {
                           clearSelection: clearSelection,
                           handleToggleMenu: handleToggleMenu,
                         }}
+                        testID={testID}
                       />
                     );
                   })

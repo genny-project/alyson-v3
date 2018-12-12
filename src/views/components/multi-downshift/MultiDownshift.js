@@ -97,10 +97,6 @@ class MultiDownshift extends React.Component {
     }
   };
 
-  handleSelection = ( selectedItem, downshift ) => {
-    this.addSelectedItem( selectedItem, downshift );
-  }
-
   removeItem = ( item, downshift ) => {
     const { removeItemFunction } = this.props;
 
@@ -125,15 +121,6 @@ class MultiDownshift extends React.Component {
     });
   }
 
-  handleToggleMenu = () => {
-    this.setState(
-      ({ isOpen }) => {
-        return {
-          isOpen: !isOpen,
-        };
-      });
-  }
-
   addSelectedItem( item, downshift ) {
     const { addItemFunction } = this.props;
 
@@ -148,6 +135,19 @@ class MultiDownshift extends React.Component {
         this.callOnChange( downshift );
       }
     );
+  }
+
+  handleToggleMenu = () => {
+    this.setState(
+      ({ isOpen }) => {
+        return {
+          isOpen: !isOpen,
+        };
+      });
+  }
+
+  handleSelection = ( selectedItem, downshift ) => {
+    this.addSelectedItem( selectedItem, downshift );
   }
 
   render() {

@@ -4,3 +4,11 @@ body,
 #root > div {
   min-height: 100vh;
 }
+
+#nprogress .bar {
+  height: 4px;
+}
+
+#nprogress .spinner {
+  display: none;
+}

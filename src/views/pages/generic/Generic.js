@@ -7,40 +7,46 @@ import { LayoutLoader, LayoutFetcher, KeycloakConsumer, Redirect } from '../../c
 class Generic extends Component {
   static propTypes = {
     keycloak: object,
+    layout: object,
+  }
+
+  shouldComponentUpdate( nextProps ) {
+    const wasAuthenticated = this.props.keycloak.isAuthenticated;
+    const { isAuthenticated } = nextProps.keycloak;
+
+    if ( wasAuthenticated !== isAuthenticated )
+      return true;
+
+    if ( this.props.layout !== nextProps.layout )
+      return true;
+
+    return false;
   }
 
   render() {
+    const { layout } = this.props;
     const { isAuthenticated } = this.props.keycloak;
-    const currentUrl = location.getBasePath();
-    const { redirectUri } = location.getQueryParams();
 
-    const loginUrl = `login?${queryString.stringify({
-      redirectUri: redirectUri || `/${currentUrl}`,
-    })}`;
+    if ( !isAuthenticated && layout && !layout.isPublic ) {
+      const currentUrl = location.getBasePath();
+      const { redirectUri } = location.getQueryParams();
 
-    // console.warn({ loginUrl, redirectUri, currentUrl, isAuthenticated });
+      const loginUrl = `login?${queryString.stringify({
+        redirectUri: redirectUri || `/${currentUrl}`,
+      })}`;
+
+      return (
+        <Redirect
+          to={loginUrl}
+          useMainNavigator
+        />
+      );
+    }
 
     return (
-      <LayoutFetcher currentUrl={currentUrl}>
-        {layout => ( layout && !isAuthenticated ) ? (
-          layout.isPublic
-            ? (
-              <LayoutLoader
-                layout={layout}
-              />
-            )
-            : (
-              <Redirect
-                to={loginUrl}
-                useMainNavigator
-              />
-            )
-        ) : (
-          <LayoutLoader
-            layout={layout}
-          />
-        )}
-      </LayoutFetcher>
+      <LayoutLoader
+        layout={layout}
+      />
     );
   }
 }
@@ -51,10 +57,15 @@ export default (
   props => (
     <KeycloakConsumer>
       {keycloak => (
-        <Generic
-          {...props}
-          keycloak={keycloak}
-        />
+        <LayoutFetcher currentUrl={location.getBasePath()}>
+          {layout => (
+            <Generic
+              {...props}
+              keycloak={keycloak}
+              layout={layout}
+            />
+          )}
+        </LayoutFetcher>
       )}
     </KeycloakConsumer>
   )

@@ -61,6 +61,7 @@ class Bridge {
       ? events[event]( eventType, data, token )
       : events[event]( eventType, data );
 
+    // eslint-disable-next-line no-console
     console.warn( 'sending event', eventObject );
 
     Vertx.sendMessage( eventObject );

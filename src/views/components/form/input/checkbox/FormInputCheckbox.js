@@ -43,6 +43,7 @@ class FormInputCheckbox extends Component {
         parsed = JSON.parse( value );
       }
       catch ( e ) {
+        // eslint-disable-next-line no-console
         console.warn( 'Unable to parse value in FormInputCheckbox', e );
       }
 
@@ -75,7 +76,7 @@ class FormInputCheckbox extends Component {
             const linkGroup = links[baseEntity];
 
             if (
-              isObject( linkGroup ) 
+              isObject( linkGroup )
             ) {
               const linkValues = Object.keys( linkGroup ).map( x => x );
 

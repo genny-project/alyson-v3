@@ -103,6 +103,8 @@ class InputDropdown extends Component {
     placeholderColor: string,
     color: string,
     appearance: string,
+    sortByWeight: bool,
+    testID: string,
   }
 
   componentDidMount() {
@@ -123,6 +125,13 @@ class InputDropdown extends Component {
     return false;
   }
 
+  injectNativeProps( nativeProps ) {
+    if ( !this.picker ) return;
+    if ( !this.picker.setNativeProps ) return;
+
+    this.picker.setNativeProps( nativeProps );
+  }
+
   handleChange = value => {
     const { placeholder } = this.props;
 
@@ -134,25 +143,43 @@ class InputDropdown extends Component {
   }
 
   handleSort = ( a, b ) => {
-    // Currently only supporting sorting of strings by name
-    if ( !a || !isString( a.name )) return 0;
-    if ( !b || !isString( b.name )) return 0;
+    const { sortByWeight } = this.props;
 
-    var nameA = a.name.toLowerCase(); // ignore upper and lowercase
-    var nameB = b.name.toLowerCase(); // ignore upper and lowercase
+    if ( sortByWeight ) {
+      if ( isObject( a ) && isObject( b )) {
+        if ( a.weight < b.weight ) return - 1;
+        if ( a.weight === b.weight ) return 0;
+        if ( a.weight > b.weight ) return 1;
+      }
+    }
 
-    if ( nameA < nameB ) return -1;
-    if ( nameA > nameB ) return 1;
+    let stringA; let stringB;
 
-    // names must be equal
+    if ( isObject( a ) && isObject( b )) {
+      if ( isString( a.name ) && isString( b.name )) {
+        stringA = a.name.toLowerCase();
+        stringB = b.name.toLowerCase();
+      }
+      else if ( isString( a.label ) && isString( b.label )) {
+        stringA = a.label.toLowerCase();
+        stringB = b.label.toLowerCase();
+      }
+    }
+    else if ( isString( a ) && isString( b )) {
+      stringA = a.toLowerCase();
+      stringB = b.toLowerCase();
+    }
+
+    // console.warn({ a, b, stringA, stringB });
+
+    if ( !stringA && !stringB ) return 0;
+    if ( !stringA ) return 1;
+    if ( !stringB ) return -1;
+
+    if ( stringA < stringB ) return -1;
+    if ( stringA > stringB ) return 1;
+
     return 0;
-  }
-
-  injectNativeProps( nativeProps ) {
-    if ( !this.picker ) return;
-    if ( !this.picker.setNativeProps ) return;
-
-    this.picker.setNativeProps( nativeProps );
   }
 
   render() {
@@ -193,6 +220,7 @@ class InputDropdown extends Component {
       borderTopLeftRadius,
       borderTopRightRadius,
       color,
+      testID,
       ...restProps
     } = this.props;
 
@@ -233,6 +261,13 @@ class InputDropdown extends Component {
     });
 
     const validItems = isArray( items, { ofMinLength: 1 });
+    const uniqueItems = [];
+
+    items.forEach( item => {
+      if ( uniqueItems.filter( x => x.label === item.label ).length === 0 ) {
+        uniqueItems.push( item );
+      }
+    });
 
     return (
       <Picker
@@ -241,6 +276,7 @@ class InputDropdown extends Component {
         onValueChange={this.handleChange}
         selectedValue={value || placeholder}
         style={inputStyle}
+        testID={`input-dropdown ${testID}`}
         ref={picker => this.picker = picker}
       >
         {validItems ? (
@@ -253,7 +289,7 @@ class InputDropdown extends Component {
               />
             ) : null}
 
-            {items
+            {uniqueItems
               .sort( this.handleSort )
               .map( item => {
                 const isItemObject = isObject( item );
@@ -265,6 +301,7 @@ class InputDropdown extends Component {
                         ? ( item[itemIdKey] || item[itemStringKey] )
                         : item
                     )}
+                    testID={`input-dropdown-option ${testID}`}
                     label={isItemObject ? item[itemStringKey] : item}
                     value={isItemObject ? item[itemValueKey] : item}
                   />

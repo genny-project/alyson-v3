@@ -6,8 +6,8 @@ import LayoutEditor from './layout-editor';
 import { location } from '../../utils';
 
 class App extends Component {
-  constructor() {
-    super();
+  constructor( props ) {
+    super( props );
 
     if ( window ) {
       window.App = this;
@@ -26,6 +26,10 @@ class App extends Component {
   componentWillUnmount() {
     if ( BackHandler )
       BackHandler.removeEventListener( 'hardwareBackPress', this.handleBackPress );
+  }
+
+  openLayoutEditor() {
+    this.setState({ layoutEditorOpen: true });
   }
 
   handleBackPress = () => {
@@ -48,10 +52,6 @@ class App extends Component {
 
     return true;
   };
-
-  openLayoutEditor() {
-    this.setState({ layoutEditorOpen: true });
-  }
 
   render() {
     const { layoutEditorOpen } = this.state;

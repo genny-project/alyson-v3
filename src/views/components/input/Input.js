@@ -27,6 +27,7 @@ class Input extends Component {
   static propTypes = {
     type: string.isRequired,
     typeOnlyProps: object,
+    question: object,
   }
 
   blur() {
@@ -207,11 +208,33 @@ class Input extends Component {
           />
         );
 
+      case 'filemultiple':
+      case 'uploadmultiple':
+        return (
+          <InputFile
+            {...inputProps}
+            multiple
+            ref={input => this.input = input}
+          />
+        );
+
       case 'image':
       case 'Image':
         return (
           <InputFile
             {...inputProps}
+            imageOnly
+            ref={input => this.input = input}
+          />
+        );
+
+      case 'imagemultiple':
+      case 'Imagemultiple':
+      case 'images':
+        return (
+          <InputFile
+            {...inputProps}
+            multiple
             imageOnly
             ref={input => this.input = input}
           />

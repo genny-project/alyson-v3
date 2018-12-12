@@ -15,6 +15,12 @@ class SidebarMenu extends Component {
     open: [],
   }
 
+  isOpen = name => {
+    const { open } = this.state;
+
+    return open.includes( name );
+  }
+
   handleToggle = name => () => {
     this.setState( state => {
       /* If the section is already open, close it. */
@@ -24,12 +30,6 @@ class SidebarMenu extends Component {
       /* If the section isn't already open, open it. */
       return { open: state.open.concat( name ) };
     });
-  }
-
-  isOpen = name => {
-    const { open } = this.state;
-
-    return open.includes( name );
   }
 
   render() {

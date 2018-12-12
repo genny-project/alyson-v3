@@ -13,6 +13,7 @@ class InputTagSuggestion extends Component {
     touchableProps: object,
     allowMultipleSelection: bool,
     functions: object,
+    testID: string,
   }
 
   render() {
@@ -24,6 +25,7 @@ class InputTagSuggestion extends Component {
       isHighlighted,
       allowMultipleSelection,
       functions,
+      testID,
     } = this.props;
 
     return (
@@ -39,6 +41,7 @@ class InputTagSuggestion extends Component {
             functions.handleToggleMenu();
           }
         }}
+        testID={`input-tag-option ${testID}`}
       >
         {
           renderProp
