@@ -242,6 +242,7 @@ class InputFile extends Component {
       testID,
       renderItem,
       renderInput,
+      value, // eslint-disable-line
       ...restProps
     } = this.props;
 
