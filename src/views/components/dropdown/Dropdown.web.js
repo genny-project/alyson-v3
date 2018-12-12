@@ -24,6 +24,9 @@ class Dropdown extends Component {
   }
 
   handleSelect = item => () => {
+    if ( item.disabled )
+      return;
+
     if ( item.buttonCode ) {
       const {
         value,
@@ -53,6 +56,9 @@ class Dropdown extends Component {
 
   handleNavigate = item => event => {
     event.preventDefault();
+
+    if ( item.disabled )
+      return false;
 
     const href = (
       item.href === 'home' ? '/'
@@ -120,6 +126,7 @@ class Dropdown extends Component {
                   onlyShowIf: item.onlyShowIf,
                   dontShowIf: item.dontShowIf,
                   conditional: item.conditional,
+                  test: item.test,
                 };
 
                 const child = (
@@ -147,6 +154,7 @@ class Dropdown extends Component {
                         : `/${item.href}`
                       )}
                       onClick={this.handleNavigate( item )}
+                      disabled={item.disabled}
                     >
                       {child}
                     </MenuLink>
@@ -157,6 +165,7 @@ class Dropdown extends Component {
                   <MenuItem
                     key={item.text}
                     onSelect={this.handleSelect( item )}
+                    disabled={item.disabled}
                   >
                     {child}
                   </MenuItem>
@@ -178,6 +187,7 @@ class Dropdown extends Component {
                       ...menuLinkStyle,
                     }}
                     onClick={this.handleNavigate( item )}
+                    disabled={item.disabled}
                   >
                     {item.text}
                   </MenuLink>
@@ -189,6 +199,7 @@ class Dropdown extends Component {
                   key={item.text}
                   style={menuItemStyle}
                   onSelect={this.handleSelect( item )}
+                  disabled={item.disabled}
                 >
                   {isValidElement( item.children ) ? item.children
                   : isString( item.text ) ? item.text
