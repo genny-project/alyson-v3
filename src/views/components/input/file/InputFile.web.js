@@ -12,7 +12,7 @@ import { Box, Recursive } from '../../../components';
 import InputFileItem from './file-item';
 import InputFileTouchable from './file-touchable';
 import config from '../../../../config';
-import { isArray } from '../../../../utils';
+import { isArray, isObject } from '../../../../utils';
 
 class InputFile extends Component {
   static defaultProps = {
@@ -76,6 +76,14 @@ class InputFile extends Component {
 
   static getDerivedStateFromProps( nextProps ) {
     let files = [];
+
+    if (
+      isObject( nextProps.value ) &&
+      dlv( nextProps, 'value.target.value' ) &&
+      isArray( nextProps.value.target.value )
+    ) {
+      return { files: nextProps.value.target.value };
+    }
 
     try {
       files = ( nextProps.value && nextProps.value !== 'null' )

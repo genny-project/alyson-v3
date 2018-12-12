@@ -57,8 +57,10 @@ const getDisplayValueField = ( item ) => {
 
   if ( item.valueString != null ) {
     if (
-      item.valueString.startsWith( '[' ) &&
-      item.valueString.endsWith( ']' )
+      ( item.valueString.startsWith( '[' ) &&
+      item.valueString.endsWith( ']' )) ||
+      ( item.valueString.startsWith( '{' ) &&
+      item.valueString.endsWith( '}' ))
     ) {
       try {
         const object = JSON.parse( item.valueString );
@@ -259,7 +261,7 @@ const handleReduceData = ( resultant, current ) => {
 
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
-        totalCount: current.totalCount || 
+        totalCount: current.totalCount ||
         ( resultant[current.parentCode] ? resultant[current.parentCode].totalCount : 0 ),
         links: [
           createLink( current ),
@@ -308,7 +310,7 @@ const handleReduceData = ( resultant, current ) => {
 
       resultant[current.parentCode] = {
         ...resultant[current.parentCode],
-        totalCount: current.totalCount || 
+        totalCount: current.totalCount ||
         ( resultant[current.parentCode] ? resultant[current.parentCode].totalCount : 0 ),
         links: newLinks,
       };
@@ -394,21 +396,21 @@ function handleReduceDataTwo( message, state ) {
 
 function changeLink( message, state ) {
   /* if we have an oldLink and it already exists in the store, we remove it */
-  if ( message.oldLink && 
-    state[message.oldLink.sourceCode] && 
+  if ( message.oldLink &&
+    state[message.oldLink.sourceCode] &&
     state[message.oldLink.sourceCode][message.oldLink.linkValue] ) {
-    state[message.oldLink.sourceCode][message.oldLink.linkValue] = 
+    state[message.oldLink.sourceCode][message.oldLink.linkValue] =
     state[message.oldLink.sourceCode][message.oldLink.linkValue]
     .filter( existingLink => existingLink.link.targetCode !== message.oldLink.targetCode );
   }
   /* TODO: to remove. here for demo */
   // else {
-  //   const buckets = 
-  // ['GRP_APPLIED', 'GRP_SHORTLISTED', 
+  //   const buckets =
+  // ['GRP_APPLIED', 'GRP_SHORTLISTED',
   // 'GRP_INTERVIEWS', 'GRP_OFFER', 'GRP_PLACED', 'GRP_OFFERED', 'GRP_IN_PROGRESS'];
 
   //   buckets.forEach( bucket => {
-  //     if ( bucket !== message.link.sourceCode && 
+  //     if ( bucket !== message.link.sourceCode &&
   //       state[bucket] && state[bucket].APPLICATION ) {
   //       state[bucket].APPLICATION = state[bucket].APPLICATION
   //       .filter( existingLink => existingLink.link.targetCode !== message.link.targetCode );
