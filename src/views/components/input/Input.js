@@ -208,6 +208,16 @@ class Input extends Component {
           />
         );
 
+      case 'filemultiple':
+      case 'uploadmultiple':
+        return (
+          <InputFile
+            {...inputProps}
+            multiple
+            ref={input => this.input = input}
+          />
+        );
+
       case 'image':
       case 'Image':
         return (

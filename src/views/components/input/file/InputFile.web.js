@@ -2,6 +2,7 @@ import '@uppy/dashboard/dist/style.css';
 
 import React, { Component } from 'react';
 import { bool, number, func, object, array, string, oneOf, oneOfType } from 'prop-types';
+import dlv from 'dlv';
 import Uppy from '@uppy/core';
 import AwsS3 from '@uppy/aws-s3';
 import Webcam from '@uppy/webcam';
@@ -26,7 +27,7 @@ class InputFile extends Component {
   static propTypes = {
     maxNumberOfFiles: number,
     autoProceed: bool,
-    onChange: func,
+    onChangeValue: func,
     defaultValue: object,
     value: array,
     imageOnly: bool,
@@ -71,7 +72,26 @@ class InputFile extends Component {
     borderTopRightRadius: number,
     wrapperProps: object,
     color: string,
-    onChangeValue: func,
+  }
+
+  static getDerivedStateFromProps( nextProps ) {
+    let files = [];
+
+    try {
+      files = ( nextProps.value && nextProps.value !== 'null' )
+        ? JSON.parse( nextProps.value )
+        : nextProps.defaultValue;
+    } catch ( e ) {
+      //
+    }
+
+    if (
+      isArray( dlv( files, 'target.value' ))
+    ) {
+      return { files: files.target.value };
+    }
+
+    return null;
   }
 
   state = {
@@ -80,20 +100,6 @@ class InputFile extends Component {
   }
 
   componentDidMount() {
-    let files = [];
-
-    try {
-      files = ( this.props.value && this.props.value !== 'null' )
-        ? JSON.parse( this.props.value )
-        : this.props.defaultValue;
-    } catch ( e ) {
-      //
-    }
-
-    this.setState({
-      files,
-    });
-
     const { autoProceed } = this.props;
 
     this.uppy = new Uppy({
@@ -200,8 +206,11 @@ class InputFile extends Component {
 
     setTimeout( this.close, 2000 );
 
-    if ( this.props.onChange ) {
-      this.props.onChange({ target: { value: files } });
+    // delete the file object from each data object, it causes problems with fastcopy
+    files.forEach( file => file && file.data ? file['data'] = { size: file.size } : file );
+
+    if ( this.props.onChangeValue ) {
+      this.props.onChangeValue( isArray( files, { ofMinLength: 1 }) ? { target: { value: files } } : '' );
     }
   }
 
