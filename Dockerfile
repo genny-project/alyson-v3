@@ -1,8 +1,16 @@
-FROM node:10.14.1-alpine
+# Builder pattern
+FROM node:10.14.1-alpine AS builder
+WORKDIR /app
 ADD package.json package.json
+ADD . .
 RUN apk add git
 RUN npm install
-ADD . .
 RUN npm run build:web
-ENTRYPOINT npm run serve:web
-EXPOSE 8080
+
+
+FROM node:10.14.1-alpine
+WORKDIR /app
+FROM nginx
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/dist /usr/share/nginx/html
+CMD ["service nginx restart"]
