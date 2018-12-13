@@ -1,66 +1,43 @@
-import React, { PureComponent } from 'react';
-import { oneOfType, number, string , object }  from 'prop-types';
-import Pdf from 'react-pdf-js-infinite';
+import React, { Component } from 'react';
+import { oneOfType, string, number, object } from 'prop-types';
 
-class  PdfViewer extends PureComponent  {
-  static defaultProps = { 
-    height: '700px',
-  }
+class Pdf extends Component {
+  static defaultProps = {
+    width: '600px',
+    height: '600px',
+    style: {},
+  };
 
   static propTypes = {
-    file: string,
+    width: oneOfType( [number, string] ),
+    height: oneOfType( [number, string] ), 
     style: object,
-    height: oneOfType( [string, number] ),
+    file: string,
   };
-
-  state = {
-    page: 1,
-  };
-
-  // On document complete
-  onDocumentComplete = () => {
-    this.setState({ page: 1 });
-  }
-
-  handlePrev = () => {
-    const { page } = this.state;
-
-    // dont decrease page size if the page number is 1
-    if ( !( page < 1 )) {
-      this.setState( prevState => ({ page: prevState.page - 1 }));
-    }
-  }
-
-  handleNext = () => {
-    this.setState( prevState => ({ page: prevState.page + 1 }));
-  }
 
   render() {
-    const { file, style , height } = this.props;
+    const { width, height, style, file } = this.props;
     const componentStyle = style;
 
     return (
       <div
-        style={{
-          height: height,
-          width: '100%',
-          overflow: 'scroll',
-          ...componentStyle,
-        }}
+        style={
+            { height: height, width: width, margin: '0 auto', ...componentStyle }
+          }
       >
-        {file !== 'undefined' && file != null ? (
-          <Pdf
-            style={{ maxWidth: '700px' }}
-            onDocumentComplete={this.handleDocumentComplete}
-            file={file}
-            page={this.state.page}
+        { file ? (
+          <iframe
+            title="pdf-document"
+            src={file}
+            width="100%"
+            height="100%"
           />
-        ) : 'File Loading'}
-
+        ) : null 
+        }
       </div>
     );
   }
 }
 
-export default PdfViewer;
+export default Pdf;
 
