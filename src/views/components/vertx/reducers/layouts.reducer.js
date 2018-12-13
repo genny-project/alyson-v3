@@ -87,15 +87,14 @@ const reducer = ( state = initialState, { type, payload }) => {
             return newState;
 
           const uri = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' ).value;
-          const data = JSON.parse(
-            baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_DATA' ).value
-          );
+          const data = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_DATA' );
+          const dataParsed = isString( data.value ) ? JSON.parse( data.value ) : data.value;
 
-          injectLayoutIntoState({ uri, data, state: newState });
+          injectLayoutIntoState({ uri, data: dataParsed, state: newState });
         }
         catch ( error ) {
           // eslint-disable-next-line no-console
-          console.warn( 'Unable to add layout to reducer state', error, item.code );
+          console.warn( 'Unable to add layout to reducer state', error, item.code, item );
         }
 
         return newState;
