@@ -131,6 +131,8 @@ class InputFile extends Component {
       isArray( value )
     ) {
       this.setState({ files: value });
+
+      return;
     }
 
     try {
