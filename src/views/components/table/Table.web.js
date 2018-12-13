@@ -44,6 +44,7 @@ class TableView extends Component {
     dispatchActionOnChange: object,
     itemToSelectFirst: object,
     code: string,
+    totalItems: number,
   };
 
   constructor( props ) {
@@ -58,14 +59,37 @@ class TableView extends Component {
     selectedFirstItemOnMount: false,
     currentPage: 0,
     totalPages: 1,
+    isLoadingNextPage: false,
+    isSearching: false,
+    lastSentFilter: null,
   }
 
   componentDidMount() {
     if ( this.props.selectFirstItemOnMount )
       this.selectFirstItem();
+
+    this.resetTableData();
   }
 
   componentDidUpdate( prevProps, prevState ) {
+    /* if we are showing a different table */
+    if ( this.props.code !== prevProps.code ) {
+      this.resetTableData();
+    }
+    /* if table is the same but data has changed */
+    else if ( this.props.code === prevProps.code &&
+       this.props.data.length !== prevProps.data.length ) {
+      /* if table was loading */
+      if ( prevState.isLoadingNextPage ) {
+        /* we end the loading and jump to the next page */
+        this.endTableLoading( !prevState.isSearching );
+      }
+      else {
+        /* we update the total number of pages */
+        this.endTableLoading();
+      }
+    }
+
     if (
       this.props.selectFirstItemOnMount &&
       !this.state.selectedFirstItemOnMount
@@ -88,11 +112,52 @@ class TableView extends Component {
     }
   }
 
+  setTotalPages = ( result ) => {
+    const { data, itemsPerPage } = this.props;
+
+    const d = result || data;
+    const t =  isArray( d, { ofMinLength: 1 }) ?
+      Math.round( d.length / itemsPerPage ) : 
+      1;
+
+    return t;
+  }
+
+  endTableLoading = ( incrementPage ) => {
+    this.setState( state => ({
+      currentPage: state.currentPage + ( incrementPage ? 1 : 0 ),
+      totalPages: this.setTotalPages(),
+      isLoadingNextPage: false,
+      isSearching: false,
+    }));
+  }
+
+  resetTableData = () => {
+    this.setState({
+      selectedItem: null,
+      selectedFirstItemOnMount: false,
+      currentPage: 0,
+      totalPages: this.setTotalPages(),
+      isLoadingNextPage: false,
+      isSearching: false,
+    });
+  }
+
   sendMessageToBridge = message => {
     return Bridge.sendAnswer( [message] );
   };
 
-  selectFirstItem() {
+  utilMethod = ( filter, rows, column ) => {
+    const result = matchSorter( rows, filter.value, { keys: [filter.id] });
+
+    if ( this.state.lastSentFilter === filter.value ) return result;
+
+    this.handleFilteredChange( column.attributeCode, filter.value, result );
+
+    return result;
+  };
+
+  selectFirstItem = () => {
     const { data, itemToSelectFirst } = this.props;
 
     if ( isArray( data, { ofMinLength: 1 })) {
@@ -109,18 +174,6 @@ class TableView extends Component {
     }
   }
 
-  utilMethod = ( filter, rows ) => {
-    const result = matchSorter( rows, filter.value, { keys: [filter.id] });
-
-    const codes = result.map( row => {
-      return row._original.code;
-    });
-
-    this.handleFilteredChange( codes );
-
-    return result;
-  };
-
   modifiedTableColumns = () => {
     /* make all the columns searchable  this is used for searching oneach column */
     const addFilterMethodsToColumn = () => {
@@ -128,7 +181,11 @@ class TableView extends Component {
 
       if ( columns.length < 1 ) return null;
       const modifiedCells = columns.map( column => {
-        return ({ ...column, ...{ filterMethod: this.utilMethod }, ...{ filterAll: true } });
+        return ({
+          ...column,
+          ...{ filterMethod: ( filter, rows ) => this.utilMethod( filter, rows, column ) },
+          ...{ filterAll: true },
+        });
       });
 
       return modifiedCells;
@@ -213,6 +270,46 @@ class TableView extends Component {
     );
   }
 
+  handleCellDataChange = cellInfo1 => event => {
+    this.renderNumberOfItems();
+    const { value } = event.target;
+
+    /* Send data to the bridge */
+    this.sendMessageToBridge({
+      attributeCode: cellInfo1.column.attributeCode,
+      sourceCode: cellInfo1.column.sourceCode,
+      targetCode: cellInfo1.column.targetCode,
+      value: value,
+    });
+  }
+
+  handleFilteredChange = ( attributeCode, value, result ) => {
+    const json = JSON.stringify({
+      attributeCode: attributeCode,
+      value: value,
+    });
+
+    Bridge.sendEvent({
+      event: 'SEARCH',
+      sendWithToken: true,
+      data: {
+        code: this.props.code,
+        // value: filteredCodes,
+        value: json,
+      },
+    });
+
+    /* we reset the table and save the latest search */
+    this.setState({
+      lastSentFilter: value,
+      selectedItem: null,
+      selectedFirstItemOnMount: false,
+      currentPage: 0,
+      totalPages: this.setTotalPages( result ),
+      isSearching: true,
+    });
+  };
+
   handleSelect = ( item ) => {
     if ( item.code ) {
       if ( this.state.selectedItem === item.code ) {
@@ -231,21 +328,26 @@ class TableView extends Component {
       }));
     }
   }
-
+  
   handleNextPress = () => {
+    /* if we are already loading the next page, we do nothing */
+    if ( this.state.isLoadingNextPage ) return;
+
+    /* we check if we are going to a page we currently don't have */
     if ( this.state.currentPage + 1 >= this.state.totalPages ) {
       const value = {
         pageSize: this.props.itemsPerPage,
         pageIndex: this.state.currentPage,
       };
-
+  
       const valueString = (
         value &&
         typeof value === 'string'
       )
         ? value
         : JSON.stringify( value );
-
+        
+      /* we ask backend for data */
       Bridge.sendEvent({
         event: 'PAGINATION',
         sendWithToken: true,
@@ -254,49 +356,26 @@ class TableView extends Component {
           value: valueString || null,
         },
       });
+      
+      /* we show the loading indicator */
+      this.setState({
+        isLoadingNextPage: true,
+      });
 
-      this.setState( state => ({
-        currentPage: isArray( this.props.data, { ofMinLength: this.props.itemsPerPage })
-          ? state.currentPage + 1
-          : state.currentPage,
-        totalPages: state.totalPages + 1,
-      }));
+      /* after 10 seconds, we jump to the next page */
+      setTimeout(() => {
+        /* we check if loading has finished */
+        if ( this.state.isLoadingNextPage ) {
+          /* we reset */
+          this.endTableLoading( false );
+        }
+      }, 10000 );
     }
     else {
       this.setState( state => ({
         currentPage: state.currentPage + 1,
       }));
     }
-  }
-
-  handleFilteredChange = items => {
-    if (
-      isArray( items )
-    ) {
-      const filteredCodes = JSON.stringify( items );
-
-      Bridge.sendEvent({
-        event: 'SEARCH',
-        sendWithToken: true,
-        data: {
-          code: 'TABLE_SEARCH',
-          value: filteredCodes,
-        },
-      });
-    }
-  };
-
-  handleCellDataChange = cellInfo1 => event => {
-    this.renderNumberOfItems();
-    const { value } = event.target;
-
-    /* Send data to the bridge */
-    this.sendMessageToBridge({
-      attributeCode: cellInfo1.column.attributeCode,
-      sourceCode: cellInfo1.column.sourceCode,
-      targetCode: cellInfo1.column.targetCode,
-      value: value,
-    });
   }
 
   render() {
@@ -309,9 +388,15 @@ class TableView extends Component {
       containerBackgroundColor,
       tableHeight,
       isSelectable,
+      totalItems,
     } = this.props;
 
-    const { selectedItem, currentPage } = this.state;
+    const { 
+      selectedItem, 
+      currentPage, 
+      isLoadingNextPage, 
+      isSearching,
+    } = this.state;
 
     const tableStyleProps = [];
 
@@ -330,7 +415,7 @@ class TableView extends Component {
           <p>
             Number of Records:
             {' '}
-            {data && data.length}
+            {totalItems ? totalItems : data && data.length}
           </p>
         </div>
 
@@ -346,27 +431,51 @@ class TableView extends Component {
             columns={this.modifiedTableColumns()}
             pageSize={itemsPerPage}
             showPagination
-            PreviousComponent={( props ) => (
-              <Touchable
-                withFeedback
-                onPress={this.handlePreviousPress}
+            PaginationComponent={() => (
+              <Box
+                flex={1}
+                alignItems="center"
+                justifyContent="space-between"
+                padding={20}
               >
-                <Text
-                  {...props}
-                  text="Previous"
-                />
-              </Touchable>
-            )}
-            NextComponent={( props ) => (
-              <Touchable
-                withFeedback
-                onPress={this.handleNextPress}
-              >
-                <Text
-                  {...props}
-                  text="Next"
-                />
-              </Touchable>
+                <Touchable
+                  withFeedback
+                  onPress={this.handlePreviousPress}
+                >
+                  <Box
+                    backgroundColor="#5173c6"
+                    padding={10}
+                  >
+                    <Text
+                      text="Previous"
+                      color="white"
+                    />
+                  </Box>
+                </Touchable>
+                <Box
+                  backgroundColor="#5173c6"
+                  padding={10}
+                >
+                  <Text 
+                    color="white"
+                    text={`${currentPage + 1} of ${totalItems}`}
+                  />
+                </Box>
+                <Touchable
+                  withFeedback
+                  onPress={this.handleNextPress}
+                >
+                  <Box
+                    backgroundColor="#5173c6"
+                    padding={10}
+                  >
+                    <Text
+                      text={isLoadingNextPage || isSearching ? 'Loading...' : 'Next'}
+                      color="white"
+                    />
+                  </Box>
+                </Touchable>
+              </Box>
             )}
             getTrProps={( state, rowInfo ) => {
               if ( !rowInfo || !isSelectable ) return {};

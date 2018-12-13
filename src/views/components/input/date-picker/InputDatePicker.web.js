@@ -31,6 +31,7 @@ class InputDatePicker extends PureComponent {
     calendarHeaderTextColor: string,
     onChangeValue: func,
     value: oneOfType( [string, object] ),
+    testID: string,
   }
 
   state = {
@@ -54,6 +55,7 @@ class InputDatePicker extends PureComponent {
       calendarHeaderColor,
       calendarHeaderTextColor,
       value,
+      testID,
       ...restProps
     } = this.props;
 
@@ -111,6 +113,7 @@ class InputDatePicker extends PureComponent {
                     editable: false,
                     value: inputValue,
                   })}
+                  testID={`input-date-picker ${testID}`}
                 />
               </div>
 
@@ -183,8 +186,11 @@ class InputDatePicker extends PureComponent {
                           <Box>
                             <Input
                               type="dropdown"
-                              items={months}
+                              items={months.map(( m, index ) => (
+                                { value: m, label: m, weight: index }
+                              ))}
                               value={months[getMonth( date )]}
+                              sortByWeight
                               onChangeValue={month => {
                                 const monthIndex = months.findIndex( m => m === month );
                                 const newDate = setMonth( date, monthIndex );
@@ -200,13 +206,16 @@ class InputDatePicker extends PureComponent {
                                 textAlign: 'center',
                                 cursor: 'pointer',
                               }}
+                              testID={`input-date-picker-month ${testID}`}
                             />
                           </Box>
 
                           <Box>
                             <Input
                               type="dropdown"
-                              items={years}
+                              items={years.map(( y, index ) => (
+                                { value: y, label: y, weight: index }
+                              ))}
                               value={years[years.findIndex( year => year === getYear( date ))]}
                               onChangeValue={year => {
                                 const newDate = setYear( date, year );
@@ -222,6 +231,7 @@ class InputDatePicker extends PureComponent {
                                 textAlign: 'center',
                                 cursor: 'pointer',
                               }}
+                              testID={`input-date-picker-year ${testID}`}
                             />
                           </Box>
 
@@ -271,6 +281,7 @@ class InputDatePicker extends PureComponent {
                             >
                               {week.map(( day, dayIndex ) => (
                                 <Touchable
+                                  testID={`input-date-picker-option input-date-picker-day ${testID}`}
                                   key={day.label}
                                   {...getItemProps({
                                     item: day.dateValue,

@@ -1,6 +1,5 @@
 import dlv from 'dlv';
 import dset from 'dset';
-import copy from 'fast-copy';
 import { isArray } from '../../utils';
 import * as Operators from './operators';
 import { injectContext, ifConditionsPass } from './operators/helpers';
@@ -17,7 +16,7 @@ class DataQuery {
       return {};
 
     /* Create a copy of the data */
-    let output = copy( this.data );
+    let output = this.data;
 
     const checkQuery = q => {
       for ( let i = 0; i < q.length; i++ ) {
@@ -46,18 +45,26 @@ class DataQuery {
 
         const queryData = this.injectQueryContext( query, queryContext );
 
-        const result = Operators[query.operator](
-          this.path ? dlv( output, this.path ) : output,
-          queryData,
-          copy( this.data ),
-          queryContext
-        );
-
-        if ( this.path ) {
-          dset( output, this.path, result );
-        } else {
-          output = result;
+        // check if the operator exists if not then log error in the console
+        if ( !Operators[query.operator] ) {
+          console.error( `Warning - data query operator '${query.operator}' does not exist, skipping` );
         }
+        else {
+          const result = Operators[query.operator](
+            this.path ? dlv( output, this.path ) : output,
+            queryData,
+            this.data,
+            queryContext
+          );
+
+          if ( this.path ) {
+            dset( output, this.path, result );
+          } else {
+            output = result;
+          }
+        }
+
+        // console.warn({ q, output });
       }
     };
 

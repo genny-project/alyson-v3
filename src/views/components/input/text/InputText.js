@@ -79,7 +79,6 @@ class Input extends PureComponent {
     textAlign: 'left',
     prefixColor: 'grey',
     editable: true,
-    testID: 'input',
   }
 
   static propTypes = {
@@ -187,6 +186,7 @@ class Input extends PureComponent {
     showCharacterCount: bool,
     context: object,
     renderCharacterCount: object,
+    name: string,
   }
 
   state = {
@@ -449,9 +449,9 @@ class Input extends PureComponent {
         position="relative"
         flex={1}
         width={width}
-        testID={testID}
       >
         <TextInput
+          testID={`input-text ${testID}`}
           autoCapitalize={autoCapitalize}
           autoComplete={autoComplete}
           autoCorrect={autoCorrect}
@@ -464,6 +464,7 @@ class Input extends PureComponent {
           )}
           keyboardType={keyboardType}
           maxLength={maxLength}
+          name={this.props.name}
           multiline={multiline}
           onChange={onChange}
           onChangeText={this.handleChangeText}

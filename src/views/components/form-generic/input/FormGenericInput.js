@@ -2,11 +2,12 @@
 import React, { Component } from 'react';
 import { bool, string, node } from 'prop-types';
 import { Field } from 'formik';
-import { Input } from '../../index';
+import { Input, Box, Text } from '../../index';
 
 class FormGenericInput extends Component {
   static defaultProps = {
     testID: 'form-generic-input',
+    validation: '.*',
   }
 
   static propTypes = {
@@ -14,27 +15,45 @@ class FormGenericInput extends Component {
     disabled: bool,
     name: string,
     testID: string,
+    validation: string,
   }
 
   render() {
     const { name, disabled, testID, ...restProps } = this.props;
 
     return (
-      <Field>
-        {({ form }) => {
+      <Field
+        name={name}
+      >
+        {({ form, field }) => {
           return (
-            <Input
-              {...restProps}
-              name={name}
-              disabled={disabled || form.isSubmitting}
-              value={form.values ? form.values[name] : ''}
-              onSubmitEditing={form.submitForm}
-              onChangeValue={value => {
-                form.setFieldTouched( name, true );
-                form.setFieldValue( name, value );
-              }}
-              testID={testID}
-            />
+            <Box
+              flexDirection="column"
+              flex={1}
+            >
+              {
+                form.errors && form.errors[name]
+                  ? (
+                    <Text
+                      text={form.errors[name]}
+                      color="red"
+                    />
+                  )
+                  : null
+              }
+              <Input
+                {...restProps}
+                name={name}
+                disabled={disabled || form.isSubmitting}
+                value={field.value}
+                onSubmitEditing={form.submitForm}
+                onChangeValue={value => {
+                  form.setFieldTouched( name, true );
+                  form.setFieldValue( name, value );
+                }}
+                testID={testID}
+              />
+            </Box>
           );
         }}
       </Field>

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { object, node, oneOf, string } from 'prop-types';
-import { Formik } from 'formik';
 import { location } from '../../../../utils';
 import { withKeycloak, Redirect } from '../../index';
+import FormGenericBody from '../../form-generic/body';
 
 class AuthenticationForm extends Component {
   static defaultProps = {
@@ -16,6 +16,7 @@ class AuthenticationForm extends Component {
       ['register', 'login']
     ),
     testID: string,
+    validation: object,
   }
 
   state = {
@@ -67,7 +68,7 @@ class AuthenticationForm extends Component {
   }
 
   render() {
-    const { children, keycloak, testID } = this.props;
+    const { children, keycloak, testID, validation, ...restProps } = this.props;
 
     if ( keycloak.isAuthenticated ) {
       const { redirectUri } = this.state;
@@ -82,15 +83,14 @@ class AuthenticationForm extends Component {
     }
 
     return (
-      <Formik
-        validate={this.doValidate}
-        onSubmit={this.handleSubmit}
-        validateOnBlur
-        enableReinitialize
+      <FormGenericBody
+        {...restProps}
         testID={testID}
+        validation={validation}
+        onSubmit={this.handleSubmit}
       >
-        {() => children}
-      </Formik>
+        {children}
+      </FormGenericBody>
     );
   }
 }

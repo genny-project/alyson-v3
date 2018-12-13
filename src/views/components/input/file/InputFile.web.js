@@ -2,6 +2,7 @@ import '@uppy/dashboard/dist/style.css';
 
 import React, { Component } from 'react';
 import { bool, number, func, object, array, string, oneOf, oneOfType } from 'prop-types';
+import dlv from 'dlv';
 import Uppy from '@uppy/core';
 import AwsS3 from '@uppy/aws-s3';
 import Webcam from '@uppy/webcam';
@@ -11,7 +12,7 @@ import { Box, Recursive } from '../../../components';
 import InputFileItem from './file-item';
 import InputFileTouchable from './file-touchable';
 import config from '../../../../config';
-import { isArray } from '../../../../utils';
+import { isArray, isObject } from '../../../../utils';
 
 class InputFile extends Component {
   static defaultProps = {
@@ -26,7 +27,7 @@ class InputFile extends Component {
   static propTypes = {
     maxNumberOfFiles: number,
     autoProceed: bool,
-    onChange: func,
+    onChangeValue: func,
     defaultValue: object,
     value: array,
     imageOnly: bool,
@@ -71,7 +72,34 @@ class InputFile extends Component {
     borderTopRightRadius: number,
     wrapperProps: object,
     color: string,
-    onChangeValue: func,
+  }
+
+  static getDerivedStateFromProps( nextProps ) {
+    let files = [];
+
+    if (
+      isObject( nextProps.value ) &&
+      dlv( nextProps, 'value.target.value' ) &&
+      isArray( nextProps.value.target.value )
+    ) {
+      return { files: nextProps.value.target.value };
+    }
+
+    try {
+      files = ( nextProps.value && nextProps.value !== 'null' )
+        ? JSON.parse( nextProps.value )
+        : nextProps.defaultValue;
+    } catch ( e ) {
+      //
+    }
+
+    if (
+      isArray( dlv( files, 'target.value' ))
+    ) {
+      return { files: files.target.value };
+    }
+
+    return null;
   }
 
   state = {
@@ -80,20 +108,6 @@ class InputFile extends Component {
   }
 
   componentDidMount() {
-    let files = [];
-
-    try {
-      files = ( this.props.value && this.props.value !== 'null' )
-        ? JSON.parse( this.props.value )
-        : this.props.defaultValue;
-    } catch ( e ) {
-      //
-    }
-
-    this.setState({
-      files,
-    });
-
     const { autoProceed } = this.props;
 
     this.uppy = new Uppy({
@@ -200,8 +214,11 @@ class InputFile extends Component {
 
     setTimeout( this.close, 2000 );
 
-    if ( this.props.onChange ) {
-      this.props.onChange({ target: { value: files } });
+    // delete the file object from each data object, it causes problems with fastcopy
+    files.forEach( file => file && file.data ? file['data'] = { size: file.size } : file );
+
+    if ( this.props.onChangeValue ) {
+      this.props.onChangeValue( isArray( files, { ofMinLength: 1 }) ? { target: { value: files } } : '' );
     }
   }
 
@@ -233,6 +250,7 @@ class InputFile extends Component {
       testID,
       renderItem,
       renderInput,
+      value, // eslint-disable-line
       ...restProps
     } = this.props;
 
@@ -299,6 +317,7 @@ class InputFile extends Component {
               text={(
               `Click to Upload a${isArray( validFiles, { ofMinLength: 1 }) ? 'nother' : imageOnly ? 'n' : ''} ${imageOnly ? 'image' : 'file'} `
               )}
+              testID={testID}
             />
           )
         )}

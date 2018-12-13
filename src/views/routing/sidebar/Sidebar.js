@@ -3,6 +3,7 @@ import { object, string, bool, oneOf, func, number } from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dlv from 'dlv';
+import NProgress from 'nprogress';
 import { isArray, isString, Bridge } from '../../../utils';
 import { closeSidebar, toggleSidebar } from '../../../redux/actions';
 import SidebarBody from './body';
@@ -122,6 +123,8 @@ class Sidebar extends Component {
   }
 
   handlePress = ({ sourceCode, targetCode }) => () => {
+    NProgress.start();
+    
     Bridge.sendEvent({
       event: 'TV_EVENT',
       eventType: 'TV_SELECT',

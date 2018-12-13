@@ -11,13 +11,20 @@ class Link extends Component {
   }
 
   handleClick = event => {
-    const { onPress, disabled } = this.props;
+    const { onPress, disabled, externalLink, to  } = this.props;
 
     if ( disabled ) {
       event.preventDefault();
       event.stopPropagation();
 
       return false;
+    }
+
+    if ( externalLink ) {
+      window.open( to, '_blank' );
+
+      event.preventDefault();
+      event.stopPropagation();
     }
 
     if ( onPress )
@@ -92,6 +99,7 @@ Link.propTypes = {
   history: object,
   wrapperProps: object,
   withFeedback: bool,
+  externalLink: bool,
 };
 
 export default withKeycloak( withRouter( Link ));

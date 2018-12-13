@@ -94,9 +94,15 @@ class FormInput extends Component {
           />
         );
 
-      case 'upload':
       case 'file':
+      case 'upload':
+      case 'filemultiple':
+      case 'uploadmultiple':
       case 'image':
+      case 'Image':
+      case 'imagemultiple':
+      case 'Imagemultiple':
+      case 'images':
       case 'signature':
         return (
           <Input

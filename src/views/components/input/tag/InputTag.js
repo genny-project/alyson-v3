@@ -31,6 +31,7 @@ class InputTag extends Component {
     tagsWrapperProps: object,
     renderTag: object,
     renderSuggestion: object,
+    testID: string,
   }
 
   state = { preSelected: [] }
@@ -112,6 +113,7 @@ class InputTag extends Component {
       tagsWrapperProps,
       renderTag,
       renderSuggestion,
+      testID,
       ...restProps
     } = this.props;
 
@@ -173,6 +175,7 @@ class InputTag extends Component {
               shouldFocus={!isOpen}
               inputValue={inputValue}
               onChangeValue={onInputValueChange}
+              testID={testID}
             />
 
             {/* SELECTED TAGS CONTAINER */ }
@@ -210,6 +213,7 @@ class InputTag extends Component {
                         },
                       })}
                       onPress={onPress}
+                      testID={testID}
                     />
                   );
                 })
@@ -283,6 +287,7 @@ class InputTag extends Component {
                           clearSelection: clearSelection,
                           handleToggleMenu: handleToggleMenu,
                         }}
+                        testID={testID}
                       />
                     );
                   })

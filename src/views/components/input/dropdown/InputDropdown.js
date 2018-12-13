@@ -103,6 +103,8 @@ class InputDropdown extends Component {
     placeholderColor: string,
     color: string,
     appearance: string,
+    sortByWeight: bool,
+    testID: string,
   }
 
   componentDidMount() {
@@ -141,6 +143,16 @@ class InputDropdown extends Component {
   }
 
   handleSort = ( a, b ) => {
+    const { sortByWeight } = this.props;
+
+    if ( sortByWeight ) {
+      if ( isObject( a ) && isObject( b )) {
+        if ( a.weight < b.weight ) return - 1;
+        if ( a.weight === b.weight ) return 0;
+        if ( a.weight > b.weight ) return 1;
+      }
+    }
+
     let stringA; let stringB;
 
     if ( isObject( a ) && isObject( b )) {
@@ -208,6 +220,7 @@ class InputDropdown extends Component {
       borderTopLeftRadius,
       borderTopRightRadius,
       color,
+      testID,
       ...restProps
     } = this.props;
 
@@ -263,6 +276,7 @@ class InputDropdown extends Component {
         onValueChange={this.handleChange}
         selectedValue={value || placeholder}
         style={inputStyle}
+        testID={`input-dropdown ${testID}`}
         ref={picker => this.picker = picker}
       >
         {validItems ? (
@@ -287,6 +301,7 @@ class InputDropdown extends Component {
                         ? ( item[itemIdKey] || item[itemStringKey] )
                         : item
                     )}
+                    testID={`input-dropdown-option ${testID}`}
                     label={isItemObject ? item[itemStringKey] : item}
                     value={isItemObject ? item[itemValueKey] : item}
                   />
