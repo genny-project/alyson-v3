@@ -1,5 +1,5 @@
 import copy from 'fast-copy';
-import { isArray } from '../../../../utils';
+import { isArray } from '../../../../utils/types/array';
 
 const initialState = {
   data: {},
