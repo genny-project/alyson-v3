@@ -774,7 +774,7 @@ class Form extends Component {
                               ) &&
                               !isFormValid &&
                               !alwaysActiveButtonTypes.includes( type )
-                            ) || isSubmitting,
+                            ),
                             onPress: () => {
                               // when clicked on cancel button on the form => close the Popup
                               buttons && buttons.map( button => {
