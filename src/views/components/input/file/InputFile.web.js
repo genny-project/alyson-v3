@@ -2,7 +2,6 @@ import '@uppy/dashboard/dist/style.css';
 
 import React, { Component } from 'react';
 import { bool, number, func, object, array, string, oneOf, oneOfType } from 'prop-types';
-import dlv from 'dlv';
 import Uppy from '@uppy/core';
 import AwsS3 from '@uppy/aws-s3';
 import Webcam from '@uppy/webcam';
@@ -12,7 +11,7 @@ import { Box, Recursive } from '../../../components';
 import InputFileItem from './file-item';
 import InputFileTouchable from './file-touchable';
 import config from '../../../../config';
-import { isArray, isObject } from '../../../../utils';
+import { isArray } from '../../../../utils';
 
 class InputFile extends Component {
   static defaultProps = {
@@ -74,34 +73,6 @@ class InputFile extends Component {
     color: string,
   }
 
-  static getDerivedStateFromProps( nextProps ) {
-    let files = [];
-
-    if (
-      isObject( nextProps.value ) &&
-      dlv( nextProps, 'value.target.value' ) &&
-      isArray( nextProps.value.target.value )
-    ) {
-      return { files: nextProps.value.target.value };
-    }
-
-    try {
-      files = ( nextProps.value && nextProps.value !== 'null' )
-        ? JSON.parse( nextProps.value )
-        : nextProps.defaultValue;
-    } catch ( e ) {
-      //
-    }
-
-    if (
-      isArray( dlv( files, 'target.value' ))
-    ) {
-      return { files: files.target.value };
-    }
-
-    return null;
-  }
-
   state = {
     error: null,
     files: [],
@@ -110,12 +81,13 @@ class InputFile extends Component {
   componentDidMount() {
     const { autoProceed } = this.props;
 
+    this.updateFilesFromProps();
+
     this.uppy = new Uppy({
       autoProceed,
       debug: false,
       restrictions: {
         maxNumberOfFiles: this.props.maxNumberOfFiles,
-        // allowedFileTypes: this.props.allowedFileTypes,
       },
       onBeforeFileAdded: ( currentFile ) => this.checkFileType( currentFile ),
     })
@@ -133,6 +105,15 @@ class InputFile extends Component {
     this.uppy.on( 'complete', this.handleComplete );
   }
 
+  componentDidUpdate( prevProps ) {
+    if (
+      this.props != null &&
+      this.props.value !== prevProps.value
+    ) {
+      this.updateFilesFromProps();
+    }
+  }
+
   componentWillUnmount() {
     if ( this.uppy )
       this.uppy.close();
@@ -140,6 +121,31 @@ class InputFile extends Component {
 
   get modalName() {
     return 'uppy';
+  }
+
+  updateFilesFromProps = () => {
+    const { value, defaultValue } = this.props;
+    let files = [];
+
+    if (
+      isArray( value )
+    ) {
+      this.setState({ files: value });
+    }
+
+    try {
+      files = ( value && value !== 'null' )
+        ? JSON.parse( value )
+        : defaultValue;
+    } catch ( e ) {
+      //
+    }
+
+    if (
+      isArray( files )
+    ) {
+      this.setState({ files: files });
+    }
   }
 
   checkFileType = ( currentFile ) => {
@@ -163,7 +169,11 @@ class InputFile extends Component {
   }
 
   close = () => {
-    this.uppy.getPlugin( 'Dashboard' ).closeModal();
+    if ( this.uppy ) {
+      if ( this.uppy.getPlugin( 'Dashboard' ).isModalOpen()) {
+        this.uppy.getPlugin( 'Dashboard' ).closeModal();
+      }
+    }
   }
 
   isValidFile = file => {
@@ -218,7 +228,7 @@ class InputFile extends Component {
     files.forEach( file => file && file.data ? file['data'] = { size: file.size } : file );
 
     if ( this.props.onChangeValue ) {
-      this.props.onChangeValue( isArray( files, { ofMinLength: 1 }) ? { target: { value: files } } : '' );
+      this.props.onChangeValue( isArray( files, { ofMinLength: 1 }) ? files : '' );
     }
   }
 
@@ -231,7 +241,14 @@ class InputFile extends Component {
   }
 
   handleRemoveFile = fileId => () => {
-    this.setState( state => ({ files: state.files.filter(({ id }) => id !== fileId ) }), () => {
+    this.setState( state => {
+      const filteredFiles = state.files.filter(({ id }) => id !== fileId );
+
+      return {
+        files: [...filteredFiles],
+        itemRemoved: [...filteredFiles],
+      };
+    }, () => {
       this.handleRefreshUppy();
       this.handleSaveToServer();
     });
