@@ -3,9 +3,9 @@ import { oneOfType, string, number, object } from 'prop-types';
 
 class Pdf extends Component {
   static defaultProps = {
-    width: '600px',
-    height: '600px',
     style: {},
+    height: '600px',
+    width: '600px',
   };
 
   static propTypes = {
@@ -22,17 +22,17 @@ class Pdf extends Component {
     return (
       <div
         style={
-            { height: height, width: width, margin: '0 auto', ...componentStyle }
+            { height: height, width: width, ...componentStyle  }
           }
       >
-        { file ? (
+        { file !== null && file !== undefined && file !== 'undefined' ? (
           <iframe
             title="pdf-document"
             src={file}
             width="100%"
             height="100%"
           />
-        ) : null 
+        ) : 'Pdf Document Loading Please Wait'
         }
       </div>
     );
