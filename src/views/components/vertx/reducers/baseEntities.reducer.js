@@ -404,19 +404,23 @@ function changeLink( message, state ) {
     .filter( existingLink => existingLink.link.targetCode !== message.oldLink.targetCode );
   }
   /* TODO: to remove. here for demo */
-  // else {
-  //   const buckets =
-  // ['GRP_APPLIED', 'GRP_SHORTLISTED',
-  // 'GRP_INTERVIEWS', 'GRP_OFFER', 'GRP_PLACED', 'GRP_OFFERED', 'GRP_IN_PROGRESS'];
+  else {
+    const buckets = ['GRP_APPLIED', 'GRP_SHORTLISTED','GRP_INTERVIEWS', 'GRP_PLACED', 'GRP_OFFERED', 'GRP_IN_PROGRESS'];
 
-  //   buckets.forEach( bucket => {
-  //     if ( bucket !== message.link.sourceCode &&
-  //       state[bucket] && state[bucket].APPLICATION ) {
-  //       state[bucket].APPLICATION = state[bucket].APPLICATION
-  //       .filter( existingLink => existingLink.link.targetCode !== message.link.targetCode );
-  //     }
-  //   });
-  // }
+    buckets.forEach( bucket => {
+      if ( bucket !== message.link.sourceCode &&
+        state[bucket] ) {
+        if ( state[bucket].APPLICATION ) {
+          state[bucket].APPLICATION = state[bucket].APPLICATION
+            .filter( existingLink => existingLink.link.targetCode !== message.link.targetCode );
+        }
+        if ( state[bucket].LINK ) {
+          state[bucket].LINK = state[bucket].LINK
+            .filter( existingLink => existingLink.link.targetCode !== message.link.targetCode );
+        }
+      }
+    });
+  }
 
   if ( state[message.link.sourceCode] == null ) {
     state[message.link.sourceCode] = {
