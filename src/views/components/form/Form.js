@@ -1,5 +1,5 @@
-import React, { Component, Fragment, createElement } from 'react';
-import { ActivityIndicator, View, Platform } from 'react-native';
+import React, { Component, Fragment } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { string, object, oneOfType, array, bool } from 'prop-types';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
@@ -17,8 +17,6 @@ import { hideDialog } from '../../../redux/actions';
 const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE'];
 
 class Form extends Component {
-  inputRefs = {}
-
   static defaultProps = {
     loadingText: 'Loading form...',
     testID: 'form',
@@ -53,6 +51,8 @@ class Form extends Component {
     shouldSetInitialValues: bool,
     alwaysActiveButtonTypes: array,
   }
+
+  inputRefs = {}
 
   state = {
     validationList: {},
@@ -557,6 +557,7 @@ class Form extends Component {
         ? 'next'
         : 'default',
       onKeyPress: this.handleKeyPress( submitForm, index, questionGroupCode ),
+      testID: questionCode || '',
     };
 
     const context = {
@@ -704,46 +705,44 @@ class Form extends Component {
                 width: '100%',
               }}
             >
-              {createElement( Platform.OS === 'web' ? 'form' : View, {
-                style: {
-                  flexDirection: displayInline ? 'row' : 'column',
-                  width: '100%',
-                  flex: 1,
-                  ...formWrapperProps,
-                },
-                onSubmit: handleSubmit,
-              }, (
+              <Box
+                accessibilityRole="form"
+                flexDirection={displayInline ? 'row' : 'column'}
+                flex={1}
+                width="100%"
+                {...formWrapperProps}
+                onSubmit={handleSubmit}
+              >
                 <Fragment>
-                  {questionGroups.map(( questionGroup, index ) => (
-                    <Box
-                      flexDirection={displayInline ? 'row' : 'column'}
-                      zIndex={150 - index}
-                      position="relative"
-                      flex={1}
-                      key={questionGroup.name}
-                    >
-                      {renderHeading ? (
-                        <Recursive
-                          {...renderHeading}
-                          key={questionGroup.name}
-                          context={{
-                            heading:
-                              questionGroup.childAsks.length === 1 &&
-                              questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                  {questionGroups.map(( questionGroup, index ) => {
+                    const isSingleBooleanForm = (
+                      questionGroup.childAsks.length === 1 &&
+                      questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                    );
+
+                    return (
+                      <Box
+                        flexDirection={displayInline ? 'row' : 'column'}
+                        zIndex={150 - index}
+                        position="relative"
+                        flex={1}
+                        key={questionGroup.name}
+                      >
+                        {renderHeading ? (
+                          <Recursive
+                            {...renderHeading}
+                            key={questionGroup.name}
+                            context={{
+                              heading: isSingleBooleanForm
                                 ? questionGroup.childAsks[0].question.name
                                 : questionGroup.name,
-                          }}
-                        />
-                      ) : null}
+                            }}
+                          />
+                        ) : null}
 
-                      {(
-                        /* If there is only one child ask and it's a Boolean question,
-                          * don't show it - the 'YES'/'NO' buttons underneath this will suffice. */
-                        questionGroup.childAsks.length === 1 &&
-                        questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
-                      )
-                        ? null
-                        : (
+                        {/* If there this form is a Yes/No (boolean) form, don't show any
+                          * child asks - the 'YES'/'NO' buttons underneath this will suffice. */}
+                        {isSingleBooleanForm ? null : (
                           questionGroup.childAsks.map(
                             this.renderInput(
                               values,
@@ -757,20 +756,25 @@ class Form extends Component {
                               submitForm,
                             )
                           )
-                        )
-                      }
-                    </Box>
-                  ))}
+                        )}
+                      </Box>
+                    );
+                  })}
 
-                  {questionGroups.reduce(( buttons, { attributeCode }) => {
+                  {questionGroups.reduce(( buttons, { childAsks, attributeCode }) => {
                     buttonTypes.forEach( type => {
                       if ( attributeCode.includes( type )) {
                         buttons.push(
                           this.renderButton({
                             disabled: (
+                              !(
+                                questionGroups.length === 1 &&
+                                isArray( childAsks, { ofMinLength: 1 }) &&
+                                childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                              ) &&
                               !isFormValid &&
                               !alwaysActiveButtonTypes.includes( type )
-                            ) || isSubmitting,
+                            ),
                             onPress: () => {
                               // when clicked on cancel button on the form => close the Popup
                               buttons && buttons.map( button => {
@@ -795,7 +799,7 @@ class Form extends Component {
                     return buttons;
                   }, [] )}
                 </Fragment>
-                ))}
+              </Box>
             </WrapperComponent>
           );
         }}

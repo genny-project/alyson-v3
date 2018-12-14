@@ -70,20 +70,6 @@ class InputFile extends Component {
     files: [],
   }
 
-  handleComplete = result => {
-    this.setState( state => {
-      if ( this.props.multiple ) {
-        return {
-          files: state.files.concat( result ),
-        };
-      }
-
-      return {
-        files: [result],
-      };
-    }, this.propagateParentOnChange );
-  }
-
   propagateParentOnChange = () => {
     const { files } = this.state;
 
@@ -229,6 +215,20 @@ class InputFile extends Component {
     this.setState( prevState => ({
       files: prevState.files.filter(({ id }) => id !== removeId ),
     }), this.propagateParentOnChange );
+  }
+
+  handleComplete = result => {
+    this.setState( state => {
+      if ( this.props.multiple ) {
+        return {
+          files: state.files.concat( result ),
+        };
+      }
+
+      return {
+        files: [result],
+      };
+    }, this.propagateParentOnChange );
   }
 
   render() {

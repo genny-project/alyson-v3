@@ -87,15 +87,25 @@ const reducer = ( state = initialState, { type, payload }) => {
             return newState;
 
           const uri = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' ).value;
-          const data = JSON.parse(
-            baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_DATA' ).value
-          );
+          let data = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_DATA' ).value;
+
+          /* Data should be an object, so if it's a string ensure it gets a JSON parsing. */
+          if ( isString( data )) {
+            /* Fix the issue with empty strings throwing up warnings. */
+            if ( data.length === 0 )
+              return newState;
+
+            /* We can check if the data string looks like it's a stringified JSON object before
+             * parsing, however since we're in a try/catch we should prefer to use the warning
+             * message below to avoid silent failures. */
+            data = JSON.parse( data );
+          }
 
           injectLayoutIntoState({ uri, data, state: newState });
         }
         catch ( error ) {
           // eslint-disable-next-line no-console
-          console.warn( 'Unable to add layout to reducer state', error, item.code );
+          console.warn( 'Unable to add layout to reducer state', error, item.code, item );
         }
 
         return newState;

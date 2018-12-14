@@ -13,6 +13,7 @@ class InputFileTouchable extends Component {
     onPress: func,
     icon: string,
     wrapperProps: object,
+    testID: string,
   }
 
   render() {
@@ -21,6 +22,7 @@ class InputFileTouchable extends Component {
       onPress,
       icon,
       wrapperProps,
+      testID,
       ...restProps
     } = this.props;
 
@@ -31,6 +33,7 @@ class InputFileTouchable extends Component {
         width="100%"
         position="relative"
         {...wrapperProps}
+        testID={`input-file ${testID}`}
       >
         <Input
           {...restProps}

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { string, bool } from 'prop-types';
-import { Field } from 'formik';
+import { string, bool, object } from 'prop-types';
 import { Button } from '../../index';
 
 class FormGenericSubmit extends Component {
@@ -11,12 +10,12 @@ class FormGenericSubmit extends Component {
   }
 
   static propTypes = {
-    name: string,
     text: string,
     disabled: bool,
     disabledWhenFormInvalid: bool,
     submittingText: string,
     testID: string,
+    formProps: object,
   }
 
   render() {
@@ -26,25 +25,23 @@ class FormGenericSubmit extends Component {
       disabled,
       disabledWhenFormInvalid,
       testID,
+      formProps,
       ...restProps
     } = this.props;
 
     return (
-      <Field>
-        {({ form }) => (
-          <Button
-            {...restProps}
-            disabled={disabled || ( disabledWhenFormInvalid && !form.isValid )}
-            onPress={form.submitForm} // eslint-disable-line react/jsx-handler-names
-            text={(
-              form.isSubmitting
-                ? submittingText
-                : text
-            )}
-            testID={testID}
-          />
+      <Button
+        {...restProps}
+        disabled={disabled || ( disabledWhenFormInvalid && formProps && !formProps.isValid )}
+        onPress={formProps ? formProps.submitForm : null}
+        text={(
+          ( formProps && formProps.isSubmitting )
+            ? submittingText
+            : text
         )}
-      </Field>
+        testID={testID}
+        onKeyPress={formProps ? formProps.submitForm : null}
+      />
     );
   }
 }

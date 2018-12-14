@@ -57,8 +57,10 @@ const getDisplayValueField = ( item ) => {
 
   if ( item.valueString != null ) {
     if (
-      item.valueString.startsWith( '[' ) &&
-      item.valueString.endsWith( ']' )
+      ( item.valueString.startsWith( '[' ) &&
+      item.valueString.endsWith( ']' )) ||
+      ( item.valueString.startsWith( '{' ) &&
+      item.valueString.endsWith( '}' ))
     ) {
       try {
         const object = JSON.parse( item.valueString );
@@ -259,6 +261,8 @@ const handleReduceData = ( resultant, current ) => {
 
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
+        totalCount: current.totalCount ||
+        ( resultant[current.parentCode] ? resultant[current.parentCode].totalCount : 0 ),
         links: [
           createLink( current ),
         ],
@@ -306,6 +310,8 @@ const handleReduceData = ( resultant, current ) => {
 
       resultant[current.parentCode] = {
         ...resultant[current.parentCode],
+        totalCount: current.totalCount ||
+        ( resultant[current.parentCode] ? resultant[current.parentCode].totalCount : 0 ),
         links: newLinks,
       };
     }
@@ -388,6 +394,54 @@ function handleReduceDataTwo( message, state ) {
   return message.items.reduce( handleReduceData, newState );
 }
 
+function changeLink( message, state ) {
+  /* if we have an oldLink and it already exists in the store, we remove it */
+  if ( message.oldLink &&
+    state[message.oldLink.sourceCode] &&
+    state[message.oldLink.sourceCode][message.oldLink.linkValue] ) {
+    state[message.oldLink.sourceCode][message.oldLink.linkValue] =
+    state[message.oldLink.sourceCode][message.oldLink.linkValue]
+    .filter( existingLink => existingLink.link.targetCode !== message.oldLink.targetCode );
+  }
+  /* TODO: to remove. here for demo */
+  // else {
+  //   const buckets =
+  // ['GRP_APPLIED', 'GRP_SHORTLISTED',
+  // 'GRP_INTERVIEWS', 'GRP_OFFER', 'GRP_PLACED', 'GRP_OFFERED', 'GRP_IN_PROGRESS'];
+
+  //   buckets.forEach( bucket => {
+  //     if ( bucket !== message.link.sourceCode &&
+  //       state[bucket] && state[bucket].APPLICATION ) {
+  //       state[bucket].APPLICATION = state[bucket].APPLICATION
+  //       .filter( existingLink => existingLink.link.targetCode !== message.link.targetCode );
+  //     }
+  //   });
+  // }
+
+  if ( state[message.link.sourceCode] == null ) {
+    state[message.link.sourceCode] = {
+      [message.link.linkValue]: [],
+    };
+  }
+
+  const createLink = ( current ) => ({
+    code: current.code,
+    weight: 1,
+    link: {
+      attributeCode: current.attributeCode,
+      targetCode: current.targetCode,
+      sourceCode: current.sourceCode,
+      weight: 1,
+      linkValue: current.linkValue,
+    },
+  });
+
+  /* we push the new link */
+  state[message.link.sourceCode][message.link.linkValue].push( createLink( message.link ));
+
+  return state;
+}
+
 // function handleReduceLinksTwo( message, state ) {
 //   const newState = copy( state );
 
@@ -424,6 +478,7 @@ const reducer = ( state = initialState, { type, payload }) => {
      *
      * TODO: explain `links`
      */
+
     case 'BASE_ENTITY_MESSAGE': {
       if (
         payload.replace ||
@@ -443,6 +498,13 @@ const reducer = ( state = initialState, { type, payload }) => {
         data: payload.items.reduce( handleReduceData, state.data ),
         attributes: payload.items.reduce( handleReduceAttributes, state.attributes ),
         links: payload.items.reduce( handleReduceLinks, state.links ),
+      };
+    }
+
+    case 'BASE_ENTITY_LINK_CHANGE': {
+      return {
+        ...state,
+        links: changeLink( payload, state.links ),
       };
     }
 

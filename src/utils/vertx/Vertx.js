@@ -1,5 +1,6 @@
 import EventBus from 'vertx3-eventbus-client';
 import decodeToken from 'jwt-decode';
+import NProgress from 'nprogress';
 import { prefixedLog } from '../../utils';
 import { store } from '../../redux';
 import * as actions from '../../redux/actions';
@@ -87,6 +88,10 @@ class Vertx {
 
   handleIncomingMessage = message => {
     const { incomingMessageHandler } = this.state;
+
+    if ( message.cmd_type && message.cmd_type === 'ROUTE_CHANGE' ) {
+      NProgress.done();
+    }
 
     // this.log( 'Receiving a message' );
 
