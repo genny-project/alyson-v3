@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { func, any, string } from 'prop-types';
 import prettierBytes from 'prettier-bytes';
-import { Box, Text, Icon, Image, Touchable } from '../../../../components';
+import { Box, Text, Icon, Image, Touchable, Link } from '../../../../components';
 
 class InputFileItem extends Component {
   static defaultProps = {
@@ -84,19 +84,39 @@ class InputFileItem extends Component {
           paddingX={10}
           flex={1}
         >
-          <Text
-            // href={file.uploadURL}
-            target="_blank"
-            rel="noopener"
-            size="sm"
-            width="100%"
-          >
-            {name}
-            {uploaded
-              ? ' (uploaded)'
-              : ' (not uploaded)'}
-            {error && '(ERROR)'}
-          </Text>
+          { uploadURL
+            ? (
+              <Link
+                to={uploadURL}
+                externalLink
+              >
+                <Text
+                  size="sm"
+                  width="100%"
+                  color="blue"
+                  decoration="underline"
+                >
+                  {name}
+                  {uploaded
+                    ? ' (uploaded)'
+                    : ' (not uploaded)'}
+                  {error && '(ERROR)'}
+                </Text>
+              </Link>
+            )
+            : (
+              <Text
+                size="sm"
+                width="100%"
+              >
+                {name}
+                {uploaded
+                  ? ' (uploaded)'
+                  : ' (not uploaded)'}
+                {error && '(ERROR)'}
+              </Text>
+            )
+            }
 
           {size ? (
             <Text

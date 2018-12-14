@@ -1,4 +1,5 @@
 /* eslint-disable import/first */
+import 'nprogress/nprogress.css';
 import './polyfills';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -10,12 +11,12 @@ import './utils/layouts-dev';
 
 console.disableYellowBox = true; // eslint-disable-line no-console
 
-/* --- ADDED FOR LOCAL LAYOUT DEV --- */
+// // /* --- ADDED FOR LOCAL LAYOUT DEV --- */
 // if ( !this.f ) {
 //   this.f = true;
-//   global.LayoutsDev.load( 'PROJECT_HERE' );
+//   global.LayoutsDev.load( 'internmatch-new' );
 // }
-/* ------------------------ */
+// /* ------------------------ */
 
 const Root = () => (
   <ErrorBoundary>

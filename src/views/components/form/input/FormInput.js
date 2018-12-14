@@ -18,6 +18,15 @@ class FormInput extends Component {
     this.handleChangeDebounced = debounce( this.handleChangeDebounced, 300 );
   }
 
+  focus() {
+    if (
+      this.input &&
+      this.input.focus
+    ) {
+      this.input.focus();
+    }
+  }
+
   handleChangeDebounced = ( value, withSend ) => {
     this.props.onChangeValue( value, withSend );
   }
@@ -28,15 +37,6 @@ class FormInput extends Component {
 
   handleChangeValueWithSendAndDebounce = value => {
     this.handleChangeDebounced( value, true );
-  }
-
-  focus() {
-    if (
-      this.input &&
-      this.input.focus
-    ) {
-      this.input.focus();
-    }
   }
 
   render() {
@@ -94,9 +94,15 @@ class FormInput extends Component {
           />
         );
 
-      case 'upload':
       case 'file':
+      case 'upload':
+      case 'filemultiple':
+      case 'uploadmultiple':
       case 'image':
+      case 'Image':
+      case 'imagemultiple':
+      case 'Imagemultiple':
+      case 'images':
       case 'signature':
         return (
           <Input

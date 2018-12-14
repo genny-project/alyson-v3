@@ -60,6 +60,7 @@ class MessageHandler {
         replace: current.payload.replace,
         shouldDeleteLinkedBaseEntities: current.payload.shouldDeleteLinkedBaseEntities,
         parentCode: current.payload.parentCode,
+        totalCount: current.payload.returnCount,
         ...item,
       })),
     ];
@@ -114,7 +115,8 @@ class MessageHandler {
       );
 
       this.lastBe = new Date().getTime();
-    } else {
+    } 
+    else {
       const payload = message;
 
       if ( isArray( payload.items )) {
@@ -122,6 +124,7 @@ class MessageHandler {
           shouldDeleteLinkedBaseEntities: payload.shouldDeleteLinkedBaseEntities,
           parentCode: payload.parentCode,
           delete: payload.delete,
+          totalCount: payload.returnCount,
           replace: payload.replace,
           ...item,
         }));

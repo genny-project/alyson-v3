@@ -1,14 +1,13 @@
-import React, { createElement, cloneElement, Component, isValidElement } from 'react';
+import React, { createElement, cloneElement, PureComponent, isValidElement } from 'react';
 import { Text } from 'react-native';
 import dlv from 'dlv';
 import copy from 'fast-copy';
 import { connect } from 'react-redux';
 import { object, any, string, array, oneOfType, shape, arrayOf } from 'prop-types';
 import { isObject, isArray, isString, ifConditionsPass } from '../../../utils';
-import { store } from '../../../redux';
 import * as Components from '../index';
 
-class Recursive extends Component {
+class Recursive extends PureComponent {
   static propTypes = {
     component: string,
     props: object,
@@ -25,7 +24,139 @@ class Recursive extends Component {
       by: string,
     }),
     dontInjectContextIntoProps: arrayOf( string ),
+    user: object,
   };
+
+  calculateConditionalProps = ( conditionalProps, context ) => {
+    /* If no conditional props or no context is provided return an empty object */
+    if ( !conditionalProps || !context ) {
+      return {};
+    }
+
+    if ( isArray( conditionalProps )) {
+      return this.calculateConditionalPropsArray( conditionalProps, context );
+    }
+
+    /* Check to make sure an if condition was provided */
+    const ifCondition = conditionalProps.if;
+
+    if ( !ifCondition ) {
+      return {};
+    }
+
+    /* Get the "then" and "else" props */
+    const thenProps = conditionalProps.then;
+    const elseProps = conditionalProps.else;
+
+    /**
+     * Check whether the condition passes. We'll reuse the should
+     * render component function for this. If the condition passes return the
+     * "then" props, otherwise return the "else" props.
+     */
+    if ( this.ifConditionsPass( ifCondition )) {
+      return thenProps;
+    }
+
+    if ( !elseProps ) {
+      return {};
+    }
+
+    if ( elseProps.if ) {
+      return this.calculateConditionalProps( elseProps, context );
+    }
+
+    return elseProps;
+  };
+
+  calculateConditionalPropsArray = ( conditionalProps, context ) => {
+    /* If no conditional props or no context is provided return an empty object */
+    if ( !conditionalProps || !context ) {
+      return {};
+    }
+
+    return conditionalProps.reduce(( result, current ) => {
+      const data = {
+        ...result,
+        ...this.calculateConditionalProps( current, context ),
+      };
+
+      return data;
+    }, {});
+  }
+
+  injectContextIntoChildren( context, children ) {
+    if ( isString( children )) {
+      if ( children.startsWith( '_' )) {
+        let temp = children;
+
+        if ( children.includes( '{{' )) {
+          temp = this.curlyBracketParse( children );
+        }
+
+        return dlv( context, temp.substring( 1 ));
+      }
+
+      if ( children.includes( '{{' )) {
+        return this.curlyBracketParse( children );
+      }
+    }
+
+    return children;
+  }
+
+  /**
+   * Loops through all of the props for this element and inject the context if required.
+   * Additionally parse a handlebars style string and inject variables from the context if needed.
+   * If the prop is not a string, simply return its current value so that functions work
+   * correctly.
+   */
+  injectContextIntoProps( props ) {
+    if ( !isObject( props )) return {};
+
+    const { dontInjectContextIntoProps } = this.props;
+    const propsCopy = copy( props );
+    let afterProps;
+
+    try {
+      afterProps = Object.keys( propsCopy ).reduce( this.handleReducePropInjection, propsCopy );
+    } catch ( e ) {
+      console.error( 'FOUND IT' );
+    }
+
+    if ( isArray( dontInjectContextIntoProps )) {
+      dontInjectContextIntoProps.forEach( key => {
+        /* Revert the keys. */
+        afterProps[key] = props[key];
+      });
+    }
+
+    return afterProps;
+  }
+
+  /* Determines whether or not we should render a component, used for onlyShowIf functionality */
+  ifConditionsPass( condition ) {
+    const { context, user } = this.props;
+
+    const dataPool = {
+      user,
+      props: this.props,
+      ...context,
+    };
+
+    return ifConditionsPass( condition, dataPool );
+  }
+
+  curlyBracketParse = string => {
+    return String( string )
+      .split( '{{' )
+      .map( this.handleMapCurlyTemplate )
+      .join( '' );
+  };
+
+  focus = () => {
+    if ( this.ref && this.ref.focus )
+      this.ref.focus();
+  }
 
   handleMapCurlyTemplate = template => {
     if ( !template || !template.includes( '}}' )) {
@@ -85,70 +216,6 @@ class Recursive extends Component {
     }
 
     return 0;
-  }
-
-  curlyBracketParse = string => {
-    return String( string )
-      .split( '{{' )
-      .map( this.handleMapCurlyTemplate )
-      .join( '' );
-  };
-
-  calculateConditionalProps = ( conditionalProps, context ) => {
-    /* If no conditional props or no context is provided return an empty object */
-    if ( !conditionalProps || !context ) {
-      return {};
-    }
-
-    if ( isArray( conditionalProps )) {
-      return this.calculateConditionalPropsArray( conditionalProps, context );
-    }
-
-    /* Check to make sure an if condition was provided */
-    const ifCondition = conditionalProps.if;
-
-    if ( !ifCondition ) {
-      return {};
-    }
-
-    /* Get the "then" and "else" props */
-    const thenProps = conditionalProps.then;
-    const elseProps = conditionalProps.else;
-
-    /**
-     * Check whether the condition passes. We'll reuse the should
-     * render component function for this. If the condition passes return the
-     * "then" props, otherwise return the "else" props.
-     */
-    if ( this.ifConditionsPass( ifCondition )) {
-      return thenProps;
-    }
-
-    if ( !elseProps ) {
-      return {};
-    }
-
-    if ( elseProps.if ) {
-      return this.calculateConditionalProps( elseProps, context );
-    }
-
-    return elseProps;
-  };
-
-  calculateConditionalPropsArray = ( conditionalProps, context ) => {
-    /* If no conditional props or no context is provided return an empty object */
-    if ( !conditionalProps || !context ) {
-      return {};
-    }
-
-    return conditionalProps.reduce(( result, current ) => {
-      const data = {
-        ...result,
-        ...this.calculateConditionalProps( current, context ),
-      };
-
-      return data;
-    }, {});
   }
 
   handleReducePropInjection = ( result, current, index ) => {
@@ -214,69 +281,6 @@ class Recursive extends Component {
     return result;
   };
 
-  injectContextIntoChildren( context, children ) {
-    if ( isString( children )) {
-      if ( children.startsWith( '_' )) {
-        let temp = children;
-
-        if ( children.includes( '{{' )) {
-          temp = this.curlyBracketParse( children );
-        }
-
-        return dlv( context, temp.substring( 1 ));
-      }
-
-      if ( children.includes( '{{' )) {
-        return this.curlyBracketParse( children );
-      }
-    }
-
-    return children;
-  }
-
-  /**
-   * Loops through all of the props for this element and inject the context if required.
-   * Additionally parse a handlebars style string and inject variables from the context if needed.
-   * If the prop is not a string, simply return its current value so that functions work
-   * correctly.
-   */
-  injectContextIntoProps( props ) {
-    if ( !isObject( props )) return {};
-
-    const { dontInjectContextIntoProps } = this.props;
-    const propsCopy = copy( props );
-    let afterProps;
-
-    try {
-      afterProps = Object.keys( propsCopy ).reduce( this.handleReducePropInjection, propsCopy );
-    } catch ( e ) {
-      console.error( 'FOUND IT' );
-    }
-
-    if ( isArray( dontInjectContextIntoProps )) {
-      dontInjectContextIntoProps.forEach( key => {
-        /* Revert the keys. */
-        afterProps[key] = props[key];
-      });
-    }
-
-    return afterProps;
-  }
-
-  /* Determines whether or not we should render a component, used for onlyShowIf functionality */
-  ifConditionsPass( condition ) {
-    const { context } = this.props;
-    const { user } = store.getState().vertx;
-
-    const dataPool = {
-      user,
-      props: this.props,
-      ...context,
-    };
-
-    return ifConditionsPass( condition, dataPool );
-  }
-
   render() {
     const {
       props,
@@ -294,6 +298,7 @@ class Recursive extends Component {
     let componentProps = this.injectContextIntoProps({
       ...props,
       ...this.calculateConditionalProps( conditional, context ),
+      ref: node => this.ref = node,
     });
 
     const component = componentProps.component || this.props.component;
@@ -402,6 +407,7 @@ class Recursive extends Component {
 
 const mapStateToProps = state => ({
   theme: state.theme,
+  user: state.vertx.user,
 });
 
 export default connect( mapStateToProps )( Recursive );

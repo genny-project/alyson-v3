@@ -28,6 +28,7 @@ class InputAutocomplete extends Component {
     onChangeValue: func,
     onBlur: func,
     onType: func,
+    testID: string,
   }
 
   handleFilter = inputValue => dropdownItem => {
@@ -74,6 +75,7 @@ class InputAutocomplete extends Component {
       onType,
       onBlur,
       value, // eslint-disable-line no-unused-vars
+      testID,
       ...restProps
     } = this.props;
 
@@ -104,6 +106,7 @@ class InputAutocomplete extends Component {
             <Box
               {...getRootProps( undefined, { suppressRefError: true })}
               position="relative"
+              testID={`input-autocomplete ${testID}`}
             >
               <Input
                 {...getInputProps( restProps )}
@@ -112,6 +115,7 @@ class InputAutocomplete extends Component {
                 onChangeValue={onType}
                 onBlur={onBlur}
                 width="100%"
+                testID={`${testID}`}
               />
 
               {isOpen && (
@@ -151,6 +155,7 @@ class InputAutocomplete extends Component {
                               onPress={() => selectItem( item )}
                               withFeedback
                               width="100%"
+                              testID={`input-autocomplete-item ${testID}`}
                             >
                               <Box
                                 {...( highlightedIndex === index ) && {

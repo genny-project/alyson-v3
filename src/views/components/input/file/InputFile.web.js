@@ -26,7 +26,7 @@ class InputFile extends Component {
   static propTypes = {
     maxNumberOfFiles: number,
     autoProceed: bool,
-    onChange: func,
+    onChangeValue: func,
     defaultValue: object,
     value: array,
     imageOnly: bool,
@@ -71,7 +71,6 @@ class InputFile extends Component {
     borderTopRightRadius: number,
     wrapperProps: object,
     color: string,
-    onChangeValue: func,
   }
 
   state = {
@@ -80,28 +79,15 @@ class InputFile extends Component {
   }
 
   componentDidMount() {
-    let files = [];
-
-    try {
-      files = ( this.props.value && this.props.value !== 'null' )
-        ? JSON.parse( this.props.value )
-        : this.props.defaultValue;
-    } catch ( e ) {
-      //
-    }
-
-    this.setState({
-      files,
-    });
-
     const { autoProceed } = this.props;
+
+    this.updateFilesFromProps();
 
     this.uppy = new Uppy({
       autoProceed,
       debug: false,
       restrictions: {
         maxNumberOfFiles: this.props.maxNumberOfFiles,
-        // allowedFileTypes: this.props.allowedFileTypes,
       },
       onBeforeFileAdded: ( currentFile ) => this.checkFileType( currentFile ),
     })
@@ -119,6 +105,15 @@ class InputFile extends Component {
     this.uppy.on( 'complete', this.handleComplete );
   }
 
+  componentDidUpdate( prevProps ) {
+    if (
+      this.props != null &&
+      this.props.value !== prevProps.value
+    ) {
+      this.updateFilesFromProps();
+    }
+  }
+
   componentWillUnmount() {
     if ( this.uppy )
       this.uppy.close();
@@ -126,6 +121,33 @@ class InputFile extends Component {
 
   get modalName() {
     return 'uppy';
+  }
+
+  updateFilesFromProps = () => {
+    const { value, defaultValue } = this.props;
+    let files = [];
+
+    if (
+      isArray( value )
+    ) {
+      this.setState({ files: value });
+
+      return;
+    }
+
+    try {
+      files = ( value && value !== 'null' )
+        ? JSON.parse( value )
+        : defaultValue;
+    } catch ( e ) {
+      //
+    }
+
+    if (
+      isArray( files )
+    ) {
+      this.setState({ files: files });
+    }
   }
 
   checkFileType = ( currentFile ) => {
@@ -148,54 +170,12 @@ class InputFile extends Component {
     return false;
   }
 
-  handleComplete = result => {
-    this.setState( state => ({
-      files: [
-        ...state.files,
-        ...result.successful.map( file => ({
-          ...file,
-          uploaded: true,
-          id: file.meta.key,
-        })),
-      ],
-    }), this.handleSaveToServer );
-  }
-
-  handleSaveToServer = () => {
-    const { files } = this.state;
-
-    this.setState({ error: null });
-
-    setTimeout( this.close, 2000 );
-
-    if ( this.props.onChange ) {
-      this.props.onChange({ target: { value: files } });
-    }
-  }
-
-  handleError = error => {
-    this.setState({ error });
-  }
-
-  handleOpenModal = () => {
-    this.uppy.getPlugin( 'Dashboard' ).openModal();
-  }
-
-  handleRemoveFile = fileId => () => {
-    this.setState( state => ({ files: state.files.filter(({ id }) => id !== fileId ) }), () => {
-      this.handleRefreshUppy();
-      this.handleSaveToServer();
-    });
-  }
-
-  handleRefreshUppy = () => {
-    this.uppy.setState({
-      files: this.state.files,
-    });
-  }
-
   close = () => {
-    this.uppy.getPlugin( 'Dashboard' ).closeModal();
+    if ( this.uppy ) {
+      if ( this.uppy.getPlugin( 'Dashboard' ).isModalOpen()) {
+        this.uppy.getPlugin( 'Dashboard' ).closeModal();
+      }
+    }
   }
 
   isValidFile = file => {
@@ -226,6 +206,62 @@ class InputFile extends Component {
     return true;
   }
 
+  handleComplete = result => {
+    this.setState( state => ({
+      files: [
+        ...state.files,
+        ...result.successful.map( file => ({
+          ...file,
+          uploaded: true,
+          id: file.meta.key,
+        })),
+      ],
+    }), this.handleSaveToServer );
+  }
+
+  handleSaveToServer = () => {
+    const { files } = this.state;
+
+    this.setState({ error: null });
+
+    setTimeout( this.close, 2000 );
+
+    // delete the file object from each data object, it causes problems with fastcopy
+    files.forEach( file => file && file.data ? file['data'] = { size: file.size } : file );
+
+    if ( this.props.onChangeValue ) {
+      this.props.onChangeValue( isArray( files, { ofMinLength: 1 }) ? files : '' );
+    }
+  }
+
+  handleError = error => {
+    this.setState({ error });
+  }
+
+  handleOpenModal = () => {
+    this.uppy.getPlugin( 'Dashboard' ).openModal();
+  }
+
+  handleRemoveFile = fileId => () => {
+    this.setState( state => {
+      const filteredFiles = state.files.filter(({ id }) => id !== fileId );
+
+      return {
+        files: [...filteredFiles],
+        itemRemoved: [...filteredFiles],
+      };
+    }, () => {
+      this.handleRefreshUppy();
+      this.handleSaveToServer();
+    });
+  }
+
+  handleRefreshUppy = () => {
+    this.uppy.setState({
+      files: this.state.files,
+    });
+  }
+
   render() {
     const {
       imageOnly,
@@ -233,6 +269,7 @@ class InputFile extends Component {
       testID,
       renderItem,
       renderInput,
+      value, // eslint-disable-line
       ...restProps
     } = this.props;
 
@@ -299,6 +336,7 @@ class InputFile extends Component {
               text={(
               `Click to Upload a${isArray( validFiles, { ofMinLength: 1 }) ? 'nother' : imageOnly ? 'n' : ''} ${imageOnly ? 'image' : 'file'} `
               )}
+              testID={testID}
             />
           )
         )}

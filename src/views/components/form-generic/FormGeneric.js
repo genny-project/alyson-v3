@@ -1,16 +1,14 @@
-import React, { isValidElement, createElement } from 'react';
-import { Platform } from 'react-native';
+import React, { } from 'react';
 import { any, bool, string, object } from 'prop-types';
-import { Formik } from 'formik';
-import dlv from 'dlv';
-import { isArray, isString, Bridge } from '../../../utils';
-import { Recursive, Box } from '../index';
+import { Bridge } from '../../../utils';
+import FormGenericBody from './body';
 
-let ref = null;
+// let ref = null;
 
 const FormGeneric = ({
   children,
-  context,
+  testID,
+  validation,
   onSubmitSendEvent,
   value,
   buttonCode,
@@ -53,73 +51,28 @@ const FormGeneric = ({
 
     if ( resetFormOnSubmit ) {
       form.resetForm();
-      ref && ref.reset && ref.reset();
-    }
-  };
-
-  const handleKeyPress = (  values, form ) => ( e ) => {
-    const key = e.key;
-
-    switch ( key ) {
-      case 'Enter':
-        sendEvent( values, form );
-        break;
-      default:
-        return null;
+      // ref && ref.reset && ref.reset();
     }
   };
 
   const handleSubmit = onSubmitSendEvent ? sendEvent : null;
 
   return (
-    <Formik
+    <FormGenericBody
+      {...restProps}
+      // ref={box => ref = box}
+      // accessibilityRole="role"
+      testID={testID}
+      validation={validation}
       onSubmit={handleSubmit}
     >
-      {formik => {
-        const element = Platform.OS === 'web' ? 'form' : Box;
-
-        return createElement( element, {
-          ...restProps,
-          ref: node => ref = node,
-          onSubmit: formik.handleSubmit,
-        }, (
-            isValidElement( children ) ? children
-            : isString( children ) ? children
-            : isArray( children )
-              ? children.map(( child, i ) => {
-                if ( dlv( child, 'props.props.submitOnEnterPress' )) child.props.props.onKeyPress = handleKeyPress( formik.values, formik );
-
-                return isValidElement( child )
-                  ? child
-                  : (
-                    <Recursive
-                      key={i} // eslint-disable-line react/no-array-index-key
-                      {...child}
-                      context={{
-                        ...context,
-                        ...formik,
-                      }}
-                    />
-                  );
-              })
-              : (
-                <Recursive
-                  {...children}
-                  context={{
-                    ...context,
-                    ...formik,
-                  }}
-                />
-              )
-          ));
-      }}
-    </Formik>
+      {children}
+    </FormGenericBody>
   );
 };
 
 FormGeneric.propTypes = {
   children: any,
-  context: any,
   onSubmitSendEvent: bool,
   value: any,
   buttonCode: string,
@@ -127,6 +80,8 @@ FormGeneric.propTypes = {
   messageType: string,
   injectFormValuesIntoValue: object,
   resetFormOnSubmit: bool,
+  testID: string,
+  validation: object,
 };
 
 export default FormGeneric;

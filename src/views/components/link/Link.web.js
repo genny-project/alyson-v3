@@ -5,14 +5,26 @@ import { withKeycloak } from '../keycloak';
 import { Touchable } from '../index';
 
 class Link extends Component {
+  focus() {
+    if ( this.link )
+      this.link.focus();
+  }
+
   handleClick = event => {
-    const { onPress, disabled } = this.props;
+    const { onPress, disabled, externalLink, to  } = this.props;
 
     if ( disabled ) {
       event.preventDefault();
       event.stopPropagation();
 
       return false;
+    }
+
+    if ( externalLink ) {
+      window.open( to, '_blank' );
+
+      event.preventDefault();
+      event.stopPropagation();
     }
 
     if ( onPress )
@@ -26,11 +38,6 @@ class Link extends Component {
       history.push( to );
 
     this.handleClick( event );
-  }
-
-  focus() {
-    if ( this.link )
-      this.link.focus();
   }
 
   render() {
@@ -92,6 +99,7 @@ Link.propTypes = {
   history: object,
   wrapperProps: object,
   withFeedback: bool,
+  externalLink: bool,
 };
 
 export default withKeycloak( withRouter( Link ));
