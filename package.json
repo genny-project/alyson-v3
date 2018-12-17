@@ -162,7 +162,12 @@
       "./node_modules/appcenter/test/AppCenterMock.js",
       "./node_modules/appcenter-analytics/test/AppCenterAnalyticsMock.js",
       "./node_modules/appcenter-crashes/test/AppCenterCrashesMock.js"
-    ]
+    ],
+    "globals": {
+      "__DEV__": true,
+      "window": {},
+      "navigator": {}
+    }
   },
   "husky": {
     "hooks": {

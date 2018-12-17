@@ -20,7 +20,7 @@ const getDisplayValueField = ( item ) => {
   if ( item.valueDouble != null ) {
     let local = navigator.language;
 
-    if ( local == null )
+    if ( !local )
       local = 'en-AU';
 
     const value = new Intl.NumberFormat( local ).format( item.valueDouble );
@@ -585,6 +585,22 @@ const reducer = ( state = initialState, { type, payload }) => {
     default:
       return state;
   }
+};
+
+/* For testing purposes. */
+export {
+  getDisplayValueField,
+  handleReduceAskQuestionData,
+  handleReduceAskQuestionTypes,
+  handleReduceAttributeCodes,
+  handleReduceAttributes,
+  handleReduceData,
+  handleReduceDataTwo,
+  handleReduceDefinitionData,
+  handleReduceDefinitionTypes,
+  handleReduceLinks,
+  handleRemoveLayoutAttributes,
+  handleReplaceLinks,
 };
 
 export default reducer;
