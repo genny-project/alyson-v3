@@ -134,16 +134,12 @@ class KeycloakProvider extends Component {
       }),
     ];
 
-    if ( Platform.OS === 'web' ) {
-      promises.push(
-        LogoutUrl
-          .addEventListener( 'url', this.handleLogoutUrlChange )
-          .open({ replaceUrl })
-      );
-    }
-
     /* Wait for the above promises to all finish. */
     await Promise.all( promises );
+
+    await LogoutUrl
+      .addEventListener( 'url', this.handleLogoutUrlChange )
+      .open({ replaceUrl });
 
     return new Promise(( resolve, reject ) => {
       if ( Platform.OS === 'web' ) {
@@ -376,7 +372,6 @@ class KeycloakProvider extends Component {
           refreshToken,
           isAuthenticated: true,
         });
-
         this.startTokenRefresh();
       }
 

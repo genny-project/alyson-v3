@@ -14,7 +14,21 @@ class Register extends Component {
   }
 
   componentDidMount() {
-    this.doRegister();
+    if ( !this.props.keycloak.isAuthenticated && !this.props.keycloak.isCheckingStorage )
+      this.doRegister();
+  }
+
+  shouldComponentUpdate( nextProps ) {
+    if ( nextProps.keycloak.isAuthenticating ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  componentDidUpdate() {
+    if ( !this.props.keycloak.isAuthenticated && !this.props.keycloak.isCheckingStorage )
+      this.doRegister();
   }
 
   doRegister = async () => {
@@ -22,8 +36,9 @@ class Register extends Component {
 
     const attempt = await attemptRegister({ replaceUrl: true });
 
-    if ( attempt && attempt.type === 'cancel' )
+    if ( attempt && attempt.type === 'cancel' ) {
       this.setState({ browserDismissed: true });
+    }
   }
 
   render() {
