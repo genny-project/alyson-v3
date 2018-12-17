@@ -18,16 +18,12 @@ class Register extends Component {
       this.doRegister();
   }
 
-  shouldComponentUpdate( nextProps ) {
-    if ( nextProps.keycloak.isAuthenticating ) {
-      return false;
-    }
-
-    return true;
-  }
-
   componentDidUpdate() {
-    if ( !this.props.keycloak.isAuthenticated && !this.props.keycloak.isCheckingStorage )
+    if (
+      !this.props.keycloak.isAuthenticated &&
+      !this.props.keycloak.isCheckingStorage &&
+      !this.props.keycloak.isAuthenticating
+    )
       this.doRegister();
   }
 
