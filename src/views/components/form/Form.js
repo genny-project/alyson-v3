@@ -14,7 +14,7 @@ import FormInput from './input';
 import { store } from '../../../redux';
 import { hideDialog } from '../../../redux/actions';
 
-const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE'];
+const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE', 'CONFIRM'];
 
 class Form extends Component {
   static defaultProps = {
