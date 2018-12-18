@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { object } from 'prop-types';
+import { connect } from 'react-redux';
 import { Text, Box, KeycloakConsumer, Redirect } from '../../components';
 import Layout from '../../layout';
+import Generic from '../generic';
 
 class Register extends Component {
   static propTypes = {
     keycloak: object,
+    config: object,
   }
 
   state = {
@@ -14,17 +17,32 @@ class Register extends Component {
   }
 
   componentDidMount() {
-    if ( !this.props.keycloak.isAuthenticated && !this.props.keycloak.isCheckingStorage )
+    if (
+      this.shouldDoRegister()
+    ) {
       this.doRegister();
+    }
   }
 
   componentDidUpdate() {
     if (
-      !this.props.keycloak.isAuthenticated &&
-      !this.props.keycloak.isCheckingStorage &&
-      !this.props.keycloak.isAuthenticating
-    )
+      this.shouldDoRegister()
+    ) {
       this.doRegister();
+    }
+  }
+
+  shouldDoRegister = () => {
+    const { keycloak } = this.props;
+    const { config } = this.props;
+
+    return (
+      !keycloak.isAuthenticated &&
+      !keycloak.isCheckingStorage &&
+      !keycloak.isAuthenticating &&
+      config !== null &&
+      config.ENV_USE_CUSTOM_AUTH_LAYOUTS !== 'TRUE'
+    );
   }
 
   doRegister = async () => {
@@ -39,7 +57,12 @@ class Register extends Component {
 
   render() {
     const { isAuthenticated, error } = this.props.keycloak;
+    const { config } = this.props;
     const { browserDismissed } = this.state;
+
+    if ( config && config.ENV_USE_CUSTOM_AUTH_LAYOUTS === 'TRUE' ) {
+      return <Generic layout="register" />;
+    }
 
     if ( isAuthenticated )
       return <Redirect to="app" />;
@@ -84,7 +107,11 @@ class Register extends Component {
   }
 }
 
-export default props => (
+const mapStateToProps = state => ({
+  config: state.keycloak.data,
+});
+
+export default connect( mapStateToProps )( props => (
   <KeycloakConsumer>
     {keycloak => (
       <Register
@@ -93,4 +120,4 @@ export default props => (
       />
     )}
   </KeycloakConsumer>
-);
+));

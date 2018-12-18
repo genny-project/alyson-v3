@@ -39,6 +39,11 @@ const routes = [
     component: Pages.Register,
   },
   {
+    path: '/registration',
+    exact: true,
+    component: Pages.Register,
+  },
+  {
     path: '*',
     component: Pages.Generic,
   },

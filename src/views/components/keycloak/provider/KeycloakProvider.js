@@ -251,10 +251,12 @@ class KeycloakProvider extends Component {
   }
 
   handleAuthSuccess = async code => {
-    this.setState({
+    await this.asyncSetState({
       isAuthenticating: false,
       isAuthenticated: true,
     });
+
+    console.warn( 'handleAuthSuccess', code );
 
     this.startTokenRefresh( code );
 
@@ -393,10 +395,14 @@ class KeycloakProvider extends Component {
       isCheckingCallback: true,
     });
 
+    console.warn( 'checking callback', location.search, location.pathname );
+
     try {
       const sessionState = await Storage.get( 'kcSessionState' );
       const { state, code, ...restQuery } = queryString.parse( location.search );
       const numberOfRestQueries = restQuery ? Object.keys( restQuery ).length : 0;
+
+      console.warn({ sessionState, state, code, numberOfRestQueries }, ...restQuery );
 
       if ( !sessionState ) throw false;
       if ( !state ) throw false;
@@ -404,6 +410,8 @@ class KeycloakProvider extends Component {
 
       /* Remove `state` and `code` from the URL query params. */
       let newUrl = location.pathname;
+
+      console.warn({ newUrl });
 
       if ( numberOfRestQueries.length > 0 )
         newUrl += `?${queryString.stringify( restQuery )}`;
@@ -413,9 +421,11 @@ class KeycloakProvider extends Component {
       /* Ensure the sessions are aligned. */
       if ( sessionState === state )
         this.handleAuthSuccess( code );
+      else console.warn( 'are equal?', { sessionState, code }, sessionState === state );
     }
     catch ( e ) {
       /* We don't care if there is an error. */
+      console.warn( 'error mayne', e );
     }
     finally {
       this.setState({
@@ -487,6 +497,8 @@ class KeycloakProvider extends Component {
   }
 
   handleTokenRefresh = async code => {
+    console.warn( 'hadnle tokensfdjfskf', JSON.stringify( this.state ), code );
+
     const realmUrl = this.createRealmUrl();
     const url = `${realmUrl}/protocol/openid-connect/token`;
     const { refreshToken } = this.state;
@@ -521,6 +533,8 @@ class KeycloakProvider extends Component {
       }),
     };
 
+    console.warn({ grant, code, refreshToken, options });
+
     this.setState({ isFetchingToken: true });
 
     try {
@@ -533,6 +547,8 @@ class KeycloakProvider extends Component {
       /* FIXME: fix check */
       // if ( session_state === sessionState )
 
+      console.warn({ response, responseJson });
+
       /* If the token refresh has failed log the user out */
       if ( !response.ok ) {
         this.attemptLogout();
@@ -541,19 +557,20 @@ class KeycloakProvider extends Component {
       this.handleTokenRefreshSuccess( responseJson );
     }
     catch ( error ) {
+      console.warn( 'failed token refresh', error );
       await this.asyncSetState( state => ({
         consecutiveTokenFails: state.consecutiveTokenFails + 1,
       }));
 
       const { consecutiveTokenFails } = this.state;
 
-      /* If the token refresh fails three times in a row, log the user out. */
-      if ( consecutiveTokenFails > 2 ) {
+      /* If the token refresh fails more than three times in a row, log the user out. */
+      if ( consecutiveTokenFails > 3 ) {
         this.attemptLogout();
       }
       else {
         /* Wait one second, then try refresh. */
-        setTimeout( this.handleTokenRefresh, 1000 );
+        setTimeout(() => this.handleTokenRefresh( code ), 5000 );
       }
 
       this.handleError( error );
@@ -575,6 +592,8 @@ class KeycloakProvider extends Component {
     const currentTime = new Date().getTime();
     const accessExpiresInSeconds = expires_in * 1000; // Convert from seconds to ms
     const refreshExpiresInSeconds = refresh_expires_in * 1000; // Convert from seconds to ms
+
+    console.warn( 'success!', access_token, refresh_token );
 
     const setTokens = new Promise( resolve => {
       this.setState({
@@ -628,6 +647,8 @@ class KeycloakProvider extends Component {
       accessTokenExpiresOn: this.state.accessTokenExpiresOn,
       timestamp: new Date().getTime(),
     });
+
+    console.warn( 'kcAuth', localStorage.getItem( 'kcAuth' ));
   }
 
   handleError = error => {
