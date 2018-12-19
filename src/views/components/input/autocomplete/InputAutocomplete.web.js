@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { func, string, number, oneOfType, array, bool } from 'prop-types';
 import Downshift from 'downshift';
 import { Text, Box, Input, Touchable } from '../../index';
+import { isString } from '../../../../utils';
 
 class InputAutocomplete extends Component {
   static defaultProps = {
@@ -29,6 +30,24 @@ class InputAutocomplete extends Component {
     onBlur: func,
     onType: func,
     testID: string,
+  }
+
+  state = {
+    filterValue: '',
+  };
+
+  componentDidUpdate( prevProps ) {
+    if (
+      this.state.filterValue === '' &&
+      isString( this.props.value ) &&
+      this.props.value !== prevProps.value
+    ) {
+      this.setFilterValue( this.props.value );
+    }
+  }
+
+  setFilterValue = ( value ) => {
+    this.setState({ filterValue: value });
   }
 
   handleFilter = inputValue => dropdownItem => {
@@ -59,11 +78,22 @@ class InputAutocomplete extends Component {
   }
 
   handleChange = item => {
+    this.setState({
+      filterValue: item.description,
+    });
     if ( this.props.onChange )
       this.props.onChange( item );
 
-    if ( this.props.onChangeValue )
-      this.props.onChangeValue( item );
+    // if ( this.props.onChangeValue )
+    //   this.props.onChangeValue( item );
+  }
+
+  handleType = ( item ) => {
+    this.setState({
+      filterValue: item,
+    });
+    if ( this.props.onType )
+      this.props.onType( item );
   }
 
   render() {
@@ -72,12 +102,13 @@ class InputAutocomplete extends Component {
       items,
       itemStringKey,
       borderBetweenItems,
-      onType,
       onBlur,
       value, // eslint-disable-line no-unused-vars
       testID,
       ...restProps
     } = this.props;
+
+    // console.log( 'autocompprops', this.props && this.props.value );
 
     return (
       <Downshift
@@ -102,6 +133,8 @@ class InputAutocomplete extends Component {
           highlightedIndex,
           selectItem,
         }) => {
+          // console.log( inputValue, this.state.filterValue );
+
           return (
             <Box
               {...getRootProps( undefined, { suppressRefError: true })}
@@ -112,10 +145,11 @@ class InputAutocomplete extends Component {
                 {...getInputProps( restProps )}
                 type={inputType}
                 clearButtonMode="while-editing"
-                onChangeValue={onType}
+                onChangeValue={this.handleType}
                 onBlur={onBlur}
                 width="100%"
                 testID={`${testID}`}
+                value={this.state.filterValue}
               />
 
               {isOpen && (
