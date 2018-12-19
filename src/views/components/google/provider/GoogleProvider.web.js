@@ -1,9 +1,12 @@
 /* eslint-disable react/no-unused-state */
 import React, { Component } from 'react';
-import { node, string } from 'prop-types';
+import { node, string, object } from 'prop-types';
 import queryString from 'query-string';
-import config from '../../../../config';
+import { connect } from 'react-redux';
+import { isObject } from '../../../../utils';
 import GoogleContext from '../context';
+
+const GOOGLE_MAPS_API_URL = 'https://maps.googleapis.com/maps/api/js';
 
 class GoogleProvider extends Component {
   static defaultProps = {
@@ -15,6 +18,7 @@ class GoogleProvider extends Component {
     children: node,
     initCallbackName: string,
     scriptTagId: string,
+    keycloak: object,
   }
 
   /* eslint-disable react/sort-comp */
@@ -136,16 +140,51 @@ class GoogleProvider extends Component {
     this.injectGoogleMapsScript();
   }
 
-  injectGoogleMapsScript() {
+  async injectGoogleMapsScript() {
     const { scriptTagId } = this.props;
     const isAlreadyInjected = !!document.getElementById( scriptTagId );
 
     if ( isAlreadyInjected )
       throw new Error( 'Attempted to inject Google Maps script when the script has already been injected.' );
 
-    const { initCallbackName } = this.props;
-    const { maps, apiKey } = config.google;
+    const { initCallbackName, keycloak } = this.props;
     const scriptTag = document.createElement( 'script' );
+
+    const apiKey = (
+      process.env.ENV_GOOGLE_MAPS_APIKEY ||
+      ( keycloak.data && keycloak.data.ENV_GOOGLE_MAPS_APIKEY )
+    );
+
+    /* If we can't find an API key, use the below util to keep trying. */
+    if ( !apiKey ) {
+      try {
+        let counter = 0;
+        const MAX_ATTEMPTS = 20;
+
+        /* Keep trying to find the Google API key through an interval loop. */
+        await new Promise(( resolve, reject ) => {
+          this.interval = setInterval(() => {
+            const { data } = this.props.keycloak;
+
+            if ( isObject( data, { withProperty: 'ENV_GOOGLE_MAPS_APIKEY' })) {
+              clearInterval( this.interval );
+              resolve();
+            }
+            else if ( ++counter > MAX_ATTEMPTS ) {
+              reject();
+              clearInterval( this.interval );
+            }
+          }, 200 );
+        });
+      }
+      /* If it doesn't happen within MAX_ATTEMPTS, break out of the function. */
+      catch ( error ) {
+        // eslint-disable-next-line no-console
+        console.warn( 'Unable to inject Google Maps script into webpage - no given Google API key. (keycloak.data.ENV_GOOGLE_MAPS_APIKEY)' );
+
+        return;
+      }
+    }
 
     const apiUrlQuery = queryString.stringify({
       key: apiKey,
@@ -153,7 +192,7 @@ class GoogleProvider extends Component {
       callback: initCallbackName,
     });
 
-    scriptTag.src = `${maps.apiUrl}?${apiUrlQuery}`;
+    scriptTag.src = `${GOOGLE_MAPS_API_URL}?${apiUrlQuery}`;
     scriptTag.async = true;
     scriptTag.id = scriptTagId;
 
@@ -169,4 +208,10 @@ class GoogleProvider extends Component {
   }
 }
 
-export default GoogleProvider;
+export { GoogleProvider };
+
+const mapStateToProps = state => ({
+  keycloak: state.keycloak,
+});
+
+export default connect( mapStateToProps )( GoogleProvider );

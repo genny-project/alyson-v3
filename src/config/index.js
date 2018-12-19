@@ -1,47 +1,21 @@
-import Config from './config';
+import config from './config';
 
 export { default as routes } from './routes';
 export { default as sidebar } from './sidebar';
 
+const { protocol, hostname } = window.location;
+
 export default {
-  app: {
-    name: Config.APP_NAME,
-  },
+  ...config,
   genny: {
-    host: Config.GENNY_HOST,
-    initUrl: Config.GENNY_INITURL,
+    host: process.env.GENNY_HOST_URL || `${protocol}//${hostname}`,
     bridge: {
-      port: Config.GENNY_BRIDGE_PORT,
+      port: process.env.GENNY_BRIDGE_PORT || 8080,
       endpoints: {
-        vertex: Config.GENNY_BRIDGE_VERTEX,
-        service: Config.GENNY_BRIDGE_SERVICE,
-        events: Config.GENNY_BRIDGE_EVENTS,
+        vertex: 'frontend',
+        service: 'api/service',
+        events: 'api/events',
       },
     },
-  },
-  signature: {
-    url: Config.SIGNATURE_URL,
-  },  
-  google: {
-    apiKey: Config.GOOGLE_MAPS_APIKEY,
-    maps: {
-      apiUrl: Config.GOOGLE_MAPS_APIURL,
-    },
-  },
-  uppy: {
-    url: Config.UPPY_URL,
-  },
-  keycloak: {
-    redirectUri: Config.KEYCLOAK_REDIRECTURI,
-  },
-  layouts: {
-    publicURL: Config.LAYOUT_PUBLICURL,
-    query: {
-      directory: Config.LAYOUT_QUERY_DIRECTORY,
-    },
-  },
-  guest: {
-    username: Config.GUEST_USERNAME,
-    password: Config.GUEST_PASSWORD,
   },
 };
