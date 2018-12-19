@@ -34,8 +34,10 @@ const injectLayoutIntoState = ({ uri, data, state, isDevLayout, isPublic = false
 
       /* If it's already in the reducer and it's a dev layout, no not overwrite it. */
       if (
-        state[layoutGroup][newUri] &&
-        state[layoutGroup][newUri].isDevLayout
+        state[layoutGroup][newUri] && (
+          state[layoutGroup][newUri].isDevLayout ||
+          state[layoutGroup][newUri].isPublic
+        )
       ) {
         return true;
       }
