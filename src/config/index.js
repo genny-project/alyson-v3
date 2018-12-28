@@ -8,7 +8,7 @@ const { protocol, hostname } = window.location;
 export default {
   ...config,
   genny: {
-    host: process.env.GENNY_HOST_URL || `${protocol}//${hostname}`,
+    host: process.env.ENV_GENNY_HOST || `${protocol}//${hostname}`,
     bridge: {
       port: process.env.GENNY_BRIDGE_PORT || 8080,
       endpoints: {
