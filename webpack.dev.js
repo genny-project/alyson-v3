@@ -10,7 +10,7 @@ module.exports = env => merge( common, {
     new MonacoWebpackPlugin(),
     new webpack.DefinePlugin({
       'process.env.ENV_GENNY_HOST': JSON.stringify( env.ENV_GENNY_HOST ),
-      'process.env.GENNY_INIT_URL': JSON.stringify( env.GENNY_INIT_URL ),
+      'process.env.ENV_GENNY_INIT_URL': JSON.stringify( env.ENV_GENNY_INIT_URL ),
     }),
     new Dotenv({ path: './.env' }),
   ],

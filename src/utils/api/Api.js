@@ -115,7 +115,7 @@ class Api {
   }
 
   getKeycloakConfig = () => {
-    const initUrl = process.env.GENNY_INIT_URL || window.location.origin;
+    const initUrl = process.env.ENV_GENNY_INIT_URL || window.location.origin;
 
     return this.eventCall({
       url: `init?url=${initUrl}`,
