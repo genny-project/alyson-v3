@@ -11,7 +11,7 @@ const { protocol, hostname } = window.location;
     nginx is setup on kubernets to get the url which 
     allows us to get the site and project specific variables */
 
-const fullUrl = `${protocol + hostname}/api/events/init?url=${protocol + hostname}`;
+const fullUrl = `${protocol}//${hostname}/api/events/init?url=${protocol + hostname}`;
 
 export default {
   ...config,
