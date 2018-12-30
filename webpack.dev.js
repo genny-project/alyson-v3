@@ -8,9 +8,9 @@ const common = require( './webpack.common.js' );
 module.exports = env => merge( common, {
   plugins: [
     new MonacoWebpackPlugin(),
-    new webpack.DefinePlugin({
+    ( env && env.ENV_GENNY_INIT_URL ? new webpack.DefinePlugin({
       'process.env.ENV_GENNY_INIT_URL': JSON.stringify( env.ENV_GENNY_INIT_URL ),
-    }),
+    }) : () => ( null )),
     new Dotenv({ path: './.env' }),
   ],
   devtool: 'eval',
