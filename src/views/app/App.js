@@ -2,8 +2,14 @@ import React, { Component } from 'react';
 import { BackHandler } from 'react-native';
 import Routing from '../routing';
 import AuthenticatedApp from './authenticated';
-import LayoutEditor from './layout-editor';
 import { location } from '../../utils';
+
+/* Only include the LayoutEditor in dev */
+let LayoutEditor = null;
+
+if ( process.env.NODE_ENV !== 'production' ) {
+  LayoutEditor = require( './layout-editor' );
+}
 
 class App extends Component {
   constructor( props ) {
