@@ -125,6 +125,8 @@ class Api {
   getPublicLayouts = () => {
     const { data } = store.getState().keycloak;
 
+    console.warn({ data }); //eslint-disable-line
+
     const publicLayoutUrl = (
       data.ENV_LAYOUT_PUBLICURL ||
       (  process.env.ENV_LAYOUT_PUBLICURL ) ||
@@ -135,7 +137,7 @@ class Api {
       ( data && data.ENV_LAYOUT_QUERY_DIRECTORY ) ||
       process.env.ENV_LAYOUT_QUERY_DIRECTORY 
     );
-
+    
     if ( !directory ) {
       // eslint-disable-next-line no-console
       console.warn( `Unable to fetch public layouts from ${publicLayoutUrl} - no directory set. (process.env.ENV_LAYOUT_QUERY_DIRECTORY)` );

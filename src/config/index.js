@@ -12,8 +12,9 @@ const { protocol, hostname } = window.location;
     allows us to get the site and project specific variables */
 
 const fullUrl = `${protocol}//${hostname}/api/events/init?url=${protocol}//${hostname}`;
-// const fullUrl = 'https://bridge-internmatch-staging.outcome-hub.com/api/events/init?url=https://app3-internmatch-staging.outcome-hub.com';
 
+// const fullUrl = 'https://bridge-internmatch-staging.outcome-hub.com/api/events/init?url=https://app3-internmatch-staging.outcome-hub.com';
+console.warn({ fullUrl }); //eslint-disable-line
 export default {
   ...config,
   genny: {
