@@ -81,7 +81,7 @@ class Api {
 
   getKeycloakConfig = () => {
     return this.eventCall({
-      url: `init?url=${config.genny.initUrl}`,
+      url: `init?url=${config.genny.initUrl}&${window && window.location ? window.location.search.replace( '?', '' ) : ''}`,
     });
   }
 

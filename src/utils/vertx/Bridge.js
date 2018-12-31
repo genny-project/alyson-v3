@@ -35,7 +35,7 @@ class Bridge {
 
     const origin = window.location ? window.location.origin : 'http://localhost:3000';
 
-    axios.post( `${config.genny.host}/${config.genny.bridge.endpoints.events}/init?url=${origin}`, {
+    axios.post( `${config.genny.host}/${config.genny.bridge.endpoints.events}/init?url=${origin}`, {}, {
       method: 'POST',
       responseType: 'json',
       timeout: 30000,
