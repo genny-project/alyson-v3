@@ -5,13 +5,14 @@ export { default as sidebar } from './sidebar';
 
 const { protocol, hostname, port } = window.location;
 
-/*  /api/events/init?url=${protocol + hostname} 
+/*  /api/events/init?url=${protocol + hostname}
     this is how we pass the current website to the bridge  */
-/* 
-    nginx is setup on kubernets to get the url which 
+/*
+    nginx is setup on kubernets to get the url which
     allows us to get the site and project specific variables */
 
-const fullUrl = `${protocol}:${port}//${hostname}/api/events/init?url=${protocol}//${hostname}`;
+const currentUrl = `${protocol}//${hostname}:${port}`;
+const fullUrl = `${currentUrl}/api/events/init?url=${currentUrl}`;
 
 // const fullUrl = 'https://bridge-internmatch-staging.outcome-hub.com/api/events/init?url=https://app3-internmatch-staging.outcome-hub.com';
 console.warn({ fullUrl }); //eslint-disable-line
