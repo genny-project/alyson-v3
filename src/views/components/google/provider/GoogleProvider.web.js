@@ -150,7 +150,7 @@ class GoogleProvider extends Component {
     const { initCallbackName, keycloak } = this.props;
     const scriptTag = document.createElement( 'script' );
 
-    const apiKey = (
+    let apiKey = (
       process.env.ENV_GOOGLE_MAPS_APIKEY ||
       ( keycloak.data && keycloak.data.ENV_GOOGLE_MAPS_APIKEY )
     );
@@ -168,6 +168,7 @@ class GoogleProvider extends Component {
 
             if ( isObject( data, { withProperty: 'ENV_GOOGLE_MAPS_APIKEY' })) {
               clearInterval( this.interval );
+              apiKey = data.ENV_GOOGLE_MAPS_APIKEY;
               resolve();
             }
             else if ( ++counter > MAX_ATTEMPTS ) {

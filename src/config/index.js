@@ -3,7 +3,7 @@ import config from './config';
 export { default as routes } from './routes';
 export { default as sidebar } from './sidebar';
 
-const { protocol, hostname } = window.location;
+const { protocol, hostname, port } = window.location;
 
 /*  /api/events/init?url=${protocol + hostname} 
     this is how we pass the current website to the bridge  */
@@ -11,7 +11,7 @@ const { protocol, hostname } = window.location;
     nginx is setup on kubernets to get the url which 
     allows us to get the site and project specific variables */
 
-const fullUrl = `${protocol}//${hostname}/api/events/init?url=${protocol}//${hostname}`;
+const fullUrl = `${protocol}:${port}//${hostname}/api/events/init?url=${protocol}//${hostname}`;
 
 // const fullUrl = 'https://bridge-internmatch-staging.outcome-hub.com/api/events/init?url=https://app3-internmatch-staging.outcome-hub.com';
 console.warn({ fullUrl }); //eslint-disable-line

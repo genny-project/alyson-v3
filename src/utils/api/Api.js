@@ -55,7 +55,7 @@ class Api {
 
     const { keycloak } = store.getState();
 
-    const apiKey = (
+    let apiKey = (
       process.env.ENV_GOOGLE_MAPS_APIKEY ||
       ( keycloak.data && keycloak.data.ENV_GOOGLE_MAPS_APIKEY )
     );
@@ -73,6 +73,7 @@ class Api {
 
             if ( isObject( data, { withProperty: 'ENV_GOOGLE_MAPS_APIKEY' })) {
               clearInterval( this.interval );
+              apiKey = data.ENV_GOOGLE_MAPS_APIKEY;
               resolve();
             }
             else if ( ++counter > MAX_ATTEMPTS ) {
