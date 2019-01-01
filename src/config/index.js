@@ -14,8 +14,6 @@ const { protocol, hostname, port } = window.location;
 const currentUrl = `${protocol}//${hostname}:${port}`;
 const fullUrl = `${currentUrl}/api/events/init?url=${currentUrl}`;
 
-// const fullUrl = 'https://bridge-internmatch-staging.outcome-hub.com/api/events/init?url=https://app3-internmatch-staging.outcome-hub.com';
-console.warn({ fullUrl }); //eslint-disable-line
 export default {
   ...config,
   genny: {
