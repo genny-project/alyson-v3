@@ -116,7 +116,18 @@ class Api {
   }
 
   getKeycloakConfig = () => {
-    const initUrl = process.env.ENV_GENNY_INIT_URL || window.location.origin;
+    let initUrl = process.env.ENV_GENNY_BRIDGE_URL;
+
+    /* Default to the env var if set, otherwise use the current URL as the init URL. */
+    if ( !initUrl ) {
+      /* This will only work on web, so ensure `location` is defined. */
+      if ( typeof window !== 'undefined' && window.location ) {
+        const { protocol, hostname, port } = window.location;
+        const currentUrl = `${protocol}//${hostname}:${port}`;
+
+        initUrl = currentUrl;
+      }
+    }
 
     return this.eventCall({
       url: `init?url=${initUrl}`,
@@ -136,9 +147,9 @@ class Api {
 
     const directory = (
       ( data && data.ENV_LAYOUT_QUERY_DIRECTORY ) ||
-      process.env.ENV_LAYOUT_QUERY_DIRECTORY 
+      process.env.ENV_LAYOUT_QUERY_DIRECTORY
     );
-    
+
     if ( !directory ) {
       // eslint-disable-next-line no-console
       console.warn( `Unable to fetch public layouts from ${publicLayoutUrl} - no directory set. (process.env.ENV_LAYOUT_QUERY_DIRECTORY)` );
@@ -147,7 +158,7 @@ class Api {
     }
 
     const query = queryString.stringify({ directory });
-    
+
     return this.observableCall({
       url: `${publicLayoutUrl}/public?${query}`,
     });

@@ -5,13 +5,38 @@ const MonacoWebpackPlugin = require( 'monaco-editor-webpack-plugin' );
 const Dotenv = require( 'dotenv-webpack' );
 const common = require( './webpack.common.js' );
 
-module.exports = env => merge( common, {
-  plugins: [
+/**
+ * Prefix each key in an object with `process.env`,
+ * and set the value of each key to be stringified.
+ *
+ * @param {object} envVars
+ */
+function formatEnvironmentVariables( envVars ) {
+  const keys = Object.keys( envVars );
+
+  return keys.reduce(( result, key ) => {
+    result[`process.env.${key}`] = JSON.stringify( envVars[key] );
+
+    return result;
+  }, {});
+}
+
+module.exports = env => {
+  const plugins = [
     new MonacoWebpackPlugin(),
-    ( env && env.ENV_GENNY_INIT_URL ? new webpack.DefinePlugin({
-      'process.env.ENV_GENNY_INIT_URL': JSON.stringify( env.ENV_GENNY_INIT_URL ),
-    }) : () => ( null )),
     new Dotenv({ path: './.env' }),
-  ],
-  devtool: 'eval',
-});
+  ];
+
+  if ( env ) {
+    const envVars = formatEnvironmentVariables( env );
+
+    plugins.push(
+      new webpack.DefinePlugin( envVars )
+    );
+  }
+
+  return merge( common, {
+    plugins,
+    devtool: 'eval',
+  });
+};

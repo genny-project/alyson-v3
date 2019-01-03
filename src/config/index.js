@@ -1,9 +1,11 @@
-import config from './config';
+import platformSpecificConfig from './config';
 
 export { default as routes } from './routes';
 export { default as sidebar } from './sidebar';
 
-const { protocol, hostname, port } = window.location;
+// The reason we're using `require` instead of `import`?
+// See: https://github.com/webpack/webpack/issues/6584
+const merge = require( 'deepmerge' );
 
 /*  /api/events/init?url=${protocol + hostname}
     this is how we pass the current website to the bridge  */
@@ -11,15 +13,11 @@ const { protocol, hostname, port } = window.location;
     nginx is setup on kubernets to get the url which
     allows us to get the site and project specific variables */
 
-const currentUrl = `${protocol}//${hostname}:${port}`;
-const fullUrl = `${currentUrl}/api/events/init?url=${currentUrl}`;
-
-export default {
-  ...config,
+const globalConfig = {
   genny: {
-    host: fullUrl || process.env.ENV_GENNY_INIT_URL,
+    host: process.env.ENV_GENNY_BRIDGE_URL,
     bridge: {
-      port: process.env.GENNY_BRIDGE_PORT || 8080,
+      port: process.env.ENV_GENNY_BRIDGE_PORT || 8080,
       endpoints: {
         vertex: 'frontend',
         service: 'api/service',
@@ -28,3 +26,6 @@ export default {
     },
   },
 };
+
+/* Allow the platform specific config to overwrite any global config keys. */
+export default merge( globalConfig, platformSpecificConfig );
