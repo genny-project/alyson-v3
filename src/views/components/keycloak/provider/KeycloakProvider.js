@@ -256,8 +256,6 @@ class KeycloakProvider extends Component {
       isAuthenticated: true,
     });
 
-    console.warn( 'handleAuthSuccess', code );
-
     this.startTokenRefresh( code );
 
     if ( this.state.promise ) {
@@ -362,15 +360,14 @@ class KeycloakProvider extends Component {
         refreshTokenExpiresOn,
       } = session;
 
-      const accessTokenHasExpired = this.hasTokenExpired( accessTokenExpiresOn );
+      const isAccessTokenExpired = this.hasTokenExpired( accessTokenExpiresOn );
+      const isRefreshTokenExpired = this.hasTokenExpired( refreshTokenExpiresOn );
 
-      const refreshTokenHasExpired = this.hasTokenExpired( refreshTokenExpiresOn );
-
-      if ( !refreshTokenHasExpired ) {
+      if ( !isRefreshTokenExpired ) {
         await this.asyncSetState({
           sessionState: state,
           sessionNonce: nonce,
-          accessToken: accessTokenHasExpired ? null : accessToken,
+          accessToken: isAccessTokenExpired ? null : accessToken,
           refreshToken,
           isAuthenticated: true,
         });
@@ -395,14 +392,10 @@ class KeycloakProvider extends Component {
       isCheckingCallback: true,
     });
 
-    console.warn( 'checking callback', location.search, location.pathname );
-
     try {
       const sessionState = await Storage.get( 'kcSessionState' );
       const { state, code, ...restQuery } = queryString.parse( location.search );
       const numberOfRestQueries = restQuery ? Object.keys( restQuery ).length : 0;
-
-      console.warn({ sessionState, state, code, numberOfRestQueries }, ...restQuery );
 
       if ( !sessionState ) throw false;
       if ( !state ) throw false;
@@ -410,8 +403,6 @@ class KeycloakProvider extends Component {
 
       /* Remove `state` and `code` from the URL query params. */
       let newUrl = location.pathname;
-
-      console.warn({ newUrl });
 
       if ( numberOfRestQueries.length > 0 )
         newUrl += `?${queryString.stringify( restQuery )}`;
@@ -421,11 +412,13 @@ class KeycloakProvider extends Component {
       /* Ensure the sessions are aligned. */
       if ( sessionState === state )
         this.handleAuthSuccess( code );
-      else console.warn( 'are equal?', { sessionState, code }, sessionState === state );
+      else {
+        // eslint-disable-next-line no-console
+        console.warn( 'Uh oh! Upon authentication, it seems the session state in the callback URL does not match the saved session state in local storage.' );
+      }
     }
     catch ( e ) {
       /* We don't care if there is an error. */
-      console.warn( 'error mayne', e );
     }
     finally {
       this.setState({
@@ -443,7 +436,7 @@ class KeycloakProvider extends Component {
 
   createActionUrl = ( action, query = {}) => {
     const realmUrl = this.createRealmUrl();
-    const redirectUri = keycloakUtils.getValidRedirectUri();
+    const redirectUri = keycloakUtils.getValidRedirectUri({ excludePathname: true });
     const sessionState = uuid();
     const sessionNonce = uuid();
 
@@ -497,8 +490,6 @@ class KeycloakProvider extends Component {
   }
 
   handleTokenRefresh = async code => {
-    console.warn( 'hadnle tokensfdjfskf', JSON.stringify( this.state ), code );
-
     const realmUrl = this.createRealmUrl();
     const url = `${realmUrl}/protocol/openid-connect/token`;
     const { refreshToken } = this.state;
@@ -518,22 +509,21 @@ class KeycloakProvider extends Component {
       : { refresh_token: refreshToken };
 
     const options = {
+      credentials: 'include',
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        ...clientSecret && {
+          Authorization: `Basic ${btoa( `${clientId}:${clientSecret}` )}`,
+        },
       },
       body: queryString.stringify({
         ...grant,
         grant_type: grantType,
         redirect_uri: redirectUrl,
         client_id: clientId,
-        ...clientSecret && {
-          client_secret: clientSecret,
-        },
       }),
     };
-
-    console.warn({ grant, code, refreshToken, options });
 
     this.setState({ isFetchingToken: true });
 
@@ -547,8 +537,6 @@ class KeycloakProvider extends Component {
       /* FIXME: fix check */
       // if ( session_state === sessionState )
 
-      console.warn({ response, responseJson });
-
       /* If the token refresh has failed log the user out */
       if ( !response.ok ) {
         this.attemptLogout();
@@ -557,7 +545,6 @@ class KeycloakProvider extends Component {
       this.handleTokenRefreshSuccess( responseJson );
     }
     catch ( error ) {
-      console.warn( 'failed token refresh', error );
       await this.asyncSetState( state => ({
         consecutiveTokenFails: state.consecutiveTokenFails + 1,
       }));
@@ -592,8 +579,6 @@ class KeycloakProvider extends Component {
     const currentTime = new Date().getTime();
     const accessExpiresInSeconds = expires_in * 1000; // Convert from seconds to ms
     const refreshExpiresInSeconds = refresh_expires_in * 1000; // Convert from seconds to ms
-
-    console.warn( 'success!', access_token, refresh_token );
 
     const setTokens = new Promise( resolve => {
       this.setState({
@@ -647,8 +632,6 @@ class KeycloakProvider extends Component {
       accessTokenExpiresOn: this.state.accessTokenExpiresOn,
       timestamp: new Date().getTime(),
     });
-
-    console.warn( 'kcAuth', localStorage.getItem( 'kcAuth' ));
   }
 
   handleError = error => {
