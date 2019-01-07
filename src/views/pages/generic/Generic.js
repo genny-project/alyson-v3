@@ -28,8 +28,11 @@ class Generic extends Component {
     const { isAuthenticated } = this.props.keycloak;
     const currentUrl = location.getBasePath();
 
-    /* Hotfix to patch the issue where user would be stuck on /home when unauthenticated. */
-    if ( !isAuthenticated && currentUrl === 'home' ) {
+    /* If the user isn't authenticated and we can't find a layout to give to them,
+     * that means that they are attempting to access a route that either doesn't
+     * exist or is not a public layout. In either case, we want to redirect them to the
+    * splash screen so they can register and login. */
+    if ( !isAuthenticated && !layout ) {
       return (
         <Redirect
           to="splash"
@@ -38,6 +41,9 @@ class Generic extends Component {
       );
     }
 
+    /* If the layout is not public and the user is not logged in, get them to login
+     * or register. Afterwards, we should send them to the redirect URI specified here,
+     * which should be the route they were originally trying to access. */
     if ( !isAuthenticated && layout && !layout.isPublic ) {
       const { redirectUri } = location.getQueryParams();
 
