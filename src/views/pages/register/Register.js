@@ -41,7 +41,8 @@ class Register extends Component {
       !keycloak.isCheckingStorage &&
       !keycloak.isAuthenticating &&
       config !== null &&
-      config.ENV_USE_CUSTOM_AUTH_LAYOUTS !== 'TRUE'
+      config.ENV_USE_CUSTOM_AUTH_LAYOUTS !== 'TRUE' &&
+      config.ENV_USE_CUSTOM_AUTH_LAYOUTS !== 'true'
     );
   }
 
@@ -60,7 +61,13 @@ class Register extends Component {
     const { config } = this.props;
     const { browserDismissed } = this.state;
 
-    if ( config && config.ENV_USE_CUSTOM_AUTH_LAYOUTS === 'TRUE' ) {
+    if (
+      config &&
+      (
+        config.ENV_USE_CUSTOM_AUTH_LAYOUTS === 'TRUE' ||
+        config.ENV_USE_CUSTOM_AUTH_LAYOUTS === 'true'
+      )
+    ) {
       return <Generic layout="register" />;
     }
 

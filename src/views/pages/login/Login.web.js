@@ -41,7 +41,8 @@ class Login extends Component {
       !keycloak.isCheckingStorage &&
       !keycloak.isAuthenticating &&
       config !== null &&
-      config.ENV_USE_CUSTOM_AUTH_LAYOUTS !== 'TRUE'
+      config.ENV_USE_CUSTOM_AUTH_LAYOUTS !== 'TRUE' &&
+      config.ENV_USE_CUSTOM_AUTH_LAYOUTS !== 'true'
     );
   }
 
@@ -59,8 +60,14 @@ class Login extends Component {
     const { config } = this.props;
     const { browserDismissed } = this.state;
 
-    if ( config && config.ENV_USE_CUSTOM_AUTH_LAYOUTS === 'TRUE' ) {
-      return  <Generic layout="login" />;
+    if (
+      config &&
+      (
+        config.ENV_USE_CUSTOM_AUTH_LAYOUTS === 'TRUE' ||
+        config.ENV_USE_CUSTOM_AUTH_LAYOUTS === 'true'
+      )
+    ) {
+      return <Generic layout="login" />;
     }
 
     if ( isAuthenticated )

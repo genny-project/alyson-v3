@@ -26,9 +26,19 @@ class Generic extends Component {
   render() {
     const { layout } = this.props;
     const { isAuthenticated } = this.props.keycloak;
+    const currentUrl = location.getBasePath();
+
+    /* Hotfix to patch the issue where user would be stuck on /home when unauthenticated. */
+    if ( !isAuthenticated && currentUrl === 'home' ) {
+      return (
+        <Redirect
+          to="splash"
+          useMainNavigator
+        />
+      );
+    }
 
     if ( !isAuthenticated && layout && !layout.isPublic ) {
-      const currentUrl = location.getBasePath();
       const { redirectUri } = location.getQueryParams();
 
       const loginUrl = `login?${queryString.stringify({
