@@ -142,7 +142,7 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
     return {
       created: be.created,
       link: {
-        attributeCode: 'LNK_CORE',
+        attributeCode: be.linkCode || 'LNK_CORE',
         linkValue: 'LINK',
         sourceCode: be.parentCode,
         targetCode: be.code,
@@ -230,7 +230,7 @@ const createLink = ( current ) => ({
   code: current.code,
   weight: Number.isInteger( current.weight ) ? current.weight : 1,
   link: {
-    attributeCode: 'LNK_CORE',
+    attributeCode: current.linkCode || 'LNK_CORE',
     targetCode: current.code,
     sourceCode: current.parentCode,
     weight: 1,
