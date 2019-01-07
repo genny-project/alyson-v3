@@ -61,6 +61,7 @@ class MessageHandler {
         shouldDeleteLinkedBaseEntities: current.payload.shouldDeleteLinkedBaseEntities,
         parentCode: current.payload.parentCode,
         totalCount: current.payload.returnCount,
+        linkCode: current.payload.linkCode,
         ...item,
       })),
     ];
