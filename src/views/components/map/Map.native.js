@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { number, arrayOf, oneOfType, shape, bool, string } from 'prop-types';
+import { number, arrayOf, oneOfType, shape, bool, string, object } from 'prop-types';
 import MapViewDirections from 'react-native-maps-directions';
-import config from '../../../config';
+import { connect } from 'react-redux';
 import { isArray, isObject } from '../../../utils';
 import { Box } from '../';
 
@@ -20,6 +20,7 @@ class Map extends Component {
     ),
     showDirections: bool,
     testID: string,
+    config: object,
   }
 
   static getDerivedStateFromProps( props, state ) {
@@ -75,7 +76,7 @@ class Map extends Component {
   }
 
   render() {
-    const { showDirections, testID } = this.props;
+    const { showDirections, testID, config } = this.props;
     const { markers } = this.state;
 
     return (
@@ -117,7 +118,7 @@ class Map extends Component {
                     longitude: Number( markers[1].longitude ),
                     key: markers.key,
                   }}
-                  apikey={config.google.apiKey}
+                  apikey={config && config.ENV_GOOGLE_MAPS_APIKEY}
                   strokeColor="blue"
                   strokeWidth={2}
                   onReady={this.handleReady}
@@ -135,4 +136,8 @@ class Map extends Component {
   }
 }
 
-export default Map;
+const mapStateToProps = state => ({
+  config: state.keycloak.data,
+});
+
+export default connect( mapStateToProps )( Map );

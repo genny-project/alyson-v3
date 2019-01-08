@@ -117,7 +117,7 @@ class TableView extends Component {
 
     const d = result || data;
     const t =  isArray( d, { ofMinLength: 1 }) ?
-      Math.round( d.length / itemsPerPage ) : 
+      Math.ceil( d.length / itemsPerPage ) : 
       1;
 
     return t;
@@ -458,7 +458,7 @@ class TableView extends Component {
                 >
                   <Text 
                     color="white"
-                    text={`${currentPage + 1} of ${totalItems}`}
+                    text={`${currentPage + 1} of ${this.state.totalPages}`}
                   />
                 </Box>
                 <Touchable

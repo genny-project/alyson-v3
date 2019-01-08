@@ -5,6 +5,7 @@ import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import capitalize from 'lodash.capitalize';
 import lowercase from 'lodash.lowercase';
+import dlv from 'dlv';
 import { isArray, isObject, isString } from '../../../utils';
 import { Bridge } from '../../../utils/vertx';
 import shallowCompare from '../../../utils/shallow-compare';
@@ -14,7 +15,7 @@ import FormInput from './input';
 import { store } from '../../../redux';
 import { hideDialog } from '../../../redux/actions';
 
-const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE'];
+const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE', 'CONFIRM'];
 
 class Form extends Component {
   static defaultProps = {
@@ -59,6 +60,7 @@ class Form extends Component {
     initialValues: {},
     questionGroups: [],
     formStatus: null,
+    missingBaseEntities: [],
   }
 
   componentDidMount() {
@@ -85,7 +87,7 @@ class Form extends Component {
 
       if ( newGroups.length > 0 ) {
         // eslint-disable-next-line react/no-did-update-set-state
-        this.setState({ questionGroups: newGroups }, () => {
+        this.setState({ questionGroups: newGroups, missingBaseEntities: [] }, () => {
           if ( checkIfSetNeeded ) {
             this.setInitialValues();
             this.setValidationList();
@@ -102,7 +104,7 @@ class Form extends Component {
 
       if ( newGroups.length > 0 ) {
         // eslint-disable-next-line react/no-did-update-set-state
-        this.setState({ questionGroups: newGroups }, () => {
+        this.setState({ questionGroups: newGroups, missingBaseEntities: [] }, () => {
           if ( checkIfSetNeeded ) {
             this.setInitialValues();
             this.setValidationList();
@@ -120,7 +122,7 @@ class Form extends Component {
 
       if ( newGroups.length !== prevGroups.length ) {
         // eslint-disable-next-line react/no-did-update-set-state
-        this.setState({ questionGroups: newGroups }, () => {
+        this.setState({ questionGroups: newGroups, missingBaseEntities: [] }, () => {
           if ( checkIfSetNeeded ) {
             this.setInitialValues();
             this.setValidationList();
@@ -128,6 +130,35 @@ class Form extends Component {
         });
       }
     }
+
+    else if (
+      isArray( this.state.missingBaseEntities, { ofMinLength: 1 })
+    ) {
+      if (
+        this.checkIfNewBaseEntities( this.props )
+      ) {
+        this.setInitialValues();
+        this.setValidationList();
+      }
+    }
+
+    // else if (
+    //   isArray( questionGroupCode ) &&
+    //   questionGroupCode.length !== questionGroups.length
+    // ) {
+    //   const newGroups = this.getQuestionGroups();
+    //   const prevGroups = this.getQuestionGroups( prevProps );
+
+    //   if ( newGroups.length !== prevGroups.length ) {
+    //     // eslint-disable-next-line react/no-did-update-set-state
+    //     this.setState({ questionGroups: newGroups }, () => {
+    //       if ( checkIfSetNeeded ) {
+    //         this.setInitialValues();
+    //         this.setValidationList();
+    //       }
+    //     });
+    //   }
+    // }
   }
 
   setInitialValues = () => {
@@ -138,6 +169,21 @@ class Form extends Component {
       return;
     }
 
+    const checkForBE = ( code ) => {
+      if ( dlv( attributes, `${code}` ) == null ) {
+        this.setState( state => ({
+          missingBaseEntities: state.missingBaseEntities.includes( code )
+            ? [...state.missingBaseEntities]
+            : [...state.missingBaseEntities, code],
+        }));
+      }
+      else if ( this.state.missingBaseEntities.includes( code )) {
+        this.setState( state => ({
+          missingBaseEntities: state.missingBaseEntities.filter( beCode => beCode !== code ),
+        }));
+      }
+    };
+
     const initialValues = {};
 
     questionGroups.forEach( questionGroup => {
@@ -147,19 +193,19 @@ class Form extends Component {
       questionGroup.childAsks.forEach( ask => {
         if ( isArray( ask.childAsks, { ofMinLength: 1 })) {
           ask.childAsks.forEach( childAsk => {
-            const value = (
-              attributes[childAsk.targetCode] &&
-              attributes[childAsk.targetCode][childAsk.attributeCode] &&
-              attributes[childAsk.targetCode][childAsk.attributeCode].value
-            );
+            checkForBE( childAsk.targetCode );
+            const value = dlv( attributes, `${childAsk.targetCode}.${childAsk.attributeCode}.value` );
 
             /* TODO: better handle `false` value */
-            if ( value || childAsk.mandatory )
+            if ( value || childAsk.mandatory ) {
               initialValues[childAsk.questionCode] = value || null;
+            }
           });
         }
 
         else {
+          checkForBE( ask.targetCode );
+
           const value = (
             attributes[ask.targetCode] &&
             attributes[ask.targetCode][ask.attributeCode] &&
@@ -236,6 +282,12 @@ class Form extends Component {
 
     /* If nothing works, return an empty array. */
     return [];
+  }
+
+  checkIfNewBaseEntities = ( newProps ) => {
+    const { missingBaseEntities } = this.state;
+
+    return missingBaseEntities.some( beCode => dlv( newProps, `baseEntities.data.${beCode}` ));
   }
 
   doValidate = values => {
