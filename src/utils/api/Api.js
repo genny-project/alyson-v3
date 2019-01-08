@@ -137,8 +137,6 @@ class Api {
   getPublicLayouts = () => {
     const { data } = store.getState().keycloak;
 
-    console.warn({ data }); //eslint-disable-line
-
     const publicLayoutUrl = (
       data.ENV_LAYOUT_PUBLICURL ||
       (  process.env.ENV_LAYOUT_PUBLICURL ) ||
