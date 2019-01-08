@@ -93,9 +93,6 @@ class KeycloakProvider extends Component {
   }
 
   attemptLogout = async ( options = {}) => {
-    if ( !this.state.isAuthenticated )
-      throw new Error( 'You are already logged out!' );
-
     const {
       replaceUrl = false,
     } = options;
@@ -159,7 +156,7 @@ class KeycloakProvider extends Component {
 
   createLogoutUrl = options => {
     const realmUrl = this.createRealmUrl();
-    const redirectUri = keycloakUtils.getValidRedirectUri();
+    const redirectUri = keycloakUtils.getValidRedirectUri({ excludePathname: true });
 
     const query = queryString.stringify({
       redirect_uri: redirectUri,
