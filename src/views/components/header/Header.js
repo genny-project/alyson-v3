@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { string, object, number, oneOfType, shape, arrayOf, bool, oneOf } from 'prop-types';
 import { connect } from 'react-redux';
 import { Box, Recursive } from '../index';
+import { getDeviceSize } from '../../../utils';
 import HeaderLeft from './left';
 import HeaderRight from './right';
 import { LayoutConsumer } from '../../layout';
@@ -82,10 +83,13 @@ class Header extends Component {
       ...restProps
     } = this.props;
 
+    const deviceSize = getDeviceSize();
+
     if ( renderHeader ) {
       const context = {
         title: layout.title,
         user,
+        deviceSize,
       };
 
       return (
