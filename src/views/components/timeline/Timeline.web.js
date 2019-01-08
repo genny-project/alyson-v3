@@ -1,27 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { string, number, shape } from 'prop-types';
 
 import './Timeline.css';
 
-class Timeline extends Component {
-  static defaultProps = {
-    currentIndex: 1,
-    highlightColor: 'teal',
-  }
-
-  static propTypes = {
-    data: shape( [{ heading: string, date: string, description: string, id: number }] ), 
-    currentIndex: number,
-    highlightColor: string,
-  }
-
-  render() { 
-    const { data,highlightColor , currentIndex } = this.props;
-
-    return (
-      <div className="timeline">
-        <div className="timeline-body"> 
-          {
+const  Timeline = ({ data,highlightColor = 'teal' , currentIndex = 1 }) => {
+  return (
+    <div className="timeline">
+      <div className="timeline-body"> 
+        {
             data && data.length > 0 && data != null  && data !== undefined  ? 
               data && data.map(( dd, i ) => (
                 <div
@@ -52,10 +38,15 @@ class Timeline extends Component {
                 </div>
               )) : 'No Data found'
       }    
-        </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+Timeline.propTypes = {
+  data: shape( [{ heading: string, date: string, description: string, id: number }] ), 
+  currentIndex: number,
+  highlightColor: string,
+};
 
 export default Timeline;
