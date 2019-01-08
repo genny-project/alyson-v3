@@ -6,11 +6,11 @@ import Uppy from '@uppy/core';
 import AwsS3 from '@uppy/aws-s3';
 import Webcam from '@uppy/webcam';
 import Dashboard from '@uppy/dashboard';
+import { connect } from 'react-redux';
 import './inputFile.css';
 import { Box, Recursive } from '../../../components';
 import InputFileItem from './file-item';
 import InputFileTouchable from './file-touchable';
-import config from '../../../../config';
 import { isArray } from '../../../../utils';
 
 class InputFile extends Component {
@@ -71,6 +71,7 @@ class InputFile extends Component {
     borderTopRightRadius: number,
     wrapperProps: object,
     color: string,
+    config: object,
   }
 
   state = {
@@ -79,7 +80,7 @@ class InputFile extends Component {
   }
 
   componentDidMount() {
-    const { autoProceed } = this.props;
+    const { autoProceed, config } = this.props;
 
     this.updateFilesFromProps();
 
@@ -98,7 +99,7 @@ class InputFile extends Component {
           : 'any file type allowed',
         hideProgressAfterFinish: true,
       })
-      .use( AwsS3, { serverUrl: config.uppy.url })
+      .use( AwsS3, { serverUrl: config && config.ENV_UPPY_URL })
       .use( Webcam, { target: Dashboard })
       .run();
 
@@ -345,4 +346,8 @@ class InputFile extends Component {
   }
 }
 
-export default InputFile;
+const mapStateToProps = state => ({
+  config: state.keycloak.data,
+});
+
+export default connect( mapStateToProps )( InputFile );
