@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {  node, number, oneOfType, string } from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 import config from '../../../config/config.web';
+import { getDeviceSize } from '../../../utils';
 
 /* global google, window */
 
@@ -23,19 +24,33 @@ class MapView extends Component {
     const { height, width , zoom } = this.props;
 
     return (
-      <div>
+      <div
+        style={{
+          ...getDeviceSize() === 'sm' ? { width: '100%' } : {},
+        }}
+      >
         <div
           style={{
-            position: 'relative',
-            top: '80px',
-            left: '10px',
-            backgroundColor: 'whitesmoke',
+            position: 'absolute',
+            top: '20px',
+            left: '20px',
+            ...getDeviceSize() === 'sm'
+              ? { backgroundColor: 'white' }
+              : {  backgroundColor: 'whitesmoke' },
             zIndex: 100,
-            width: '200px',
+            ...getDeviceSize() === 'sm' ? {} : {  width: '200px' },
             padding: '8px',
           }}
         >
-          <h2>
+          <h2
+            style={{
+              ...getDeviceSize() === 'sm'
+                ? {
+                  fontSize: '12px',
+                }
+                : {},
+            }}
+          >
             Markers available:
             <span style={{ color: 'blue' }}>
               {this.props.children && this.props.children.length - 1}
