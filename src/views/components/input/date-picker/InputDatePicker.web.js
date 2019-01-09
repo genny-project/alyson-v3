@@ -8,6 +8,7 @@ import Downshift from 'downshift';
 import Kalendaryo from 'kalendaryo';
 import range from 'lodash.range';
 import { format, isSameMonth, isToday, setMonth, setYear, getMonth, getYear } from 'date-fns';
+import { getDeviceSize } from '../../../../utils';
 import { Input, Box, Text, Touchable, Icon } from '../../index';
 
 const NUMBER_OF_DOB_YEARS = 125;
@@ -156,6 +157,7 @@ class InputDatePicker extends PureComponent {
                         position="absolute"
                         zIndex={20}
                         top="100%"
+                        {...( getDeviceSize() === 'sm' ? { width: '100%' } : null )}
                         onPress={event => {
                           event.stopPropagation();
                         }}
@@ -197,15 +199,13 @@ class InputDatePicker extends PureComponent {
 
                                 setDate( newDate );
                               }}
-                              style={{
-                                color: '#000',
-                                backgroundColor: '#FFF',
-                                padding: 5,
-                                borderRadius: 10,
-                                borderWidth: 0,
-                                textAlign: 'center',
-                                cursor: 'pointer',
-                              }}
+                              color="#000"
+                              backgroundColor="#FFF"
+                              padding={5}
+                              borderRadius={10}
+                              borderWidth={0}
+                              textAlign="center"
+                              cursor="pointer"
                               testID={`input-date-picker-month ${testID}`}
                             />
                           </Box>
@@ -222,15 +222,13 @@ class InputDatePicker extends PureComponent {
 
                                 setDate( newDate );
                               }}
-                              style={{
-                                color: '#000',
-                                backgroundColor: '#FFF',
-                                padding: 5,
-                                borderRadius: 10,
-                                borderWidth: 0,
-                                textAlign: 'center',
-                                cursor: 'pointer',
-                              }}
+                              color="#000"
+                              backgroundColor="#FFF"
+                              padding={5}
+                              borderRadius={10}
+                              borderWidth={0}
+                              textAlign="center"
+                              cursor="pointer"
                               testID={`input-date-picker-year ${testID}`}
                             />
                           </Box>

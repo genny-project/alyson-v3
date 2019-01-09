@@ -3,7 +3,7 @@ import { string, oneOfType, array, number, any, func, oneOf, object } from 'prop
 import { TouchableOpacity } from 'react-native';
 import { withRouter } from 'react-router-dom';
 import dlv from 'dlv';
-import { isArray, Bridge } from '../../../utils';
+import { isArray, Bridge, getDeviceSize } from '../../../utils';
 import { Icon, Box, Text } from '../../components';
 
 const tabBarLocation = {
@@ -174,6 +174,13 @@ class Tabs extends PureComponent {
       >
         <Box
           {...tabWrapperProps}
+          {...getDeviceSize() === 'sm'
+            ? {
+              width: '100%',
+              overflowX: 'auto',
+            }
+            : {}
+          }
           flexDirection={tabBarDirection[tabBarSide]}
           flex={0}
           backgroundColor={tabBarBackground}
@@ -221,9 +228,19 @@ class Tabs extends PureComponent {
           padding={padding}
           flex={1}
           backgroundColor={activeTabBackground}
+          {...getDeviceSize() === 'sm'
+            ? {
+              width: '100%',
+              overflowX: 'hidden',
+            }
+            : {}
+          }
           {...childProps}
         >
-          {children[currentChild]}
+          { isArray( children, { ofMinLength: 1 })
+            ? children[currentChild]
+            : null
+          }
         </Box>
       </Box>
     );
