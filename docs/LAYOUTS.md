@@ -128,6 +128,7 @@ The context is a data object can contains a pool of data that you can use. The c
   "props": "If this layout is a sublayout (layout loaded from a layout) any props passed in are accessible here",
   "time": "An object which returns information about the current time, for example time of day (morning, evening etc)",
   "user": "An object containing information about the currently logged in user (if they exist)",
+  "media": "An object containing information about the screen and window sizes",
   "repeater": "If you are using the repeater functionality than this object will exist and include the data of the current item that is being repeated"
 }
 ```
@@ -164,7 +165,7 @@ This will pass the raw `user.attributes` object straight through as the `data` p
 
 Sometimes you'll want to repeat a component based on your data. This is handy for doing things like showing lists. To repeat a component based on specific data we set the `repeat` field as well as setting the child component that we need repeater. You'll notice that the **children object has been set to a single object instead of an array**. This required whenever using the repeater functionality.
 
-For example, let's say we want to list a users payment methods inside a `Box`. 
+For example, let's say we want to list a users payment methods inside a `Box`.
 
 ```json
 {
@@ -371,7 +372,7 @@ Additionally there is also support for using an array of conditionals as follows
 
       },
       "then": {
-        
+
       }
     },
     {
@@ -379,7 +380,7 @@ Additionally there is also support for using an array of conditionals as follows
 
       },
       "then": {
-        
+
       }
     },
     {
@@ -387,7 +388,7 @@ Additionally there is also support for using an array of conditionals as follows
 
       },
       "then": {
-        
+
       }
     }
   ]
