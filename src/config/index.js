@@ -1,47 +1,31 @@
-import Config from './config';
+import platformSpecificConfig from './config';
 
 export { default as routes } from './routes';
 export { default as sidebar } from './sidebar';
 
-export default {
-  app: {
-    name: Config.APP_NAME,
-  },
+// The reason we're using `require` instead of `import`?
+// See: https://github.com/webpack/webpack/issues/6584
+const merge = require( 'deepmerge' );
+
+/*  /api/events/init?url=${protocol + hostname}
+    this is how we pass the current website to the bridge  */
+/*
+    nginx is setup on kubernets to get the url which
+    allows us to get the site and project specific variables */
+
+const globalConfig = {
   genny: {
-    host: Config.GENNY_HOST,
-    initUrl: Config.GENNY_INITURL,
+    host: process.env.ENV_GENNY_BRIDGE_URL,
     bridge: {
-      port: Config.GENNY_BRIDGE_PORT,
+      port: process.env.ENV_GENNY_BRIDGE_PORT || 8080,
       endpoints: {
-        vertex: Config.GENNY_BRIDGE_VERTEX,
-        service: Config.GENNY_BRIDGE_SERVICE,
-        events: Config.GENNY_BRIDGE_EVENTS,
+        vertex: 'frontend',
+        service: 'api/service',
+        events: 'api/events',
       },
     },
   },
-  signature: {
-    url: Config.SIGNATURE_URL,
-  },  
-  google: {
-    apiKey: Config.GOOGLE_MAPS_APIKEY,
-    maps: {
-      apiUrl: Config.GOOGLE_MAPS_APIURL,
-    },
-  },
-  uppy: {
-    url: Config.UPPY_URL,
-  },
-  keycloak: {
-    redirectUri: Config.KEYCLOAK_REDIRECTURI,
-  },
-  layouts: {
-    publicURL: Config.LAYOUT_PUBLICURL,
-    query: {
-      directory: Config.LAYOUT_QUERY_DIRECTORY,
-    },
-  },
-  guest: {
-    username: Config.GUEST_USERNAME,
-    password: Config.GUEST_PASSWORD,
-  },
 };
+
+/* Allow the platform specific config to overwrite any global config keys. */
+export default merge( globalConfig, platformSpecificConfig );

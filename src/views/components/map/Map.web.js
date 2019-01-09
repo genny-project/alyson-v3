@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import {  node, number, oneOfType, string } from 'prop-types';
+import {  node, number, oneOfType, string, object } from 'prop-types';
 import GoogleMapReact from 'google-map-react';
-import config from '../../../config/config.web';
+import { connect } from 'react-redux';
 import { getDeviceSize } from '../../../utils';
 
 /* global google, window */
@@ -18,10 +18,11 @@ class MapView extends Component {
     width: oneOfType( [string, number] ),
     children: node,
     zoom: number,
+    config: object,
   };
 
   render() {
-    const { height, width , zoom } = this.props;
+    const { height, width, zoom, config } = this.props;
 
     return (
       <div
@@ -61,7 +62,7 @@ class MapView extends Component {
         <div style={{ height: height, width: width }}>
           { google ?  (
             <GoogleMapReact
-              bootstrapURLKeys={{ key: config.GOOGLE_MAPS_APIKEY }}
+              bootstrapURLKeys={{ key: config && config.ENV_GOOGLE_MAPS_APIKEY }}
               defaultCenter={{ lat: -25.8043538, lng: 138.2538214 }}
               defaultZoom={zoom}
             >
@@ -76,4 +77,8 @@ class MapView extends Component {
   }
 }
 
-export default MapView;
+const mapStateToProps = state => ({
+  config: state.keycloak.data,
+});
+
+export default connect( mapStateToProps )( MapView );

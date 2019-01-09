@@ -1,7 +1,6 @@
 /* eslint-disable react/no-unused-state */
 import React, { Component } from 'react';
 import { node } from 'prop-types';
-import config from '../../../config';
 import { store } from '../../../redux';
 import * as actions from '../../../redux/actions';
 import LayoutContext from '../context';
@@ -116,7 +115,7 @@ class LayoutProvider extends Component {
     appColor: this.appColors.dark,
     textColor: this.textColors.dark,
     backgroundColor: this.backgroundColors.grey,
-    title: config.app.name,
+    title: null,
     setBackgroundColor: this.setBackgroundColor,
     setAppColor: this.setAppColor,
     setTitle: this.setTitle,

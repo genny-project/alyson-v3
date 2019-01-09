@@ -1,10 +1,17 @@
 # alysonv3
 
+- [Get started](#get-started)
+  - [iOS](#ios)
+  - [Android](#android)
+  - [Web](#web)
+- [Notes](#notes)
+- [FAQs](#faqs)
+- [Troubleshooting](#troubleshooting)
+- [Running in Up mode as part of the full Genny Project stack](#running-in-up-mode-as-part-of-the-full-genny-project-stack)
+
 ## Get started
 
 ### iOS
-
-(these could be wrong, please let me know if it doesn't work or a step is unnecessary)
 
 1. Install JS dependencies
 
@@ -69,16 +76,89 @@ ENVFILE=.env.project-name  react-native run-android
 
 ---
 
+### Web
+
+
+1. Install JS dependencies
+
+```bash
+npm install
+```
+
+2. Run the web app
+
+```bash
+npm run start:web
+```
+
+3. Open http://localhost:3000/
+
+---
+
 ## Notes
 
 - Do not run `npm link`! Always only use `npm link {library_name}`.
 
- ```diff
+```diff
 - npm link
 + npm link {library_name}
- ```
+```
 
- If you do run `npm link` across the project, you will break many other libraries. These other libraries need installations more complex than `npm link` command can offer, and in running that command you are breaking their complex installations. It is tricky to reverse the effects of running this command, so we recommend you simply reset your project files.
+If you do run `npm link` across the project, you will break many other libraries. These other libraries need installations more complex than `npm link` command can offer, and in running that command you are breaking their complex installations. It is tricky to reverse the effects of running this command, so we recommend you simply reset your project files.
+
+---
+
+## FAQs
+
+<details>
+	<summary>How do I set environment variables?</summary>
+
+<p></p>
+
+By default, all the config values are fetched from Bridge and used from thereon in. On web, the Bridge URL is assumed to be accessible from the same URL which the web app is hosted on, and therefore no extra guidance from you needs to be given for the web app to point to the correct Bridge URL.
+
+However, sometimes you may need to change what the Bridge URL should be. A good example of this is when you're developing locally, and trying to point to the staging Bridge URL. You need to override the environment variable `ENV_GENNY_BRIDGE_URL` and set it to the relevant app's Bridge URL.
+
+You can easily override any environment variables by either passing them in when you run `npm run start:web`.
+
+To do so, simply follow this convention:
+
+```diff
+- --env.{key}={value}
++ --env.ENV_GENNY_BRIDGE_URL=http://www.google.com.au
+```
+
+So your run command may end up looking like this:
+
+```bash
+npm run start:web -- --env.VAR_ONE=one --env.VAR_TWO=two
+```
+
+Alternatively, you can also set up a `.env` file containing these environmental variables to save you from passing them in via the CLI every time you run the web app.
+
+To do so, follow these steps:
+
+1. Create a file named `.env` in the root directory of this project
+
+2. Open the `.env` file and write your environment variables inside, like so:
+
+```bash
+ENV_GENNY_BRIDGE_URL=https://www.google.com.au
+ENV_LAYOUT_PUBLICURL=http://localhost:2224
+ENV_LAYOUT_QUERY_DIRECTORY=layouts/example-directory
+```
+
+3. Run the web app again
+
+```bash
+npm run start:web
+```
+
+4. Open http://localhost:3000/
+
+</details>
+
+<p></p>
 
 ---
 
@@ -161,15 +241,9 @@ In layout-cache project, run the command ./build-docker.sh followed by ./start-d
 	layout-cache_1  | Layout cache public server listening on port 2224!
 ```
 
-In genny-main project, run the command 
+In genny-main project, run the command
 ```bash
 ./run.sh <project> up
 ```
 
 Finally, launch the browser and run the following URL: http://alyson3.genny.life
-
-
-
-
-
-
