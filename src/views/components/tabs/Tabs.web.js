@@ -237,7 +237,10 @@ class Tabs extends PureComponent {
           }
           {...childProps}
         >
-          {children[currentChild]}
+          { isArray( children, { ofMinLength: 1 })
+            ? children[currentChild]
+            : null
+          }
         </Box>
       </Box>
     );
