@@ -830,14 +830,26 @@ class Form extends Component {
                             onPress: () => {
                               // when clicked on cancel button on the form => close the Popup
                               buttons && buttons.map( button => {
-                                if ( button.key === 'CANCEL' )
-                                  store.dispatch( hideDialog({ layoutName: `questions/${questionGroupCode}` }));
-                              }
-                              );
+                                /* TODO: only hide dialog when cancel button is clicked,
+                                 * not any button? - Callan */
+                                if ( button.key === 'CANCEL' ) {
+                                  store.dispatch(
+                                    hideDialog({ layoutName: `questions/${questionGroupCode}` })
+                                  );
+                                }
+                              });
+
                               this.setState({
                                 formStatus: lowercase( type ),
                               }, () => {
-                                submitForm();
+                                if ( type === 'CANCEL' ) {
+                                  /* Skip the validation from occurring in Formik
+                                   * and go straight to form submission. */
+                                  this.handleSubmit();
+                                }
+                                else {
+                                  submitForm();
+                                }
                               });
                             },
                             key: type,
