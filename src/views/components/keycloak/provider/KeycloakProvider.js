@@ -93,9 +93,6 @@ class KeycloakProvider extends Component {
   }
 
   attemptLogout = async ( options = {}) => {
-    if ( !this.state.isAuthenticated )
-      throw new Error( 'You are already logged out!' );
-
     const {
       replaceUrl = false,
     } = options;
@@ -134,16 +131,12 @@ class KeycloakProvider extends Component {
       }),
     ];
 
-    if ( Platform.OS === 'web' ) {
-      promises.push(
-        LogoutUrl
-          .addEventListener( 'url', this.handleLogoutUrlChange )
-          .open({ replaceUrl })
-      );
-    }
-
     /* Wait for the above promises to all finish. */
     await Promise.all( promises );
+
+    await LogoutUrl
+      .addEventListener( 'url', this.handleLogoutUrlChange )
+      .open({ replaceUrl });
 
     return new Promise(( resolve, reject ) => {
       if ( Platform.OS === 'web' ) {
@@ -163,7 +156,7 @@ class KeycloakProvider extends Component {
 
   createLogoutUrl = options => {
     const realmUrl = this.createRealmUrl();
-    const redirectUri = keycloakUtils.getValidRedirectUri();
+    const redirectUri = keycloakUtils.getValidRedirectUri({ excludePathname: true });
 
     const query = queryString.stringify({
       redirect_uri: redirectUri,
@@ -255,7 +248,7 @@ class KeycloakProvider extends Component {
   }
 
   handleAuthSuccess = async code => {
-    this.setState({
+    await this.asyncSetState({
       isAuthenticating: false,
       isAuthenticated: true,
     });
@@ -364,19 +357,17 @@ class KeycloakProvider extends Component {
         refreshTokenExpiresOn,
       } = session;
 
-      const accessTokenHasExpired = this.hasTokenExpired( accessTokenExpiresOn );
+      const isAccessTokenExpired = this.hasTokenExpired( accessTokenExpiresOn );
+      const isRefreshTokenExpired = this.hasTokenExpired( refreshTokenExpiresOn );
 
-      const refreshTokenHasExpired = this.hasTokenExpired( refreshTokenExpiresOn );
-
-      if ( !refreshTokenHasExpired ) {
+      if ( !isRefreshTokenExpired ) {
         await this.asyncSetState({
           sessionState: state,
           sessionNonce: nonce,
-          accessToken: accessTokenHasExpired ? null : accessToken,
+          accessToken: isAccessTokenExpired ? null : accessToken,
           refreshToken,
           isAuthenticated: true,
         });
-
         this.startTokenRefresh();
       }
 
@@ -418,6 +409,10 @@ class KeycloakProvider extends Component {
       /* Ensure the sessions are aligned. */
       if ( sessionState === state )
         this.handleAuthSuccess( code );
+      else {
+        // eslint-disable-next-line no-console
+        console.warn( 'Uh oh! Upon authentication, it seems the session state in the callback URL does not match the saved session state in local storage.' );
+      }
     }
     catch ( e ) {
       /* We don't care if there is an error. */
@@ -438,7 +433,7 @@ class KeycloakProvider extends Component {
 
   createActionUrl = ( action, query = {}) => {
     const realmUrl = this.createRealmUrl();
-    const redirectUri = keycloakUtils.getValidRedirectUri();
+    const redirectUri = keycloakUtils.getValidRedirectUri({ excludePathname: true });
     const sessionState = uuid();
     const sessionNonce = uuid();
 
@@ -511,18 +506,19 @@ class KeycloakProvider extends Component {
       : { refresh_token: refreshToken };
 
     const options = {
+      credentials: 'include',
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        ...clientSecret && {
+          Authorization: `Basic ${btoa( `${clientId}:${clientSecret}` )}`,
+        },
       },
       body: queryString.stringify({
         ...grant,
         grant_type: grantType,
         redirect_uri: redirectUrl,
         client_id: clientId,
-        ...clientSecret && {
-          client_secret: clientSecret,
-        },
       }),
     };
 
@@ -552,13 +548,13 @@ class KeycloakProvider extends Component {
 
       const { consecutiveTokenFails } = this.state;
 
-      /* If the token refresh fails three times in a row, log the user out. */
-      if ( consecutiveTokenFails > 2 ) {
+      /* If the token refresh fails more than three times in a row, log the user out. */
+      if ( consecutiveTokenFails > 3 ) {
         this.attemptLogout();
       }
       else {
         /* Wait one second, then try refresh. */
-        setTimeout( this.handleTokenRefresh, 1000 );
+        setTimeout(() => this.handleTokenRefresh( code ), 5000 );
       }
 
       this.handleError( error );

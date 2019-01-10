@@ -10,6 +10,12 @@
   flex-direction: column !important;
 }
 
+@media (max-width: 767px) {
+  .uppy-Webcam-container {
+    width: 100% !important;
+  }
+}
+
 .uppy-Webcam-videoContainer {
   height: calc( 100% - 100px ) !important;
   display: flex !important;

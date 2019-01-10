@@ -2,9 +2,11 @@
 import React, { PureComponent } from 'react';
 import { shape, object, any, bool , func } from 'prop-types';
 import { connect } from 'react-redux';
+import { Dimensions } from 'react-native-web';
+
 import Layout from '../../layout';
 import { openSidebar } from '../../../redux/actions';
-import { isArray, curlyBracketParse } from '../../../utils';
+import { isArray, curlyBracketParse, getDeviceSize } from '../../../utils';
 import DataQuery from '../../../utils/data-query';
 import { Box, Text, Timeout, Button, ActivityIndicator, Fragment } from '../../components';
 import Recursive from './Recursive';
@@ -19,6 +21,9 @@ const timeUtils = {
     : 'evening'
   ),
 };
+
+const windowDimensions = Dimensions.get( 'window' );
+const screenDimensions = Dimensions.get( 'screen' );
 
 class LayoutLoader extends PureComponent {
   static propTypes = {
@@ -83,6 +88,11 @@ class LayoutLoader extends PureComponent {
       openSidebarRight: this.handleOpenSidebar( 'right' ),
     },
     props: this.props.sublayoutProps,
+    media: {
+      window: windowDimensions,
+      screen: screenDimensions,
+      size: getDeviceSize(),
+    },
   }
 
   // shouldComponentUpdate( nextProps, nextState ) {
@@ -105,6 +115,10 @@ class LayoutLoader extends PureComponent {
     ) {
       this.doDataQuery();
     }
+  }
+
+  componentWillUnmount() {
+    Dimensions.removeEventListener( 'change' );
   }
 
   shouldPullFromCache() {
