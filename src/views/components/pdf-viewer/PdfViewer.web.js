@@ -1,6 +1,6 @@
 import React from 'react';
 import { oneOfType, string, number, object } from 'prop-types';
-import { Box } from '../../components';
+import { Box, Text } from '../../components';
 
 const  Pdf  = ({ height =  '600px', width = '600px', file = null, ...restProps }) => {
   return (
@@ -16,7 +16,7 @@ const  Pdf  = ({ height =  '600px', width = '600px', file = null, ...restProps }
           width="100%"
           height="100%"
         />
-      ) : 'Pdf Document Loading Please Wait'
+      ) : <Text text="'Pdf Document Loading Please Wait'" />
         }
     </Box>
   );
@@ -30,4 +30,3 @@ Pdf.propTypes = {
 };
 
 export default Pdf;
-
