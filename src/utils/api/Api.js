@@ -138,14 +138,14 @@ class Api {
     const { data } = store.getState().keycloak;
 
     const publicLayoutUrl = (
-      data.ENV_LAYOUT_PUBLICURL ||
-      (  process.env.ENV_LAYOUT_PUBLICURL ) ||
+      ( process.env.ENV_LAYOUT_PUBLICURL ) ||
+      ( data.ENV_LAYOUT_PUBLICURL ) ||
       'http://localhost:2224'
     );
 
     const directory = (
-      ( data && data.ENV_LAYOUT_QUERY_DIRECTORY ) ||
-      process.env.ENV_LAYOUT_QUERY_DIRECTORY
+      ( process.env.ENV_LAYOUT_QUERY_DIRECTORY ) ||
+      ( data && data.ENV_LAYOUT_QUERY_DIRECTORY )
     );
 
     if ( !directory ) {
