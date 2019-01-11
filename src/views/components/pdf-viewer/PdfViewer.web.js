@@ -1,14 +1,13 @@
 import React from 'react';
 import { oneOfType, string, number, object } from 'prop-types';
+import { Box } from '../../components';
 
-const  Pdf  = ({ style = {}, height =  '600px', width = '600px', file = null }) => {
-  const componentStyle = style;
-
+const  Pdf  = ({ height =  '600px', width = '600px', file = null, ...restProps }) => {
   return (
-    <div
-      style={
-            { height: height, width: width, ...componentStyle  }
-          }
+    <Box
+      height={height}
+      width={width}
+      {...restProps}
     >
       { file !== null && file !== undefined && file !== 'undefined' ? (
         <iframe
@@ -19,11 +18,11 @@ const  Pdf  = ({ style = {}, height =  '600px', width = '600px', file = null }) 
         />
       ) : 'Pdf Document Loading Please Wait'
         }
-    </div>
+    </Box>
   );
 };
 
-Pdf.propTypes = { 
+Pdf.propTypes = {
   width: oneOfType( [number, string] ),
   height: oneOfType( [number, string] ), 
   style: object,
