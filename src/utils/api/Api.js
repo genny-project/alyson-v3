@@ -139,7 +139,7 @@ class Api {
 
     const publicLayoutUrl = (
       ( process.env.ENV_LAYOUT_PUBLICURL ) ||
-      ( data.ENV_LAYOUT_PUBLICURL ) ||
+      ( data && data.ENV_LAYOUT_PUBLICURL ) ||
       'http://localhost:2224'
     );
 
