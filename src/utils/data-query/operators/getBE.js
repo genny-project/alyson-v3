@@ -3,6 +3,7 @@ import { injectContext } from './helpers';
 import { isArray, isObject, isString } from '../../../utils';
 
 export default ( data, options, allData ) => {
+  // if ( isArray( data )) console.log( '------------------------' );
   // if ( isArray( data )) console.log( '-', data, data.length );
 
   if ( !data )
@@ -15,7 +16,7 @@ export default ( data, options, allData ) => {
 
       const be = lookupBE( item, options, allData );
 
-      // console.log( '- -', be );
+      // console.log( '- -', be, result );
 
       if (
         options.filterOutEmpty &&
@@ -46,10 +47,10 @@ const lookupBE = ( data, options, allData ) => {
   /* Create the path to the base entity */
   const be = copy( allData.baseEntities.data[lookupKey] );
 
-  // console.log( '- - -', 'be', be );
+  // console.log( '- - -', 'be', be, allData.baseEntities.data );
 
-  if ( be === undefined )
-    return;
+  // if ( be === undefined )
+  //   return;
 
   if (
     options.filterOutEmpty && (
@@ -63,5 +64,15 @@ const lookupBE = ( data, options, allData ) => {
 
   // console.log( '- - -', 'is  array?', isArray( be ), typeof be );
 
-  return options.as ? { ...data, [options.as]: be } : be;
+  // console.log( '- - -', 'type of data', isArray( data ), typeof data, isString( data ));
+
+  return options.as
+    ? {
+      ...( isString( data )
+        ? {}
+        : data
+      ),
+      [options.as]: be,
+    }
+    : be;
 };
