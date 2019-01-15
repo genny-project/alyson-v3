@@ -32,6 +32,7 @@ class Tabs extends PureComponent {
     textColor: 'white',
     tabBarSide: 'top',
     testID: 'tabs',
+    initialIndex: 0,
   }
 
   static propTypes = {
@@ -69,6 +70,7 @@ class Tabs extends PureComponent {
     parentRoute: string,
     history: object,
     location: object,
+    initialIndex: number,
   }
 
   state = {
@@ -86,7 +88,7 @@ class Tabs extends PureComponent {
       newPath &&
       newPath !== newState.currentPath
     ) {
-      newState.currentChild = 0;
+      newState.currentChild = props.initialIndex || 0;
       newState.currentPath = newPath;
 
       return newState;
