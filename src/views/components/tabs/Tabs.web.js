@@ -72,6 +72,7 @@ class Tabs extends PureComponent {
   }
 
   state = {
+    currentPath: '', //eslint-disable-line
     currentChild: 0,
   }
 
@@ -79,8 +80,24 @@ class Tabs extends PureComponent {
     const newState = { ...state };
     const hash = dlv( props, 'history.location.hash' );
     const newIndex = parseInt( hash.slice( 1 ), 10 );
+    const newPath = dlv( props, 'history.location.pathname' );
 
-    if ( newIndex && typeof newIndex === 'number' ) {
+    if (
+      newPath &&
+      newPath !== newState.currentPath
+    ) {
+      newState.currentChild = 0;
+      newState.currentPath = newPath;
+
+      return newState;
+    }
+
+    if (
+      newPath &&
+      newPath === newState.currentPath &&
+      newIndex &&
+      typeof newIndex === 'number'
+    ) {
       if ( newIndex !== newState.currentChild ) {
         newState.currentChild = newIndex;
       }
