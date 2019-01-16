@@ -88,7 +88,6 @@ class Input extends Component {
           />
         );
 
-      case 'htmlarea':
       case 'textarea':
         return (
           <InputText
@@ -344,6 +343,7 @@ class Input extends Component {
           />
         );
 
+      case 'htmlarea':
       case 'rich-text-editor':
         return (
           <RichTextEditor

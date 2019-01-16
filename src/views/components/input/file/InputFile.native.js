@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import ImagePicker from 'react-native-image-picker';
-import { bool, func, string, shape, number, oneOf, oneOfType, array } from 'prop-types';
+import { bool, func, string, shape, number, oneOf, oneOfType, array, object } from 'prop-types';
 import dlv from 'dlv';
 import fastXmlParser from 'fast-xml-parser';
 import mime from 'react-native-mime-types';
+import { connect } from 'react-redux';
 import { Box, alert } from '../../../components';
 import InputFileItem from './file-item';
 import InputFileTouchable from './file-touchable';
 import { isArray } from '../../../../utils';
-import config from '../../../../config';
 
 class InputFile extends Component {
   static defaultProps = {
@@ -64,6 +64,7 @@ class InputFile extends Component {
       }),
     }),
     testID: string,
+    keycloak: object,
   }
 
   state = {
@@ -81,11 +82,12 @@ class InputFile extends Component {
   }
 
   uploadFile = async result => {
+    const { keycloak } = this.props;
     const { uri, fileName } = result;
     const fileParts = /\.(\w+)$/.exec( fileName );
     const mimeType = fileParts ? mime.contentType( fileParts[1] ).split( ';' )[0] : 'file';
     const formData = new FormData();
-    const url = `${config.uppy.url}/s3/`;
+    const url = `${keycloak.data && keycloak.data.ENV_UPPY_URL}/s3/`;
 
     const responseGet = await axios({
       method: 'get',
@@ -277,4 +279,8 @@ class InputFile extends Component {
   }
 }
 
-export default InputFile;
+const mapStateToProps = state => ({
+  keycloak: state.keycloak,
+});
+
+export default connect( mapStateToProps )( InputFile );

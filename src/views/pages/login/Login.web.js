@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { object } from 'prop-types';
+import { connect } from 'react-redux';
 import { Text, Box, KeycloakConsumer, Redirect } from '../../components';
 import Layout from '../../layout';
+import Generic from '../generic';
 
 class Login extends Component {
   static propTypes = {
     keycloak: object,
+    config: object,
   }
 
   state = {
@@ -14,7 +17,33 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    this.doLogin();
+    if (
+      this.shouldDoLogin()
+    ) {
+      this.doLogin();
+    }
+  }
+
+  componentDidUpdate() {
+    if (
+      this.shouldDoLogin()
+    ) {
+      this.doLogin();
+    }
+  }
+
+  shouldDoLogin = () => {
+    const { keycloak } = this.props;
+    const { config } = this.props;
+
+    return (
+      !keycloak.isAuthenticated &&
+      !keycloak.isCheckingStorage &&
+      !keycloak.isAuthenticating &&
+      config !== null &&
+      config.ENV_USE_CUSTOM_AUTH_LAYOUTS !== 'TRUE' &&
+      config.ENV_USE_CUSTOM_AUTH_LAYOUTS !== 'true'
+    );
   }
 
   doLogin = async () => {
@@ -28,7 +57,18 @@ class Login extends Component {
 
   render() {
     const { isAuthenticated, error } = this.props.keycloak;
+    const { config } = this.props;
     const { browserDismissed } = this.state;
+
+    if (
+      config &&
+      (
+        config.ENV_USE_CUSTOM_AUTH_LAYOUTS === 'TRUE' ||
+        config.ENV_USE_CUSTOM_AUTH_LAYOUTS === 'true'
+      )
+    ) {
+      return <Generic layout="login" />;
+    }
 
     if ( isAuthenticated )
       return <Redirect to="app" />;
@@ -73,7 +113,11 @@ class Login extends Component {
   }
 }
 
-export default props => (
+const mapStateToProps = state => ({
+  config: state.keycloak.data,
+});
+
+export default connect( mapStateToProps )( props => (
   <KeycloakConsumer>
     {keycloak => (
       <Login
@@ -82,4 +126,4 @@ export default props => (
       />
     )}
   </KeycloakConsumer>
-);
+));

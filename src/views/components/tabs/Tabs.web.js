@@ -3,7 +3,7 @@ import { string, oneOfType, array, number, any, func, oneOf, object } from 'prop
 import { TouchableOpacity } from 'react-native';
 import { withRouter } from 'react-router-dom';
 import dlv from 'dlv';
-import { isArray, Bridge } from '../../../utils';
+import { isArray, Bridge, getDeviceSize } from '../../../utils';
 import { Icon, Box, Text } from '../../components';
 
 const tabBarLocation = {
@@ -32,6 +32,7 @@ class Tabs extends PureComponent {
     textColor: 'white',
     tabBarSide: 'top',
     testID: 'tabs',
+    initialIndex: 0,
   }
 
   static propTypes = {
@@ -69,9 +70,11 @@ class Tabs extends PureComponent {
     parentRoute: string,
     history: object,
     location: object,
+    initialIndex: number,
   }
 
   state = {
+    currentPath: '', //eslint-disable-line
     currentChild: 0,
   }
 
@@ -79,8 +82,24 @@ class Tabs extends PureComponent {
     const newState = { ...state };
     const hash = dlv( props, 'history.location.hash' );
     const newIndex = parseInt( hash.slice( 1 ), 10 );
+    const newPath = dlv( props, 'history.location.pathname' );
 
-    if ( newIndex && typeof newIndex === 'number' ) {
+    if (
+      newPath &&
+      newPath !== newState.currentPath
+    ) {
+      newState.currentChild = props.initialIndex || 0;
+      newState.currentPath = newPath;
+
+      return newState;
+    }
+
+    if (
+      newPath &&
+      newPath === newState.currentPath &&
+      newIndex &&
+      typeof newIndex === 'number'
+    ) {
       if ( newIndex !== newState.currentChild ) {
         newState.currentChild = newIndex;
       }
@@ -174,6 +193,13 @@ class Tabs extends PureComponent {
       >
         <Box
           {...tabWrapperProps}
+          {...getDeviceSize() === 'sm'
+            ? {
+              width: '100%',
+              overflowX: 'auto',
+            }
+            : {}
+          }
           flexDirection={tabBarDirection[tabBarSide]}
           flex={0}
           backgroundColor={tabBarBackground}
@@ -221,9 +247,19 @@ class Tabs extends PureComponent {
           padding={padding}
           flex={1}
           backgroundColor={activeTabBackground}
+          {...getDeviceSize() === 'sm'
+            ? {
+              width: '100%',
+              overflowX: 'hidden',
+            }
+            : {}
+          }
           {...childProps}
         >
-          {children[currentChild]}
+          { isArray( children, { ofMinLength: 1 })
+            ? children[currentChild]
+            : null
+          }
         </Box>
       </Box>
     );

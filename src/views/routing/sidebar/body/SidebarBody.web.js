@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Box, ScrollView, Recursive } from '../../../components';
 import { onClose } from '../../../../redux/actions';
+import { isObject, getDeviceSize } from '../../../../utils';
 import SidebarMenu from './menu';
 
 const Sidebar = ({
@@ -33,11 +34,14 @@ const Sidebar = ({
     sortDirection === 'desc' ? sortedItems.sort(( a, b ) => b[sortBy] > a[sortBy] ? 1 : -1 ) : sortedItems.sort(( a, b ) => a[sortBy] > b[sortBy] ? 1 : -1 );
   }
 
+  const deviceSize = getDeviceSize();
+
   const context = {
     items: sortedItems,
     sidebar,
     onClose,
     onToggle,
+    deviceSize,
   };
 
   return (
@@ -58,14 +62,26 @@ const Sidebar = ({
             ],
           },
         }}
-        width={width}
+        width={
+          isObject( width )
+            ? width[deviceSize] != null
+              ? width[deviceSize]
+              : width['default']
+            : width
+        }
         height="100%"
         backgroundColor={backgroundColor}
         transitionDuration="300ms"
         transitionProperty="transform"
         {...sidebar[side].isOpen ? {
           zIndex: 100,
-          ...openProps,
+          ...(
+            openProps[deviceSize] != null
+              ? openProps[deviceSize]
+              : openProps['default'] != null
+                ? openProps['default']
+                : openProps
+          ),
         } : {
           zIndex: 98,
           ...closedProps,

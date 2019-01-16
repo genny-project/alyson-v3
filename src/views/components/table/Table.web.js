@@ -117,7 +117,7 @@ class TableView extends Component {
 
     const d = result || data;
     const t =  isArray( d, { ofMinLength: 1 }) ?
-      Math.round( d.length / itemsPerPage ) : 
+      Math.ceil( d.length / itemsPerPage ) :
       1;
 
     return t;
@@ -193,7 +193,7 @@ class TableView extends Component {
 
     const renderCell = ( cellInfo, data ) => {
       const { renderWrapper, cellContext, isSelectable } = this.props;
-      const { renderButton } = data;
+      const { renderButton, fakeButton } = data;
 
       if ( renderButton ) {
         const context = {
@@ -244,7 +244,22 @@ class TableView extends Component {
                 : null,
             }}
           >
-            {cellData}
+            { fakeButton
+              ? (
+                <Box
+                  backgroundColor="#5173c6"
+                  alignItems="center"
+                  justifyContent="center"
+                  paddingX={10}
+                  paddingY={2}
+                >
+                  <Text
+                    color="white"
+                    text={fakeButton}
+                  />
+                </Box>
+              )
+              : cellData}
           </Recursive>
         );
       }
@@ -328,7 +343,7 @@ class TableView extends Component {
       }));
     }
   }
-  
+
   handleNextPress = () => {
     /* if we are already loading the next page, we do nothing */
     if ( this.state.isLoadingNextPage ) return;
@@ -339,14 +354,14 @@ class TableView extends Component {
         pageSize: this.props.itemsPerPage,
         pageIndex: this.state.currentPage,
       };
-  
+
       const valueString = (
         value &&
         typeof value === 'string'
       )
         ? value
         : JSON.stringify( value );
-        
+
       /* we ask backend for data */
       Bridge.sendEvent({
         event: 'PAGINATION',
@@ -356,7 +371,7 @@ class TableView extends Component {
           value: valueString || null,
         },
       });
-      
+
       /* we show the loading indicator */
       this.setState({
         isLoadingNextPage: true,
@@ -391,20 +406,19 @@ class TableView extends Component {
       totalItems,
     } = this.props;
 
-    const { 
-      selectedItem, 
-      currentPage, 
-      isLoadingNextPage, 
+    const {
+      selectedItem,
+      currentPage,
+      isLoadingNextPage,
       isSearching,
     } = this.state;
 
-    const tableStyleProps = [];
-
-    tableStyleProps.push(
+    const tableStyleProps = {
       tableHeight,
       tableWidth,
       tableBackgroundColor,
-      containerBackgroundColor );
+      containerBackgroundColor,
+    };
 
     return (
       <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
@@ -423,7 +437,7 @@ class TableView extends Component {
           <ReactTable
             page={currentPage}
             className="react-tbl table -striped -highlight"
-            style={[tableStyleProps]}
+            style={tableStyleProps}
             noDataText="No data to Display."
             filterable={filterable}
             data={data}
@@ -456,9 +470,9 @@ class TableView extends Component {
                   backgroundColor="#5173c6"
                   padding={10}
                 >
-                  <Text 
+                  <Text
                     color="white"
-                    text={`${currentPage + 1} of ${totalItems}`}
+                    text={`${currentPage + 1} of ${this.state.totalPages}`}
                   />
                 </Box>
                 <Touchable

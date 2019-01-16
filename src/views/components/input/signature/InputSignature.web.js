@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { string, number, oneOfType } from 'prop-types';
 import axios from 'axios';
+import { connect } from 'react-redux';
 import SignaturePad from 'react-signature-pad-wrapper';
-import config from '../../../../config/config.web';
 import { Tabs, InputText , Input, Button } from '../..';
-
-const SIGNATURE_URL = config.SIGNATURE_URL;
 
 class InputSignature extends Component {
   static defaultProps = {
@@ -25,16 +23,18 @@ class InputSignature extends Component {
 
   /* Helper method for submitting */
   submitSignature = async ( dataFromDrawingPad ) => {
-    if ( !SIGNATURE_URL ) { 
+    const { config } = this.props;
+
+    if ( !config || !config.ENV_SIGNATURE_URL ) {
       console.error( 'No Signature URL provided' );
     }
     try {
       axios({
         method: 'post',
-        url: SIGNATURE_URL,
+        url: config.ENV_SIGNATURE_URL,
         data: dataFromDrawingPad,
       }).then( data => {
-        if ( data && data.data.signatureURL ) { 
+        if ( data && data.data.signatureURL ) {
           this.setState({ validated: true });
         }
         if ( this.props.onChangeValue ) //eslint-disable-line
@@ -75,7 +75,7 @@ class InputSignature extends Component {
   renderButtons = () => {
     const { validated } = this.state;
 
-    if ( validated ) { 
+    if ( validated ) {
       return null;
     }
 
@@ -149,7 +149,7 @@ class InputSignature extends Component {
 
             {this.renderButtons()}
           </div>
-            
+
           <div style={{ width: '100%', marginTop: 20 ,backgroundColor: '#fff', padding: 20 }}>
             <InputText
               type="text"
@@ -184,4 +184,8 @@ class InputSignature extends Component {
   }
 }
 
-export default InputSignature;
+const mapStateToProps = state => ({
+  config: state.keycloak.data,
+});
+
+export default connect( mapStateToProps )( InputSignature );
