@@ -25,6 +25,7 @@ class Sidebar extends Component {
     side: oneOf( ['left', 'right'] ),
     closeSidebar: func,
     toggleSidebar: func,
+    closeOnItemClick: func,
   }
 
   /*
@@ -124,7 +125,7 @@ class Sidebar extends Component {
 
   handlePress = ({ sourceCode, targetCode }) => () => {
     NProgress.start();
-    
+
     Bridge.sendEvent({
       event: 'TV_EVENT',
       eventType: 'TV_SELECT',
@@ -134,6 +135,10 @@ class Sidebar extends Component {
         value: targetCode,
       },
     });
+
+    if ( this.props.closeOnItemClick ) {
+      this.handleClose();
+    }
   }
 
   handleToggle = () => {
