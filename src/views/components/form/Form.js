@@ -71,7 +71,7 @@ class Form extends Component {
   componentDidUpdate( prevProps, prevState ) {
     const { questionGroupCode } = this.props;
     const { questionGroups } = this.state;
-
+    
     const checkIfSetNeeded = () => {
       return (
         this.state.questionGroups.length !== prevState.questionGroups.length ||
@@ -84,7 +84,7 @@ class Form extends Component {
       questionGroupCode !== prevProps.questionGroupCode
     ) {
       const newGroups = this.getQuestionGroups();
-
+     
       if ( newGroups.length > 0 ) {
         // eslint-disable-next-line react/no-did-update-set-state
         this.setState({ questionGroups: newGroups, missingBaseEntities: [] }, () => {
@@ -101,7 +101,7 @@ class Form extends Component {
       isArray( questionGroups, { ofExactLength: 0 })
     ) {
       const newGroups = this.getQuestionGroups();
-
+      
       if ( newGroups.length > 0 ) {
         // eslint-disable-next-line react/no-did-update-set-state
         this.setState({ questionGroups: newGroups, missingBaseEntities: [] }, () => {
@@ -119,7 +119,7 @@ class Form extends Component {
     ) {
       const newGroups = this.getQuestionGroups();
       const prevGroups = this.getQuestionGroups( prevProps );
-
+      
       if ( newGroups.length !== prevGroups.length ) {
         // eslint-disable-next-line react/no-did-update-set-state
         this.setState({ questionGroups: newGroups, missingBaseEntities: [] }, () => {
@@ -170,14 +170,22 @@ class Form extends Component {
     }
 
     const checkForBE = ( code ) => {
-      if ( dlv( attributes, `${code}` ) == null ) {
+      const beAttributes = dlv( attributes, `${code}` );
+
+      if (
+        !isObject( beAttributes, { isNotEmpty: true }) &&
+        !this.state.missingBaseEntities.includes( code )
+      ) {
         this.setState( state => ({
           missingBaseEntities: state.missingBaseEntities.includes( code )
             ? [...state.missingBaseEntities]
             : [...state.missingBaseEntities, code],
         }));
       }
-      else if ( this.state.missingBaseEntities.includes( code )) {
+      else if ( 
+        isObject( beAttributes, { isNotEmpty: true }) &&
+        this.state.missingBaseEntities.includes( code )
+      ) {
         this.setState( state => ({
           missingBaseEntities: state.missingBaseEntities.filter( beCode => beCode !== code ),
         }));
@@ -194,6 +202,7 @@ class Form extends Component {
         if ( isArray( ask.childAsks, { ofMinLength: 1 })) {
           ask.childAsks.forEach( childAsk => {
             checkForBE( childAsk.targetCode );
+
             const value = dlv( attributes, `${childAsk.targetCode}.${childAsk.attributeCode}.value` );
 
             /* TODO: better handle `false` value */
@@ -287,7 +296,14 @@ class Form extends Component {
   checkIfNewBaseEntities = ( newProps ) => {
     const { missingBaseEntities } = this.state;
 
-    return missingBaseEntities.some( beCode => dlv( newProps, `baseEntities.data.${beCode}` ));
+    const result = missingBaseEntities.some( beCode => {
+      return (
+        dlv( newProps, `baseEntities.data.${beCode}` ) &&
+        isObject( dlv( newProps, `baseEntities.attributes.${beCode}` ), { isNotEmpty: true })
+      );
+    });
+    
+    return result;
   }
 
   doValidate = values => {
