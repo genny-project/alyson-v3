@@ -194,6 +194,12 @@ class RichTextEditor extends React.Component {
             {children}
           </blockquote>
         );
+      case 'code':
+        return (
+          <pre {...attributes}>
+            {children}
+          </pre>
+        );
       case 'paragraph':
         return (
           <p {...attributes}>
