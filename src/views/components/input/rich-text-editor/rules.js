@@ -2,16 +2,23 @@ import React from 'react';
 // This file consists of rules for serializing and de serializing the values from Rich text editor 
 
 const BLOCK_TAGS = {
-  blockquote: 'quote',
+  blockquote: 'block-quote',
   p: 'paragraph',
   pre: 'code',
+  code: 'code',
+  ul: 'bulleted-list',
+  ol: 'numbered-list',
+  li: 'list-item',
+  h3: 'heading-three',
 };
 
 // Add a dictionary of mark tags.
 const MARK_TAGS = {
   em: 'italic',
   strong: 'bold',
-  u: 'underline',
+  u: 'underlined',
+  pre: 'code',
+  code: 'code',
 };
 
 const rules = [
@@ -47,11 +54,42 @@ const rules = [
                 {children}
               </p>
             );
-          case 'quote':
+          case 'bulleted-list':
             return (
-              <blockquote>
+              <ul>
                 {children}
-              </blockquote>
+              </ul>
+            );
+          case 'heading-one':
+            return (
+              <h1>
+                {children}
+              </h1>
+            );
+          case 'heading-two':
+            return (
+              <h2>
+                {children}
+              </h2>
+            );
+          case 'list-item':
+            return (
+              <li>
+                {children}
+              </li>
+            );
+          case 'numbered-list':
+            return (
+              <ol>
+                {children}
+              </ol>
+            );
+        
+          default:
+            return (
+              <p> 
+                {children}
+              </p>
             );
         }
       }
@@ -85,11 +123,37 @@ const rules = [
                 {children}
               </em>
             );
-          case 'underline':
+          case 'underlined':
             return (
               <u>
                 {children}
               </u>
+            );
+          case 'code':
+            return (
+              <pre>
+                <code>
+                  {children}
+                </code>
+              </pre>
+            );
+          case 'paragraph':
+            return (
+              <p className={obj.data.get( 'className' )}>
+                {children}
+              </p>
+            );
+          case 'block-quote':
+            return (
+              <blockquote>
+                {children}
+              </blockquote>
+            );
+          default:
+            return (
+              <span> 
+                {children}
+              </span>
             );
         }
       }
