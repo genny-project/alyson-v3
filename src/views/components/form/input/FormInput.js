@@ -86,6 +86,8 @@ class FormInput extends Component {
       case 'codeVerificationFive':
       case 'mobileverification':
       case 'java.time.localdatetime':
+      case 'htmlarea':
+      case 'rich-text-editor':
         return (
           <Input
             {...this.props}

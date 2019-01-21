@@ -1,13 +1,18 @@
 import React from 'react';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
+import Html from 'slate-html-serializer';
 import { isKeyHotkey } from 'is-hotkey';
-import { string, oneOfType, number } from 'prop-types';
+import { string, oneOfType, number, func } from 'prop-types';
 /* This could be dynamic in the future (pre filled schemas while typing in the job description.) */
 import initialValue from './defaultSchema.json';
 import Toolbar from './ToolBar';
 import { Icon } from '../../../components';
 import IconWrapperButton from './Button';
+import rules from './rules';
+
+// Create a new serializer instance with our `rules` from above.
+const html = new Html({ rules });
 
 /* default html node to choose */
 const DEFAULT_NODE = 'paragraph';
@@ -28,6 +33,7 @@ class RichTextEditor extends React.Component {
   }
 
   static propTypes = {
+    onChangeValue: func,
     backgroundColor: string,
     editorBackgroundColor: string,
     height: oneOfType( [string, number] ),
@@ -104,7 +110,18 @@ class RichTextEditor extends React.Component {
   };
 
   handleChange = ({ value }) => {
-    this.setState({ value });
+    // if ( value.document !== this.state.value.document ) {
+    //   console.warn( '************** slate editor string value' );
+    //   console.warn( string );
+    // }
+    
+    const string = html.serialize( value );
+
+    this.props.onChangeValue( string );
+    
+    this.setState({ value: value });
+    // this.setState({ value });
+    // this.setState({ value });
   };
 
   handleKeyDown = ( event, change ) => {
