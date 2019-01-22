@@ -1,7 +1,6 @@
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
-const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 
 // This is needed for webpack to compile JavaScript.
 // Many OSS React Native packages are not compiled to ES5 before being
@@ -85,9 +84,6 @@ module.exports = {
         },
       },
     },
-    minimizer: [
-      new UglifyJsPlugin(),
-    ],
   },
 
   // ...the rest of your config
