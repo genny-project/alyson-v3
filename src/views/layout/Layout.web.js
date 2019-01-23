@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { any, string, bool, object } from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import dlv from 'dlv';
 import LayoutConsumer from './consumer';
 import { Header, Box, Dialog } from '../components';
 import {
@@ -9,6 +10,7 @@ import {
   ifConditionsPass,
   injectDataIntoProps,
   curlyBracketParse,
+  getDeviceSize,
 } from '../../utils';
 import { Sidebar } from '../routing';
 
@@ -308,6 +310,8 @@ class Layout extends PureComponent {
       showSidebarRight,
     } = layout;
 
+    const sizebarSizeOnlyProps = dlv( sidebarProps, `sizeOnlyProps.${getDeviceSize()}` );
+
     return (
       <Box
         height="100%"
@@ -343,6 +347,7 @@ class Layout extends PureComponent {
           <Sidebar
             side="left"
             {...sidebarProps}
+            {...sizebarSizeOnlyProps}
           />
         )}
 
