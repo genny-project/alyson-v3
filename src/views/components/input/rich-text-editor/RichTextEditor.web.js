@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Html from 'slate-html-serializer';
 import { isKeyHotkey } from 'is-hotkey';
-import { string, oneOfType, number, func } from 'prop-types';
+import { string, oneOfType, number, func, object } from 'prop-types';
 /* This could be dynamic in the future (pre filled schemas while typing in the job description.) */
-import initialValue from './defaultSchema.json';
+import defaultSchema from './defaultSchema.json';
 import Toolbar from './ToolBar';
 import { Icon } from '../../../components';
 import IconWrapperButton from './Button';
@@ -24,12 +24,15 @@ const isItalicHotkey = isKeyHotkey( 'mod+i' );
 const isUnderlinedHotkey = isKeyHotkey( 'mod+u' );
 const isCodeHotkey = isKeyHotkey( 'mod+`' );
 
-class RichTextEditor extends React.Component {
+const initialValue = Value.fromJSON( defaultSchema );
+
+class RichTextEditor extends Component {
   static defaultProps = {
     backgroundColor: '#eee',
     editorBackgroundColor: '#fff',
     height: 'auto',
     width: '100%',
+    defaultValue: initialValue,
   }
 
   static propTypes = {
@@ -38,12 +41,55 @@ class RichTextEditor extends React.Component {
     editorBackgroundColor: string,
     height: oneOfType( [string, number] ),
     width: oneOfType( [string,number] ),
+    defaultValue: object,
+    value: string,
+
   }
 
   /* Set initial form value from the JSON file */
   state = {
-    value: Value.fromJSON( initialValue ),
+    value: this.props.defaultValue,
+    isValueFromProps: false,
+    hasUserTyped: false,
   };
+
+  // get previous value and put them
+  componentDidMount() {
+    if ( this.props.value != null || this.props.value !== 'undefined' ) {
+      const deserializedValue = Value.fromJS( html.deserialize( this.props.value ));
+
+      this.setState({
+        isValueFromProps: true,
+        value: deserializedValue,
+      });
+    }
+  }
+
+  // store reloads multips times - to accomodate slight delay we need to perform this
+  componentDidUpdate() {
+    if ( this.state.isValueFromProps )
+      return;
+
+    if (
+      !this.state.hasUserTyped &&
+      !this.state.isValueFromProps &&
+      this.props.value !== this.state.value
+    ) {
+      const deserializedValue = Value.fromJS( html.deserialize( this.props.value ));
+
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({
+        isValueFromProps: true,
+        value: deserializedValue,
+      });
+    }
+
+    return;
+  }
+
+  updateStateFromProps= ( newValue ) => {
+    this.setState({ value: newValue });
+  }
 
   hasMark = type => {
     const { value } = this.state;
@@ -110,18 +156,14 @@ class RichTextEditor extends React.Component {
   };
 
   handleChange = ({ value }) => {
-    // if ( value.document !== this.state.value.document ) {
-    //   console.warn( '************** slate editor string value' );
-    //   console.warn( string );
-    // }
-    
     const string = html.serialize( value );
 
     this.props.onChangeValue( string );
     
-    this.setState({ value: value });
-    // this.setState({ value });
-    // this.setState({ value });
+    this.setState({
+      value: value,
+      hasUserTyped: true,
+    });
   };
 
   handleKeyDown = ( event, change ) => {
