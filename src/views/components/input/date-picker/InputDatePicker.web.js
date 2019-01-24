@@ -39,15 +39,40 @@ class InputDatePicker extends PureComponent {
     isCalendarOpen: false,
   }
 
+  componentDidMount() {
+    this.setSelectedItem();
+  }
+
+  componentDidUpdate( prevProps ) {
+    if (
+      this.props.value != null &&
+      prevProps.value !== this.props.value
+    ) {
+      this.setSelectedItem();
+    }
+  }
+
+  setSelectedItem = () => {
+    if ( this.props.value ) {
+      this.setState({
+        value: this.props.value,
+      });
+    }
+  }
+
   handleCalendarToggle = () => {
     this.setState( state => ({ isCalendarOpen: !state.isCalendarOpen }));
   }
 
   handleChange = value => {
-    const date = format( value );
+    this.setState({
+      value: this.props.value,
+    }, () => {
+      const date = format( value );
 
-    if ( this.props.onChangeValue )
-      this.props.onChangeValue( date );
+      if ( this.props.onChangeValue )
+        this.props.onChangeValue( date );
+    });
   }
 
   render() {
@@ -66,8 +91,11 @@ class InputDatePicker extends PureComponent {
       <Downshift
         defaultInputValue={value}
         onChange={this.handleChange}
-        itemToString={date => date ? format( date, displayFormat ) : ''}
+        itemToString={date => {
+          return date ? format( date, displayFormat ) : '';
+        }}
         isOpen={isCalendarOpen}
+        selectedItem={this.state.value}
       >
         {({
           getInputProps,
@@ -77,265 +105,266 @@ class InputDatePicker extends PureComponent {
           selectedItem,
           inputValue,
           selectItem,
-        }) => (
-          <Box
-            {...getRootProps( undefined, { suppressRefError: true })}
-          >
-            <Box>
-              {isOpen ? (
-                <Touchable
-                  onPress={this.handleCalendarToggle}
-                >
-                  <Box
-                    position="fixed"
-                    top={0}
-                    left={0}
-                    width="100%"
-                    height="100%"
-                  />
-                </Touchable>
-              ) : null}
-            </Box>
-
+        }) => {
+          return (
             <Box
-              position="relative"
-              width="100%"
+              {...getRootProps( undefined, { suppressRefError: true })}
             >
-              <div
-                onClick={this.handleCalendarToggle}
-                style={{
-                  width: '100%',
-                }}
+              <Box>
+                {isOpen ? (
+                  <Touchable
+                    onPress={this.handleCalendarToggle}
+                  >
+                    <Box
+                      position="fixed"
+                      top={0}
+                      left={0}
+                      width="100%"
+                      height="100%"
+                    />
+                  </Touchable>
+                ) : null}
+              </Box>
+
+              <Box
+                position="relative"
+                width="100%"
               >
-                <Input
-                  {...getInputProps({
-                    ...restProps,
-                    type: 'text',
-                    editable: false,
-                    value: inputValue,
-                  })}
-                  testID={`input-date-picker ${testID}`}
-                />
-              </div>
+                <div
+                  onClick={this.handleCalendarToggle}
+                  style={{
+                    width: '100%',
+                  }}
+                >
+                  <Input
+                    {...getInputProps({
+                      ...restProps,
+                      type: 'text',
+                      editable: false,
+                      value: inputValue,
+                    })}
+                    testID={`input-date-picker ${testID}`}
+                  />
+                </div>
 
-              {isOpen ? (
-                <Kalendaryo
-                  startCurrentDateAt={selectedItem}
-                  selectedItem={selectedItem}
-                  getItemProps={getItemProps}
-                  calendarHeaderColor={calendarHeaderColor}
-                  calendarHeaderTextColor={calendarHeaderTextColor}
-                  selectItem={selectItem}
-                  render={({
-                    getFormattedDate,
-                    getWeeksInMonth,
-                    getDatePrevMonth,
-                    getDateNextMonth,
-                    setDate,
-                    getItemProps,
-                    selectedItem,
-                    date,
-                    calendarHeaderColor,
-                    calendarHeaderTextColor,
-                    selectItem,
-                  }) => {
-                    const weeksInCurrentMonth = getWeeksInMonth();
-                    const isDisabled = dateValue => !isSameMonth( date, dateValue );
-                    const isSelectedDay = date => (
-                      selectedItem &&
+                {isOpen ? (
+                  <Kalendaryo
+                    startCurrentDateAt={selectedItem}
+                    selectedItem={selectedItem}
+                    getItemProps={getItemProps}
+                    calendarHeaderColor={calendarHeaderColor}
+                    calendarHeaderTextColor={calendarHeaderTextColor}
+                    selectItem={selectItem}
+                    render={({
+                      getFormattedDate,
+                      getWeeksInMonth,
+                      getDatePrevMonth,
+                      getDateNextMonth,
+                      setDate,
+                      getItemProps,
+                      selectedItem,
+                      date,
+                      calendarHeaderColor,
+                      calendarHeaderTextColor,
+                      selectItem,
+                    }) => {
+                      const weeksInCurrentMonth = getWeeksInMonth();
+                      const isDisabled = dateValue => !isSameMonth( date, dateValue );
+                      const isSelectedDay = date => (
+                        selectedItem &&
                       getFormattedDate( selectedItem ) === getFormattedDate( date )
-                    );
+                      );
 
-                    return (
-                      <Box
-                        flexDirection="column"
-                        marginTop="0.5rem"
-                        boxShadow="0 1px 5px #AEAEAE"
-                        borderRadius={5}
-                        overflow="hidden"
-                        backgroundColor="#FFF"
-                        position="absolute"
-                        zIndex={20}
-                        top="100%"
-                        {...( getDeviceSize() === 'sm' ? { width: '100%' } : null )}
-                        onPress={event => {
-                          event.stopPropagation();
-                        }}
-                      >
+                      return (
                         <Box
-                          justifyContent="space-between"
-                          alignItems="center"
-                          paddingX={10}
-                          paddingY={15}
-                          backgroundColor={calendarHeaderColor}
+                          flexDirection="column"
+                          marginTop="0.5rem"
+                          boxShadow="0 1px 5px #AEAEAE"
+                          borderRadius={5}
+                          overflow="hidden"
+                          backgroundColor="#FFF"
+                          position="absolute"
+                          zIndex={20}
+                          top="100%"
+                          {...( getDeviceSize() === 'sm' ? { width: '100%' } : null )}
                           onPress={event => {
                             event.stopPropagation();
                           }}
                         >
-                          <Touchable
-                            withFeedback
-                            onPress={event => {
-                              event.stopPropagation();
-                              setDate( getDatePrevMonth());
-                            }}
-                          >
-                            <Icon
-                              name="arrow-back"
-                              color={calendarHeaderTextColor}
-                            />
-                          </Touchable>
-
-                          <Box>
-                            <Input
-                              type="dropdown"
-                              items={months.map(( m, index ) => (
-                                { value: m, label: m, weight: index }
-                              ))}
-                              value={months[getMonth( date )]}
-                              sortByWeight
-                              onChangeValue={month => {
-                                const monthIndex = months.findIndex( m => m === month );
-                                const newDate = setMonth( date, monthIndex );
-
-                                setDate( newDate );
-                              }}
-                              color="#000"
-                              backgroundColor="#FFF"
-                              padding={5}
-                              borderRadius={10}
-                              borderWidth={0}
-                              textAlign="center"
-                              cursor="pointer"
-                              testID={`input-date-picker-month ${testID}`}
-                            />
-                          </Box>
-
-                          <Box>
-                            <Input
-                              type="dropdown"
-                              items={years.map(( y, index ) => (
-                                { value: y, label: y, weight: index }
-                              ))}
-                              value={years[years.findIndex( year => year === getYear( date ))]}
-                              onChangeValue={year => {
-                                const newDate = setYear( date, year );
-
-                                setDate( newDate );
-                              }}
-                              color="#000"
-                              backgroundColor="#FFF"
-                              padding={5}
-                              borderRadius={10}
-                              borderWidth={0}
-                              textAlign="center"
-                              cursor="pointer"
-                              testID={`input-date-picker-year ${testID}`}
-                            />
-                          </Box>
-
-                          <Touchable
-                            withFeedback
-                            onPress={event => {
-                              event.stopPropagation();
-                              setDate( getDateNextMonth());
-                            }}
-                          >
-                            <Icon
-                              name="arrow-forward"
-                              color={calendarHeaderTextColor}
-                            />
-                          </Touchable>
-                        </Box>
-
-                        <Box
-                          flexDirection="column"
-                          borderWidth={2}
-                          borderColor="#efefef"
-                          borderStyle="solid"
-                        >
                           <Box
-                            backgroundColor="#F8F8F8"
+                            justifyContent="space-between"
+                            alignItems="center"
+                            paddingX={10}
+                            paddingY={15}
+                            backgroundColor={calendarHeaderColor}
+                            onPress={event => {
+                              event.stopPropagation();
+                            }}
                           >
-                            {daysOfTheWeek.map( day => (
-                              <Box
-                                key={day}
-                                width="calc(100% / 7)"
-                                paddingX={10}
-                                paddingY={15}
-                              >
-                                <Text>
-                                  {day}
-                                </Text>
-                              </Box>
-                            ))}
+                            <Touchable
+                              withFeedback
+                              onPress={event => {
+                                event.stopPropagation();
+                                setDate( getDatePrevMonth());
+                              }}
+                            >
+                              <Icon
+                                name="arrow-back"
+                                color={calendarHeaderTextColor}
+                              />
+                            </Touchable>
+
+                            <Box>
+                              <Input
+                                type="dropdown"
+                                items={months.map(( m, index ) => (
+                                  { value: m, label: m, weight: index }
+                                ))}
+                                value={months[getMonth( date )]}
+                                sortByWeight
+                                onChangeValue={month => {
+                                  const monthIndex = months.findIndex( m => m === month );
+                                  const newDate = setMonth( date, monthIndex );
+
+                                  setDate( newDate );
+                                }}
+                                color="#000"
+                                backgroundColor="#FFF"
+                                padding={5}
+                                borderRadius={10}
+                                borderWidth={0}
+                                textAlign="center"
+                                cursor="pointer"
+                                testID={`input-date-picker-month ${testID}`}
+                              />
+                            </Box>
+
+                            <Box>
+                              <Input
+                                type="dropdown"
+                                items={years.map(( y, index ) => (
+                                  { value: y, label: y, weight: index }
+                                ))}
+                                value={years[years.findIndex( year => year === getYear( date ))]}
+                                onChangeValue={year => {
+                                  const newDate = setYear( date, year );
+
+                                  setDate( newDate );
+                                }}
+                                color="#000"
+                                backgroundColor="#FFF"
+                                padding={5}
+                                borderRadius={10}
+                                borderWidth={0}
+                                textAlign="center"
+                                cursor="pointer"
+                                testID={`input-date-picker-year ${testID}`}
+                              />
+                            </Box>
+
+                            <Touchable
+                              withFeedback
+                              onPress={event => {
+                                event.stopPropagation();
+                                setDate( getDateNextMonth());
+                              }}
+                            >
+                              <Icon
+                                name="arrow-forward"
+                                color={calendarHeaderTextColor}
+                              />
+                            </Touchable>
                           </Box>
 
-                          {weeksInCurrentMonth.map(( week, weekIndex ) => (
+                          <Box
+                            flexDirection="column"
+                            borderWidth={2}
+                            borderColor="#efefef"
+                            borderStyle="solid"
+                          >
                             <Box
-                              key={weekIndex} // eslint-disable-line react/no-array-index-key
-                              borderTopWidth={1}
-                              borderStyle="solid"
-                              borderColor="#efefef"
+                              backgroundColor="#F8F8F8"
                             >
-                              {week.map(( day, dayIndex ) => (
-                                <Touchable
-                                  testID={`input-date-picker-option input-date-picker-day ${testID}`}
-                                  key={day.label}
-                                  {...getItemProps({
-                                    item: day.dateValue,
-                                    disabled: isDisabled( day.dateValue ),
-                                    width: 'calc(100% / 7)',
-                                    paddingY: 15,
-                                    paddingX: 10,
-                                    backgroundColor: (
-                                      isSelectedDay( day.dateValue )
-                                        ? calendarHeaderColor
-                                        : '#FFFFFF'
-                                    ),
-                                    ...dayIndex > 0 && {
-                                      borderLeftWidth: 1,
-                                      borderStyle: 'solid',
-                                      borderColor: '#efefef',
-                                    },
-                                    ...isDisabled( day.dateValue ) && {
-                                      cursor: 'not-allowed',
-                                    },
-                                    justifyContent: 'center',
-                                    withFeedback: true,
-                                    onPress: event => {
-                                      if ( isDisabled( day.dateValue ))
-                                        event.stopPropagation();
-                                      else {
-                                        selectItem( day.dateValue );
-                                        this.handleCalendarToggle();
-                                      }
-                                    },
-                                  })}
+                              {daysOfTheWeek.map( day => (
+                                <Box
+                                  key={day}
+                                  width="calc(100% / 7)"
+                                  paddingX={10}
+                                  paddingY={15}
                                 >
-                                  <Text
-                                    align="center"
-                                    color={(
+                                  <Text>
+                                    {day}
+                                  </Text>
+                                </Box>
+                              ))}
+                            </Box>
+
+                            {weeksInCurrentMonth.map(( week, weekIndex ) => (
+                              <Box
+                                key={weekIndex} // eslint-disable-line react/no-array-index-key
+                                borderTopWidth={1}
+                                borderStyle="solid"
+                                borderColor="#efefef"
+                              >
+                                {week.map(( day, dayIndex ) => (
+                                  <Touchable
+                                    testID={`input-date-picker-option input-date-picker-day ${testID}`}
+                                    key={day.label}
+                                    {...getItemProps({
+                                      item: day.dateValue,
+                                      disabled: isDisabled( day.dateValue ),
+                                      width: 'calc(100% / 7)',
+                                      paddingY: 15,
+                                      paddingX: 10,
+                                      backgroundColor: (
+                                        isSelectedDay( day.dateValue )
+                                          ? calendarHeaderColor
+                                          : '#FFFFFF'
+                                      ),
+                                      ...dayIndex > 0 && {
+                                        borderLeftWidth: 1,
+                                        borderStyle: 'solid',
+                                        borderColor: '#efefef',
+                                      },
+                                      ...isDisabled( day.dateValue ) && {
+                                        cursor: 'not-allowed',
+                                      },
+                                      justifyContent: 'center',
+                                      withFeedback: true,
+                                      onPress: event => {
+                                        if ( isDisabled( day.dateValue ))
+                                          event.stopPropagation();
+                                        else {
+                                          selectItem( day.dateValue );
+                                          this.handleCalendarToggle();
+                                        }
+                                      },
+                                    })}
+                                  >
+                                    <Text
+                                      align="center"
+                                      color={(
                                       isSelectedDay( day.dateValue ) ? calendarHeaderTextColor
                                       : isDisabled( day.dateValue ) ? '#dedede'
                                       : isToday( day.dateValue ) ? 'crimson'
                                       : '#000000'
                                     )}
-                                  >
-                                    {day.label}
-                                  </Text>
-                                </Touchable>
-                              ))}
-                            </Box>
-                          ))}
+                                    >
+                                      {day.label}
+                                    </Text>
+                                  </Touchable>
+                                ))}
+                              </Box>
+                            ))}
+                          </Box>
                         </Box>
-                      </Box>
-                    );
-                  }}
-                />
-              ) : null}
+                      );
+                    }}
+                  />
+                ) : null}
+              </Box>
             </Box>
-          </Box>
-        )}
+          );}}
       </Downshift>
     );
   }

@@ -4,6 +4,7 @@ const isObject = ( object, options = {}) => {
   const {
     withProperties, // array
     withProperty, // string
+    isNotEmpty,
   } = options;
 
   /* Ensure a valid object (and not an array - thanks JS!) is given. */
@@ -33,6 +34,12 @@ const isObject = ( object, options = {}) => {
   /* If withProperty is given, ensure it exists inside the object. */
   if ( isString( withProperty )) {
     if ( !object.hasOwnProperty( withProperty )) {
+      return false;
+    }
+  }
+
+  if ( isNotEmpty ) {
+    if ( !isArray( Object.keys( object ), { ofMinLength: 1 })) {
       return false;
     }
   }

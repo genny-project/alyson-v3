@@ -347,7 +347,7 @@ class Input extends Component {
       case 'rich-text-editor':
         return (
           <RichTextEditor
-            {...this.props}
+            {...inputProps}
           />
         );
 
