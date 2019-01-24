@@ -130,6 +130,7 @@
     "redux-observable": "^0.18.0",
     "rxjs": "^5.5.10",
     "slate": "0.40.2",
+    "slate-html-serializer": "^0.7.33",
     "slate-react": "0.18.5",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
@@ -156,6 +157,7 @@
     "react-native-dotenv": "^0.2.0",
     "react-test-renderer": "16.3.1",
     "remotedev-rn-debugger": "^0.8.3",
+    "uglifyjs-webpack-plugin": "^2.1.1",
     "webpack-bundle-analyzer": "^2.13.1",
     "webpack-merge": "^4.1.4"
   },

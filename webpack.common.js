@@ -73,6 +73,19 @@ module.exports = {
     publicPath: '/',
   },
 
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+      },
+    },
+  },
+
   // ...the rest of your config
 
   module: {
