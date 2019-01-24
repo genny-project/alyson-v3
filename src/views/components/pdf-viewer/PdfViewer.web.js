@@ -9,7 +9,7 @@ const  Pdf  = ({ height =  '600px', width = '600px', file = null, ...restProps }
       width={width}
       {...restProps}
     >
-      { file !== null ||  file !== undefined ||  file !== 'undefined' ? (
+      { file !== null &&  file !== undefined && file !== 'undefined' ? (
         <iframe
           title="pdf-document"
           src={file}
