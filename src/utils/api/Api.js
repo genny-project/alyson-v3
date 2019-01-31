@@ -116,7 +116,15 @@ class Api {
   }
 
   getKeycloakConfig = () => {
-    let initUrl = process.env.ENV_GENNY_BRIDGE_URL;
+    let initUrl;
+
+    if ( process.env.NODE_ENV === 'development' ) {
+      initUrl = process.env.ENV_GENNY_INIT_URL;
+    }
+
+    else {
+      initUrl = process.env.ENV_GENNY_BRIDGE_URL;
+    }
 
     /* Default to the env var if set, otherwise use the current URL as the init URL. */
     if ( !initUrl ) {
