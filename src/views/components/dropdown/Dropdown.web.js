@@ -116,7 +116,7 @@ class Dropdown extends Component {
             }}
           >
             {items.map( item => {
-              const itemTestId = `dropdown-item ${item.id || item.buttonCode}`;
+              const itemTestId = `dropdown-item ${item.testID || item.buttonCode}`;
 
               if ( renderItem ) {
                 const context = {
