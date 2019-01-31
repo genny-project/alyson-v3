@@ -473,6 +473,7 @@ class TableView extends Component {
                   withFeedback
                   onPress={this.handlePreviousPress}
                   disabled={currentPage <= 0}
+                  testID="table-nav SEL_TABLE_PREVIOUS"
                 >
                   <Box
                     backgroundColor={currentPage <= 0 ? '#ddd' : '#5173c6'}
@@ -497,6 +498,7 @@ class TableView extends Component {
                   withFeedback
                   onPress={this.handleNextPress}
                   disabled={currentPage + 1 >= this.state.totalPages}
+                  testID="table-nav SEL_TABLE_NEXT"
                 >
                   <Box
                     backgroundColor={currentPage + 1 >= this.state.totalPages ?  '#ddd' : '#5173c6'}
