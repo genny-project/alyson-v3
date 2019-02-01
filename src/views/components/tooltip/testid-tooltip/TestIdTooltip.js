@@ -23,9 +23,7 @@ class TestIdTooltip extends Component {
 
     const dimensions = Dimensions.get( 'window' );
 
-    const isDebugMode = true;
-
-    // console.log( 'isDebugMode?', isDebugMode );
+    const isDebugMode = window.originalQueryParams.showcodes;
 
     if ( !isDebugMode ) {
       return children;
