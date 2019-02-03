@@ -90,6 +90,18 @@ class LayoutProvider extends Component {
     );
   }
 
+  setSidebarOpen = () => {
+    store.dispatch(
+      actions.openSidebar( 'left' )
+    );
+  }
+
+  setSidebarRightOpen = () => {
+    store.dispatch(
+      actions.openSidebar( 'right' )
+    );
+  }
+
   setTitle = title => {
     this.setState({ title });
   }
@@ -125,6 +137,8 @@ class LayoutProvider extends Component {
     setHeaderProps: this.setHeaderProps,
     setSidebarProps: this.setSidebarProps,
     setSidebarRightProps: this.setSidebarRightProps,
+    setSidebarOpen: this.setSidebarOpen,
+    setSidebarRightOpen: this.setSidebarRightOpen,
     showSidebar: false,
     showSidebarRight: false,
     showHeader: false,

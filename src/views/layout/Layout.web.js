@@ -180,6 +180,12 @@ class Layout extends PureComponent {
         this.props.layout.setSidebarProps( sidebarProps );
         this.props.layout.setSidebarVisibility( true );
 
+        if (
+          sidebarProps.defaultOpen !== false
+        ) {
+          this.props.layout.setSidebarOpen();
+        }
+
         if ( this.state.unableToFindSidebar )
           this.setState({ unableToFindSidebar: false });
       }
@@ -228,6 +234,12 @@ class Layout extends PureComponent {
       if ( sidebarRightProps && Object.keys( sidebarRightProps ).length > 0 ) {
         this.props.layout.setSidebarRightVisibility( true );
         this.props.layout.setSidebarRightProps( sidebarRightProps );
+
+        if (
+          sidebarRightProps.defaultOpen
+        ) {
+          this.props.layout.setSidebarRightOpen();
+        }
 
         if ( this.state.unableToFindSidebarRight )
           this.setState({ unableToFindSidebarRight: false });
