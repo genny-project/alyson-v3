@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce';
 import dlv from 'dlv';
 
 import 'react-table/react-table.css';
-import { Bridge, isArray, isObject, injectDataIntoProps, isInteger } from '../../../utils';
+import { Bridge, isArray, isObject, injectDataIntoProps } from '../../../utils';
 import { store } from '../../../redux';
 import { Box, Recursive, Touchable, Text } from '../../components';
 
@@ -25,7 +25,6 @@ class TableView extends Component {
     tableWidth: '100%',
     containerBackgroundColor: '#fff',
     buttonTextColor: '#fff',
-    deselectableRows: false,
   };
 
   static propTypes = {
@@ -46,7 +45,6 @@ class TableView extends Component {
     itemToSelectFirst: object,
     code: string,
     totalItems: number,
-    deselectableRows: bool,
   };
 
   constructor( props ) {
@@ -59,7 +57,7 @@ class TableView extends Component {
   state = {
     selectedItem: null,
     selectedFirstItemOnMount: false,
-    currentPage: 0,
+    currentPage: 1,
     totalPages: 1,
     isLoadingNextPage: false,
     isSearching: false,
@@ -92,19 +90,6 @@ class TableView extends Component {
       }
     }
 
-    if ( this.props.totalItems !== prevProps.totalItems ) {
-      this.updateTotalPages();
-    }
-
-    if (
-      this.state.selectedItem == null &&
-      this.props.itemToSelectFirst &&
-      this.props.itemToSelectFirst.code &&
-      this.props.itemToSelectFirst.code !== this.state.selectedItem
-    ) {
-      this.handleSelect( this.props.itemToSelectFirst );
-    }
-
     if (
       this.props.selectFirstItemOnMount &&
       !this.state.selectedFirstItemOnMount
@@ -128,20 +113,14 @@ class TableView extends Component {
   }
 
   setTotalPages = ( result ) => {
-    const { itemsPerPage, totalItems } = this.props;
+    const { data, itemsPerPage } = this.props;
 
-    const itemCount = isArray( result, { ofMinLength: 1 }) ? result.length : totalItems;
-    const totalPages = isInteger( itemCount, { isGreaterThan: 1 })
-      ? Math.ceil( itemCount / itemsPerPage )
-      : 1;
+    const d = result || data;
+    const t =  isArray( d, { ofMinLength: 1 }) ?
+      Math.ceil( d.length / itemsPerPage ) :
+      1;
 
-    return totalPages;
-  }
-
-  updateTotalPages = () => {
-    this.setState({
-      totalPages: this.setTotalPages(),
-    });
+    return t;
   }
 
   endTableLoading = ( incrementPage ) => {
@@ -185,7 +164,7 @@ class TableView extends Component {
       const isItemInData = ( item ) => {
         if ( !isObject( item )) return false;
 
-        return data.filter( row => row.code === item.code ).length > 0;
+        return data.filter( row => row.code === item.code ) > 0;
       };
 
       const item = isItemInData( itemToSelectFirst ) ? itemToSelectFirst : data[0];
@@ -215,7 +194,7 @@ class TableView extends Component {
     const renderCell = ( cellInfo, data ) => {
       const { renderWrapper, cellContext, isSelectable } = this.props;
       const { renderButton, fakeButton } = data;
-
+      
       if ( renderButton ) {
         const context = {
           ...this.props.context, // eslint-disable-line
@@ -340,7 +319,7 @@ class TableView extends Component {
       lastSentFilter: value,
       selectedItem: null,
       selectedFirstItemOnMount: false,
-      currentPage: 0,
+      currentPage: 1,
       totalPages: this.setTotalPages( result ),
       isSearching: true,
     });
@@ -348,10 +327,7 @@ class TableView extends Component {
 
   handleSelect = ( item ) => {
     if ( item.code ) {
-      if (
-        this.state.selectedItem === item.code &&
-        this.props.deselectableRows
-      ) {
+      if ( this.state.selectedItem === item.code ) {
         this.setState({ selectedItem: null });
       }
       else {
@@ -372,54 +348,48 @@ class TableView extends Component {
     /* if we are already loading the next page, we do nothing */
     if ( this.state.isLoadingNextPage ) return;
 
-    const loadedPages = Math.floor(( isArray( this.props.data, { ofMinLength: 1 })
-      ? this.props.data.length / this.props.itemsPerPage
-      : 1 ));
-
     /* we check if we are going to a page we currently don't have */
-    if ( this.state.currentPage + 1 < this.state.totalPages ) {
-      if ( this.state.currentPage + 1 >= loadedPages ) {
-        const value = {
-          pageSize: this.props.itemsPerPage,
-          pageIndex: this.state.currentPage,
-        };
+    if ( this.state.currentPage + 1 >= this.state.totalPages ) {
+      const value = {
+        pageSize: this.props.itemsPerPage,
+        pageIndex: this.state.currentPage,
+      };
+     
+      const valueString = (
+        value &&
+        typeof value === 'string'
+      )
+        ? value
+        : JSON.stringify( value );
 
-        const valueString = (
-          value &&
-          typeof value === 'string'
-        )
-          ? value
-          : JSON.stringify( value );
+      /* we ask backend for data */
+      Bridge.sendEvent({
+        event: 'PAGINATION',
+        sendWithToken: true,
+        data: {
+          code: this.props.code || null,
+          value: valueString || null,
+        },
+      });
 
-        /* we ask backend for data */
-        Bridge.sendEvent({
-          event: 'PAGINATION',
-          sendWithToken: true,
-          data: {
-            code: this.props.code || null,
-            value: valueString || null,
-          },
-        });
+      /* we show the loading indicator */
+      this.setState({
+        isLoadingNextPage: true,
+      });
 
-        /* we show the loading indicator */
-        this.setState({
-          isLoadingNextPage: true,
-        });
-
-        /* after 10 seconds, we jump to the next page */
-        setTimeout(() => {
-          /* we check if loading has finished */
-          if ( this.state.isLoadingNextPage ) {
-            /* we reset */
-            this.endTableLoading( false );
-          }
-        }, 10000 );
-      }
-      else {
-        this.setState( state => ({
-          currentPage: state.currentPage + 1,
-        }));
-      }
+      /* after 10 seconds, we jump to the next page */
+      setTimeout(() => {
+        /* we check if loading has finished */
+        if ( this.state.isLoadingNextPage ) {
+          /* we reset */
+          this.endTableLoading( false );
+        }
+      }, 10000 );
+    }
+    else {
+      this.setState( state => ({
+        currentPage: state.currentPage + 1,
+      }));
     }
   }
 
@@ -443,13 +413,12 @@ class TableView extends Component {
       isSearching,
     } = this.state;
 
-    const tableStyleProps = [];
-
-    tableStyleProps.push(
+    const tableStyleProps = {
       tableHeight,
       tableWidth,
       tableBackgroundColor,
-      containerBackgroundColor );
+      containerBackgroundColor,
+    };
 
     return (
       <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
@@ -457,18 +426,18 @@ class TableView extends Component {
           className="table-custom-footer"
           style={customFooterStyle}
         >
-          <p>
+          {/* <p>
             Number of Records:
             {' '}
             {totalItems ? totalItems : data && data.length}
-          </p>
+          </p> */}
         </div>
 
         {isArray( data ) ? (
           <ReactTable
             page={currentPage}
             className="react-tbl table -striped -highlight"
-            style={[tableStyleProps]}
+            style={tableStyleProps}
             noDataText="No data to Display."
             filterable={filterable}
             data={data}
@@ -489,22 +458,25 @@ class TableView extends Component {
                   disabled={currentPage <= 0}
                 >
                   <Box
-                    backgroundColor={currentPage <= 0 ? '#ddd' : '#5173c6'}
+                    backgroundColor={currentPage <= 0 ? '#ddd' : '#d16360'}
                     padding={10}
                   >
                     <Text
-                      text="Previous"
-                      color="white"
+                      text="<"
+                      color="black"
+                      size="lg"
                     />
                   </Box>
                 </Touchable>
                 <Box
-                  backgroundColor="#5173c6"
+                  backgroundColor="#e5e5e5"
+                  borderRadius="10px"
+                  borderColor="red"
                   padding={10}
                 >
                   <Text
-                    color="white"
-                    text={`${currentPage + 1} of ${this.state.totalPages}`}
+                    color="black"
+                    text={`${( this.state.currentPage ) * itemsPerPage + 1} - ${( this.state.currentPage + 1 ) * itemsPerPage} of ${totalItems}`}
                   />
                 </Box>
                 <Touchable
@@ -513,12 +485,13 @@ class TableView extends Component {
                   disabled={currentPage + 1 >= this.state.totalPages}
                 >
                   <Box
-                    backgroundColor={currentPage + 1 >= this.state.totalPages ?  '#ddd' : '#5173c6'}
+                    backgroundColor={currentPage + 1 >= this.state.totalPages ?  '#ddd' : '#d16360'}
                     padding={10}
                   >
                     <Text
-                      text={isLoadingNextPage || isSearching ? 'Loading...' : 'Next'}
-                      color="white"
+                      text={isLoadingNextPage || isSearching ? 'Loading...' : '>'}
+                      color="black"
+                      size="lg"
                     />
                   </Box>
                 </Touchable>
