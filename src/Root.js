@@ -30,7 +30,11 @@ class Root extends Component {
   attachStoreToWindow() {
     const storeFromRedux = store.getState();
 
-    return ( window.storeFromRedux = storeFromRedux );
+    if ( typeof window !== 'undefined' ) {
+      return ( window.storeFromRedux = storeFromRedux );
+    }
+
+    return null;
   }
 
   render() {
