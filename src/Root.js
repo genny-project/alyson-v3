@@ -1,7 +1,7 @@
 /* eslint-disable import/first */
 import 'nprogress/nprogress.css';
 import './polyfills';
-import React, { Component } from 'react';
+import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import App from './views/app';
 import { LayoutProvider } from './views/layout';
@@ -22,24 +22,20 @@ if ( typeof window !== 'undefined' ) {
   window.store = store;
 }
 
-class Root extends Component {
-  render() {
-    return (
-      <ErrorBoundary>
-        <ReduxProvider store={store}>
-          <VertxProvider>
-            <ThemeProvider>
-              <LayoutProvider>
-                <GoogleProvider>
-                  <App />
-                </GoogleProvider>
-              </LayoutProvider>
-            </ThemeProvider>
-          </VertxProvider>
-        </ReduxProvider>
-      </ErrorBoundary>
-    );
-  }
-}
+const Root = () => (
+  <ErrorBoundary>
+    <ReduxProvider store={store}>
+      <VertxProvider>
+        <ThemeProvider>
+          <LayoutProvider>
+            <GoogleProvider>
+              <App />
+            </GoogleProvider>
+          </LayoutProvider>
+        </ThemeProvider>
+      </VertxProvider>
+    </ReduxProvider>
+  </ErrorBoundary>
+);
 
 export default Root;
