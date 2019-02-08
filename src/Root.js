@@ -1,7 +1,7 @@
 /* eslint-disable import/first */
 import 'nprogress/nprogress.css';
 import './polyfills';
-import React from 'react';
+import React, { Component } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import App from './views/app';
 import { LayoutProvider } from './views/layout';
@@ -18,20 +18,38 @@ console.disableYellowBox = true; // eslint-disable-line no-console
 // }
 // /* ------------------------ */
 
-const Root = () => (
-  <ErrorBoundary>
-    <ReduxProvider store={store}>
-      <VertxProvider>
-        <ThemeProvider>
-          <LayoutProvider>
-            <GoogleProvider>
-              <App />
-            </GoogleProvider>
-          </LayoutProvider>
-        </ThemeProvider>
-      </VertxProvider>
-    </ReduxProvider>
-  </ErrorBoundary>
-);
+class Root extends Component {
+  componentDidMount() {
+    this.attachStoreToWindow();
+  }
+
+  componentDidUpdate() {
+    this.attachStoreToWindow();
+  }
+
+  attachStoreToWindow() {
+    const storeFromRedux = store.getState();
+
+    return storeFromRedux;
+  }
+
+  render() {
+    return (
+      <ErrorBoundary>
+        <ReduxProvider store={store}>
+          <VertxProvider>
+            <ThemeProvider>
+              <LayoutProvider>
+                <GoogleProvider>
+                  <App />
+                </GoogleProvider>
+              </LayoutProvider>
+            </ThemeProvider>
+          </VertxProvider>
+        </ReduxProvider>
+      </ErrorBoundary>
+    );
+  }
+}
 
 export default Root;
