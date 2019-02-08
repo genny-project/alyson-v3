@@ -143,7 +143,7 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
       created: be.created,
       link: {
         attributeCode: be.linkCode || 'LNK_CORE',
-        linkValue: 'LINK',
+        linkValue: be.linkValue || 'LINK',
         sourceCode: be.parentCode,
         targetCode: be.code,
         weight: 1,
