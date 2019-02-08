@@ -18,25 +18,11 @@ console.disableYellowBox = true; // eslint-disable-line no-console
 // }
 // /* ------------------------ */
 
+if ( typeof window !== 'undefined' ) {
+  window.store = store;
+}
+
 class Root extends Component {
-  componentDidMount() {
-    this.attachStoreToWindow();
-  }
-
-  componentDidUpdate() {
-    this.attachStoreToWindow();
-  }
-
-  attachStoreToWindow() {
-    const storeFromRedux = store.getState();
-
-    if ( typeof window !== 'undefined' ) {
-      return ( window.storeFromRedux = storeFromRedux );
-    }
-
-    return null;
-  }
-
   render() {
     return (
       <ErrorBoundary>
