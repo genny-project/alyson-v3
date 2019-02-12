@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { object, array } from 'prop-types';
 import { connect } from 'react-redux';
-import { Fragment, ProtoLayout } from '../index';
+import { Fragment, ProtoLayout, Text } from '../index';
 import { isArray, isString, isObject } from '../../../utils';
 
 class ProtoRecursive extends Component {
@@ -17,19 +17,33 @@ class ProtoRecursive extends Component {
   }
 
   render() {
-    const { data, attributes, layouts } = this.props;
+    const { data, attributes, layouts, themes } = this.props;
 
     if ( !isArray( layouts, { ofMinLength: 1 })) {
       return null;
     }
 
+    // console.log(themes);
+
     return (
       <Fragment>
         {layouts.map( x => {
+          const baseEntityCode = x.code;
+
+          if ( baseEntityCode.startsWith('TEST_QQQ_') ) {
+            return (
+              <Text
+                key={baseEntityCode}
+                text={baseEntityCode}
+              />
+            );
+          }
+
           return (
             <ProtoLayout
-              key={x}
-              rootCode={x}
+              key={baseEntityCode}
+              rootCode={baseEntityCode}
+              inheritedThemes={themes}
             />
           );
         })}

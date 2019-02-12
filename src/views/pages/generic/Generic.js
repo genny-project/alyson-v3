@@ -14,7 +14,7 @@ class Generic extends Component {
 
   render() {
     return (
-      <ProtoLayout rootCode="TEST_LAYOUT_ROOT" />
+      <ProtoLayout rootCode="FRAME_ROOT" />
     );
   }
 }

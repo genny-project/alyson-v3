@@ -7,132 +7,192 @@ import dlv from 'dlv';
 import { Box, Text, ProtoRecursive } from '../index';
 import { isArray, isString, isObject } from '../../../utils';
 
+const defaultStyle = {
+  wrapper: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    flex: 1,
+  },
+  row: {
+    flexDirection: 'row',
+    width: '100%',
+    flex: 1,
+  },
+  panel: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 'initial',
+  },
+};
+
 class ProtoLayout extends Component {
   static defaultProps = {
-    sections: [
+    panels: [
       'NORTH', 'SOUTH', 'EAST', 'WEST', 'CENTRE',
     ],
-    rootCode: 'TEST_LAYOUT_ROOT',
+    rootCode: 'FRAME_ROOT',
   }
 
   static propTypes = {
-    data: object,
-    attributes: object,
-    sections: array,
+    frames: object,
+    themes: object,
+    panels: array,
     rootCode: string,
+    inheritedThemes: array,
   }
 
   state = {
-    NORTH: [],
-    SOUTH: [],
-    EAST: [],
-    WEST: [],
-    CENTRE: [],
-    themes: {
-      NORTH: [],
-      SOUTH: [],
-      EAST: [],
-      WEST: [],
-      CENTRE: [],
-    },
+    frames: [],
+    themes: [],
+  }
+
+  componentDidMount() {
+    this.getChildLayouts();
   }
 
   componentDidUpdate( prevProps ) {
+    console.log( 'update', prevProps );
     this.getChildLayouts();
   }
 
   getChildLayouts = () => {
-    const { data, attributes, rootCode, sections } = this.props;
-    const { items } = this.state;
+    const { rootCode, frames } = this.props;
 
-    const layoutBaseEntity = data[rootCode];
-    const layoutAttributes = attributes[rootCode];
+    console.log( 'get' );
+    // const layoutBaseEntity = data[rootCode];
+    // const layoutAttributes = attributes[rootCode];
 
-    if ( !layoutBaseEntity || !layoutAttributes ) {
-      return (
-        <Box
-          justifyContent="center"
-          alignItems="center"
-          flex={1}
-        >
-          <Text
-            text="No Layout Found"
-          />
-        </Box>
-      );
+    const rootFrame = frames[rootCode];
+
+    if ( !rootFrame ) {
+      return null;
     }
 
-    const linkedThemes = [];
-    const linkedLayouts = [];
+    const getLinksOfType = type => {
+      return isArray( rootFrame.links, { ofMinLength: 1 })
+        ? rootFrame.links.filter( link => link.type === type )
+        : [];
+    };
 
-    if ( isArray( layoutBaseEntity.links, { ofMinLength: 1 })) {
-      layoutBaseEntity.links.forEach( x => {
-        if ( x.link.attributeCode === 'LNK_LAYOUT' ) {
-          linkedLayouts.push({
-            link: x,
-            baseEntity: data[x.link.targetCode],
-          });
-        }
-        else if ( x.link.attributeCode === 'LNK_THEME' ) {
-          linkedThemes.push({
-            link: x,
-            baseEntity: data[x.link.targetCode],
-          });
-        }
+    const linkedFrames = getLinksOfType( 'frame' );
+    const linkedThemes = getLinksOfType( 'theme' );
+
+    this.checkForChanges( 'frames', this.state.frames, linkedFrames );
+    this.checkForChanges( 'themes', this.state.themes, linkedThemes );
+
+    // this.checkForChanges( 'frames', this.state.layouts, linkedFrames );
+    // this.checkForChanges( 'themes', this.state.themes, linkedThemes );
+  }
+
+  checkForChanges = ( stateKey, oldArray, newArray ) => {
+    if ( stateKey ) {
+      const prevLinks = ( isArray( oldArray ))
+        ? oldArray.map( item => item.code ) : [];
+      const newLinks = ( isArray( newArray ))
+        ? newArray.map( item => item.code ) : [];
+
+      const toAdd = newLinks.filter( item => !prevLinks.includes( item ));
+      const toRemove = prevLinks.filter( item => !newLinks.includes( item ));
+
+      const toChangePanel = [];
+
+      newLinks.filter( x => prevLinks.includes( x )).forEach( item => {
+        const oldBe = oldArray.filter( subItem => subItem.code === item )[0];
+        const newBe = newArray.filter( subItem => subItem.code === item )[0];
+
+        const isPanelMatch = oldBe.panel ===  newBe.panel;
+
+        if ( !isPanelMatch ) toChangePanel.push( item );
       });
-    }
 
-    if ( isArray( linkedLayouts, { ofMinLength: 1 })) {
-      linkedLayouts.forEach( x => {
-        if (
-          dlv( x, 'link.link.linkValue' ) != null &&
-          sections.includes( x.link.link.linkValue ) &&
-          dlv( x, 'baseEntity.code' ) != null &&
-          !this.state[x.link.link.linkValue].includes( x.baseEntity.code )
-        ) {
-          console.log( x.link.link.linkValue, x.baseEntity.code );
-          this.setState( state => ({
-            [x.link.link.linkValue]: [
-              ...state[x.link.link.linkValue],
-              x.baseEntity.code,
-            ],
-          }));
-        }
-      });
+      if (
+        toAdd.length > 0 ||
+        toRemove.length > 0 ||
+        toChangePanel.length > 0
+      ) {
+        this.updateState( stateKey, newArray );
+      }
     }
+  };
 
-    if ( isArray( linkedThemes, { ofMinLength: 1 })) {
-      linkedThemes.forEach( x => {
-        if (
-          dlv( x, 'link.link.linkValue' ) != null &&
-          sections.includes( x.link.link.linkValue ) &&
-          dlv( x, 'baseEntity.code' ) != null &&
-          !this.state.themes[x.link.link.linkValue].includes( x.baseEntity.code )
-        ) {
-          console.log( x.link.link.linkValue, x.baseEntity.code );
-          this.setState( state => ({
-            themes: {
-              ...state.themes,
-              [x.link.link.linkValue]: [
-                ...state[x.link.link.linkValue],
-                x.baseEntity.code,
-              ],
-            },
-          }));
-        }
-      });
-    }
-    // console.log( layoutBaseEntity, layoutAttributes, linkedThemes, linkedLayouts );
+  updateState = ( stateKey, links ) => {
+    console.log( 'update state', stateKey, links );
+    this.setState( state => ({
+      [stateKey]: [
+        // ...state[stateKey]
+        ...links,
+      ],
+    }));
+  }
+
+  // addToState = ( stateKey, baseEntityCodes ) => {
+  //   // console.log( 'addToState', stateKey, baseEntityCodes );
+  //   const { data, attributes, rootCode, panels } = this.props;
+
+  //   if (
+  //     stateKey != null &&
+  //     isArray( baseEntityCodes, { ofMinLength: 1 })
+  //   ) {
+  //     baseEntityCodes.forEach( baseEntityCode => {
+  //       const link = data[rootCode].links.filter( link => link.link.targetCode )[0];
+  //       const baseEntity = data[baseEntityCode];
+  //       const baseEntityAttributes = attributes[baseEntityCode];
+
+  //       // console.log( baseEntity, baseEntityAttributes, link );
+
+  //       if (
+  //         baseEntity != null &&
+  //         baseEntityAttributes != null &&
+  //         link != null &&
+  //         panels.includes( link.link.linkValue ) &&
+  //         this.state[stateKey]
+  //           .filter( existingEntity => existingEntity.code === baseEntityCode ) < 1
+  //       ) {
+  //         this.setState( state => ({
+  //           [stateKey]: [
+  //             ...state[stateKey],
+  //             {
+  //               name: baseEntity.name,
+  //               code: baseEntityCode,
+  //               panel: link.link.linkValue,
+  //               weight: link.link.weight,
+  //               ...dlv( baseEntityAttributes, 'PRI_CONTENT.value' ) ? { content: baseEntityAttributes.PRI_CONTENT.value } : {},
+  //             },
+  //           ],
+  //         }));
+  //       }
+  //     });
+  //   }
+  // }
+
+  arrayCompare = ( x, y ) => {
+    if ( !x || !y )
+      return false;
+
+    if ( x.length !== y.length )
+      return false;
+
+    // loose match - string
+    if ( !x.every( x => y.includes( x )))
+      return false;
+
+    // exact match - string
+    // if ( !x.every(( x, i ) => y[i] === x ))
+    //    return false;
+
+    return true;
   }
 
   render() {
-    const { data, attributes, rootCode, sections } = this.props;
-    const { items } = this.state;
+    const { rootCode, panels, inheritedThemes, frames, themes } = this.props;
+    // const { frames, themes } = this.state;
 
-    const layoutBaseEntity = data[rootCode];
-    const layoutAttributes = attributes[rootCode];
+    const rootFrame = frames[rootCode];
 
-    if ( !layoutBaseEntity || !layoutAttributes ) {
+    if ( !rootFrame ) {
       return (
         <Box
           justifyContent="center"
@@ -146,129 +206,157 @@ class ProtoLayout extends Component {
       );
     }
 
-    // const layoutBaseEntities = [];
-    // const themeBaseEntities = [];
+    const filterByPanel = ( array, panel ) => {
+      return array.filter( item => item.panel === panel );
+    };
 
-    // Object.keys( data ).forEach( key => {
-    //   if ( key.startsWith( 'TEST_LAYOUT' )) {
-    //     layouts.push(
-    //       data[key]
-    //     );
-    //   }
-    // });
+    const getStyling = ( panel ) => {
+      let styling = {};
 
-    // Object.keys( data ).forEach( key => {
-    //   if ( key.startsWith( 'THEME' )) {
-    //     themes.push(
-    //       data[key]
-    //     );
-    //   }
-    // });
+      if ( isArray( this.state.themes )) {
+        filterByPanel( this.state.themes, panel ).forEach( theme => {
+          const themeData = dlv( themes, `${theme.code}.data` );
 
-    const centreThemes = this.state.themes.CENTRE.map( x => {
-      console.log( 'getthemedata' );
-      console.log( attributes[x], dlv( attributes, `${x}.PRI_CONTENT.value` ));
+          console.log( 'theme data', theme, themes, themes[theme], themeData );
 
-      if (
-        attributes[x] &&
-        dlv( attributes, `${x}.PRI_CONTENT.value` ) != null
-      ) {
-        const themeData = dlv( attributes, `${x}.PRI_CONTENT.value` );
-
-        console.log( themeData );
-
-        return themeData;
+          if (
+            isObject( themeData )
+          ) {
+            styling = {
+              ...inheritedThemes,
+              ...styling,
+              ...( isObject( themeData ) ? themeData : {}),
+            };
+          }
+        });
       }
-    });
 
-    let centreStyling = {};
+      return styling;
+    };
 
-    console.log( centreThemes );
-
-    if ( isArray( centreThemes, { ofMinLength: 1 })) {
-      centreThemes.forEach( x => {
-        console.log( x );
-        centreStyling = {
-          ...centreStyling,
-          ...x,
-        };
-      });
-    }
-    console.log( centreStyling );
-
-    console.log( this.state );
+    console.log( this.state.frames, this.state.themes );
 
     return (
       <Box
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        width="100%"
-        height="100%"
-        flex={1}
+        id="wrapper"
+        {...defaultStyle.wrapper}
       >
-        <Box
-          justifyContent="center"
-          alignItems="center"
-          flex={1}
-        >
-          <Text
-            text="North"
-          />
-        </Box>
-        <Box
-          flexDirection="row"
-          width="100%"
-          flex={1}
-        >
-          <Box
-            justifyContent="center"
-            alignItems="center"
-            flex={1}
-          >
-            <Text
-              text="West"
-            />
-          </Box>
-          <Box
-            justifyContent="center"
-            alignItems="center"
-            flex={1}
-            {...centreStyling}
-          >
-            {
-              isArray( this.state.CENTRE, { ofMinLength: 1 })
-                ? (
+        {
+          isArray( filterByPanel( this.state.frames, 'NORTH' ), { ofMinLength: 1 })
+            ? (
+              <Box
+                id="north-panel"
+                {...defaultStyle.panel}
+                width="100%"
+                {...isArray( filterByPanel( this.state.frames, 'CENTRE' ), { ofMinLength: 1 })
+                  ? {}
+                  : { flex: 1 }
+                }
+                alignItems="flex-start"
+                {...getStyling( 'NORTH' )}
+              >
+                <ProtoRecursive
+                  layouts={filterByPanel( this.state.frames, 'NORTH' )}
+                  themes={{ ...getStyling( 'NORTH' ) }}
+                />
+              </Box>
+            )
+            : null
+          }
+        {
+            isArray( filterByPanel( this.state.frames, 'WEST' ), { ofMinLength: 1 }) ||
+            isArray( filterByPanel( this.state.frames, 'CENTRE' ), { ofMinLength: 1 }) ||
+            isArray( filterByPanel( this.state.frames, 'EAST' ), { ofMinLength: 1 })
+              ? (
+                <Box
+                  id="row"
+                  {...defaultStyle.row}
+                >
+                  {
+                    isArray( filterByPanel( this.state.frames, 'WEST' ), { ofMinLength: 1 })
+                      ? (
+                        <Box
+                          id="west-panel"
+                          {...defaultStyle.panel}
+                          {...isArray( filterByPanel( this.state.frames, 'CENTRE' ), { ofMinLength: 1 })
+                            ? {}
+                            : { flex: 1 }
+                          }
+                          justifyContent="flex-start"
+                          {...getStyling( 'WEST' )}
+                        >
+                          <ProtoRecursive
+                            layouts={filterByPanel( this.state.frames, 'WEST' )}
+                            themes={{ ...getStyling( 'WEST' ) }}
+                          />
+                        </Box>
+                      )
+                      : null
+                  }
+                  {
+                    isArray( filterByPanel( this.state.frames, 'CENTRE' ), { ofMinLength: 1 })
+                      ? (
+                        <Box
+                          id="centre-panel"
+                          {...defaultStyle.panel}
+                          flex={1}
+                          {...getStyling( 'CENTRE' )}
+                        >
+                          <ProtoRecursive
+                            layouts={filterByPanel( this.state.frames, 'CENTRE' )}
+                            themes={{ ...getStyling( 'CENTRE' ) }}
+                          />
+                        </Box>
+                      )
+                      : null
+                  }
+                  {
+                    isArray( filterByPanel( this.state.frames, 'EAST' ), { ofMinLength: 1 })
+                      ? (
+                        <Box
+                          id="east-panel"
+                          {...defaultStyle.panel}
+                          {...isArray( filterByPanel( this.state.frames, 'CENTRE' ), { ofMinLength: 1 })
+                            ? {}
+                            : { flex: 1 }
+                          }
+                          justifyContent="flex-end"
+                          {...getStyling( 'EAST' )}
+                        >
+                          <ProtoRecursive
+                            layouts={filterByPanel( this.state.frames, 'EAST' )}
+                            themes={{ ...getStyling( 'EAST' ) }}
+                          />
+                        </Box>
+                      )
+                      : null
+                  }
+                </Box>
+              )
+              : null
+          }
+        {
+            isArray( filterByPanel( this.state.frames, 'SOUTH' ), { ofMinLength: 1 })
+              ? (
+                <Box
+                  id="south-panel"
+                  {...defaultStyle.panel}
+                  width="100%"
+                  {...isArray( filterByPanel( this.state.frames, 'CENTRE' ), { ofMinLength: 1 })
+                    ? {}
+                    : { flex: 1 }
+                  }
+                  alignItems="flex-end"
+                  {...getStyling( 'SOUTH' )}
+                >
                   <ProtoRecursive
-                    layouts={this.state.CENTRE}
+                    layouts={filterByPanel( this.state.frames, 'SOUTH' )}
+                    themes={{ ...getStyling( 'SOUTH' ) }}
                   />
-                )
-                : (
-                  <Text
-                    text="Centre"
-                  />
-                )
-            }
-          </Box>
-          <Box
-            justifyContent="center"
-            alignItems="center"
-            flex={1}
-          >
-            <Text
-              text="East"
-            />
-          </Box>
-        </Box>
-        <Box
-          justifyContent="center"
-          alignItems="center"
-          flex={1}
-        >
-          <Text
-            text="South"
-          />
-        </Box>
+                </Box>
+              )
+              : null
+          }
       </Box>
     );
   }
@@ -277,8 +365,9 @@ class ProtoLayout extends Component {
 export { ProtoLayout };
 
 const mapStateToProps = state => ({
-  data: state.vertx.baseEntities.data,
-  attributes: state.vertx.baseEntities.attributes,
+  baseEntities: state.vertx.baseEntities.data,
+  themes: state.vertx.layouts.themes,
+  frames: state.vertx.layouts.frames,
 });
 
 export default connect( mapStateToProps )( ProtoLayout );
