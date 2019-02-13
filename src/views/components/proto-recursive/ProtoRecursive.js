@@ -23,14 +23,15 @@ class ProtoRecursive extends Component {
       return null;
     }
 
-    // console.log(themes);
+    // console.log( layouts );
 
     return (
       <Fragment>
         {layouts.map( x => {
           const baseEntityCode = x.code;
+          const linkType = x.type;
 
-          if ( baseEntityCode.startsWith('TEST_QQQ_') ) {
+          if ( linkType === 'ask' ) {
             return (
               <Text
                 key={baseEntityCode}

@@ -33,7 +33,6 @@ class ProtoLayout extends Component {
     panels: [
       'NORTH', 'SOUTH', 'EAST', 'WEST', 'CENTRE',
     ],
-    rootCode: 'FRAME_ROOT',
   }
 
   static propTypes = {
@@ -46,25 +45,81 @@ class ProtoLayout extends Component {
 
   state = {
     frames: [],
+    asks: [],
     themes: [],
   }
 
   componentDidMount() {
+    // if ( this.props.rootCode === 'FRAME_SIDEBAR' )  console.log( 'mount', this.props.rootCode );
     this.getChildLayouts();
   }
 
+  shouldComponentUpdate( nextProps, nextState ) {
+    if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( '================================' );
+    if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( this.state.frames.concat( this.state.asks, this.state.themes ));
+    const oldArray = this.state.frames.concat( this.state.asks, this.state.themes );
+    const newArray = dlv( nextProps, `frames.${nextProps.rootCode}.links` );
+
+    const prevLinks = [];
+    const newLinks = [];
+
+    if ( isArray( oldArray )) {
+      oldArray.forEach( item => {
+        prevLinks.push( item.code );
+      });
+    }
+
+    if ( isArray( newArray )) {
+      // if ( this.props.rootCode === 'FRAME_SIDEBAR' ) console.log( 'newArray', newArray );
+
+      newArray.forEach( item => {
+        if ( this.props.rootCode === 'FRAME_ROOT' ) {
+          console.log( item );
+          console.log( dlv( nextProps, `${item.type === 'ask' ? 'baseEntities' : `${item.type}s`}.${item.code}` ));
+          console.log( dlv( nextProps, `${item.type}s.${item.code}` ));
+        }
+
+        if ( isObject( dlv( nextProps, `${item.type === 'ask' ? 'baseEntities' : `${item.type}s`}.${item.code}` ))) {
+          // if ( this.props.rootCode === 'FRAME_SIDEBAR' ) console.log( 'newLink' );
+          newLinks.push( item.code );
+        }
+      });
+    }
+
+    const toAdd = newLinks.filter( item => !prevLinks.includes( item ));
+    const toRemove = prevLinks.filter( item => !newLinks.includes( item ));
+
+    const toChangePanel = [];
+
+    newLinks.filter( x => prevLinks.includes( x )).forEach( item => {
+      const oldBe = oldArray.filter( subItem => subItem.code === item )[0];
+      const newBe = newArray.filter( subItem => subItem.code === item )[0];
+
+      const isPanelMatch = oldBe.panel ===  newBe.panel;
+
+      if ( !isPanelMatch ) toChangePanel.push( item );
+    });
+
+    if (
+      toAdd.length > 0 ||
+      toRemove.length > 0 ||
+      toChangePanel.length > 0
+    ) {
+      if ( this.props.rootCode === 'FRAME_ROOT' ) console.log( 'CHANGES', this.props.rootCode, toAdd, toRemove, toChangePanel );
+
+      return true;
+    }
+    if ( this.props.rootCode === 'FRAME_SIDEBAR' ) console.log( 'NO CHANGES', this.props.rootCode, this.state.themes );
+
+    return false;
+  }
+
   componentDidUpdate( prevProps ) {
-    console.log( 'update', prevProps );
     this.getChildLayouts();
   }
 
   getChildLayouts = () => {
     const { rootCode, frames } = this.props;
-
-    console.log( 'get' );
-    // const layoutBaseEntity = data[rootCode];
-    // const layoutAttributes = attributes[rootCode];
-
     const rootFrame = frames[rootCode];
 
     if ( !rootFrame ) {
@@ -78,16 +133,16 @@ class ProtoLayout extends Component {
     };
 
     const linkedFrames = getLinksOfType( 'frame' );
+    const linkedAsks = getLinksOfType( 'ask' );
     const linkedThemes = getLinksOfType( 'theme' );
 
     this.checkForChanges( 'frames', this.state.frames, linkedFrames );
+    this.checkForChanges( 'asks', this.state.asks, linkedAsks );
     this.checkForChanges( 'themes', this.state.themes, linkedThemes );
-
-    // this.checkForChanges( 'frames', this.state.layouts, linkedFrames );
-    // this.checkForChanges( 'themes', this.state.themes, linkedThemes );
   }
 
   checkForChanges = ( stateKey, oldArray, newArray ) => {
+    // if ( this.props.rootCode === 'FRAME_SIDEBAR' ) console.log( 'checkForChanges', stateKey, oldArray, newArray );
     if ( stateKey ) {
       const prevLinks = ( isArray( oldArray ))
         ? oldArray.map( item => item.code ) : [];
@@ -119,54 +174,13 @@ class ProtoLayout extends Component {
   };
 
   updateState = ( stateKey, links ) => {
-    console.log( 'update state', stateKey, links );
-    this.setState( state => ({
+    this.setState({
       [stateKey]: [
         // ...state[stateKey]
         ...links,
       ],
-    }));
+    }, () => {});
   }
-
-  // addToState = ( stateKey, baseEntityCodes ) => {
-  //   // console.log( 'addToState', stateKey, baseEntityCodes );
-  //   const { data, attributes, rootCode, panels } = this.props;
-
-  //   if (
-  //     stateKey != null &&
-  //     isArray( baseEntityCodes, { ofMinLength: 1 })
-  //   ) {
-  //     baseEntityCodes.forEach( baseEntityCode => {
-  //       const link = data[rootCode].links.filter( link => link.link.targetCode )[0];
-  //       const baseEntity = data[baseEntityCode];
-  //       const baseEntityAttributes = attributes[baseEntityCode];
-
-  //       // console.log( baseEntity, baseEntityAttributes, link );
-
-  //       if (
-  //         baseEntity != null &&
-  //         baseEntityAttributes != null &&
-  //         link != null &&
-  //         panels.includes( link.link.linkValue ) &&
-  //         this.state[stateKey]
-  //           .filter( existingEntity => existingEntity.code === baseEntityCode ) < 1
-  //       ) {
-  //         this.setState( state => ({
-  //           [stateKey]: [
-  //             ...state[stateKey],
-  //             {
-  //               name: baseEntity.name,
-  //               code: baseEntityCode,
-  //               panel: link.link.linkValue,
-  //               weight: link.link.weight,
-  //               ...dlv( baseEntityAttributes, 'PRI_CONTENT.value' ) ? { content: baseEntityAttributes.PRI_CONTENT.value } : {},
-  //             },
-  //           ],
-  //         }));
-  //       }
-  //     });
-  //   }
-  // }
 
   arrayCompare = ( x, y ) => {
     if ( !x || !y )
@@ -188,7 +202,6 @@ class ProtoLayout extends Component {
 
   render() {
     const { rootCode, panels, inheritedThemes, frames, themes } = this.props;
-    // const { frames, themes } = this.state;
 
     const rootFrame = frames[rootCode];
 
@@ -213,28 +226,33 @@ class ProtoLayout extends Component {
     const getStyling = ( panel ) => {
       let styling = {};
 
+      if ( rootCode === 'FRAME_ROOT' ) console.log( this.state.themes );
+
       if ( isArray( this.state.themes )) {
         filterByPanel( this.state.themes, panel ).forEach( theme => {
           const themeData = dlv( themes, `${theme.code}.data` );
 
-          console.log( 'theme data', theme, themes, themes[theme], themeData );
+          if ( rootCode === 'FRAME_ROOT' ) console.log( themes, Object.keys( themes ).join(), Object.keys( themes ).length, theme, theme.code, themes[theme.code], themeData );
 
-          if (
-            isObject( themeData )
-          ) {
-            styling = {
-              ...inheritedThemes,
-              ...styling,
-              ...( isObject( themeData ) ? themeData : {}),
-            };
-          }
+          styling = {
+            ...inheritedThemes,
+            ...styling,
+            ...( isObject( themeData ) ? themeData : {}),
+          };
         });
       }
 
+      // if (rootCode === 'FRAME_MAIN') console.log( 'styling', styling, panel );
       return styling;
     };
 
-    console.log( this.state.frames, this.state.themes );
+    // console.log( this.state.frames, this.state.themes );
+
+    const panelContent = this.state.frames.concat( this.state.asks );
+
+    const hasContent = ( panel ) => {
+      return isArray( filterByPanel( panelContent, panel ), { ofMinLength: 1 });
+    };
 
     return (
       <Box
@@ -242,13 +260,13 @@ class ProtoLayout extends Component {
         {...defaultStyle.wrapper}
       >
         {
-          isArray( filterByPanel( this.state.frames, 'NORTH' ), { ofMinLength: 1 })
+          hasContent( 'NORTH' )
             ? (
               <Box
                 id="north-panel"
                 {...defaultStyle.panel}
                 width="100%"
-                {...isArray( filterByPanel( this.state.frames, 'CENTRE' ), { ofMinLength: 1 })
+                {...hasContent( 'CENTRE' )
                   ? {}
                   : { flex: 1 }
                 }
@@ -256,7 +274,7 @@ class ProtoLayout extends Component {
                 {...getStyling( 'NORTH' )}
               >
                 <ProtoRecursive
-                  layouts={filterByPanel( this.state.frames, 'NORTH' )}
+                  layouts={filterByPanel( panelContent, 'NORTH' )}
                   themes={{ ...getStyling( 'NORTH' ) }}
                 />
               </Box>
@@ -264,21 +282,21 @@ class ProtoLayout extends Component {
             : null
           }
         {
-            isArray( filterByPanel( this.state.frames, 'WEST' ), { ofMinLength: 1 }) ||
-            isArray( filterByPanel( this.state.frames, 'CENTRE' ), { ofMinLength: 1 }) ||
-            isArray( filterByPanel( this.state.frames, 'EAST' ), { ofMinLength: 1 })
+            hasContent( 'WEST' ) ||
+            hasContent( 'CENTRE' ) ||
+            hasContent( 'EAST' )
               ? (
                 <Box
                   id="row"
                   {...defaultStyle.row}
                 >
                   {
-                    isArray( filterByPanel( this.state.frames, 'WEST' ), { ofMinLength: 1 })
+                    hasContent( 'WEST' )
                       ? (
                         <Box
                           id="west-panel"
                           {...defaultStyle.panel}
-                          {...isArray( filterByPanel( this.state.frames, 'CENTRE' ), { ofMinLength: 1 })
+                          {...hasContent( 'CENTRE' )
                             ? {}
                             : { flex: 1 }
                           }
@@ -286,7 +304,7 @@ class ProtoLayout extends Component {
                           {...getStyling( 'WEST' )}
                         >
                           <ProtoRecursive
-                            layouts={filterByPanel( this.state.frames, 'WEST' )}
+                            layouts={filterByPanel( panelContent, 'WEST' )}
                             themes={{ ...getStyling( 'WEST' ) }}
                           />
                         </Box>
@@ -294,7 +312,7 @@ class ProtoLayout extends Component {
                       : null
                   }
                   {
-                    isArray( filterByPanel( this.state.frames, 'CENTRE' ), { ofMinLength: 1 })
+                    hasContent( 'CENTRE' )
                       ? (
                         <Box
                           id="centre-panel"
@@ -303,7 +321,7 @@ class ProtoLayout extends Component {
                           {...getStyling( 'CENTRE' )}
                         >
                           <ProtoRecursive
-                            layouts={filterByPanel( this.state.frames, 'CENTRE' )}
+                            layouts={filterByPanel( panelContent, 'CENTRE' )}
                             themes={{ ...getStyling( 'CENTRE' ) }}
                           />
                         </Box>
@@ -311,12 +329,12 @@ class ProtoLayout extends Component {
                       : null
                   }
                   {
-                    isArray( filterByPanel( this.state.frames, 'EAST' ), { ofMinLength: 1 })
+                    hasContent( 'EAST' )
                       ? (
                         <Box
                           id="east-panel"
                           {...defaultStyle.panel}
-                          {...isArray( filterByPanel( this.state.frames, 'CENTRE' ), { ofMinLength: 1 })
+                          {...hasContent( 'CENTRE' )
                             ? {}
                             : { flex: 1 }
                           }
@@ -324,7 +342,7 @@ class ProtoLayout extends Component {
                           {...getStyling( 'EAST' )}
                         >
                           <ProtoRecursive
-                            layouts={filterByPanel( this.state.frames, 'EAST' )}
+                            layouts={filterByPanel( panelContent, 'EAST' )}
                             themes={{ ...getStyling( 'EAST' ) }}
                           />
                         </Box>
@@ -336,13 +354,13 @@ class ProtoLayout extends Component {
               : null
           }
         {
-            isArray( filterByPanel( this.state.frames, 'SOUTH' ), { ofMinLength: 1 })
+            hasContent( 'SOUTH' )
               ? (
                 <Box
                   id="south-panel"
                   {...defaultStyle.panel}
                   width="100%"
-                  {...isArray( filterByPanel( this.state.frames, 'CENTRE' ), { ofMinLength: 1 })
+                  {...hasContent( 'CENTRE' )
                     ? {}
                     : { flex: 1 }
                   }
@@ -350,7 +368,7 @@ class ProtoLayout extends Component {
                   {...getStyling( 'SOUTH' )}
                 >
                   <ProtoRecursive
-                    layouts={filterByPanel( this.state.frames, 'SOUTH' )}
+                    layouts={filterByPanel( panelContent, 'SOUTH' )}
                     themes={{ ...getStyling( 'SOUTH' ) }}
                   />
                 </Box>

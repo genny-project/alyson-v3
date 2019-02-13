@@ -1,5 +1,6 @@
 /* eslint-disable */
 
+import dlv from 'dlv';
 import { isArray, isString, isObject } from '../../../../utils';
 import { FETCH_PUBLIC_LAYOUTS_FAILURE, FETCH_PUBLIC_LAYOUTS_SUCCESS } from '../../../../constants';
 
@@ -17,15 +18,19 @@ const injectFrameIntoState = ({ item, state }) => {
       name: item.name,
       code: item.code,
       links: item.links.map( link => {
+        const linkTypes = {
+          LNK_THEME: 'theme',
+          LNK_FRAME: 'frame',
+          LNK_ASK: 'ask',
+        };
+
         return {
           code: link.link.targetCode,
           weight: link.link.weight,
           panel: link.link.linkValue,
-          type: link.link.attributeCode === 'LNK_THEME'
-            ? 'theme'
-            : link.link.attributeCode === 'LNK_FRAME'
-              ? 'frame'
-              : 'none',
+          type: linkTypes[link.link.attributeCode]
+            ? linkTypes[link.link.attributeCode]
+            : 'none',
           created: link.created,
         };
       }),
@@ -36,17 +41,27 @@ const injectFrameIntoState = ({ item, state }) => {
 
 const injectThemeIntoState = ({ item, state }) => {
   // console.log( 'injectThemeIntoState', item, state, state.themes );
-  const attributes = item.baseEntityAttributes;
-  const themeDataAttributes = attributes.filter( attribute => attribute.attributeCode === 'PRI_CONTENT' );
-  const themeData = isArray( themeDataAttributes, { ofMinLength: 1 })
-    ? themeDataAttributes[0] : null;
+  const attributes = {};
+
+  // console.log( item.baseEntityAttributes );
+  item.baseEntityAttributes.forEach( attribute => {
+    // console.log( attribute );
+    attributes[attribute.attributeCode] = attribute;
+  });
+
+  // console.log( attributes );
+
+  const themeData = dlv( attributes, 'PRI_CONTENT.value' );
+  const isInheritable = dlv( attributes, 'PRI_IS_INHERITABLE.value' );
+
   /* alter the state */
 
   if ( state.themes ) {
     state.themes[item.code] = {
       name: item.name,
       code: item.code,
-      data: isObject( themeData, { withProperty: 'value' }) ? themeData.value : {},
+      data: themeData,
+      isInheritable: isInheritable != null ? isInheritable : true,
       created: item.created,
     };
   }
