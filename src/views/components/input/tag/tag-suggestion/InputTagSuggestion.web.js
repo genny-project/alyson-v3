@@ -41,7 +41,7 @@ class InputTagSuggestion extends Component {
             functions.handleToggleMenu();
           }
         }}
-        testID={`input-tag-option ${testID}`}
+        testID={`input-tag-option ${item.value || testID}`}
       >
         {
           renderProp

@@ -462,6 +462,7 @@ class Button extends Component {
       borderWidth,
       borderColor,
       dispatchActionOnClick,
+      testID,
     } = this.getProps();
 
     const { isSpinning } = this.state;
@@ -501,6 +502,7 @@ class Button extends Component {
             : undefined
         )}
         dispatchActionOnClick={dispatchActionOnClick}
+        testID={testID}
       >
         {this.renderChildWrapper()}
       </Touchable>

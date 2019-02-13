@@ -6,6 +6,7 @@ import logger from 'redux-logger';
 import epics from './epics';
 import vertxMiddleware from '../views/components/vertx/vertx.middleware';
 import history from './history';
+import location from '../utils/location';
 
 const epicMiddleware = createEpicMiddleware( epics );
 const router = routerMiddleware( history );
@@ -24,7 +25,7 @@ const productionMiddleware = [
 
 ];
 
-if ( window.localStorage && window.localStorage.getItem( 'DISPLAY_LOGS' ) != null ) { 
+if (( window.localStorage && window.localStorage.getItem( 'DISPLAY_LOGS' ) != null ) || location.getQueryParams().debug ) {
   productionMiddleware.push( logger );
 }
 

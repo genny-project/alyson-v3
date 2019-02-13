@@ -23,6 +23,17 @@ class App extends Component {
       BackHandler.addEventListener( 'hardwareBackPress', this.handleBackPress );
   }
 
+  componentDidUpdate() {
+    const queryParams = location.getQueryParams();
+
+    if ( window ) {
+      window.originalQueryParams = {
+        ...( window.originalQueryParams ? window.originalQueryParams : {}),
+        ...queryParams,
+      };
+    }
+  }
+
   componentWillUnmount() {
     if ( BackHandler )
       BackHandler.removeEventListener( 'hardwareBackPress', this.handleBackPress );

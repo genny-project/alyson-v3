@@ -9,7 +9,7 @@ import dlv from 'dlv';
 import 'react-table/react-table.css';
 import { Bridge, isArray, isObject, injectDataIntoProps, isInteger } from '../../../utils';
 import { store } from '../../../redux';
-import { Box, Recursive, Touchable, Text } from '../../components';
+import { Box, Recursive, Touchable, Text, TestIdTooltip } from '../../components';
 
 /* testing table for rendering the number of items */
 import './table.css';
@@ -487,6 +487,7 @@ class TableView extends Component {
                   withFeedback
                   onPress={this.handlePreviousPress}
                   disabled={currentPage <= 0}
+                  testID="table-nav SEL_TABLE_PREVIOUS"
                 >
                   <Box
                     backgroundColor={currentPage <= 0 ? '#ddd' : '#5173c6'}
@@ -502,15 +503,20 @@ class TableView extends Component {
                   backgroundColor="#5173c6"
                   padding={10}
                 >
-                  <Text
-                    color="white"
-                    text={`${currentPage + 1} of ${this.state.totalPages}`}
-                  />
+                  <TestIdTooltip
+                    id="table-nav SEL_TABLE_COUNT"
+                  >
+                    <Text
+                      color="white"
+                      text={`${currentPage + 1} of ${this.state.totalPages}`}
+                    />
+                  </TestIdTooltip>
                 </Box>
                 <Touchable
                   withFeedback
                   onPress={this.handleNextPress}
                   disabled={currentPage + 1 >= this.state.totalPages}
+                  testID="table-nav SEL_TABLE_NEXT"
                 >
                   <Box
                     backgroundColor={currentPage + 1 >= this.state.totalPages ?  '#ddd' : '#5173c6'}

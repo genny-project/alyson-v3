@@ -301,7 +301,7 @@ class InputDropdown extends Component {
                         ? ( item[itemIdKey] || item[itemStringKey] )
                         : item
                     )}
-                    testID={`input-dropdown-option ${testID}`}
+                    testID={`input-dropdown-option ${testID} ${item[itemValueKey]}`}
                     label={isItemObject ? item[itemStringKey] : item}
                     value={isItemObject ? item[itemValueKey] : item}
                   />
