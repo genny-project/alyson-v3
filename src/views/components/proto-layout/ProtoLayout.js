@@ -55,8 +55,8 @@ class ProtoLayout extends Component {
   }
 
   shouldComponentUpdate( nextProps, nextState ) {
-    if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( '================================' );
-    if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( this.state.frames.concat( this.state.asks, this.state.themes ));
+    // if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( '================================' );
+    // if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( this.state.frames.concat( this.state.asks, this.state.themes ));
     const oldArray = this.state.frames.concat( this.state.asks, this.state.themes );
     const newArray = dlv( nextProps, `frames.${nextProps.rootCode}.links` );
 
@@ -65,6 +65,7 @@ class ProtoLayout extends Component {
 
     if ( isArray( oldArray )) {
       oldArray.forEach( item => {
+        // if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( item );
         prevLinks.push( item.code );
       });
     }
@@ -73,11 +74,11 @@ class ProtoLayout extends Component {
       // if ( this.props.rootCode === 'FRAME_SIDEBAR' ) console.log( 'newArray', newArray );
 
       newArray.forEach( item => {
-        if ( this.props.rootCode === 'FRAME_ROOT' ) {
-          console.log( item );
-          console.log( dlv( nextProps, `${item.type === 'ask' ? 'baseEntities' : `${item.type}s`}.${item.code}` ));
-          console.log( dlv( nextProps, `${item.type}s.${item.code}` ));
-        }
+        // if ( this.props.rootCode === 'FRAME_ROOT' ) {
+        //   if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( 'item', item );
+        //   if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( 'dlv', dlv( nextProps, `${item.type === 'ask' ? 'baseEntities' : `${item.type}s`}.${item.code}` ));
+        //   if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( 'isobject', isObject( dlv( nextProps, `${item.type === 'ask' ? 'baseEntities' : `${item.type}s`}.${item.code}` )));
+        // }
 
         if ( isObject( dlv( nextProps, `${item.type === 'ask' ? 'baseEntities' : `${item.type}s`}.${item.code}` ))) {
           // if ( this.props.rootCode === 'FRAME_SIDEBAR' ) console.log( 'newLink' );
@@ -85,6 +86,8 @@ class ProtoLayout extends Component {
         }
       });
     }
+
+    // if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( 'newlinks', prevLinks, newLinks );
 
     const toAdd = newLinks.filter( item => !prevLinks.includes( item ));
     const toRemove = prevLinks.filter( item => !newLinks.includes( item ));
@@ -105,11 +108,11 @@ class ProtoLayout extends Component {
       toRemove.length > 0 ||
       toChangePanel.length > 0
     ) {
-      if ( this.props.rootCode === 'FRAME_ROOT' ) console.log( 'CHANGES', this.props.rootCode, toAdd, toRemove, toChangePanel );
+      // if ( this.props.rootCode === 'FRAME_ROOT' ) console.log( 'CHANGES', this.props.rootCode, toAdd, toRemove, toChangePanel );
 
       return true;
     }
-    if ( this.props.rootCode === 'FRAME_SIDEBAR' ) console.log( 'NO CHANGES', this.props.rootCode, this.state.themes );
+    // if ( this.props.rootCode === 'FRAME_ROOT' ) console.log( 'NO CHANGES', this.props.rootCode, this.state.themes );
 
     return false;
   }
@@ -128,13 +131,19 @@ class ProtoLayout extends Component {
 
     const getLinksOfType = type => {
       return isArray( rootFrame.links, { ofMinLength: 1 })
-        ? rootFrame.links.filter( link => link.type === type )
+        ? rootFrame.links.filter( link => (
+          link.type === type &&
+          dlv( this.props, `${link.type === 'ask' ? 'baseEntities' : `${link.type}s`}.${link.code}` ) != null
+        ))
         : [];
     };
 
     const linkedFrames = getLinksOfType( 'frame' );
     const linkedAsks = getLinksOfType( 'ask' );
     const linkedThemes = getLinksOfType( 'theme' );
+
+
+    // if ( this.props.rootCode === 'FRAME_ROOT' ) console.log( 'links', linkedFrames, linkedAsks, linkedThemes );
 
     this.checkForChanges( 'frames', this.state.frames, linkedFrames );
     this.checkForChanges( 'asks', this.state.asks, linkedAsks );
@@ -226,13 +235,13 @@ class ProtoLayout extends Component {
     const getStyling = ( panel ) => {
       let styling = {};
 
-      if ( rootCode === 'FRAME_ROOT' ) console.log( this.state.themes );
+      // if ( rootCode === 'FRAME_ROOT' ) console.log( this.state.themes );
 
       if ( isArray( this.state.themes )) {
         filterByPanel( this.state.themes, panel ).forEach( theme => {
           const themeData = dlv( themes, `${theme.code}.data` );
 
-          if ( rootCode === 'FRAME_ROOT' ) console.log( themes, Object.keys( themes ).join(), Object.keys( themes ).length, theme, theme.code, themes[theme.code], themeData );
+          // if ( rootCode === 'FRAME_ROOT' ) console.log( themes, Object.keys( themes ).join(), Object.keys( themes ).length, theme, theme.code, themes[theme.code], themeData );
 
           styling = {
             ...inheritedThemes,
