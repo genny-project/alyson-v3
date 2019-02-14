@@ -1,10 +1,9 @@
 import React, { PureComponent } from 'react';
 import { string, oneOfType, array, number, any, func, oneOf, object } from 'prop-types';
-import { TouchableOpacity } from 'react-native';
 import { withRouter } from 'react-router-dom';
 import dlv from 'dlv';
 import { isArray, Bridge, getDeviceSize } from '../../../utils';
-import { Icon, Box, Text } from '../../components';
+import { Icon, Box, Text, Touchable } from '../../components';
 
 const tabBarLocation = {
   top: 'column',
@@ -213,9 +212,11 @@ class Tabs extends PureComponent {
                 {...tabProps}
                 {...index === currentChild ? activeTabProps : inactiveTabProps}
               >
-                <TouchableOpacity
+                <Touchable
+                  withFeedback
                   onPress={() => this.handlePress( index )}
                   style={{ flexDirection: 'row', flex: 1 }}
+                  testID={tab.testID}
                 >
                   {tab.icon ? (
                     <Icon
@@ -233,7 +234,7 @@ class Tabs extends PureComponent {
                   >
                     {tab.title}
                   </Text>
-                </TouchableOpacity>
+                </Touchable>
               </Box>
             ))
           ) : (

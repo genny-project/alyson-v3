@@ -3,7 +3,7 @@ import { array, bool, object, any, string } from 'prop-types';
 import { Menu, MenuButton, MenuItem, MenuList, MenuLink } from '@reach/menu-button';
 import { withRouter } from 'react-router-dom';
 import { isArray, isString, Bridge } from '../../../utils';
-import { Recursive } from '../../components';
+import { Recursive, Text, TestIdTooltip } from '../../components';
 import './Dropdown.css';
 
 class Dropdown extends Component {
@@ -79,25 +79,30 @@ class Dropdown extends Component {
       testID,
       renderItem,
     } = this.props;
+    const buttonTestId = `dropdown ${testID}`;
 
     return (
       <Menu>
-        <MenuButton
-          disabled={disabled || !isArray( items, { ofMinLength: 1 })}
-          style={menuButtonStyle}
-          data-testID={`dropdown ${testID}`}
+        <TestIdTooltip
+          id={buttonTestId}
         >
-          {isValidElement( children ) ? children
-          : isString( text ) ? text
-          : isArray( children )
-            ? children.map(( child, i ) => (
-              isValidElement( child )
-                ? child
-                : <Recursive key={i} {...child} /> // eslint-disable-line
-            ))
-            : <Recursive {...children} />
-          }
-        </MenuButton>
+          <MenuButton
+            disabled={disabled || !isArray( items, { ofMinLength: 1 })}
+            style={menuButtonStyle}
+            data-testID={buttonTestId}
+          >
+            {isValidElement( children ) ? children
+            : isString( text ) ? text
+            : isArray( children )
+              ? children.map(( child, i ) => (
+                isValidElement( child )
+                  ? child
+                  : <Recursive key={i} {...child} /> // eslint-disable-line
+              ))
+              : <Recursive {...children} />
+            }
+          </MenuButton>
+        </TestIdTooltip>
 
         {isArray( items, { ofMinLength: 1 }) && (
           <MenuList
@@ -111,6 +116,8 @@ class Dropdown extends Component {
             }}
           >
             {items.map( item => {
+              const itemTestId = `dropdown-item ${item.testID || item.buttonCode}`;
+
               if ( renderItem ) {
                 const context = {
                   ...this.props.context,
@@ -133,7 +140,7 @@ class Dropdown extends Component {
                   return (
                     <MenuLink
                       key={item.text}
-                      data-testID={`dropdown-item ${testID}`}
+                      data-testID={itemTestId}
                       to={(
                         item.href === 'home' ? '/'
                         : item.href.startsWith( '/' ) ? item.href
@@ -141,7 +148,11 @@ class Dropdown extends Component {
                       )}
                       onClick={this.handleNavigate( item )}
                     >
-                      {child}
+                      <TestIdTooltip
+                        id={itemTestId}
+                      >
+                        {child}
+                      </TestIdTooltip>
                     </MenuLink>
                   );
                 }
@@ -149,10 +160,14 @@ class Dropdown extends Component {
                 return (
                   <MenuItem
                     key={item.text}
-                    data-testID={`dropdown-item ${testID}`}
+                    data-testID={itemTestId}
                     onSelect={this.handleSelect( item )}
                   >
-                    {child}
+                    <TestIdTooltip
+                      id={itemTestId}
+                    >
+                      {child}
+                    </TestIdTooltip>
                   </MenuItem>
                 );
               }
@@ -161,7 +176,7 @@ class Dropdown extends Component {
                 return (
                   <MenuLink
                     key={item.text}
-                    data-testID={`dropdown-item ${testID}`}
+                    data-testID={itemTestId}
                     to={(
                       item.href === 'home' ? '/'
                       : item.href.startsWith( '/' ) ? item.href
@@ -173,7 +188,17 @@ class Dropdown extends Component {
                     }}
                     onClick={this.handleNavigate( item )}
                   >
-                    {item.text}
+                    <TestIdTooltip
+                      id={itemTestId}
+                    >
+                      <Text
+                        text={item.text}
+                        {...{
+                          ...menuItemStyle,
+                          ...menuLinkStyle,
+                        }}
+                      />
+                    </TestIdTooltip>
                   </MenuLink>
                 );
               }
@@ -182,19 +207,30 @@ class Dropdown extends Component {
                 <MenuItem
                   key={item.text}
                   style={menuItemStyle}
-                  data-testID={`dropdown-item ${testID}`}
+                  data-testID={itemTestId}
                   onSelect={this.handleSelect( item )}
                 >
-                  {isValidElement( item.children ) ? item.children
-                  : isString( item.text ) ? item.text
-                  : isArray( item.children )
-                    ? item.children.map(( child, i ) => (
-                      isValidElement( child )
-                        ? child
-                        : <Recursive key={i} {...child} /> // eslint-disable-line
-                    ))
-                    : <Recursive {...item.children} />
-                  }
+                  <TestIdTooltip
+                    id={itemTestId}
+                  >
+                    {
+                      isValidElement( item.children )
+                        ? item.children
+                        : isString( item.text )
+                          ? (
+                            <Text
+                              {...menuItemStyle}
+                              text={item.text}
+                            />
+                          ) : isArray( item.children )
+                            ? item.children.map(( child, i ) => (
+                              isValidElement( child )
+                                ? child
+                                : <Recursive key={i} {...child} /> // eslint-disable-line
+                            ))
+                            : <Recursive {...item.children} />
+                    }
+                  </TestIdTooltip>
                 </MenuItem>
               );
             })}
