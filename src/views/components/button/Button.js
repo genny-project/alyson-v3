@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Platform, ActivityIndicator, TouchableNativeFeedback } from 'react-native';
 import { array, string, bool, func, oneOf, number, oneOfType, shape, arrayOf, object, any } from 'prop-types';
 import { Text, Icon, Box, Touchable, alert } from '../index';
-import { withTheme } from '../theme';
 import defaultThemeConfig from './defaultThemeConfig.json';
 import defaultThemes from './defaultThemes.json';
 
@@ -118,15 +117,17 @@ class Button extends Component {
   }
 
   getThemes() {
-    const { button } = this.props.theme.components;
+    // const { button } = this.props.theme.components;
 
-    return button || defaultThemes;
+    // return button || defaultThemes;
+    return defaultThemes;
   }
 
   getThemeConfig() {
-    const { config } = this.getThemes();
+    // const { config } = this.getThemes();
 
-    return config || defaultThemeConfig;
+    // return config || defaultThemeConfig;
+    return defaultThemeConfig;
   }
 
   setSpinning = isSpinning => {
@@ -508,4 +509,4 @@ class Button extends Component {
   }
 }
 
-export default withTheme( Button );
+export default Button;

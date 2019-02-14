@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { object } from 'prop-types';
 import { Text, Box, KeycloakConsumer, Redirect } from '../../components';
-// import Layout from '../../layout';
 
 class Logout extends Component {
   static propTypes = {

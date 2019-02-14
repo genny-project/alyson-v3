@@ -59,7 +59,4 @@ marginX: number,
 borderWidth: number,
 borderColor: string,
 inverted: bool,
-theme: shape({
-  components: object,
-}),
 ```

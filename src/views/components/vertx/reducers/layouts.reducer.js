@@ -1,109 +1,92 @@
-import { isArray, isString, removeStartingAndEndingSlashes } from '../../../../utils';
+/* eslint-disable */
+
+import dlv from 'dlv';
+import { isArray, isString, isObject } from '../../../../utils';
 import { FETCH_PUBLIC_LAYOUTS_FAILURE, FETCH_PUBLIC_LAYOUTS_SUCCESS } from '../../../../constants';
 
 const initialState = {
-  pages: {},
-  sublayouts: {},
-  queries: {},
-  dialogs: {},
-  error: null,
-  hasLoadedDevLayouts: false,
+  frames: {},
+  themes: {},
 };
 
-const layoutGroups = ['pages', 'sublayouts', 'dialogs', 'queries'];
+const injectFrameIntoState = ({ item, state }) => {
+  // console.log( 'injectFrameIntoState', item, state, state.frames );
+  /* alter the state */
 
-/* This function makes use of mutation for the `state` param. As we're passing through an
- * object to this function, it is being passed through by reference (and not value), so we
- * are able to modify the object inside this function and use the changes in the local variable
- * (that is, whatever we passed into `state`) from the block this function was called from.
- * See uses. */
-const injectLayoutIntoState = ({ uri, data, state, isDevLayout, isPublic = false }) => {
-  /* Use of `Array.some()` here is to counteract using `Array.forEach()`,
-  * but we only want to loop through `layoutGroups` until we find the corresponding
-  * group to the layout URI. `.some()` allows us to cancel out at any time by
-  * returning `true` when we are done. */
-  const didFindAGroup = layoutGroups.some( layoutGroup => {
-    const group = `${layoutGroup}/`;
+  if ( state.frames ) {
+    state.frames[item.code] = {
+      name: item.name,
+      code: item.code,
+      links: item.links.map( link => {
+        const linkTypes = {
+          LNK_THEME: 'theme',
+          LNK_FRAME: 'frame',
+          LNK_ASK: 'ask',
+        };
 
-    if ( uri.startsWith( group )) {
-      /* Remove the group from the start of the URI,
-       * and remove the starting and ending slashes. */
-      const newUri = removeStartingAndEndingSlashes(
-        uri.split( group )[1]
-      );
+        return {
+          code: link.link.targetCode,
+          weight: link.link.weight,
+          panel: link.link.linkValue,
+          type: linkTypes[link.link.attributeCode]
+            ? linkTypes[link.link.attributeCode]
+            : 'none',
+          created: link.created,
+        };
+      }),
+      created: item.created,
+    };
+  }
+};
 
-      /* If it's already in the reducer and it's a dev layout, no not overwrite it. */
-      if (
-        state[layoutGroup][newUri] && (
-          state[layoutGroup][newUri].isDevLayout ||
-          state[layoutGroup][newUri].isPublic
-        )
-      ) {
-        return true;
-      }
+const injectThemeIntoState = ({ item, state }) => {
+  // console.log( 'injectThemeIntoState', item, state, state.themes );
+  const attributes = {};
 
-      state[layoutGroup][newUri] = data;
-      state[layoutGroup][newUri].isPublic = isPublic;
-
-      if ( isDevLayout )
-        state[layoutGroup][newUri].isDevLayout = true;
-
-      return true;
-    }
+  // console.log( item.baseEntityAttributes );
+  item.baseEntityAttributes.forEach( attribute => {
+    // console.log( attribute );
+    attributes[attribute.attributeCode] = attribute;
   });
 
-  /* Default to saving it in `sublayouts`. */
-  if ( !didFindAGroup ) {
-    const newUri = removeStartingAndEndingSlashes( uri );
+  // console.log( attributes );
 
-    /* If it's already in the reducer and it's a dev layout, no not overwrite it. */
-    if (
-      state.sublayouts[newUri] &&
-      state.sublayouts[newUri].isDevLayout
-    ) {
-      return;
-    }
+  const themeData = dlv( attributes, 'PRI_CONTENT.value' );
+  const isInheritable = dlv( attributes, 'PRI_IS_INHERITABLE.value' );
 
-    state.sublayouts[newUri] = data;
+  /* alter the state */
 
-    if ( isDevLayout )
-      state.sublayouts[newUri].isDevLayout = true;
+  if ( state.themes ) {
+    state.themes[item.code] = {
+      name: item.name,
+      code: item.code,
+      data: themeData,
+      isInheritable: isInheritable != null ? isInheritable : true,
+      created: item.created,
+    };
   }
 };
 
 const reducer = ( state = initialState, { type, payload }) => {
+  // console.log( type, payload );
   switch ( type ) {
     case 'BASE_ENTITY_MESSAGE': {
-      // if ( state.hasLoadedDevLayouts )
-        // return state;
-
       if ( !isArray( payload.items, { ofMinLength: 1 }))
         return state;
 
       /* Loop through all of the layouts and store them in their corresponding layout groups. */
       return payload.items.reduce(( newState, item ) => {
+        // console.log( newState );
         try {
-          const { code, baseEntityAttributes } = item;
-
-          if ( !isString( code, { startsWith: 'LAY_' }))
-            return newState;
-
-          const uri = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_URI' ).value;
-          let data = baseEntityAttributes.find( attribute => attribute.attributeCode === 'PRI_LAYOUT_DATA' ).value;
-
-          /* Data should be an object, so if it's a string ensure it gets a JSON parsing. */
-          if ( isString( data )) {
-            /* Fix the issue with empty strings throwing up warnings. */
-            if ( data.length === 0 )
-              return newState;
-
-            /* We can check if the data string looks like it's a stringified JSON object before
-             * parsing, however since we're in a try/catch we should prefer to use the warning
-             * message below to avoid silent failures. */
-            data = JSON.parse( data );
+          if ( isString( item.code, { startsWith: 'FRAME_' })) {
+            injectFrameIntoState({ item, state: newState });
           }
-
-          injectLayoutIntoState({ uri, data, state: newState });
+          else if ( isString( item.code, { startsWith: 'THEME_' })) {
+            injectThemeIntoState({ item, state: newState });
+          }
+          else {
+            return state;
+          }
         }
         catch ( error ) {
           // eslint-disable-next-line no-console
@@ -114,58 +97,9 @@ const reducer = ( state = initialState, { type, payload }) => {
       }, { ...state });
     }
 
-    case 'LOAD_DEV_LAYOUT': {
-      const layouts = Object.keys( payload );
-
-      /* Loop through all of the layouts and store them in their corresponding layout groups. */
-      return layouts.reduce(( newState, layoutCode ) => {
-        const layout = payload[layoutCode];
-        const uri = layout.PRI_LAYOUT_URI.value;
-        const data = layout.PRI_LAYOUT_DATA.value;
-
-        try {
-          const parsed = JSON.parse( data );
-
-          injectLayoutIntoState({ uri, data: parsed, state: newState, isDevLayout: true });
-        }
-        catch ( error ) {
-          // eslint-disable-next-line no-console
-          console.warn( 'Unable to add layout to reducer state', error );
-        }
-
-        return newState;
-      }, {
-        ...state,
-        hasLoadedDevLayouts: true,
-      });
-    }
-
-    case FETCH_PUBLIC_LAYOUTS_FAILURE: {
-      return {
-        ...state,
-        error: payload,
-      };
-    }
-
-    case FETCH_PUBLIC_LAYOUTS_SUCCESS: {
-      if ( !isArray( payload, { ofMinLength: 1 }))
-        return state;
-
-      const newState = { ...state };
-
-      payload.forEach( layout => {
-        const { uri, data } = layout;
-
-        injectLayoutIntoState({ uri, data, state: newState, isPublic: true });
-      });
-
-      return newState;
-    }
-
-    case 'CLEAR_ALL_LAYOUTS': {
-      return { ...initialState };
-    }
-
+    case FETCH_PUBLIC_LAYOUTS_FAILURE:
+    case FETCH_PUBLIC_LAYOUTS_SUCCESS:
+    case 'CLEAR_ALL_LAYOUTS':
     case 'USER_LOGOUT':
       return { ...initialState };
 

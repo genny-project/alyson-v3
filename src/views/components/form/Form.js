@@ -10,12 +10,11 @@ import { isArray, isObject, isString } from '../../../utils';
 import { Bridge } from '../../../utils/vertx';
 import shallowCompare from '../../../utils/shallow-compare';
 import { Box, Text, Button, KeyboardAwareScrollView, ScrollView } from '../index';
-import Recursive from '../layout-loader/Recursive';
 import FormInput from './input';
 import { store } from '../../../redux';
 import { hideDialog } from '../../../redux/actions';
 
-const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE', 'CONFIRM'];
+const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE', 'CONFIRM', 'NONE'];
 
 class Form extends Component {
   static defaultProps = {
@@ -71,7 +70,7 @@ class Form extends Component {
   componentDidUpdate( prevProps, prevState ) {
     const { questionGroupCode } = this.props;
     const { questionGroups } = this.state;
-    
+
     const checkIfSetNeeded = () => {
       return (
         this.state.questionGroups.length !== prevState.questionGroups.length ||
@@ -84,7 +83,7 @@ class Form extends Component {
       questionGroupCode !== prevProps.questionGroupCode
     ) {
       const newGroups = this.getQuestionGroups();
-     
+
       if ( newGroups.length > 0 ) {
         // eslint-disable-next-line react/no-did-update-set-state
         this.setState({ questionGroups: newGroups, missingBaseEntities: [] }, () => {
@@ -101,7 +100,7 @@ class Form extends Component {
       isArray( questionGroups, { ofExactLength: 0 })
     ) {
       const newGroups = this.getQuestionGroups();
-      
+
       if ( newGroups.length > 0 ) {
         // eslint-disable-next-line react/no-did-update-set-state
         this.setState({ questionGroups: newGroups, missingBaseEntities: [] }, () => {
@@ -119,7 +118,7 @@ class Form extends Component {
     ) {
       const newGroups = this.getQuestionGroups();
       const prevGroups = this.getQuestionGroups( prevProps );
-      
+
       if ( newGroups.length !== prevGroups.length ) {
         // eslint-disable-next-line react/no-did-update-set-state
         this.setState({ questionGroups: newGroups, missingBaseEntities: [] }, () => {
@@ -182,7 +181,7 @@ class Form extends Component {
             : [...state.missingBaseEntities, code],
         }));
       }
-      else if ( 
+      else if (
         isObject( beAttributes, { isNotEmpty: true }) &&
         this.state.missingBaseEntities.includes( code )
       ) {
@@ -302,7 +301,7 @@ class Form extends Component {
         isObject( dlv( newProps, `baseEntities.attributes.${beCode}` ), { isNotEmpty: true })
       );
     });
-    
+
     return result;
   }
 
@@ -492,7 +491,7 @@ class Form extends Component {
   }
 
   renderButton( buttonProps ) {
-    const { renderSubmitButton, renderSubmitButtonWrapper, hideButtonIfDisabled } = this.props;
+    const { hideButtonIfDisabled } = this.props;
     const { disabled } = buttonProps;
 
     if (
@@ -502,43 +501,9 @@ class Form extends Component {
       return null;
     }
 
-    if ( renderSubmitButtonWrapper ) {
-      return (
-        <Recursive
-          key={buttonProps.key}
-          {...renderSubmitButtonWrapper}
-          children={( // eslint-disable-line react/no-children-prop
-            renderSubmitButton
-              ? {
-                ...renderSubmitButton,
-                props: {
-                  ...buttonProps,
-                  ...renderSubmitButton.props,
-
-                },
-              }
-              : {
-                component: 'Button',
-                props: buttonProps,
-              }
-          )}
-        />
-      );
-    }
-
     return (
       <Box key={buttonProps.key}>
-        {renderSubmitButton ? (
-          <Recursive
-            {...renderSubmitButton}
-            props={{
-              ...renderSubmitButton.props,
-              ...buttonProps,
-            }}
-          />
-        ) : (
-          <Button {...buttonProps} />
-        )}
+        <Button {...buttonProps} />
       </Box>
     );
   }
@@ -558,7 +523,6 @@ class Form extends Component {
       renderFormInput,
       renderFormInputWrapper,
       renderFormInputLabel,
-      renderSubheading,
       baseEntities,
     } = this.props;
 
@@ -573,16 +537,6 @@ class Form extends Component {
           position="relative"
           zIndex={100 - index}
         >
-          {renderSubheading ? (
-            <Recursive
-              {...renderSubheading}
-              key={name}
-              context={{
-                subheading: name,
-              }}
-            />
-          ) : null}
-
           <Box flexDirection="column">
             {childAsks.map(
               this.renderInput(
@@ -640,51 +594,13 @@ class Form extends Component {
 
     const children = [];
 
-    if ( renderFormInputLabel ) {
-      children.push({
-        ...renderFormInputLabel,
-        context,
-        props: {
-          ...renderFormInputLabel.props,
-          ...inputProps,
-        },
-      });
-    }
-
-    if ( renderFormInput ) {
-      children.push({
-        ...renderFormInput,
-        context,
-        props: {
-          ...renderFormInput.props,
-          ...inputProps,
-        },
-      });
-    }
-    else {
-      children.push(
-        <FormInput
-          {...inputProps}
-        />
-      );
-    }
-
-    return (
-      <Recursive
-        key={questionCode}
-        context={context}
-        /* Default to the 'Box' component if `renderFormInputWrapper` is
-         * not given as a prop. */
-        component="Box"
-        {...renderFormInputWrapper}
-        props={{
-          position: 'relative',
-          zIndex: 50 - index,
-          ...renderFormInputWrapper ? renderFormInputWrapper.props : {},
-        }}
-        children={children} // eslint-disable-line react/no-children-prop
+    children.push(
+      <FormInput
+        {...inputProps}
       />
     );
+
+    return children;
   }
 
   render() {
@@ -707,10 +623,6 @@ class Form extends Component {
         questionGroupCode.length !== questionGroups.length
       )
     ) {
-      if ( renderLoading ) {
-        return <Recursive {...renderLoading} />;
-      }
-
       return (
         <Box
           flexDirection="column"
@@ -796,18 +708,6 @@ class Form extends Component {
                         flex={1}
                         key={questionGroup.name}
                       >
-                        {renderHeading ? (
-                          <Recursive
-                            {...renderHeading}
-                            key={questionGroup.name}
-                            context={{
-                              heading: isSingleBooleanForm
-                                ? questionGroup.childAsks[0].question.name
-                                : questionGroup.name,
-                            }}
-                          />
-                        ) : null}
-
                         {/* If there this form is a Yes/No (boolean) form, don't show any
                           * child asks - the 'YES'/'NO' buttons underneath this will suffice. */}
                         {isSingleBooleanForm ? null : (

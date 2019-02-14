@@ -1,7 +1,6 @@
 import React, { Component, isValidElement } from 'react';
 import { object, array, string } from 'prop-types';
 import { isArray, Bridge } from '../../../utils';
-import { Recursive } from '..';
 
 class Pagination extends Component {
   static defaultProps = {
@@ -61,24 +60,19 @@ class Pagination extends Component {
     const { children } = this.props;
 
     if ( !isArray( children )) {
-      if ( isValidElement )
-        return children;
+      if ( !isValidElement )
+        return null;
 
-      return (
-        <Recursive {...children} />
-      );
+      return children;
     }
 
-    return children.map(( child, index ) => (
-      <Recursive
-        {...child.props}
-        key={index} // eslint-disable-line react/no-array-index-key
-        context={{
-          ...child.props.context,
-          onScroll: this.handleScrollForMore,
+    // needs checking
 
-        }}
-      />
+    return React.Children.map( children, child => (
+      React.cloneElement( child, {
+        ...child.props,
+        onScroll: this.handleScrollForMore,
+      })
     ));
   }
 }

@@ -8,7 +8,7 @@ import Webcam from '@uppy/webcam';
 import Dashboard from '@uppy/dashboard';
 import { connect } from 'react-redux';
 import './inputFile.css';
-import { Box, Recursive } from '../../../components';
+import { Box } from '../../../components';
 import InputFileItem from './file-item';
 import InputFileTouchable from './file-touchable';
 import { isArray } from '../../../../utils';
@@ -268,8 +268,6 @@ class InputFile extends Component {
       imageOnly,
       multiple,
       testID,
-      renderItem,
-      renderInput,
       value, // eslint-disable-line
       ...restProps
     } = this.props;
@@ -285,22 +283,6 @@ class InputFile extends Component {
       >
         {isArray( validFiles, { ofMinLength: 1 }) && (
           validFiles.map( file => {
-            if ( renderItem ) {
-              const context = {
-                file,
-                onRemove: this.handleRemoveFile,
-                error,
-              };
-
-              return (
-                <Recursive
-                  {...renderItem}
-                  key={file.id}
-                  context={context}
-                />
-              );
-            }
-
             return (
               <InputFileItem
                 key={file.id}
@@ -322,24 +304,14 @@ class InputFile extends Component {
           isArray( validFiles, { ofExactLength: 0 }) ||
           multiple
         ) && (
-          renderInput ? (
-            <Recursive
-              {...renderInput}
-              context={{
-                numberOfUploadedFiles: validFiles.length,
-                onOpenModal: this.handleOpenModal,
-              }}
-            />
-          ) : (
-            <InputFileTouchable
-              {...restProps}
-              onPress={this.handleOpenModal}
-              text={(
-              `Click to Upload a${isArray( validFiles, { ofMinLength: 1 }) ? 'nother' : imageOnly ? 'n' : ''} ${imageOnly ? 'image' : 'file'} `
-              )}
-              testID={testID}
-            />
-          )
+          <InputFileTouchable
+            {...restProps}
+            onPress={this.handleOpenModal}
+            text={(
+            `Click to Upload a${isArray( validFiles, { ofMinLength: 1 }) ? 'nother' : imageOnly ? 'n' : ''} ${imageOnly ? 'image' : 'file'} `
+            )}
+            testID={testID}
+          />
         )}
       </Box>
     );

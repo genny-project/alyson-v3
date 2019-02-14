@@ -2,7 +2,6 @@ import React, { Component, isValidElement } from 'react';
 import { object, array, oneOf, bool, func, string, any, shape } from 'prop-types';
 import { isArray, injectDataIntoProps } from '../../../utils';
 import { store } from '../../../redux';
-import { Recursive } from '../../components';
 
 class Selection extends Component {
   static defaultProps = {
@@ -115,20 +114,16 @@ class Selection extends Component {
      */
 
     if ( !isArray( children )) {
-      if ( isValidElement )
-        return children;
+      if ( !isValidElement )
+        return null;
 
-      return (
-        <Recursive {...children} />
-      );
+      return children;
     }
 
-    return children.map(( child, index ) => (
-      <Recursive
-        {...child.props}
-        key={index} // eslint-disable-line react/no-array-index-key
-        context={{
-          ...child.props.context,
+    return children.map(( child, index ) => {
+      return (
+        React.cloneElement( child, {
+          ...child.props,
           ...useSelectableComponents
             ? {
               selection: {
@@ -142,9 +137,9 @@ class Selection extends Component {
                 isSelected: selectedIndex === index,
               },
             },
-        }}
-      />
-    ));
+        })
+      );
+    });
   }
 }
 

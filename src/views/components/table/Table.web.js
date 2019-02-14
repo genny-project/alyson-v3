@@ -9,7 +9,7 @@ import dlv from 'dlv';
 import 'react-table/react-table.css';
 import { Bridge, isArray, isObject, injectDataIntoProps, isInteger } from '../../../utils';
 import { store } from '../../../redux';
-import { Box, Recursive, Touchable, Text } from '../../components';
+import { Box, Touchable, Text } from '../../components';
 
 /* testing table for rendering the number of items */
 import './table.css';
@@ -201,78 +201,11 @@ class TableView extends Component {
       return modifiedCells;
     };
 
-    const renderCell = ( cellInfo, data ) => {
-      const { renderWrapper, cellContext, isSelectable } = this.props;
-      const { renderButton, fakeButton } = data;
+    const renderCell = ( cellInfo ) => {
+      const { isSelectable } = this.props;
 
-      if ( renderButton ) {
-        const context = {
-          ...this.props.context, // eslint-disable-line
-          ...this.props.data[cellInfo.index],
-        };
-
-        return (
-          <Box
-            justifyContent="space-around"
-            height="100%"
-          >
-            {renderButton ? (
-              isValidElement( renderButton ) ? renderButton
-              : isArray( renderButton )
-                ? renderButton.map(( element, i ) => (
-                  isValidElement( element ) ? element : (
-                    <Recursive
-                      key={i} // eslint-disable-line
-                      {...element}
-                      context={context}
-                    />
-                  )))
-                : (
-                  <Recursive
-                    {...renderButton}
-                    context={context}
-                  />
-                )
-            ) : null}
-          </Box>
-        );
-      }
       const cellData = this.props.data[cellInfo.index][cellInfo.column.id];
       const rowData = this.props.data[cellInfo.index];
-
-      if ( renderWrapper ) {
-        return (
-          <Recursive
-            {...renderWrapper}
-            context={{
-              ...cellContext,
-              celld: rowData,
-              cellData,
-              rowData,
-              onPress: isSelectable
-                ? () => this.handleSelect( rowData )
-                : null,
-            }}
-          >
-            { fakeButton
-              ? (
-                <Box
-                  backgroundColor="#5173c6"
-                  alignItems="center"
-                  justifyContent="center"
-                  paddingX={10}
-                  paddingY={2}
-                >
-                  <Text
-                    color="white"
-                    text={fakeButton}
-                  />
-                </Box>
-              )
-              : cellData}
-          </Recursive>
-        );
-      }
 
       if ( isSelectable ) {
         return (

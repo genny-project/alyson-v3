@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { bool, object, string, func } from 'prop-types';
-import { LayoutConsumer } from '../../../../layout';
-import { Box, Recursive, Touchable, Text } from '../../../index';
+import { Box, Touchable, Text } from '../../../index';
 
 class InputTagSuggestion extends Component {
   static propTypes = {
@@ -18,7 +17,6 @@ class InputTagSuggestion extends Component {
 
   render() {
     const {
-      renderProp,
       item,
       itemString,
       isSelected,
@@ -45,45 +43,20 @@ class InputTagSuggestion extends Component {
           },
         })}
       >
-        {
-          renderProp
-            ? (
-              <LayoutConsumer>
-                {layout => {
-                  const context = {
-                    item: {
-                      ...item,
-                      selected: isSelected,
-                    },
-                    layout,
-                  };
-
-                  return (
-                    <Recursive
-                      {...renderProp}
-                      context={context}
-                    />
-                  );
-                }}
-              </LayoutConsumer>
-            )
-            : (
-              <Box
-                padding={15}
-                borderBottomWidth={1}
-                borderColor="#DDD"
-                borderStyle="solid"
-                alignItems="center"
-              >
-                <Text
-                  color={isHighlighted ? 'black' : 'gray'}
-                  fontWeight={isSelected ? 'bold' : 'normal'}
-                >
-                  {itemString}
-                </Text>
-              </Box>
-            )
-          }
+        <Box
+          padding={15}
+          borderBottomWidth={1}
+          borderColor="#DDD"
+          borderStyle="solid"
+          alignItems="center"
+        >
+          <Text
+            color={isHighlighted ? 'black' : 'gray'}
+            fontWeight={isSelected ? 'bold' : 'normal'}
+          >
+            {itemString}
+          </Text>
+        </Box>
       </Touchable>
     );
   }

@@ -6,7 +6,6 @@ export * from './auth.events.incoming';
 export * from './baseEntity.events.incoming';
 export * from './cmd.events.incoming';
 export * from './gps.events.incoming';
-export * from './layout.events.incoming';
 export * from './notification.events.incoming';
 export * from './redirect.events.incoming';
 export * from './routeChange.events.incoming';

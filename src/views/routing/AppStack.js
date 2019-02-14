@@ -6,10 +6,8 @@ import CardStackStyleInterpolator from 'react-navigation/src/views/CardStack/Car
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
 import { connect } from 'react-redux';
 import * as Pages from '../../views/pages';
-import { store } from '../../redux';
 import { routes } from '../../config';
 import { navigator } from '../../utils';
-import { Header } from '../components';
 
 const addListener = createReduxBoundAddListener( 'root' );
 
@@ -25,24 +23,6 @@ export const AppStackNavigator = StackNavigator({
   cardStyle: {
     backgroundColor: '#FFF',
     shadowColor: 'transparent',
-  },
-  navigationOptions: props => {
-    const { headerProps, showHeader } = store.getState().layout;
-
-    const shouldShowHeader = (
-      showHeader &&
-      headerProps != null &&
-      Object.keys( headerProps ).length > 0
-    );
-
-    return {
-      header: shouldShowHeader ? (
-        <Header
-          {...props}
-          {...headerProps}
-        />
-      ) : null,
-    };
   },
   transitionConfig: () => ({
     screenInterpolator: sceneProps => {

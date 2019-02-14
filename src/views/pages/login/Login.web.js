@@ -3,7 +3,6 @@ import { ActivityIndicator } from 'react-native';
 import { object } from 'prop-types';
 import { connect } from 'react-redux';
 import { Text, Box, KeycloakConsumer, Redirect } from '../../components';
-import Layout from '../../layout';
 import Generic from '../generic';
 
 class Login extends Component {
@@ -84,31 +83,25 @@ class Login extends Component {
       );
 
     return (
-      <Layout
-        title="Login"
-        appColor="light"
-        hideHeader
+      <Box
+        justifyContent="center"
+        alignItems="center"
+        flex={1}
+        flexDirection="column"
+        testID="page-login"
       >
+        <ActivityIndicator
+          size="large"
+        />
+
         <Box
-          justifyContent="center"
-          alignItems="center"
-          flex={1}
-          flexDirection="column"
-          testID="page-login"
-        >
-          <ActivityIndicator
-            size="large"
-          />
+          height={20}
+        />
 
-          <Box
-            height={20}
-          />
-
-          <Text>
-            Logging you in...
-          </Text>
-        </Box>
-      </Layout>
+        <Text>
+          Logging you in...
+        </Text>
+      </Box>
     );
   }
 }

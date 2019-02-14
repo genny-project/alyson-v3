@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { object, array } from 'prop-types';
 import { connect } from 'react-redux';
-import { Fragment, Frame, Text } from '../index';
+import { Fragment, Frame, Text, Form } from '../index';
 import { isArray, isString, isObject } from '../../../utils';
 
 class Recurser extends Component {
@@ -28,22 +28,33 @@ class Recurser extends Component {
         {children.map( child => {
           const baseEntityCode = child.code;
           const linkType = child.type;
+          console.log( linkType, baseEntityCode );
 
           if ( linkType === 'ask' ) {
             return (
-              <Text
-                {...themes}
+              <Form
+                // {...themes}
                 key={baseEntityCode}
-                text={baseEntityCode}
+                questionGroupCode={baseEntityCode}
+              />
+            );
+          }
+
+          if ( linkType === 'frame' ) {
+            return (
+              <Frame
+                key={baseEntityCode}
+                rootCode={baseEntityCode}
+                inheritedThemes={themes}
               />
             );
           }
 
           return (
-            <Frame
+            <Text
+              {...themes}
               key={baseEntityCode}
-              rootCode={baseEntityCode}
-              inheritedThemes={themes}
+              text={baseEntityCode}
             />
           );
         })}

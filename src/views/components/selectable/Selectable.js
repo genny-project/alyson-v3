@@ -1,7 +1,7 @@
 import React, { Component, isValidElement } from 'react';
 import { object, array, string, any } from 'prop-types';
 import { isArray } from '../../../utils';
-import { Recursive, EventButton } from '..';
+import { EventButton } from '..';
 
 class Selectable extends Component {
   static defaultProps = {
@@ -26,12 +26,10 @@ class Selectable extends Component {
     const { children, selectionProps, id, ...restProps } = this.props;
 
     if ( !isArray( children )) {
-      if ( isValidElement )
-        return children;
+      if ( !isValidElement )
+        return null;
 
-      return (
-        <Recursive {...children} />
-      );
+      return children;
     }
 
     return children.map(( child, index ) => (
@@ -40,15 +38,12 @@ class Selectable extends Component {
         key={index} // eslint-disable-line react/no-array-index-key
         onPress={this.handlePress}
       >
-        <Recursive
-          {...child.props}
-          context={{
-            ...child.props.context,
-            selectable: {
-              isSelected: selectionProps.selectedItem === id,
-            },
-          }}
-        />
+        {React.cloneElement( child, {
+          ...child.props,
+          selectable: {
+            isSelected: selectionProps.selectedItem === id,
+          },
+        })}
       </EventButton>
     ));
   }

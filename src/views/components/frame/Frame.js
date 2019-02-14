@@ -86,7 +86,7 @@ class Frame extends Component {
           /* Ask Bes are being passed to Frame via the baseEntity prop, while frames and themes have their own props
             so we need to check where we are looking for a base entity. If no entity is found that matches the
             target code  of the link, it is not added to the array of new links */
-          if ( isObject( dlv( nextProps, `${item.type === 'ask' ? 'baseEntities' : `${item.type}s`}.${item.code}` ))) {
+          if ( isObject( dlv( nextProps, `${item.type === 'ask' ? 'asks' : `${item.type}s`}.${item.code}` ))) {
             newLinks.push( item.code );
           }
         });
@@ -145,7 +145,7 @@ class Frame extends Component {
       return isArray( rootFrame.links, { ofMinLength: 1 })
         ? rootFrame.links.filter( link => (
           link.type === type &&
-          dlv( this.props, `${link.type === 'ask' ? 'baseEntities' : `${link.type}s`}.${link.code}` ) != null
+          dlv( this.props, `${link.type === 'ask' ? 'asks' : `${link.type}s`}.${link.code}` ) != null
         ))
         : [];
     };
@@ -350,6 +350,7 @@ export { Frame };
 
 const mapStateToProps = state => ({
   baseEntities: state.vertx.baseEntities.data,
+  asks: state.vertx.asks,
   themes: state.vertx.layouts.themes,
   frames: state.vertx.layouts.frames,
 });

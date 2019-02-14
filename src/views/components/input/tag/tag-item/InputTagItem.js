@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { object, string, func } from 'prop-types';
-import { LayoutConsumer } from '../../../../layout';
-import { Box, Recursive, Touchable, Text, Icon } from '../../../index';
+import { Box, Touchable, Text, Icon } from '../../../index';
 
 class InputTagItem extends Component {
   static propTypes = {
@@ -14,33 +13,9 @@ class InputTagItem extends Component {
 
   render() {
     const {
-      renderProp,
-      item,
       itemString,
       touchableProps,
-      onPress,
     } = this.props;
-
-    if ( renderProp ) {
-      return (
-        <LayoutConsumer>
-          {layout => {
-            const context = {
-              item: item,
-              layout,
-              onPress: onPress,
-            };
-
-            return (
-              <Recursive
-                {...renderProp}
-                context={context}
-              />
-            );
-          }}
-        </LayoutConsumer>
-      );
-    }
 
     return (
       <Box

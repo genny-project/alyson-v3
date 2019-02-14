@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { object } from 'prop-types';
 import { ActivityIndicator } from 'react-native';
 import { KeycloakConsumer, Redirect, Box, Text } from '../../components';
-import Layout from '../../layout';
 
 class Loading extends Component {
   static propTypes = {
@@ -32,23 +31,18 @@ class Loading extends Component {
       isCheckingCallback
     ) {
       return (
-        <Layout
-          title="Loading..."
-          appColor="light"
+        <Box
+          justifyContent="center"
+          alignItems="center"
+          flex={1}
+          flexDirection="column"
+          testID="page-loading"
         >
-          <Box
-            justifyContent="center"
-            alignItems="center"
-            flex={1}
-            flexDirection="column"
-            testID="page-loading"
-          >
-            <ActivityIndicator />
-            <Text>
-              Loading...
-            </Text>
-          </Box>
-        </Layout>
+          <ActivityIndicator />
+          <Text>
+            Loading...
+          </Text>
+        </Box>
       );
     }
 

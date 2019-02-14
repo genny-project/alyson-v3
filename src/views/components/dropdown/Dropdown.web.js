@@ -3,7 +3,6 @@ import { array, bool, object, any, string } from 'prop-types';
 import { Menu, MenuButton, MenuItem, MenuList, MenuLink } from '@reach/menu-button';
 import { withRouter } from 'react-router-dom';
 import { isArray, isString, Bridge } from '../../../utils';
-import { Recursive } from '../../components';
 import './Dropdown.css';
 
 class Dropdown extends Component {
@@ -90,12 +89,12 @@ class Dropdown extends Component {
           {isValidElement( children ) ? children
           : isString( text ) ? text
           : isArray( children )
-            ? children.map(( child, i ) => (
+            ? children.map(( child ) => (
               isValidElement( child )
                 ? child
-                : <Recursive key={i} {...child} /> // eslint-disable-line
+                : null
             ))
-            : <Recursive {...children} />
+            : null
           }
         </MenuButton>
 
@@ -124,9 +123,9 @@ class Dropdown extends Component {
                     ? renderItem.map(( item, i ) => (
                       isValidElement( item )
                         ? item
-                          : <Recursive key={i} {...item} context={context} /> // eslint-disable-line
+                        : null
                     ))
-                    : <Recursive {...renderItem} context={context} /> // eslint-disable-line
+                    : null
                 );
 
                 if ( item.href ) {
@@ -191,9 +190,9 @@ class Dropdown extends Component {
                     ? item.children.map(( child, i ) => (
                       isValidElement( child )
                         ? child
-                        : <Recursive key={i} {...child} /> // eslint-disable-line
+                        : null
                     ))
-                    : <Recursive {...item.children} />
+                    : null
                   }
                 </MenuItem>
               );

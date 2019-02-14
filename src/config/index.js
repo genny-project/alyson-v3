@@ -1,7 +1,6 @@
 import platformSpecificConfig from './config';
 
 export { default as routes } from './routes';
-export { default as sidebar } from './sidebar';
 
 // The reason we're using `require` instead of `import`?
 // See: https://github.com/webpack/webpack/issues/6584

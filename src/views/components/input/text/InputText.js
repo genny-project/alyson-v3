@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { TextInput, Platform } from 'react-native';
 import { string, oneOf, number, shape, bool, func, oneOfType, node, object } from 'prop-types';
 // import memoize from 'memoize-one';
-import { Box, Icon, Text, Recursive } from '../../../components';
+import { Box, Icon, Text } from '../../../components';
 
 /** Ensure the props we're going to use were indeed passed through. */
 const filterOutUnspecifiedProps = props => {
@@ -511,24 +511,13 @@ class Input extends PureComponent {
           : null}
 
         {!showCharacterCount ? null : (
-          renderCharacterCount ? (
-            <Recursive
-              {...renderCharacterCount}
-              context={{
-                ...context,
-                characterCount: valueLength,
-                maxLength,
-              }}
-            />
-          ) : (
-            <Box {...characterCountWrapperProps}>
-              <Text {...characterCountTextProps}>
-                {valueLength}
-                {' / '}
-                {maxLength}
-              </Text>
-            </Box>
-          )
+          <Box {...characterCountWrapperProps}>
+            <Text {...characterCountTextProps}>
+              {valueLength}
+              {' / '}
+              {maxLength}
+            </Text>
+          </Box>
         )}
       </Box>
     );

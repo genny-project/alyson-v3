@@ -3,7 +3,6 @@ import { ActivityIndicator } from 'react-native';
 import { object } from 'prop-types';
 import { connect } from 'react-redux';
 import { Text, Box, KeycloakConsumer, Redirect } from '../../components';
-import Layout from '../../layout';
 import Generic from '../generic';
 
 class Register extends Component {
@@ -85,31 +84,25 @@ class Register extends Component {
       );
 
     return (
-      <Layout
-        title="Register"
-        appColor="light"
-        hideHeader
+      <Box
+        justifyContent="center"
+        alignItems="center"
+        flex={1}
+        flexDirection="column"
+        testID="page-register"
       >
+        <ActivityIndicator
+          size="large"
+        />
+
         <Box
-          justifyContent="center"
-          alignItems="center"
-          flex={1}
-          flexDirection="column"
-          testID="page-register"
-        >
-          <ActivityIndicator
-            size="large"
-          />
+          height={20}
+        />
 
-          <Box
-            height={20}
-          />
-
-          <Text>
-            Preparing to register...
-          </Text>
-        </Box>
-      </Layout>
+        <Text>
+        Preparing to register...
+        </Text>
+      </Box>
     );
   }
 }

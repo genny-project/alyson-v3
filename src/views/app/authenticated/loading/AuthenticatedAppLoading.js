@@ -1,30 +1,22 @@
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
-import Layout from '../../../layout';
 import { Box, Text } from '../../../components';
 
 const AuthenticatedAppLoading = () => ( // eslint-disable-line no-unused-vars
-  <Layout
-    title="Loading..."
-    appColor="light"
-    hideHeader
-    hideSidebar
+  <Box
+    justifyContent="center"
+    alignItems="center"
+    flex={1}
+    flexDirection="column"
   >
-    <Box
-      justifyContent="center"
-      alignItems="center"
-      flex={1}
-      flexDirection="column"
-    >
-      <ActivityIndicator size="large" />
+    <ActivityIndicator size="large" />
 
-      <Box height={20} />
+    <Box height={20} />
 
-      <Text align="center">
+    <Text align="center">
         Loading authentication...
-      </Text>
-    </Box>
-  </Layout>
+    </Text>
+  </Box>
 );
 
 export default AuthenticatedAppLoading;
