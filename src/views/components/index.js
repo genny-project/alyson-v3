@@ -74,8 +74,8 @@ export { default as Marker } from './marker';
 export { default as Pagination } from './pagination';
 export { default as Breadcrumbs } from './breadcrumbs';
 
-export { default as ProtoLayout } from './proto-layout';
-export { default as ProtoRecursive } from './proto-recursive';
+export { default as Frame } from './frame';
+export { default as Recurser } from './recurser';
 
 export * from './keycloak';
 export * from './vertx';

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { object } from 'prop-types';
 import { Text, Box, KeycloakConsumer, Redirect } from '../../components';
-import Layout from '../../layout';
+// import Layout from '../../layout';
 
 class Logout extends Component {
   static propTypes = {
@@ -33,31 +33,25 @@ class Logout extends Component {
       );
 
     return (
-      <Layout
-        title="Logout"
-        appColor="light"
-        hideHeader
+      <Box
+        justifyContent="center"
+        alignItems="center"
+        flex={1}
+        flexDirection="column"
+        testID="page-logout"
       >
+        <ActivityIndicator
+          size="large"
+        />
+
         <Box
-          justifyContent="center"
-          alignItems="center"
-          flex={1}
-          flexDirection="column"
-          testID="page-logout"
-        >
-          <ActivityIndicator
-            size="large"
-          />
+          height={20}
+        />
 
-          <Box
-            height={20}
-          />
-
-          <Text>
-            Logging you out...
-          </Text>
-        </Box>
-      </Layout>
+        <Text>
+          Logging you out...
+        </Text>
+      </Box>
     );
   }
 }

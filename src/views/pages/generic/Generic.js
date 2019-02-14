@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { object } from 'prop-types';
 import queryString from 'query-string';
 import { location } from '../../../utils';
-import { LayoutLoader, LayoutFetcher, KeycloakConsumer, Redirect, ProtoLayout } from '../../components';
+import { LayoutLoader, LayoutFetcher, KeycloakConsumer, Redirect, Frame } from '../../components';
 
 class Generic extends Component {
   static propTypes = {
@@ -14,7 +14,7 @@ class Generic extends Component {
 
   render() {
     return (
-      <ProtoLayout rootCode="FRAME_ROOT" />
+      <Frame rootCode="FRAME_ROOT" />
     );
   }
 }

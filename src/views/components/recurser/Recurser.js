@@ -3,37 +3,36 @@
 import React, { Component } from 'react';
 import { object, array } from 'prop-types';
 import { connect } from 'react-redux';
-import { Fragment, ProtoLayout, Text } from '../index';
+import { Fragment, Frame, Text } from '../index';
 import { isArray, isString, isObject } from '../../../utils';
 
-class ProtoRecursive extends Component {
+class Recurser extends Component {
   static propTypes = {
     data: object,
     attributes: object,
-    layouts: array,
+    children: array,
   }
 
   state = {
   }
 
   render() {
-    const { data, attributes, layouts, themes } = this.props;
+    const { data, attributes, children, themes } = this.props;
 
-    if ( !isArray( layouts, { ofMinLength: 1 })) {
+    if ( !isArray( children, { ofMinLength: 1 })) {
       return null;
     }
 
-    // console.log( layouts );
-
     return (
       <Fragment>
-        {layouts.map( x => {
-          const baseEntityCode = x.code;
-          const linkType = x.type;
+        {children.map( child => {
+          const baseEntityCode = child.code;
+          const linkType = child.type;
 
           if ( linkType === 'ask' ) {
             return (
               <Text
+                {...themes}
                 key={baseEntityCode}
                 text={baseEntityCode}
               />
@@ -41,7 +40,7 @@ class ProtoRecursive extends Component {
           }
 
           return (
-            <ProtoLayout
+            <Frame
               key={baseEntityCode}
               rootCode={baseEntityCode}
               inheritedThemes={themes}
@@ -54,4 +53,4 @@ class ProtoRecursive extends Component {
   }
 }
 
-export default ProtoRecursive;
+export default Recurser;

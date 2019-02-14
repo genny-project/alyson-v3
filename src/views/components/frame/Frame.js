@@ -4,8 +4,9 @@ import React, { Component } from 'react';
 import { object, array, string } from 'prop-types';
 import { connect } from 'react-redux';
 import dlv from 'dlv';
-import { Box, Text, ProtoRecursive } from '../index';
+import { Box, Text, Recurser } from '../index';
 import { isArray, isString, isObject } from '../../../utils';
+import shallowCompare from '../../../utils/shallow-compare';
 
 const defaultStyle = {
   wrapper: {
@@ -24,23 +25,27 @@ const defaultStyle = {
   panel: {
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 'initial',
-  },
+  }
 };
 
-class ProtoLayout extends Component {
+class Frame extends Component {
   static defaultProps = {
     panels: [
       'NORTH', 'SOUTH', 'EAST', 'WEST', 'CENTRE',
     ],
+    linkTypes: [
+      'asks', 'frames', 'themes',
+    ],
+    inheritedThemes: {},
   }
 
   static propTypes = {
     frames: object,
     themes: object,
     panels: array,
+    linkTypes: array,
     rootCode: string,
-    inheritedThemes: array,
+    inheritedThemes: object,
   }
 
   state = {
@@ -50,69 +55,76 @@ class ProtoLayout extends Component {
   }
 
   componentDidMount() {
-    // if ( this.props.rootCode === 'FRAME_SIDEBAR' )  console.log( 'mount', this.props.rootCode );
     this.getChildLayouts();
   }
 
   shouldComponentUpdate( nextProps, nextState ) {
-    // if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( '================================' );
-    // if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( this.state.frames.concat( this.state.asks, this.state.themes ));
-    const oldArray = this.state.frames.concat( this.state.asks, this.state.themes );
-    const newArray = dlv( nextProps, `frames.${nextProps.rootCode}.links` );
 
-    const prevLinks = [];
-    const newLinks = [];
-
-    if ( isArray( oldArray )) {
-      oldArray.forEach( item => {
-        // if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( item );
-        prevLinks.push( item.code );
-      });
-    }
-
-    if ( isArray( newArray )) {
-      // if ( this.props.rootCode === 'FRAME_SIDEBAR' ) console.log( 'newArray', newArray );
-
-      newArray.forEach( item => {
-        // if ( this.props.rootCode === 'FRAME_ROOT' ) {
-        //   if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( 'item', item );
-        //   if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( 'dlv', dlv( nextProps, `${item.type === 'ask' ? 'baseEntities' : `${item.type}s`}.${item.code}` ));
-        //   if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( 'isobject', isObject( dlv( nextProps, `${item.type === 'ask' ? 'baseEntities' : `${item.type}s`}.${item.code}` )));
-        // }
-
-        if ( isObject( dlv( nextProps, `${item.type === 'ask' ? 'baseEntities' : `${item.type}s`}.${item.code}` ))) {
-          // if ( this.props.rootCode === 'FRAME_SIDEBAR' ) console.log( 'newLink' );
-          newLinks.push( item.code );
-        }
-      });
-    }
-
-    // if ( this.props.rootCode === 'FRAME_ROOT' )  console.log( 'newlinks', prevLinks, newLinks );
-
-    const toAdd = newLinks.filter( item => !prevLinks.includes( item ));
-    const toRemove = prevLinks.filter( item => !newLinks.includes( item ));
-
-    const toChangePanel = [];
-
-    newLinks.filter( x => prevLinks.includes( x )).forEach( item => {
-      const oldBe = oldArray.filter( subItem => subItem.code === item )[0];
-      const newBe = newArray.filter( subItem => subItem.code === item )[0];
-
-      const isPanelMatch = oldBe.panel ===  newBe.panel;
-
-      if ( !isPanelMatch ) toChangePanel.push( item );
-    });
-
-    if (
-      toAdd.length > 0 ||
-      toRemove.length > 0 ||
-      toChangePanel.length > 0
-    ) {
-      // if ( this.props.rootCode === 'FRAME_ROOT' ) console.log( 'CHANGES', this.props.rootCode, toAdd, toRemove, toChangePanel );
-
+    /* If rootCode is different, then a different base entity needs to be rendered inside the frame */
+    if ( this.props.rootCode !== nextProps.rootCode ) {
       return true;
     }
-    // if ( this.props.rootCode === 'FRAME_ROOT' ) console.log( 'NO CHANGES', this.props.rootCode, this.state.themes );
+
+    /* Check if any of the links of the root base entity have changed */
+    if (  isObject( dlv( nextProps, `frames.${nextProps.rootCode}` ))) {
+      /* Valid links are added to the state key that matches their link type, so check all the state arrays together */
+      const oldArray = this.state.frames.concat( this.state.asks, this.state.themes );
+      const newArray = dlv( nextProps, `frames.${nextProps.rootCode}.links` );
+
+      const prevLinks = [];
+      const newLinks = [];
+
+      /* Get just the target codes */
+      if ( isArray( oldArray )) {
+        oldArray.forEach( item => {
+          prevLinks.push( item.code );
+        });
+      }
+
+      if ( isArray( newArray )) {
+        newArray.forEach( item => {
+          /* Ask Bes are being passed to Frame via the baseEntity prop, while frames and themes have their own props
+            so we need to check where we are looking for a base entity. If no entity is found that matches the
+            target code  of the link, it is not added to the array of new links */
+          if ( isObject( dlv( nextProps, `${item.type === 'ask' ? 'baseEntities' : `${item.type}s`}.${item.code}` ))) {
+            newLinks.push( item.code );
+          }
+        });
+      }
+
+      /* Find the differences between the two sets of links */
+      const toAdd = newLinks.filter( item => !prevLinks.includes( item ));
+      const toRemove = prevLinks.filter( item => !newLinks.includes( item ));
+
+      const toChangePanel = [];
+
+      /* For items that have the same target, check if the panel ( linkValue ) is the same*/
+      newLinks.filter( newLinkCode => prevLinks.includes( newLinkCode )).forEach( newLinkCode => {
+        const oldBe = oldArray.filter( link => link.code === newLinkCode )[0];
+        const newBe = newArray.filter( link => link.code === newLinkCode )[0];
+
+        const isPanelMatch = oldBe.panel ===  newBe.panel;
+
+        if ( !isPanelMatch ) toChangePanel.push( item );
+      });
+
+      /* if any changes are found, update */
+      if (
+        toAdd.length > 0 ||
+        toRemove.length > 0 ||
+        toChangePanel.length > 0
+      ) {
+        return true;
+      }
+    }
+
+    /* Check if the inherited themes have changed */
+    if (
+      isObject(nextProps.inheritedThemes) &&
+     !shallowCompare( this.props.inheritedThemes , nextProps.inheritedThemes )
+    ) {
+      return true;
+    }
 
     return false;
   }
@@ -138,75 +150,26 @@ class ProtoLayout extends Component {
         : [];
     };
 
+    /* filter each of the links based on their type */
     const linkedFrames = getLinksOfType( 'frame' );
     const linkedAsks = getLinksOfType( 'ask' );
     const linkedThemes = getLinksOfType( 'theme' );
 
-
-    // if ( this.props.rootCode === 'FRAME_ROOT' ) console.log( 'links', linkedFrames, linkedAsks, linkedThemes );
-
-    this.checkForChanges( 'frames', this.state.frames, linkedFrames );
-    this.checkForChanges( 'asks', this.state.asks, linkedAsks );
-    this.checkForChanges( 'themes', this.state.themes, linkedThemes );
+    /* update the state  */
+    this.updateLinks( 'frames', linkedFrames );
+    this.updateLinks( 'asks', linkedAsks );
+    this.updateLinks( 'themes', linkedThemes );
   }
 
-  checkForChanges = ( stateKey, oldArray, newArray ) => {
-    // if ( this.props.rootCode === 'FRAME_SIDEBAR' ) console.log( 'checkForChanges', stateKey, oldArray, newArray );
-    if ( stateKey ) {
-      const prevLinks = ( isArray( oldArray ))
-        ? oldArray.map( item => item.code ) : [];
-      const newLinks = ( isArray( newArray ))
-        ? newArray.map( item => item.code ) : [];
-
-      const toAdd = newLinks.filter( item => !prevLinks.includes( item ));
-      const toRemove = prevLinks.filter( item => !newLinks.includes( item ));
-
-      const toChangePanel = [];
-
-      newLinks.filter( x => prevLinks.includes( x )).forEach( item => {
-        const oldBe = oldArray.filter( subItem => subItem.code === item )[0];
-        const newBe = newArray.filter( subItem => subItem.code === item )[0];
-
-        const isPanelMatch = oldBe.panel ===  newBe.panel;
-
-        if ( !isPanelMatch ) toChangePanel.push( item );
-      });
-
-      if (
-        toAdd.length > 0 ||
-        toRemove.length > 0 ||
-        toChangePanel.length > 0
-      ) {
-        this.updateState( stateKey, newArray );
-      }
+  updateLinks = ( stateKey, links ) => {
+    /* check if the stateKey is valid  */
+    if ( this.props.linkTypes.includes( stateKey )){
+      this.setState({
+        [stateKey]: [
+          ...links,
+        ],
+      }, () => {});
     }
-  };
-
-  updateState = ( stateKey, links ) => {
-    this.setState({
-      [stateKey]: [
-        // ...state[stateKey]
-        ...links,
-      ],
-    }, () => {});
-  }
-
-  arrayCompare = ( x, y ) => {
-    if ( !x || !y )
-      return false;
-
-    if ( x.length !== y.length )
-      return false;
-
-    // loose match - string
-    if ( !x.every( x => y.includes( x )))
-      return false;
-
-    // exact match - string
-    // if ( !x.every(( x, i ) => y[i] === x ))
-    //    return false;
-
-    return true;
   }
 
   render() {
@@ -222,7 +185,7 @@ class ProtoLayout extends Component {
           flex={1}
         >
           <Text
-            text="No Layout Found"
+            text="No Base Entity Found"
           />
         </Box>
       );
@@ -233,29 +196,23 @@ class ProtoLayout extends Component {
     };
 
     const getStyling = ( panel ) => {
-      let styling = {};
-
-      // if ( rootCode === 'FRAME_ROOT' ) console.log( this.state.themes );
+      let styling = {
+        ...isObject( inheritedThemes ) ? inheritedThemes : {},
+      };
 
       if ( isArray( this.state.themes )) {
         filterByPanel( this.state.themes, panel ).forEach( theme => {
           const themeData = dlv( themes, `${theme.code}.data` );
 
-          // if ( rootCode === 'FRAME_ROOT' ) console.log( themes, Object.keys( themes ).join(), Object.keys( themes ).length, theme, theme.code, themes[theme.code], themeData );
-
           styling = {
-            ...inheritedThemes,
             ...styling,
             ...( isObject( themeData ) ? themeData : {}),
           };
         });
       }
 
-      // if (rootCode === 'FRAME_MAIN') console.log( 'styling', styling, panel );
       return styling;
     };
-
-    // console.log( this.state.frames, this.state.themes );
 
     const panelContent = this.state.frames.concat( this.state.asks );
 
@@ -282,8 +239,8 @@ class ProtoLayout extends Component {
                 alignItems="flex-start"
                 {...getStyling( 'NORTH' )}
               >
-                <ProtoRecursive
-                  layouts={filterByPanel( panelContent, 'NORTH' )}
+                <Recurser
+                  children={filterByPanel( panelContent, 'NORTH' )}
                   themes={{ ...getStyling( 'NORTH' ) }}
                 />
               </Box>
@@ -312,8 +269,8 @@ class ProtoLayout extends Component {
                           justifyContent="flex-start"
                           {...getStyling( 'WEST' )}
                         >
-                          <ProtoRecursive
-                            layouts={filterByPanel( panelContent, 'WEST' )}
+                          <Recurser
+                            children={filterByPanel( panelContent, 'WEST' )}
                             themes={{ ...getStyling( 'WEST' ) }}
                           />
                         </Box>
@@ -329,8 +286,8 @@ class ProtoLayout extends Component {
                           flex={1}
                           {...getStyling( 'CENTRE' )}
                         >
-                          <ProtoRecursive
-                            layouts={filterByPanel( panelContent, 'CENTRE' )}
+                          <Recurser
+                            children={filterByPanel( panelContent, 'CENTRE' )}
                             themes={{ ...getStyling( 'CENTRE' ) }}
                           />
                         </Box>
@@ -350,8 +307,8 @@ class ProtoLayout extends Component {
                           justifyContent="flex-end"
                           {...getStyling( 'EAST' )}
                         >
-                          <ProtoRecursive
-                            layouts={filterByPanel( panelContent, 'EAST' )}
+                          <Recurser
+                            children={filterByPanel( panelContent, 'EAST' )}
                             themes={{ ...getStyling( 'EAST' ) }}
                           />
                         </Box>
@@ -376,8 +333,8 @@ class ProtoLayout extends Component {
                   alignItems="flex-end"
                   {...getStyling( 'SOUTH' )}
                 >
-                  <ProtoRecursive
-                    layouts={filterByPanel( panelContent, 'SOUTH' )}
+                  <Recurser
+                    children={filterByPanel( panelContent, 'SOUTH' )}
                     themes={{ ...getStyling( 'SOUTH' ) }}
                   />
                 </Box>
@@ -389,7 +346,7 @@ class ProtoLayout extends Component {
   }
 }
 
-export { ProtoLayout };
+export { Frame };
 
 const mapStateToProps = state => ({
   baseEntities: state.vertx.baseEntities.data,
@@ -397,4 +354,4 @@ const mapStateToProps = state => ({
   frames: state.vertx.layouts.frames,
 });
 
-export default connect( mapStateToProps )( ProtoLayout );
+export default connect( mapStateToProps )( Frame );
