@@ -6,25 +6,33 @@ import Tooltip from '../Tooltip';
 class TestIdTooltip extends Component {
   static defaultProps = {
     id: 'test-id',
-  }
+  };
 
   static propTypes = {
     id: string,
     children: node,
-  }
+  };
 
   handleMouseOver = () => {
     // eslint-disable-next-line no-console
     console.warn( 'TestId:', this.props.id );
-  }
+  };
 
   render() {
     const { id, children } = this.props;
 
     const dimensions = Dimensions.get( 'window' );
 
-    const isDebugMode = window.originalQueryParams.showcodes;
+    let isDebugMode = window.originalQueryParams.showcodes;
 
+    if (
+      localStorage.getItem( 'showcodes' ) === true ||
+      localStorage.getItem( 'showcodes' ) === 'true'
+    ) {
+      console.log(localStorage.getItem('showcodes')); // eslint-disable-line
+      isDebugMode = true || window.originalQueryParams.showcodes;
+    }
+    console.warn({ isDebugMode }); // eslint-disable-line
     if ( !isDebugMode ) {
       return children;
     }
