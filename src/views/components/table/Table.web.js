@@ -480,17 +480,17 @@ class TableView extends Component {
                     padding={10}
                   >
                     <Text
-                      text="Previous"
+                      text="<<"
                       color="white"
                     />
                   </Box>
                 </Touchable>
                 <Box
-                  backgroundColor="#5173c6"
+                  backgroundColor=""
                   padding={10}
                 >
                   <Text
-                    color="white"
+                    color="black"
                     text={`${( this.state.currentPage ) * itemsPerPage + 1} - ${( this.state.currentPage + 1 ) * itemsPerPage} of ${totalItems}`}
                   />
                 </Box>
@@ -504,7 +504,7 @@ class TableView extends Component {
                     padding={10}
                   >
                     <Text
-                      text={isLoadingNextPage || isSearching ? 'Loading...' : 'Next'}
+                      text={isLoadingNextPage || isSearching ? 'Loading...' : '>>'}
                       color="white"
                     />
                   </Box>
