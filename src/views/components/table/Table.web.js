@@ -1,4 +1,4 @@
-import React, { Component, isValidElement } from 'react';
+import React, { Component } from 'react';
 import { string, array, number, bool, oneOfType, object } from 'prop-types';
 import ReactTable from 'react-table';
 
@@ -24,11 +24,9 @@ class TableView extends Component {
     tableHeight: 200,
     tableWidth: '100%',
     containerBackgroundColor: '#fff',
-    buttonTextColor: '#fff',
   };
 
   static propTypes = {
-    cellContext: object,
     columns: array,
     data: array,
     itemsPerPage: number,
@@ -37,8 +35,6 @@ class TableView extends Component {
     tableHeight: oneOfType( [number, string] ),
     tableWidth: oneOfType( [number, string] ),
     containerBackgroundColor: string,
-    buttonTextColor: string,
-    renderWrapper: object,
     isSelectable: bool,
     selectFirstItemOnMount: bool,
     dispatchActionOnChange: object,

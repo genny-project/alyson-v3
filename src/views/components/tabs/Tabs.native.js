@@ -135,7 +135,7 @@ class Tabs extends Component {
   }
 
   renderIcon = ({ route }) => {
-    const { iconColor, iconSize, iconProps, activeIconColor, renderIcon } = this.props;
+    const { iconColor, iconSize, iconProps, activeIconColor } = this.props;
 
     const color = (
       activeIconColor &&

@@ -1,5 +1,5 @@
 import React, { Component, isValidElement } from 'react';
-import { object, array, oneOf, bool, func, string, any, shape } from 'prop-types';
+import { array, oneOf, bool, func, string, any, shape } from 'prop-types';
 import { isArray, injectDataIntoProps } from '../../../utils';
 import { store } from '../../../redux';
 
@@ -10,7 +10,6 @@ class Selection extends Component {
   }
 
   static propTypes = {
-    context: object,
     children: array,
     mode: oneOf( ['single','toggle'] ),
     selectFirstItemOnMount: bool,

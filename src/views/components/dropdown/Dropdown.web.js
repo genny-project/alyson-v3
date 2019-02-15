@@ -18,8 +18,6 @@ class Dropdown extends Component {
     menuItemStyle: object,
     children: any,
     history: object,
-    renderItem: object,
-    context: object,
   }
 
   handleSelect = item => () => {
@@ -76,7 +74,6 @@ class Dropdown extends Component {
       disabled,
       children,
       testID,
-      renderItem,
     } = this.props;
 
     return (
@@ -110,52 +107,6 @@ class Dropdown extends Component {
             }}
           >
             {items.map( item => {
-              if ( renderItem ) {
-                const context = {
-                  ...this.props.context,
-                  item,
-                };
-
-                const child = (
-                  isValidElement( renderItem ) ? renderItem
-                  : isString( renderItem ) ? renderItem
-                  : isArray( renderItem )
-                    ? renderItem.map(( item, i ) => (
-                      isValidElement( item )
-                        ? item
-                        : null
-                    ))
-                    : null
-                );
-
-                if ( item.href ) {
-                  return (
-                    <MenuLink
-                      key={item.text}
-                      data-testID={`dropdown-item ${testID}`}
-                      to={(
-                        item.href === 'home' ? '/'
-                        : item.href.startsWith( '/' ) ? item.href
-                        : `/${item.href}`
-                      )}
-                      onClick={this.handleNavigate( item )}
-                    >
-                      {child}
-                    </MenuLink>
-                  );
-                }
-
-                return (
-                  <MenuItem
-                    key={item.text}
-                    data-testID={`dropdown-item ${testID}`}
-                    onSelect={this.handleSelect( item )}
-                  >
-                    {child}
-                  </MenuItem>
-                );
-              }
-
               if ( item.href ) {
                 return (
                   <MenuLink
@@ -187,7 +138,7 @@ class Dropdown extends Component {
                   {isValidElement( item.children ) ? item.children
                   : isString( item.text ) ? item.text
                   : isArray( item.children )
-                    ? item.children.map(( child, i ) => (
+                    ? item.children.map(( child ) => (
                       isValidElement( child )
                         ? child
                         : null

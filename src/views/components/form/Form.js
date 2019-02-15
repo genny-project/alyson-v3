@@ -9,24 +9,24 @@ import dlv from 'dlv';
 import { isArray, isObject, isString } from '../../../utils';
 import { Bridge } from '../../../utils/vertx';
 import shallowCompare from '../../../utils/shallow-compare';
-import { Box, Text, Button, KeyboardAwareScrollView, ScrollView } from '../index';
+import { Box, Text, Button, KeyboardAwareScrollView } from '../index';
 import FormInput from './input';
 import { store } from '../../../redux';
 import { hideDialog } from '../../../redux/actions';
 
-const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE', 'CONFIRM', 'NONE'];
+const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE', 'CONFIRM'];
 
 class Form extends Component {
   static defaultProps = {
     loadingText: 'Loading form...',
     testID: 'form',
     shouldSetInitialValues: true,
-    formWrapperProps: {},
     alwaysActiveButtonTypes: [
       'CANCEL',
       'NO',
       'YES',
     ],
+    inheritedThemes: {},
   }
 
   static propTypes = {
@@ -35,21 +35,12 @@ class Form extends Component {
     ),
     asks: object, // eslint-disable-line react/no-unused-prop-types
     baseEntities: object,
-    renderHeading: object,
-    renderSubheading: object,
-    formWrapperProps: object,
-    renderFormInput: object,
-    renderFormInputWrapper: object,
-    renderFormInputLabel: object,
-    renderLoading: object,
-    renderSubmitButtonWrapper: object,
-    renderSubmitButton: object,
-    displayInline: bool,
     hideButtonIfDisabled: bool,
     loadingText: string,
     testID: string,
     shouldSetInitialValues: bool,
     alwaysActiveButtonTypes: array,
+    inheritedThemes: object,
   }
 
   inputRefs = {}
@@ -140,24 +131,6 @@ class Form extends Component {
         this.setValidationList();
       }
     }
-
-    // else if (
-    //   isArray( questionGroupCode ) &&
-    //   questionGroupCode.length !== questionGroups.length
-    // ) {
-    //   const newGroups = this.getQuestionGroups();
-    //   const prevGroups = this.getQuestionGroups( prevProps );
-
-    //   if ( newGroups.length !== prevGroups.length ) {
-    //     // eslint-disable-next-line react/no-did-update-set-state
-    //     this.setState({ questionGroups: newGroups }, () => {
-    //       if ( checkIfSetNeeded ) {
-    //         this.setInitialValues();
-    //         this.setValidationList();
-    //       }
-    //     });
-    //   }
-    // }
   }
 
   setInitialValues = () => {
@@ -520,13 +493,10 @@ class Form extends Component {
     submitForm,
   ) => ( ask, index ) => {
     const {
-      renderFormInput,
-      renderFormInputWrapper,
-      renderFormInputLabel,
       baseEntities,
     } = this.props;
 
-    const { questionCode, attributeCode, name, mandatory, question, childAsks } = ask;
+    const { questionCode, attributeCode, mandatory, question, childAsks } = ask;
     const baseEntityDefinition = baseEntities.definitions.data[attributeCode];
     const dataType = baseEntityDefinition && baseEntityDefinition.dataType;
 
@@ -580,16 +550,8 @@ class Form extends Component {
         : 'default',
       onKeyPress: this.handleKeyPress( submitForm, index, questionGroupCode ),
       testID: questionCode || '',
-    };
-
-    const context = {
-      label: name,
-      question,
-      required: mandatory,
-      touched: touched[questionCode],
-      error: errors[questionCode],
-      disabled: isSubmitting,
-      submitCount,
+      // inheritedThemes: this.props.inheritedThemes,
+      ...this.props.inheritedThemes,
     };
 
     const children = [];
@@ -606,12 +568,8 @@ class Form extends Component {
   render() {
     const {
       questionGroupCode,
-      renderHeading,
-      renderLoading,
-      displayInline,
       loadingText,
       testID,
-      formWrapperProps,
       alwaysActiveButtonTypes,
     } = this.props;
     const { questionGroups } = this.state;
@@ -654,7 +612,6 @@ class Form extends Component {
     }
 
     const { initialValues } = this.state;
-    const WrapperComponent = displayInline ? ScrollView : KeyboardAwareScrollView;
 
     return (
       <Formik
@@ -678,19 +635,14 @@ class Form extends Component {
           const isFormValid = shallowCompare( this.doValidate( values ), {});
 
           return (
-            <WrapperComponent
+            <KeyboardAwareScrollView
               testID={testID}
-              scrollEnabled={!displayInline}
-              style={{
-                width: '100%',
-              }}
             >
               <Box
                 accessibilityRole="form"
-                flexDirection={displayInline ? 'row' : 'column'}
+                flexDirection="column"
                 flex={1}
                 width="100%"
-                {...formWrapperProps}
                 onSubmit={handleSubmit}
               >
                 <Fragment>
@@ -702,7 +654,7 @@ class Form extends Component {
 
                     return (
                       <Box
-                        flexDirection={displayInline ? 'row' : 'column'}
+                        flexDirection="column"
                         zIndex={150 - index}
                         position="relative"
                         flex={1}
@@ -737,17 +689,17 @@ class Form extends Component {
                             disabled: (
                               !(
                                 questionGroups.length === 1 &&
-                                isArray( childAsks, { ofMinLength: 1 }) &&
-                                childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                                  isArray( childAsks, { ofMinLength: 1 }) &&
+                                  childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
                               ) &&
-                              !isFormValid &&
-                              !alwaysActiveButtonTypes.includes( type )
+                                !isFormValid &&
+                                !alwaysActiveButtonTypes.includes( type )
                             ),
                             onPress: () => {
-                              // when clicked on cancel button on the form => close the Popup
+                                // when clicked on cancel button on the form => close the Popup
                               buttons && buttons.map( button => {
-                                /* TODO: only hide dialog when cancel button is clicked,
-                                 * not any button? - Callan */
+                                  /* TODO: only hide dialog when cancel button is clicked,
+                                  * not any button? - Callan */
                                 if ( button.key === 'CANCEL' ) {
                                   store.dispatch(
                                     hideDialog({ layoutName: `questions/${questionGroupCode}` })
@@ -759,8 +711,8 @@ class Form extends Component {
                                 formStatus: lowercase( type ),
                               }, () => {
                                 if ( type === 'CANCEL' ) {
-                                  /* Skip the validation from occurring in Formik
-                                   * and go straight to form submission. */
+                                    /* Skip the validation from occurring in Formik
+                                    * and go straight to form submission. */
                                   this.handleSubmit();
                                 }
                                 else {
@@ -780,7 +732,7 @@ class Form extends Component {
                   }, [] )}
                 </Fragment>
               </Box>
-            </WrapperComponent>
+            </KeyboardAwareScrollView>
           );
         }}
       </Formik>

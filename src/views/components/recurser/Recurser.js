@@ -28,12 +28,11 @@ class Recurser extends Component {
         {children.map( child => {
           const baseEntityCode = child.code;
           const linkType = child.type;
-          console.log( linkType, baseEntityCode );
 
           if ( linkType === 'ask' ) {
             return (
               <Form
-                // {...themes}
+                inheritedThemes={themes}
                 key={baseEntityCode}
                 questionGroupCode={baseEntityCode}
               />

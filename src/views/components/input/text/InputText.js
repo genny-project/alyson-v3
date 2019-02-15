@@ -386,8 +386,6 @@ class Input extends PureComponent {
       showCharacterCount,
       characterCountWrapperProps,
       characterCountTextProps,
-      context,
-      renderCharacterCount,
     } = this.props;
 
     const { isFocused, valueLength } = this.state;

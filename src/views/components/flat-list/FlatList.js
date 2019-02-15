@@ -1,4 +1,4 @@
-import React, { Component, isValidElement } from 'react';
+import React, { Component } from 'react';
 import { object, array, string } from 'prop-types';
 import { FlatList as RNFlatList } from 'react-native';
 

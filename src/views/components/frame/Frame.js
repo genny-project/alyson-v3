@@ -195,7 +195,7 @@ class Frame extends Component {
       return array.filter( item => item.panel === panel );
     };
 
-    const getStyling = ( panel ) => {
+    const getStyling = ( panel, onlyInheritableThemes ) => {
       let styling = {
         ...isObject( inheritedThemes ) ? inheritedThemes : {},
       };
@@ -203,6 +203,10 @@ class Frame extends Component {
       if ( isArray( this.state.themes )) {
         filterByPanel( this.state.themes, panel ).forEach( theme => {
           const themeData = dlv( themes, `${theme.code}.data` );
+          const themeIsInheritable = dlv( themes, `${theme.code}.isInheritable` );
+
+          console.log
+          if ( onlyInheritableThemes && !themeIsInheritable ) return;
 
           styling = {
             ...styling,
@@ -212,6 +216,10 @@ class Frame extends Component {
       }
 
       return styling;
+    };
+
+    const getStylingInheritable = ( panel ) => {
+      return getStyling( panel, true );
     };
 
     const panelContent = this.state.frames.concat( this.state.asks );
@@ -241,7 +249,7 @@ class Frame extends Component {
               >
                 <Recurser
                   children={filterByPanel( panelContent, 'NORTH' )}
-                  themes={{ ...getStyling( 'NORTH' ) }}
+                  themes={{ ...getStylingInheritable( 'NORTH' ) }}
                 />
               </Box>
             )
@@ -271,7 +279,7 @@ class Frame extends Component {
                         >
                           <Recurser
                             children={filterByPanel( panelContent, 'WEST' )}
-                            themes={{ ...getStyling( 'WEST' ) }}
+                            themes={{ ...getStylingInheritable( 'WEST' ) }}
                           />
                         </Box>
                       )
@@ -288,7 +296,7 @@ class Frame extends Component {
                         >
                           <Recurser
                             children={filterByPanel( panelContent, 'CENTRE' )}
-                            themes={{ ...getStyling( 'CENTRE' ) }}
+                            themes={{ ...getStylingInheritable( 'CENTRE' ) }}
                           />
                         </Box>
                       )
@@ -309,7 +317,7 @@ class Frame extends Component {
                         >
                           <Recurser
                             children={filterByPanel( panelContent, 'EAST' )}
-                            themes={{ ...getStyling( 'EAST' ) }}
+                            themes={{ ...getStylingInheritable( 'EAST' ) }}
                           />
                         </Box>
                       )
@@ -335,7 +343,7 @@ class Frame extends Component {
                 >
                   <Recurser
                     children={filterByPanel( panelContent, 'SOUTH' )}
-                    themes={{ ...getStyling( 'SOUTH' ) }}
+                    themes={{ ...getStylingInheritable( 'SOUTH' ) }}
                   />
                 </Box>
               )

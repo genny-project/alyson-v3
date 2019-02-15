@@ -1,5 +1,5 @@
 import React, { Component, isValidElement } from 'react';
-import { object, array, string } from 'prop-types';
+import { array, string } from 'prop-types';
 import { isArray, Bridge } from '../../../utils';
 
 class Pagination extends Component {
@@ -7,7 +7,6 @@ class Pagination extends Component {
   }
 
   static propTypes = {
-    context: object,
     children: array,
     code: string.isRequired,
   }
