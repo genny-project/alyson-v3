@@ -1,0 +1,130 @@
+/* eslint-disable */
+
+import React, { Component } from 'react';
+import { object, node, string } from 'prop-types';
+import { connect } from 'react-redux';
+import { store } from '../../../../redux';
+import { Box, Text, Recurser, Fragment, Icon } from '../../index';
+import { isObject } from '../../../../utils';
+
+class Panel extends Component {
+  static defaultProps = {
+    location: 'centre',
+    style: {},
+  }
+
+  static propTypes = {
+    children: node,
+    location: string,
+    style: object,
+    aliases: object,
+  }
+
+  // state = {
+  //   maximised: false,
+  // }
+
+  handleToggleMaximised = () => {
+    // this.setState( state => ({
+    //   maximised: !state.maximised,
+    // }))
+
+    store.dispatch(
+      {
+        type: "ALIAS_TOGGLE",
+        payload: {
+          alias: "FULLSCREEN_PANEL",
+          value: `${this.props.rootCode}-${this.props.location}`
+        }
+      }
+    );
+
+    /* send event to backend with:
+      * userCode
+      * be Code
+      * panel Code
+      * eventCode
+    */
+
+    /*
+      backend needs to send back
+      1/ Theme for Fullscreen
+      2/ Link to Be, with linkValue Panel
+      3/ Update the Fullscreen Alias
+    */
+  }
+
+
+
+  render() {
+    const { rootCode, children, location, style, aliases, isExpandable } = this.props;
+    const currentFullscreenCode = aliases['FULLSCREEN_PANEL'];
+
+    const isFullscreen = `${rootCode}-${location}` === currentFullscreenCode && rootCode != null;
+
+    const Wrapper = isExpandable ? 'div' : Fragment;
+
+    return (
+      <Box
+        test-id={`rootCode-${location}-panel`}
+        {...style}
+      >
+      <Wrapper
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "100%"
+        }}
+      >
+        {
+          isExpandable
+            ? (
+              <Box
+                onClick={this.handleToggleMaximised}
+                position="absolute"
+                top={0}
+                right={-2}
+                zIndex={isObject(style , { withProperty: 'zIndex' }) ? style.zIndex + 1 : 'auto'}
+                cursor="pointer"
+                opacity={0.5}
+              >
+                <Box
+                  transform="rotate(270deg)"
+                >
+                  <Icon
+                    size="sm"
+                    color="black"
+                    name="signal_cellular_4_bar"
+                  />
+                </Box>
+
+                {/* <Text text={isFullscreen ? '-' : '+'} /> */}
+              </Box>
+              // <div
+              //   onClick={this.handleToggleMaximised}
+              //   style={{
+              //     position: "absolute",
+              //     top: 0,
+              //     right: 0,
+              //     padding: 10,
+              //     zIndex: isObject(style , { withProperty: 'zIndex' }) ? style.zIndex + 1 : 'auto'
+              //   }}
+              // >
+              //   <span>{isFullscreen ? '-' : '+'}</span>
+              // </div>
+            ) : null
+        }
+        {children}
+      </Wrapper>
+      </Box>
+    );
+  }
+}
+
+export { Panel };
+
+const mapStateToProps = state => ({
+  aliases: state.vertx.aliases,
+});
+
+export default connect( mapStateToProps )( Panel );

@@ -558,6 +558,7 @@ class Form extends Component {
 
     children.push(
       <FormInput
+        key={questionCode}
         {...inputProps}
       />
     );
@@ -639,7 +640,7 @@ class Form extends Component {
               testID={testID}
             >
               <Box
-                accessibilityRole="form"
+                // accessibilityRole="form"
                 flexDirection="column"
                 flex={1}
                 width="100%"

@@ -13,6 +13,19 @@ const injectFrameIntoState = ({ item, state }) => {
   // console.log( 'injectFrameIntoState', item, state, state.frames );
   /* alter the state */
 
+  const attributes = {};
+
+  item.baseEntityAttributes.forEach( attribute => {
+    // console.log( attribute );
+    attributes[attribute.attributeCode] = attribute;
+  });
+
+  console.log(item.baseEntityAttributes, attributes);
+
+  const expandablePanels = dlv( attributes, 'PRI_EXPANDABLE_PANELS.value' );
+
+  console.log(expandablePanels, isArray(expandablePanels));
+
   if ( state.frames ) {
     state.frames[item.code] = {
       name: item.name,
@@ -34,6 +47,7 @@ const injectFrameIntoState = ({ item, state }) => {
           created: link.created,
         };
       }),
+      expandablePanels: isArray(expandablePanels) ? expandablePanels : [],
       created: item.created,
     };
   }

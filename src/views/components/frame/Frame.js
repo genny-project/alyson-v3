@@ -5,6 +5,7 @@ import { object, array, string } from 'prop-types';
 import { connect } from 'react-redux';
 import dlv from 'dlv';
 import { Box, Text, Recurser } from '../index';
+import Panel from './panel';
 import { isArray, isString, isObject } from '../../../utils';
 import shallowCompare from '../../../utils/shallow-compare';
 
@@ -25,7 +26,24 @@ const defaultStyle = {
   panel: {
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
+  north: {
+    width: '100%',
+    alignItems: 'flex-start',
+  },
+  south: {
+    width: '100%',
+    alignItems: 'flex-end',
+  },
+  east: {
+    justifyContent: 'flex-end',
+  },
+  west: {
+    justifyContent: 'flex-start',
+  },
+  centre: {
+    flex: 1,
+  },
 };
 
 class Frame extends Component {
@@ -195,7 +213,7 @@ class Frame extends Component {
       return array.filter( item => item.panel === panel );
     };
 
-    const getStyling = ( panel, onlyInheritableThemes ) => {
+    const getStylingByPanel = ( panel, onlyInheritableThemes ) => {
       let styling = {
         ...isObject( inheritedThemes ) ? inheritedThemes : {},
       };
@@ -219,7 +237,7 @@ class Frame extends Component {
     };
 
     const getStylingInheritable = ( panel ) => {
-      return getStyling( panel, true );
+      return getStylingByPanel( panel, true );
     };
 
     const panelContent = this.state.frames.concat( this.state.asks );
@@ -227,6 +245,20 @@ class Frame extends Component {
     const hasContent = ( panel ) => {
       return isArray( filterByPanel( panelContent, panel ), { ofMinLength: 1 });
     };
+
+    /* Compile  all styling for the panel*/
+    const getStyling = ( panel ) => {
+      return {
+        ...defaultStyle.panel,
+        ...defaultStyle[panel],
+        /* If the centre panel is rendered, then it is the only panel that expands.
+          If not, then the other panels need to have flex 1 to expand. */
+        ...hasContent( 'CENTRE' ) ? {} : { flex: 1 },
+        ...getStylingByPanel( panel.toUpperCase()),
+      }
+    }
+
+    const isExpandable = ( panel ) => isArray( rootFrame.expandablePanels ) ? rootFrame.expandablePanels.includes(panel) : false ;
 
     return (
       <Box
@@ -236,22 +268,17 @@ class Frame extends Component {
         {
           hasContent( 'NORTH' )
             ? (
-              <Box
-                id="north-panel"
-                {...defaultStyle.panel}
-                width="100%"
-                {...hasContent( 'CENTRE' )
-                  ? {}
-                  : { flex: 1 }
-                }
-                alignItems="flex-start"
-                {...getStyling( 'NORTH' )}
+              <Panel
+                rootCode={rootCode}
+                location={'NORTH'}
+                style={getStyling( 'north' )}
+                isExpandable={isExpandable('NORTH')}
               >
                 <Recurser
                   children={filterByPanel( panelContent, 'NORTH' )}
                   themes={{ ...getStylingInheritable( 'NORTH' ) }}
                 />
-              </Box>
+              </Panel>
             )
             : null
           }
@@ -267,59 +294,51 @@ class Frame extends Component {
                   {
                     hasContent( 'WEST' )
                       ? (
-                        <Box
-                          id="west-panel"
-                          {...defaultStyle.panel}
-                          {...hasContent( 'CENTRE' )
-                            ? {}
-                            : { flex: 1 }
-                          }
-                          justifyContent="flex-start"
-                          {...getStyling( 'WEST' )}
+                        <Panel
+                          rootCode={rootCode}
+                          location={'WEST'}
+                          style={getStyling( 'west' )}
+                          isExpandable={isExpandable('WEST')}
                         >
                           <Recurser
                             children={filterByPanel( panelContent, 'WEST' )}
                             themes={{ ...getStylingInheritable( 'WEST' ) }}
                           />
-                        </Box>
+                        </Panel>
                       )
                       : null
                   }
                   {
                     hasContent( 'CENTRE' )
                       ? (
-                        <Box
-                          id="centre-panel"
-                          {...defaultStyle.panel}
-                          flex={1}
-                          {...getStyling( 'CENTRE' )}
+                        <Panel
+                          rootCode={rootCode}
+                          location={'CENTRE'}
+                          style={getStyling( 'centre' )}
+                          isExpandable={isExpandable('CENTRE')}
                         >
                           <Recurser
                             children={filterByPanel( panelContent, 'CENTRE' )}
                             themes={{ ...getStylingInheritable( 'CENTRE' ) }}
                           />
-                        </Box>
+                        </Panel>
                       )
                       : null
                   }
                   {
                     hasContent( 'EAST' )
                       ? (
-                        <Box
-                          id="east-panel"
-                          {...defaultStyle.panel}
-                          {...hasContent( 'CENTRE' )
-                            ? {}
-                            : { flex: 1 }
-                          }
-                          justifyContent="flex-end"
-                          {...getStyling( 'EAST' )}
+                        <Panel
+                          rootCode={rootCode}
+                          location={'EAST'}
+                          style={getStyling( 'east' )}
+                          isExpandable={isExpandable('EAST')}
                         >
                           <Recurser
                             children={filterByPanel( panelContent, 'EAST' )}
                             themes={{ ...getStylingInheritable( 'EAST' ) }}
                           />
-                        </Box>
+                        </Panel>
                       )
                       : null
                   }
@@ -330,22 +349,17 @@ class Frame extends Component {
         {
             hasContent( 'SOUTH' )
               ? (
-                <Box
-                  id="south-panel"
-                  {...defaultStyle.panel}
-                  width="100%"
-                  {...hasContent( 'CENTRE' )
-                    ? {}
-                    : { flex: 1 }
-                  }
-                  alignItems="flex-end"
-                  {...getStyling( 'SOUTH' )}
+                <Panel
+                  rootCode={rootCode}
+                  location={'SOUTH'}
+                  style={getStyling( 'south' )}
+                  isExpandable={isExpandable('SOUTH')}
                 >
                   <Recurser
                     children={filterByPanel( panelContent, 'SOUTH' )}
                     themes={{ ...getStylingInheritable( 'SOUTH' ) }}
                   />
-                </Box>
+                </Panel>
               )
               : null
           }
