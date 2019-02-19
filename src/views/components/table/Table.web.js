@@ -429,13 +429,20 @@ class TableView extends Component {
       isSearching,
     } = this.state;
 
-    const tableStyleProps = [];
+    // const tableStyleProps = [];
 
-    tableStyleProps.push(
+    // tableStyleProps.push(
+    //   tableHeight,
+    //   tableWidth,
+    //   tableBackgroundColor,
+    //   containerBackgroundColor );
+
+    const tableStyleProps = {
       tableHeight,
       tableWidth,
       tableBackgroundColor,
-      containerBackgroundColor );
+      containerBackgroundColor,
+    };
 
     return (
       <div style={{ backgroundColor: containerBackgroundColor, width: tableWidth }}>
@@ -454,7 +461,7 @@ class TableView extends Component {
           <ReactTable
             page={currentPage}
             className="react-tbl table -striped -highlight"
-            style={[tableStyleProps]}
+            style={tableStyleProps}
             noDataText="No data to Display."
             filterable={filterable}
             data={data}
