@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { object, node, string } from 'prop-types';
 import { connect } from 'react-redux';
 import { store } from '../../../../redux';
-import { Box, Text, Recurser, Fragment, Icon } from '../../index';
+import { Box, Fragment, Icon, Touchable } from '../../index';
 import { isObject } from '../../../../utils';
 
 class Panel extends Component {
@@ -67,55 +67,51 @@ class Panel extends Component {
     return (
       <Box
         test-id={`rootCode-${location}-panel`}
+        {...isExpandable ? { position: 'relative' } : {}}
         {...style}
-      >
-      <Wrapper
-        style={{
-          position: "relative",
-          width: "100%",
-          height: "100%"
-        }}
       >
         {
           isExpandable
             ? (
               <Box
-                onClick={this.handleToggleMaximised}
                 position="absolute"
                 top={0}
                 right={-2}
                 zIndex={isObject(style , { withProperty: 'zIndex' }) ? style.zIndex + 1 : 'auto'}
-                cursor="pointer"
-                opacity={0.5}
               >
-                <Box
-                  transform="rotate(270deg)"
+                <Touchable
+                  onPress={this.handleToggleMaximised}
+                  withFeedback
+                  opacity={0}
+                  hoverProps={{
+                    style: {
+                      opacity: 0.5
+                    }
+                  }}
                 >
-                  <Icon
-                    size="sm"
-                    color="black"
-                    name="signal_cellular_4_bar"
-                  />
-                </Box>
-
-                {/* <Text text={isFullscreen ? '-' : '+'} /> */}
+                  <Box
+                    padding={5}
+                  >
+                    <Icon
+                      size="sm"
+                      color="black"
+                      name={`fullscreen${isFullscreen ? '_exit' : ''}`}
+                    />
+                  </Box>
+                  {/* <Box
+                    transform="rotate(270deg)"
+                  >
+                    <Icon
+                      size="sm"
+                      color="black"
+                      name="signal_cellular_4_bar"
+                    />
+                  </Box> */}
+                </Touchable>
               </Box>
-              // <div
-              //   onClick={this.handleToggleMaximised}
-              //   style={{
-              //     position: "absolute",
-              //     top: 0,
-              //     right: 0,
-              //     padding: 10,
-              //     zIndex: isObject(style , { withProperty: 'zIndex' }) ? style.zIndex + 1 : 'auto'
-              //   }}
-              // >
-              //   <span>{isFullscreen ? '-' : '+'}</span>
-              // </div>
             ) : null
         }
         {children}
-      </Wrapper>
       </Box>
     );
   }

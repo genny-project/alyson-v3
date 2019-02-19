@@ -3,8 +3,9 @@
 import React, { Component } from 'react';
 import { object, array } from 'prop-types';
 import { connect } from 'react-redux';
+import dlv from 'dlv';
 import { Fragment, Frame, Text, Form } from '../index';
-import { isArray, isString, isObject } from '../../../utils';
+import { isArray, isString, isObject, sort } from '../../../utils';
 
 class Recurser extends Component {
   static propTypes = {
@@ -25,7 +26,7 @@ class Recurser extends Component {
 
     return (
       <Fragment>
-        {children.map( child => {
+        { sort( children, { paths: ["weight", "created"], direction: 'desc' }).map( child => {
           const baseEntityCode = child.code;
           const linkType = child.type;
 

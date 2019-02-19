@@ -20,11 +20,7 @@ const injectFrameIntoState = ({ item, state }) => {
     attributes[attribute.attributeCode] = attribute;
   });
 
-  console.log(item.baseEntityAttributes, attributes);
-
   const expandablePanels = dlv( attributes, 'PRI_EXPANDABLE_PANELS.value' );
-
-  console.log(expandablePanels, isArray(expandablePanels));
 
   if ( state.frames ) {
     state.frames[item.code] = {
