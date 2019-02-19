@@ -500,30 +500,6 @@ class Form extends Component {
     const baseEntityDefinition = baseEntities.definitions.data[attributeCode];
     const dataType = baseEntityDefinition && baseEntityDefinition.dataType;
 
-    if ( isArray( childAsks, { ofMinLength: 1 })) {
-      return (
-        <Box
-          flexDirection="column"
-          position="relative"
-          zIndex={100 - index}
-        >
-          <Box flexDirection="column">
-            {childAsks.map(
-              this.renderInput(
-                values,
-                errors,
-                touched,
-                setFieldValue,
-                setTouched,
-                false,
-                ask.questionCode
-              )
-            )}
-          </Box>
-        </Box>
-      );
-    }
-
     const inputProps = {
       onChangeValue: this.handleChange( questionCode, setFieldValue, setTouched, ask ),
       value: values && values[questionCode],
@@ -562,6 +538,35 @@ class Form extends Component {
         {...inputProps}
       />
     );
+    /* TODO: pass theme to wrapper, possible remove other wrapper? */
+
+    if ( isArray( childAsks, { ofMinLength: 1 })) {
+      return (
+        <Box
+          flexDirection="column"
+          position="relative"
+          zIndex={100 - index}
+        >
+          {children}
+          <Box
+            flexDirection="column"
+            {...this.props.inheritedThemes}
+          >
+            {childAsks.map(
+              this.renderInput(
+                values,
+                errors,
+                touched,
+                setFieldValue,
+                setTouched,
+                false,
+                ask.questionCode
+              )
+            )}
+          </Box>
+        </Box>
+      );
+    }
 
     return children;
   }
@@ -681,6 +686,8 @@ class Form extends Component {
                       </Box>
                     );
                   })}
+
+                  {/* TODO: remove button rendering, move code to handle form submit somewhere else, as prop passed to children? */}
 
                   {questionGroups.reduce(( buttons, { childAsks, attributeCode }) => {
                     buttonTypes.forEach( type => {

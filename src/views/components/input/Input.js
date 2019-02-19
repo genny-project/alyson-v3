@@ -351,6 +351,25 @@ class Input extends Component {
           />
         );
 
+      case 'event':
+        /*
+          get event and message data from question context
+
+          data: {
+            code: "GRP_ROOT", <- Question Group Code
+            value: "GRP_INTERNSHIPS", <- Question Code
+            event_type: "TV_SELECT", <-
+            msg_type: "EVT_MSG" <-
+          }
+        */
+
+        return (
+          <Text
+            {...inputProps}
+            text={inputProps.question.name}
+          />
+        );
+
       default:
         return (
           <Text>
