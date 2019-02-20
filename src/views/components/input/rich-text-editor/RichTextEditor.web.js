@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 import Html from 'slate-html-serializer';
+
 import { isKeyHotkey } from 'is-hotkey';
 import { string, oneOfType, number, func, object } from 'prop-types';
 /* This could be dynamic in the future (pre filled schemas while typing in the job description.) */
@@ -24,15 +25,13 @@ const isItalicHotkey = isKeyHotkey( 'mod+i' );
 const isUnderlinedHotkey = isKeyHotkey( 'mod+u' );
 const isCodeHotkey = isKeyHotkey( 'mod+`' );
 
-const initialValue = Value.fromJSON( defaultSchema );
-
 class RichTextEditor extends Component {
   static defaultProps = {
     backgroundColor: '#eee',
     editorBackgroundColor: '#fff',
     height: 'auto',
     width: '100%',
-    defaultValue: initialValue,
+    defaultValue: Value.fromJSON( defaultSchema ),
   }
 
   static propTypes = {
@@ -55,12 +54,18 @@ class RichTextEditor extends Component {
 
   // get previous value and put them
   componentDidMount() {
-    if ( this.props.value != null || this.props.value !== 'undefined' ) {
+    if ( this.props.value ) {
       const deserializedValue = Value.fromJS( html.deserialize( this.props.value ));
 
       this.setState({
         isValueFromProps: true,
         value: deserializedValue,
+      });
+    }
+    else {
+      this.setState({
+        isValueFromProps: true,
+        value: this.props.defaultValue,
       });
     }
   }
