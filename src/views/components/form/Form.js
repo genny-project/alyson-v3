@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { string, object, oneOfType, array, bool } from 'prop-types';
 import { Formik } from 'formik';
@@ -9,7 +9,7 @@ import dlv from 'dlv';
 import { isArray, isObject, isString } from '../../../utils';
 import { Bridge } from '../../../utils/vertx';
 import shallowCompare from '../../../utils/shallow-compare';
-import { Box, Text, Button, KeyboardAwareScrollView } from '../index';
+import { Box, Text, Button, KeyboardAwareScrollView, Fragment, Collapsible } from '../index';
 import FormInput from './input';
 import { store } from '../../../redux';
 import { hideDialog } from '../../../redux/actions';
@@ -491,12 +491,16 @@ class Form extends Component {
     questionGroupCode,
     submitCount,
     submitForm,
-  ) => ( ask, index ) => {
+    ask,
+    index,
+  ) => {
     const {
       baseEntities,
     } = this.props;
 
-    const { questionCode, attributeCode, mandatory, question, childAsks } = ask;
+    // console.log( 'renderInput', ask );
+
+    const { questionCode, attributeCode, mandatory, question, contextList } = ask;
     const baseEntityDefinition = baseEntities.definitions.data[attributeCode];
     const dataType = baseEntityDefinition && baseEntityDefinition.dataType;
 
@@ -526,49 +530,150 @@ class Form extends Component {
         : 'default',
       onKeyPress: this.handleKeyPress( submitForm, index, questionGroupCode ),
       testID: questionCode || '',
+      ...contextList,
+      rootQuestionGroupCode: this.props.questionGroupCode,
       // inheritedThemes: this.props.inheritedThemes,
       ...this.props.inheritedThemes,
     };
 
-    const children = [];
-
-    children.push(
+    return (
       <FormInput
         key={questionCode}
         {...inputProps}
       />
     );
-    /* TODO: pass theme to wrapper, possible remove other wrapper? */
+  }
 
-    if ( isArray( childAsks, { ofMinLength: 1 })) {
+  renderQuestionGroup = ( questionGroup, index, form, ) => {
+    const {
+      values,
+      errors,
+      touched,
+      setFieldValue,
+      setFieldTouched,
+      isSubmitting,
+      submitCount,
+      submitForm,
+    } = form;
+    const {
+      name,
+      childAsks,
+      question,
+      contextList,
+      questionCode,
+    } = questionGroup;
+
+    const isDropdown = isObject( contextList, { withProperty: 'isDropdown' }) ? contextList.isDropdown : false;
+
+    if ( isDropdown && question ) {
       return (
-        <Box
-          flexDirection="column"
-          position="relative"
-          zIndex={100 - index}
+        <Collapsible
+          renderHeader={
+            this.renderInput(
+              values,
+              errors,
+              touched,
+              setFieldValue,
+              setFieldTouched,
+              isSubmitting,
+              questionCode,
+              submitCount,
+              submitForm,
+              questionGroup,
+              index
+            )
+          }
         >
-          {children}
           <Box
             flexDirection="column"
-            {...this.props.inheritedThemes}
+            zIndex={150 - index}
+            position="relative"
+            flex={1}
+            key={name}
+            backgroundColor="rgba(255, 0, 0, 0.1)"
+            paddingLeft={5}
           >
-            {childAsks.map(
-              this.renderInput(
+            {childAsks.map(( ask, index ) => {
+              if ( isArray( ask.childAsks, { ofMinLength: 1 })) {
+                return this.renderQuestionGroup(
+                  ask,
+                  index,
+                  form
+                );
+              }
+
+              return this.renderInput(
                 values,
                 errors,
                 touched,
                 setFieldValue,
-                setTouched,
-                false,
-                ask.questionCode
-              )
-            )}
+                setFieldTouched,
+                isSubmitting,
+                questionCode,
+                submitCount,
+                submitForm,
+                ask,
+                index,
+              );
+            })}
           </Box>
-        </Box>
+        </Collapsible>
       );
     }
 
-    return children;
+    return (
+      <Fragment>
+        {question
+          ? (
+            this.renderInput(
+              values,
+              errors,
+              touched,
+              setFieldValue,
+              setFieldTouched,
+              isSubmitting,
+              questionCode,
+              submitCount,
+              submitForm,
+              questionGroup,
+              index
+            )) : null
+        }
+        <Box
+          flexDirection="column"
+          zIndex={150 - index}
+          position="relative"
+          flex={1}
+          key={name}
+          backgroundColor="rgba(255, 0, 0, 0.1)"
+          paddingLeft={5}
+        >
+          {childAsks.map(( ask, index ) => {
+            if ( isArray( ask.childAsks, { ofMinLength: 1 })) {
+              return this.renderQuestionGroup(
+                ask,
+                index,
+                form
+              );
+            }
+
+            return this.renderInput(
+              values,
+              errors,
+              touched,
+              setFieldValue,
+              setFieldTouched,
+              isSubmitting,
+              questionCode,
+              submitCount,
+              submitForm,
+              ask,
+              index,
+            );
+          })}
+        </Box>
+      </Fragment>
+    );
   }
 
   render() {
@@ -576,7 +681,6 @@ class Form extends Component {
       questionGroupCode,
       loadingText,
       testID,
-      alwaysActiveButtonTypes,
     } = this.props;
     const { questionGroups } = this.state;
 
@@ -650,45 +754,80 @@ class Form extends Component {
                 flex={1}
                 width="100%"
                 onSubmit={handleSubmit}
+                backgroundColor="white"
               >
                 <Fragment>
                   {questionGroups.map(( questionGroup, index ) => {
-                    const isSingleBooleanForm = (
-                      questionGroup.childAsks.length === 1 &&
-                      questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                    // const isSingleBooleanForm = (
+                    //   questionGroup.childAsks.length === 1 &&
+                    //   questionGroup.childAsks[0].question.attribute.dataType.typeName === 'java.lang.Boolean'
+                    // );
+
+                    // map over the root question groups
+
+                    return this.renderQuestionGroup(
+                      questionGroup,
+                      index,
+                      {
+                        values,
+                        errors,
+                        touched,
+                        setFieldValue,
+                        setFieldTouched,
+                        isSubmitting,
+                        submitCount,
+                        submitForm,
+                      }
                     );
 
-                    return (
-                      <Box
-                        flexDirection="column"
-                        zIndex={150 - index}
-                        position="relative"
-                        flex={1}
-                        key={questionGroup.name}
-                      >
-                        {/* If there this form is a Yes/No (boolean) form, don't show any
-                          * child asks - the 'YES'/'NO' buttons underneath this will suffice. */}
-                        {isSingleBooleanForm ? null : (
-                          questionGroup.childAsks.map(
-                            this.renderInput(
-                              values,
-                              errors,
-                              touched,
-                              setFieldValue,
-                              setFieldTouched,
-                              isSubmitting,
-                              questionGroup.questionCode,
-                              submitCount,
-                              submitForm,
-                            )
-                          )
-                        )}
-                      </Box>
-                    );
+                    // return (
+                    //   <Box
+                    //     flexDirection="column"
+                    //     zIndex={150 - index}
+                    //     position="relative"
+                    //     flex={1}
+                    //     key={questionGroup.name}
+                    //     backgroundColor="rgba(255, 0, 0, 0.1)"
+                    //     paddingLeft={5}
+                    //   >
+                    //     {questionGroup.childAsks.map(
+                    //       this.renderInput(
+                    //         values,
+                    //         errors,
+                    //         touched,
+                    //         setFieldValue,
+                    //         setFieldTouched,
+                    //         isSubmitting,
+                    //         questionGroup.questionCode,
+                    //         submitCount,
+                    //         submitForm,
+                    //       )
+                    //     )}
+
+                    //     {/* If there this form is a Yes/No (boolean) form, don't show any
+                    //       * child asks - the 'YES'/'NO' buttons underneath this will suffice. */}
+                    //     {/* {isSingleBooleanForm ? null : (
+                    //       questionGroup.childAsks.map(
+                    //         this.renderInput(
+                    //           values,
+                    //           errors,
+                    //           touched,
+                    //           setFieldValue,
+                    //           setFieldTouched,
+                    //           isSubmitting,
+                    //           questionGroup.questionCode,
+                    //           submitCount,
+                    //           submitForm,
+                    //         )
+                    //       )
+                    //     )} */}
+                    //   </Box>
+                    // );
                   })}
 
                   {/* TODO: remove button rendering, move code to handle form submit somewhere else, as prop passed to children? */}
 
+                  {/*
                   {questionGroups.reduce(( buttons, { childAsks, attributeCode }) => {
                     buttonTypes.forEach( type => {
                       if ( attributeCode.includes( type )) {
@@ -706,8 +845,6 @@ class Form extends Component {
                             onPress: () => {
                                 // when clicked on cancel button on the form => close the Popup
                               buttons && buttons.map( button => {
-                                  /* TODO: only hide dialog when cancel button is clicked,
-                                  * not any button? - Callan */
                                 if ( button.key === 'CANCEL' ) {
                                   store.dispatch(
                                     hideDialog({ layoutName: `questions/${questionGroupCode}` })
@@ -719,8 +856,8 @@ class Form extends Component {
                                 formStatus: lowercase( type ),
                               }, () => {
                                 if ( type === 'CANCEL' ) {
-                                    /* Skip the validation from occurring in Formik
-                                    * and go straight to form submission. */
+                                    // Skip the validation from occurring in Formik
+                                    // * and go straight to form submission.
                                   this.handleSubmit();
                                 }
                                 else {
@@ -738,6 +875,8 @@ class Form extends Component {
 
                     return buttons;
                   }, [] )}
+
+                  */}
                 </Fragment>
               </Box>
             </KeyboardAwareScrollView>

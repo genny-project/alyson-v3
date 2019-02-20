@@ -1,5 +1,5 @@
 import copy from 'fast-copy';
-import { isArray } from '../../../../utils';
+import { isArray, isObject } from '../../../../utils';
 
 const initialState = {
   data: {},
@@ -329,6 +329,10 @@ const handleReduceDefinitionTypes = ( resultant, current ) => {
 };
 
 const handleReduceAskQuestionData = ( resultant, current ) => {
+  if ( !isObject( current.question, { withProperty: 'attribute' })) {
+    return resultant;
+  }
+
   /* Shortcut to remove properties inside the `current` object. */
   const { dataType, ...wantedData } = current.question.attribute; // eslint-disable-line
 
@@ -342,6 +346,10 @@ const handleReduceAskQuestionData = ( resultant, current ) => {
 };
 
 const handleReduceAskQuestionTypes = ( resultant, current ) => {
+  if ( !isObject( current.question, { withProperty: 'attribute' })) {
+    return resultant;
+  }
+
   const { dataType, childAsks } = current.question.attribute;
 
   resultant[dataType.typeName] = dataType;

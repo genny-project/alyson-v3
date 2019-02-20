@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { any, bool, func, string, object } from 'prop-types';
+import { any, bool, func, string, object, node } from 'prop-types';
 import { TouchableOpacity } from 'react-native';
 import { Box, Icon }  from '../../components';
 
@@ -21,19 +21,8 @@ class Collapsible extends Component {
     wrapperProps: object,
     headerWrapperProps: object,
     headerIconProps: object,
+    renderHeader: node,
   }
-
-  // static getDerivedStateFromProps( nextProps, nextState ) {
-  //   if (
-  //     nextProps.open != null &&
-  //     nextProps.open !== undefined &&
-  //     nextProps.open !== nextState.open
-  //   ) {
-  //     return { isOpen: nextProps.open };
-  //   }
-
-  //   return null;
-  // }
 
   state = {
     isOpen: false,
@@ -52,6 +41,7 @@ class Collapsible extends Component {
       wrapperProps,
       headerWrapperProps,
       headerIconProps,
+      renderHeader,
     } = this.props;
 
     const { isOpen } = this.state;
@@ -69,6 +59,7 @@ class Collapsible extends Component {
               onPress={this.handlePress}
             >
               {/* header alt goes here */}
+              {renderHeader}
               <Box
                 justifyContent="center"
                 transform={[

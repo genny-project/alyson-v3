@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { string, object } from 'prop-types';
-import { Text } from '../index';
+import { Text, EventTouchable } from '../index';
 import InputAddress from './address';
 import InputAutocomplete from './autocomplete';
 import CheckBox from './checkbox';
@@ -352,22 +352,19 @@ class Input extends Component {
         );
 
       case 'event':
-        /*
-          get event and message data from question context
-
-          data: {
-            code: "GRP_ROOT", <- Question Group Code
-            value: "GRP_INTERNSHIPS", <- Question Code
-            event_type: "TV_SELECT", <-
-            msg_type: "EVT_MSG" <-
-          }
-        */
-
         return (
-          <Text
-            {...inputProps}
-            text={inputProps.question.name}
-          />
+          <EventTouchable
+            withFeedback
+            eventType="TV_SELECT"
+            messageType="TV_EVENT"
+            value={inputProps.question.code}
+            buttonCode={inputProps.rootQuestionGroupCode}
+          >
+            <Text
+              {...inputProps}
+              text={inputProps.question.name}
+            />
+          </EventTouchable>
         );
 
       default:
