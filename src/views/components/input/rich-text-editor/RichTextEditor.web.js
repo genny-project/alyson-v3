@@ -48,45 +48,59 @@ class RichTextEditor extends Component {
   /* Set initial form value from the JSON file */
   state = {
     value: this.props.defaultValue,
-    isValueFromProps: false,
+    isValueFromProps: true,
     hasUserTyped: false,
+    didUpdateValueFromProps: false,
   };
-
-  // get previous value and put them
-  componentDidMount() {
-    if ( this.props.value ) {
-      const deserializedValue = Value.fromJS( html.deserialize( this.props.value ));
-
-      this.setState({
-        isValueFromProps: true,
-        value: deserializedValue,
-      });
-    }
-    else {
-      this.setState({
-        isValueFromProps: true,
-        value: this.props.defaultValue,
-      });
-    }
-  }
 
   // store reloads multips times - to accomodate slight delay we need to perform this
   componentDidUpdate() {
-    if ( this.state.isValueFromProps )
+    if ( this.state.isValueFromProps ) {
+      if ( !this.state.didUpdateValueFromProps ) {
+        if ( this.props.value ) {
+          const deserializedValue = Value.fromJS( html.deserialize( this.props.value ));
+    
+          // eslint-disable-next-line react/no-did-update-set-state
+          this.setState({
+            isValueFromProps: true,
+            value: deserializedValue,
+            didUpdateValueFromProps: true,
+          });
+        }
+        else {
+          // eslint-disable-next-line react/no-did-update-set-state
+          this.setState({
+            isValueFromProps: true,
+            value: this.props.defaultValue,
+            didUpdateValueFromProps: true,
+          });
+        }
+      }
+
       return;
+    }
 
     if (
       !this.state.hasUserTyped &&
       !this.state.isValueFromProps &&
       this.props.value !== this.state.value
     ) {
-      const deserializedValue = Value.fromJS( html.deserialize( this.props.value ));
+      if ( this.props.value ) {
+        const deserializedValue = Value.fromJS( html.deserialize( this.props.value ));
 
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({
-        isValueFromProps: true,
-        value: deserializedValue,
-      });
+        this.setState({
+          isValueFromProps: true,
+          value: deserializedValue,
+        });
+      }
+      else {
+      // eslint-disable-next-line react/no-did-update-set-state
+        this.setState({
+          isValueFromProps: true,
+          value: this.props.defaultValue,
+        });
+      }
     }
 
     return;
@@ -163,7 +177,9 @@ class RichTextEditor extends Component {
   handleChange = ({ value }) => {
     const string = html.serialize( value );
 
-    this.props.onChangeValue( string );
+    if ( this.state.isValueFromProps === false ) {
+      this.props.onChangeValue( string );
+    }
     
     this.setState({
       value: value,
@@ -172,6 +188,11 @@ class RichTextEditor extends Component {
   };
 
   handleKeyDown = ( event, change ) => {
+    if ( this.state.isValueFromProps ) {
+      this.setState({
+        isValueFromProps: false,
+      });
+    }
     let mark;
 
     if ( isBoldHotkey( event )) {
