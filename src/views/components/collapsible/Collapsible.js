@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { any, bool, func, string, object, node } from 'prop-types';
 import { TouchableOpacity } from 'react-native';
-import { Box, Icon }  from '../../components';
+import { Box, Icon, Touchable }  from '../../components';
 
 class Collapsible extends Component {
   static defaultProps = {
@@ -55,25 +55,31 @@ class Collapsible extends Component {
       >
         {showHeader
           ? (
-            <TouchableOpacity
+            <Touchable
+              withFeedback
               onPress={this.handlePress}
             >
-              {/* header alt goes here */}
-              {renderHeader}
               <Box
-                justifyContent="center"
-                transform={[
-                  { rotate: isOpen ? '180deg' : '0deg' },
-                ]}
-                {...headerWrapperProps}
+                flex={1}
+                justifyContent="space-between"
               >
-                <Icon
-                  name="keyboard_arrow_down"
-                  color="black"
-                  {...headerIconProps}
-                />
+                {/* header alt goes here */}
+                {renderHeader}
+                <Box
+                  justifyContent="center"
+                  transform={[
+                    { rotate: isOpen ? '0deg' : '270deg' },
+                  ]}
+                  {...headerWrapperProps}
+                >
+                  <Icon
+                    name="keyboard_arrow_down"
+                    color="black"
+                    {...headerIconProps}
+                  />
+                </Box>
               </Box>
-            </TouchableOpacity>
+            </Touchable>
           ) : null
         }
         {isOpen ? (

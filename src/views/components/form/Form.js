@@ -3,18 +3,12 @@ import { ActivityIndicator } from 'react-native';
 import { string, object, oneOfType, array, bool } from 'prop-types';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
-import capitalize from 'lodash.capitalize';
-import lowercase from 'lodash.lowercase';
 import dlv from 'dlv';
 import { isArray, isObject, isString } from '../../../utils';
 import { Bridge } from '../../../utils/vertx';
 import shallowCompare from '../../../utils/shallow-compare';
 import { Box, Text, Button, KeyboardAwareScrollView, Fragment, Collapsible } from '../index';
 import FormInput from './input';
-import { store } from '../../../redux';
-import { hideDialog } from '../../../redux/actions';
-
-const buttonTypes = ['NEXT', 'SUBMIT', 'CANCEL', 'NO', 'YES', 'ACCEPT', 'DECLINE', 'CONFIRM'];
 
 class Form extends Component {
   static defaultProps = {
@@ -279,6 +273,7 @@ class Form extends Component {
   }
 
   doValidate = values => {
+    console.log( 'do validate' );
     if ( !values )
       return {};
 
@@ -375,6 +370,8 @@ class Form extends Component {
     if ( value == null )
       return;
 
+    // console.log({ field, setFieldValue, setFieldTouched, ask, value, sendOnChange });
+
     setFieldValue( field, value );
     setFieldTouched( field, true );
 
@@ -393,6 +390,7 @@ class Form extends Component {
   }
 
   handleSubmit = ( values, form ) => {
+    console.log( 'handle submit' );
     if ( form ) {
       const { setSubmitting } = form;
 
@@ -463,56 +461,47 @@ class Form extends Component {
     }
   }
 
-  renderButton( buttonProps ) {
-    const { hideButtonIfDisabled } = this.props;
-    const { disabled } = buttonProps;
-
-    if (
-      hideButtonIfDisabled &&
-      disabled
-    ) {
-      return null;
-    }
-
-    return (
-      <Box key={buttonProps.key}>
-        <Button {...buttonProps} />
-      </Box>
-    );
-  }
-
   renderInput = (
-    values,
-    errors,
-    touched,
-    setFieldValue,
-    setTouched,
-    isSubmitting,
-    questionGroupCode,
-    submitCount,
-    submitForm,
     ask,
+    questionGroupCode,
     index,
+    form,
   ) => {
     const {
       baseEntities,
     } = this.props;
 
     // console.log( 'renderInput', ask );
+    const {
+      values,
+      errors,
+      touched,
+      setFieldValue,
+      setFieldTouched,
+      isSubmitting,
+      submitCount,
+      submitForm,
+      isFormValid,
 
-    const { questionCode, attributeCode, mandatory, question, contextList } = ask;
+    } = form;
+    const { questionCode, attributeCode, mandatory, question, contextList, readonly } = ask;
     const baseEntityDefinition = baseEntities.definitions.data[attributeCode];
     const dataType = baseEntityDefinition && baseEntityDefinition.dataType;
 
+    const isFormSubmit = isObject( contextList, { withProperty: 'isFormSubmit' }) ? contextList.isFormSubmit : false;
+
     const inputProps = {
-      onChangeValue: this.handleChange( questionCode, setFieldValue, setTouched, ask ),
+      onChangeValue: this.handleChange( questionCode, setFieldValue, setFieldTouched, ask ),
       value: values && values[questionCode],
       type: isString( dataType ) ? dataType.toLowerCase() : dataType,
       error: touched[questionCode] && errors[questionCode],
       onBlur: this.handleBlur( ask, values, errors ),
       required: mandatory,
       question,
-      disabled: isSubmitting,
+      disabled: isFormSubmit
+        ? !isFormValid
+        : isSubmitting,
+      editable: !readonly,
       onSubmitEditing: this.handleFocusNextInput( questionGroupCode, index ),
       blurOnSubmit: (
         !this.inputRefs[questionGroupCode] ||
@@ -529,10 +518,13 @@ class Form extends Component {
         ? 'next'
         : 'default',
       onKeyPress: this.handleKeyPress( submitForm, index, questionGroupCode ),
+      onPress: () => {
+        console.log( 'onPress' );
+        submitForm();
+      },
       testID: questionCode || '',
       ...contextList,
       rootQuestionGroupCode: this.props.questionGroupCode,
-      // inheritedThemes: this.props.inheritedThemes,
       ...this.props.inheritedThemes,
     };
 
@@ -545,16 +537,6 @@ class Form extends Component {
   }
 
   renderQuestionGroup = ( questionGroup, index, form, ) => {
-    const {
-      values,
-      errors,
-      touched,
-      setFieldValue,
-      setFieldTouched,
-      isSubmitting,
-      submitCount,
-      submitForm,
-    } = form;
     const {
       name,
       childAsks,
@@ -570,19 +552,15 @@ class Form extends Component {
         <Collapsible
           renderHeader={
             this.renderInput(
-              values,
-              errors,
-              touched,
-              setFieldValue,
-              setFieldTouched,
-              isSubmitting,
-              questionCode,
-              submitCount,
-              submitForm,
               questionGroup,
-              index
+              questionCode,
+              index,
+              form,
             )
           }
+          headerIconProps={{
+            ...this.props.inheritedThemes,
+          }}
         >
           <Box
             flexDirection="column"
@@ -590,8 +568,7 @@ class Form extends Component {
             position="relative"
             flex={1}
             key={name}
-            backgroundColor="rgba(255, 0, 0, 0.1)"
-            paddingLeft={5}
+            {...this.props.inheritedThemes}
           >
             {childAsks.map(( ask, index ) => {
               if ( isArray( ask.childAsks, { ofMinLength: 1 })) {
@@ -603,17 +580,10 @@ class Form extends Component {
               }
 
               return this.renderInput(
-                values,
-                errors,
-                touched,
-                setFieldValue,
-                setFieldTouched,
-                isSubmitting,
-                questionCode,
-                submitCount,
-                submitForm,
                 ask,
+                questionCode,
                 index,
+                form,
               );
             })}
           </Box>
@@ -626,17 +596,10 @@ class Form extends Component {
         {question
           ? (
             this.renderInput(
-              values,
-              errors,
-              touched,
-              setFieldValue,
-              setFieldTouched,
-              isSubmitting,
-              questionCode,
-              submitCount,
-              submitForm,
               questionGroup,
-              index
+              questionCode,
+              index,
+              form,
             )) : null
         }
         <Box
@@ -645,8 +608,9 @@ class Form extends Component {
           position="relative"
           flex={1}
           key={name}
-          backgroundColor="rgba(255, 0, 0, 0.1)"
-          paddingLeft={5}
+          // backgroundColor="rgba(255, 0, 0, 0.1)"
+          // paddingLeft={5}
+          {...this.props.inheritedThemes}
         >
           {childAsks.map(( ask, index ) => {
             if ( isArray( ask.childAsks, { ofMinLength: 1 })) {
@@ -658,17 +622,10 @@ class Form extends Component {
             }
 
             return this.renderInput(
-              values,
-              errors,
-              touched,
-              setFieldValue,
-              setFieldTouched,
-              isSubmitting,
-              questionCode,
-              submitCount,
-              submitForm,
               ask,
+              questionCode,
               index,
+              form,
             );
           })}
         </Box>
@@ -754,7 +711,7 @@ class Form extends Component {
                 flex={1}
                 width="100%"
                 onSubmit={handleSubmit}
-                backgroundColor="white"
+                // backgroundColor="white"
               >
                 <Fragment>
                   {questionGroups.map(( questionGroup, index ) => {
@@ -777,52 +734,9 @@ class Form extends Component {
                         isSubmitting,
                         submitCount,
                         submitForm,
+                        isFormValid,
                       }
                     );
-
-                    // return (
-                    //   <Box
-                    //     flexDirection="column"
-                    //     zIndex={150 - index}
-                    //     position="relative"
-                    //     flex={1}
-                    //     key={questionGroup.name}
-                    //     backgroundColor="rgba(255, 0, 0, 0.1)"
-                    //     paddingLeft={5}
-                    //   >
-                    //     {questionGroup.childAsks.map(
-                    //       this.renderInput(
-                    //         values,
-                    //         errors,
-                    //         touched,
-                    //         setFieldValue,
-                    //         setFieldTouched,
-                    //         isSubmitting,
-                    //         questionGroup.questionCode,
-                    //         submitCount,
-                    //         submitForm,
-                    //       )
-                    //     )}
-
-                    //     {/* If there this form is a Yes/No (boolean) form, don't show any
-                    //       * child asks - the 'YES'/'NO' buttons underneath this will suffice. */}
-                    //     {/* {isSingleBooleanForm ? null : (
-                    //       questionGroup.childAsks.map(
-                    //         this.renderInput(
-                    //           values,
-                    //           errors,
-                    //           touched,
-                    //           setFieldValue,
-                    //           setFieldTouched,
-                    //           isSubmitting,
-                    //           questionGroup.questionCode,
-                    //           submitCount,
-                    //           submitForm,
-                    //         )
-                    //       )
-                    //     )} */}
-                    //   </Box>
-                    // );
                   })}
 
                   {/* TODO: remove button rendering, move code to handle form submit somewhere else, as prop passed to children? */}

@@ -248,12 +248,33 @@ class Frame extends Component {
 
     /* Compile  all styling for the panel*/
     const getStyling = ( panel ) => {
+
+
+
+      const checkPanelFlex = ( panel ) => {
+        switch( panel ) {
+          case 'north':
+          case 'south':
+            return (
+              hasContent( 'CENTRE' ) ||
+              hasContent( 'EAST' ) ||
+              hasContent( 'WEST' )
+            ) ? {} : { flex: 1 };
+          case 'east':
+          case 'west':
+            return hasContent( 'CENTRE' ) ? {} : { flex: 1 };
+          case 'centre':
+          default :
+            return {};
+        }
+      }
+
       return {
         ...defaultStyle.panel,
         ...defaultStyle[panel],
         /* If the centre panel is rendered, then it is the only panel that expands.
           If not, then the other panels need to have flex 1 to expand. */
-        ...hasContent( 'CENTRE' ) ? {} : { flex: 1 },
+        ...checkPanelFlex( panel ),
         ...getStylingByPanel( panel.toUpperCase()),
       }
     }

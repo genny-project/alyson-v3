@@ -359,6 +359,7 @@ class Input extends Component {
             messageType="TV_EVENT"
             value={inputProps.question.code}
             buttonCode={inputProps.rootQuestionGroupCode}
+            {...inputProps}
           >
             <Text
               {...inputProps}
