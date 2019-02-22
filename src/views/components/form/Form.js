@@ -562,7 +562,7 @@ class Form extends Component {
       baseEntities,
     } = this.props;
 
-    const { questionCode, attributeCode, name, mandatory, question, childAsks } = ask;
+    const { questionCode, attributeCode, name, mandatory, question, childAsks, readonly } = ask;
     const baseEntityDefinition = baseEntities.definitions.data[attributeCode];
     const dataType = baseEntityDefinition && baseEntityDefinition.dataType;
 
@@ -609,6 +609,7 @@ class Form extends Component {
       required: mandatory,
       question,
       disabled: isSubmitting,
+      editable: !readonly,
       onSubmitEditing: this.handleFocusNextInput( questionGroupCode, index ),
       blurOnSubmit: (
         !this.inputRefs[questionGroupCode] ||
