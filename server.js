@@ -21,8 +21,8 @@ app.get( '/version', ( req, res ) => {
   return res.sendFile( path.resolve( `${__dirname}/dist`, 'version.html' ));
 });
 
-app.get( '/home', ( request, response ) => {
-  response.sendFile( path.resolve( `${__dirname}/dist`, 'index.html' ));
+app.get( '*', ( request, response ) => {
+  return response.sendFile( path.resolve( `${__dirname}/dist`, 'index.html' ));
 });
 
 // app.get( '/', ( req, res ) => {
