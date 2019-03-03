@@ -1,4 +1,6 @@
 #!/bin/bash
+node-git-info
+cp version.html ./dist/
 if [ -z "${1}" ]; then
    version="latest"
 else
