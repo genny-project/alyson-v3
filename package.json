@@ -70,6 +70,7 @@
     "memoize-one": "^4.0.2",
     "moment": "^2.22.2",
     "monaco-editor-webpack-plugin": "^1.5.1",
+    "node-git-info": "^1.1.0",
     "nprogress": "^0.2.0",
     "prettier": "^1.13.7",
     "prettier-bytes": "^1.0.4",
