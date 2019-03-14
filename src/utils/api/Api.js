@@ -17,7 +17,7 @@ class Api {
       },
       ...options,
     });
-  }
+  };
 
   promiseCall = ( options = {}) => {
     return axios({
@@ -29,36 +29,29 @@ class Api {
       },
       ...options,
     });
-  }
+  };
 
   gennyCall = ( options = {}) => {
     return this.observableCall({
       ...options,
       url: `${config.genny.host}/${options.url}`,
     });
-  }
+  };
 
   eventCall = options => {
     return this.gennyCall({
       ...options,
       url: `${config.genny.bridge.endpoints.events}/${options.url}`,
     });
-  }
+  };
 
   googleMapsCall = async ( options = {}) => {
-    const queryPrefix = (
-      options.url &&
-      options.url.includes( '?' )
-    )
-      ? '&'
-      : '?';
+    const queryPrefix = options.url && options.url.includes( '?' ) ? '&' : '?';
 
     const { keycloak } = store.getState();
 
-    let apiKey = (
-      process.env.ENV_GOOGLE_MAPS_APIKEY ||
-      ( keycloak.data && keycloak.data.ENV_GOOGLE_MAPS_APIKEY )
-    );
+    let apiKey =
+      process.env.ENV_GOOGLE_MAPS_APIKEY || ( keycloak.data && keycloak.data.ENV_GOOGLE_MAPS_APIKEY );
 
     /* If we can't find an API key, use the below util to keep trying. */
     if ( !apiKey ) {
@@ -75,16 +68,14 @@ class Api {
               clearInterval( this.interval );
               apiKey = data.ENV_GOOGLE_MAPS_APIKEY;
               resolve();
-            }
-            else if ( ++counter > MAX_ATTEMPTS ) {
+            } else if ( ++counter > MAX_ATTEMPTS ) {
               reject();
               clearInterval( this.interval );
             }
           }, 200 );
         });
-      }
-      /* If it doesn't happen within MAX_ATTEMPTS, stop trying. */
-      catch ( error ) {
+      } catch ( error ) {
+        /* If it doesn't happen within MAX_ATTEMPTS, stop trying. */
         // do nothing, let the network request fail so we can debug easier
       }
     }
@@ -93,7 +84,7 @@ class Api {
       ...options,
       url: `https://maps.googleapis.com/maps/api/${options.url}${queryPrefix}key=${apiKey}`,
     });
-  }
+  };
 
   getPlaceAutocomplete = ( options = {}) => {
     const query = queryString.stringify({
@@ -104,25 +95,23 @@ class Api {
       method: 'get',
       url: `place/autocomplete/json?${query}`,
     });
-  }
+  };
 
-  getGeocodedAddress = ( components ) => {
+  getGeocodedAddress = components => {
     const query = queryString.stringify( components );
 
     return this.googleMapsCall({
       method: 'get',
       url: `geocode/json?${query}`,
     });
-  }
+  };
 
   getKeycloakConfig = () => {
     let initUrl;
 
     if ( process.env.NODE_ENV === 'development' ) {
       initUrl = process.env.ENV_GENNY_INIT_URL;
-    }
-
-    else {
+    } else {
       initUrl = process.env.ENV_GENNY_BRIDGE_URL;
     }
 
@@ -140,27 +129,28 @@ class Api {
     return this.eventCall({
       url: `init?url=${initUrl}`,
     });
-  }
+  };
 
   getPublicLayouts = () => {
     const { data } = store.getState().keycloak;
 
-    const publicLayoutUrl = (
-      ( process.env.ENV_LAYOUT_PUBLICURL ) ||
+    const publicLayoutUrl =
+      process.env.ENV_LAYOUT_PUBLICURL ||
       ( data && data.ENV_LAYOUT_PUBLICURL ) ||
-      'http://localhost:2224'
-    );
+      'http://localhost:2224';
 
-    const directory = (
-      ( process.env.ENV_LAYOUT_QUERY_DIRECTORY ) ||
-      ( data && data.ENV_LAYOUT_QUERY_DIRECTORY )
-    );
+    const directory =
+      process.env.ENV_LAYOUT_QUERY_DIRECTORY || ( data && data.ENV_LAYOUT_QUERY_DIRECTORY );
 
     if ( !directory ) {
       // eslint-disable-next-line no-console
-      console.warn( `Unable to fetch public layouts from ${publicLayoutUrl} - no directory set. (process.env.ENV_LAYOUT_QUERY_DIRECTORY)` );
+      console.warn(
+        `Unable to fetch public layouts from ${publicLayoutUrl} - no directory set. (process.env.ENV_LAYOUT_QUERY_DIRECTORY)`
+      );
 
-      throw new Error( `Unable to fetch public layouts from ${publicLayoutUrl} - no directory set. (process.env.ENV_LAYOUT_QUERY_DIRECTORY)` );
+      throw new Error(
+        `Unable to fetch public layouts from ${publicLayoutUrl} - no directory set. (process.env.ENV_LAYOUT_QUERY_DIRECTORY)`
+      );
     }
 
     const query = queryString.stringify({ directory });
@@ -168,7 +158,7 @@ class Api {
     return this.observableCall({
       url: `${publicLayoutUrl}/public?${query}`,
     });
-  }
+  };
 }
 
 export default new Api();
