@@ -11,7 +11,7 @@ const routes = [
   {
     path: '/',
     exact: true,
-    component: Pages.Splash,
+    component: Pages.Login,
   },
   {
     path: '/auth',
