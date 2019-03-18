@@ -1,6 +1,7 @@
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
 
 // This is needed for webpack to compile JavaScript.
 // Many OSS React Native packages are not compiled to ES5 before being
@@ -26,17 +27,16 @@ const babelLoaderConfiguration = {
       plugins: [
         'react-native-web',
         'transform-async-to-generator',
-        ['transform-runtime', {
-          polyfill: false,
-          regenerator: true,
-        }],
+        [
+          'transform-runtime',
+          {
+            polyfill: false,
+            regenerator: true,
+          },
+        ],
       ],
       // The 'react-native' preset is recommended to match React Native's packager
-      presets: [
-        'react-native',
-        'react',
-        'react-native-dotenv',
-      ],
+      presets: ['react-native', 'react', 'react-native-dotenv'],
     },
   },
 };
@@ -54,10 +54,7 @@ const imageLoaderConfiguration = {
 
 const styleLoaderConfiguration = {
   test: /\.css$/,
-  use: [
-    { loader: 'style-loader' },
-    { loader: 'css-loader' },
-  ],
+  use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
 };
 
 module.exports = {
@@ -84,16 +81,18 @@ module.exports = {
         },
       },
     },
+    minimizer: [
+      new TerserPlugin({
+        test: /\.js(\?.*)?$/i,
+        parallel: true,
+      }),
+    ],
   },
 
   // ...the rest of your config
 
   module: {
-    rules: [
-      babelLoaderConfiguration,
-      imageLoaderConfiguration,
-      styleLoaderConfiguration,
-    ],
+    rules: [babelLoaderConfiguration, imageLoaderConfiguration, styleLoaderConfiguration],
   },
 
   plugins: [
