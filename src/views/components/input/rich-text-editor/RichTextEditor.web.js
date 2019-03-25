@@ -16,7 +16,7 @@ class RichEditorExample extends Component {
     super( props );
     this.editor = React.createRef();
     this.state = { editorState: EditorState.createEmpty() };
-    this.handleFocus = () => this.editor.focus();
+    this.handleFocus = () => this.editor.current.focus();
     this.handleChange = editorState => this.setState({ editorState });
     this.onKeyCommand = this._handleKeyCommand.bind( this );
     this.mapKeyToEditorCommand = this._mapKeyToEditorCommand.bind( this );
@@ -40,7 +40,7 @@ class RichEditorExample extends Component {
     const newState = RichUtils.handleKeyCommand( editorState, command );
 
     if ( newState ) {
-      this.onChange( newState );
+      this.handleChange( newState );
 
       return true;
     }
@@ -53,7 +53,7 @@ class RichEditorExample extends Component {
       const newEditorState = RichUtils.onTab( e, this.state.editorState, 4 /* maxDepth */ );
 
       if ( newEditorState !== this.state.editorState ) {
-        this.onChange( newEditorState );
+        this.handleChange( newEditorState );
       }
 
       return;
@@ -63,11 +63,11 @@ class RichEditorExample extends Component {
   }
 
   _toggleBlockType( blockType ) {
-    this.onChange( RichUtils.toggleBlockType( this.state.editorState, blockType ));
+    this.handleChange( RichUtils.toggleBlockType( this.state.editorState, blockType ));
   }
 
   _toggleInlineStyle( inlineStyle ) {
-    this.onChange( RichUtils.toggleInlineStyle( this.state.editorState, inlineStyle ));
+    this.handleChange( RichUtils.toggleInlineStyle( this.state.editorState, inlineStyle ));
   }
 
   handleBlur() {
@@ -186,6 +186,7 @@ const BLOCK_TYPES = [
   { label: 'OL', style: 'ordered-list-item' },
   { label: 'Code Block', style: 'code-block' },
 ];
+
 const BlockStyleControls = props => {
   const { editorState } = props;
   const selection = editorState.getSelection();
