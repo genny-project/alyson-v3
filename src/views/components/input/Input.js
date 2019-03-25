@@ -21,6 +21,7 @@ import AudioRecord from './audio-record';
 import SegmentedControl from './segmented-control';
 import InputTag from './tag';
 import Signature from './signature';
+import RichTextEditor from './rich-text-editor';
 
 class Input extends Component {
   static propTypes = {
@@ -82,8 +83,6 @@ class Input extends Component {
         );
 
       case 'textarea':
-      case 'htmlarea':
-      case 'rich-text-editor':
         return (
           <InputText
             multiline
@@ -333,6 +332,14 @@ class Input extends Component {
       case 'signature':
         return <Signature {...this.props} />;
 
+      case 'htmlarea':
+      case 'rich-text-editor':
+        return (
+          <RichTextEditor
+            {...inputProps}
+            ref={input => ( this.input = input )}
+          />
+        );
       default:
         return (
           <Text>
