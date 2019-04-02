@@ -6,9 +6,11 @@ import { prefixedLog } from '../../utils';
 import { store } from '../../redux';
 import * as actions from '../../redux/actions';
 
+const { deepParseJson } = require( 'deep-parse-json' );
+
 function convertDataURIToBinary( base64 ) {
- // var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
- // var base64 = dataURI.substring(base64Index);
+  // var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+  // var base64 = dataURI.substring(base64Index);
   var raw = window.atob( base64 );
   var rawLength = raw.length;
   var array = new Uint8Array( new ArrayBuffer( rawLength ));
@@ -91,27 +93,44 @@ class Vertx {
     return ZstdCodec.run( zstd => {
       const simple = new zstd.Simple();
 
-    // const testB64EncodedStr = "KLUv/SAIQQAAYUdWc2JHOD0=";
-   // console.warn({ incomingCompressedMessage });
+      // const testB64EncodedStr = "KLUv/SAIQQAAYUdWc2JHOD0=";
+      // console.warn({ incomingCompressedMessage });
 
       const incomingByteArray = convertDataURIToBinary( incomingCompressedMessage );
-    //  console.warn({ incomingByteArray });
+
+      console.warn({ incomingByteArray });
+      //  console.warn({ incomingByteArray });
 
       const decompressedDataArray = simple.decompress( incomingByteArray );
-    // console.warn({ decompressedDataArray });
+
+      console.warn({ decompressedDataArray });
+      // console.warn({ decompressedDataArray });
 
       var decompressedStr = new TextDecoder( 'utf-8' ).decode( decompressedDataArray );
-     
-    //  console.warn({ decompressedStr });
+
+      console.warn({ decompressedStr });
+
+      //  console.warn({ decompressedStr });
 
       var decoded = window.atob( decompressedStr );
 
-     // console.warn(decoded);
-      return decoded;
+      console.warn({ decoded });
+
+      const jsonified = JSON.parse( decoded );
+
+      console.warn({ jsonified });
+
+      const deeplyParsed = deepParseJson( decoded );
+
+      console.warn({ deeplyParsed });
+
+      // console.warn(decoded);
+      return deeplyParsed;
     });
   };
 
   handleRegisterHandler = async ( error, message ) => {
+    console.warn({ message });
     if ( message && message.body && message.body.zip ) {
       const uncompressed = await this.uncompress( message.body.zip );
 
@@ -124,7 +143,7 @@ class Vertx {
   handleIncomingMessage = message => {
     const { incomingMessageHandler } = this.state;
 
-    if ( message.cmd_type && message.cmd_type === 'ROUTE_CHANGE' ) {
+    if ( message && message.cmd_type && message.cmd_type === 'ROUTE_CHANGE' ) {
       NProgress.done();
     }
 

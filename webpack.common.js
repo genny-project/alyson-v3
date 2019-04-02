@@ -1,7 +1,6 @@
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
-const TerserPlugin = require( 'terser-webpack-plugin' );
 
 // This is needed for webpack to compile JavaScript.
 // Many OSS React Native packages are not compiled to ES5 before being
@@ -68,25 +67,6 @@ module.exports = {
     filename: 'bundle.[hash].js',
     path: path.resolve( __dirname, 'dist' ),
     publicPath: '/',
-  },
-
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
-        },
-      },
-    },
-    minimizer: [
-      new TerserPlugin({
-        test: /\.js(\?.*)?$/i,
-        parallel: true,
-      }),
-    ],
   },
 
   // ...the rest of your config
