@@ -6,26 +6,18 @@ import { prefixedLog } from '../../utils';
 import { store } from '../../redux';
 import * as actions from '../../redux/actions';
 
-function stringToUint( string ) {
-  var string = btoa( unescape( encodeURIComponent( string )));
+function convertDataURIToBinary( base64 ) {
+ // var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+ // var base64 = dataURI.substring(base64Index);
+  var raw = window.atob( base64 );
+  var rawLength = raw.length;
+  var array = new Uint8Array( new ArrayBuffer( rawLength ));
 
-  var charList = string.split( '' );
-
-  var uintArray = [];
-
-  for ( var i = 0; i < charList.length; i++ ) {
-    uintArray.push( charList[i].charCodeAt( 0 ));
+  for ( var i = 0; i < rawLength; i++ ) {
+    array[i] = raw.charCodeAt( i );
   }
 
-  return new Uint8Array( uintArray );
-}
-
-function uintToString( uintArray ) {
-  var encodedString = String.fromCharCode.apply( null, uintArray );
-
-  var decodedString = decodeURIComponent( escape( atob( encodedString )));
-
-  return decodedString;
+  return array;
 }
 
 const ZstdCodec = require( 'zstd-codec' ).ZstdCodec;
@@ -96,48 +88,26 @@ class Vertx {
   };
 
   uncompress = async incomingCompressedMessage => {
-    // return ZstdCodec.run( zstd => {
-    //   console.warn( ' THis zstd run function is being trigerred' );
-    //   const simple = new zstd.Simple();
-    //   // convert base64 to normal string
-    //   const base64toString = atob( incomingCompressedMessage );
-    //   console.warn({ base64toString });
-    //   // convert the normal string to byte array / array buffer
-    //   const stringTOUnit = ab2str( base64toString );
-    //   console.warn({ stringTOUnit });
-    //   // decompress the string
-    //   const decompressedData = simple.decompress( incomingCompressedMessage );
-    //   console.warn({ decompressedData });
-    //   return decompressedData;
-    // });
     return ZstdCodec.run( zstd => {
-      // console.warn( ' THis zstd run function is being trigerred' );
-      // const unit = stringToUint( 'hello' );
-      // console.warn({ unit });
-      // const simple = new zstd.Simple();
-      // const compressedData = simple.compress( unit );
-      // console.warn({ compressedData });
-      // const decompressedData = simple.decompress( compressedData );
-      // console.warn({ decompressedData });
-      // const units = uintToString( decompressedData );
-      // console.warn({ units });
-
-      console.warn({ incomingCompressedMessage });
       const simple = new zstd.Simple();
 
-      const stringRep = window.atob( incomingCompressedMessage );
+    // const testB64EncodedStr = "KLUv/SAIQQAAYUdWc2JHOD0=";
+   // console.warn({ incomingCompressedMessage });
 
-      console.warn({ stringRep });
+      const incomingByteArray = convertDataURIToBinary( incomingCompressedMessage );
+    //  console.warn({ incomingByteArray });
 
-      const uintFromString = stringToUint( stringRep );
+      const decompressedDataArray = simple.decompress( incomingByteArray );
+    // console.warn({ decompressedDataArray });
 
-      console.warn({ uintFromString });
+      var decompressedStr = new TextDecoder( 'utf-8' ).decode( decompressedDataArray );
+     
+    //  console.warn({ decompressedStr });
 
-      const decompressedData = simple.decompress( uintFromString );
+      var decoded = window.atob( decompressedStr );
 
-      console.warn({ decompressedData });
-
-      return decompressedData;
+     // console.warn(decoded);
+      return decoded;
     });
   };
 
