@@ -1,10 +1,34 @@
 import EventBus from 'vertx3-eventbus-client';
 import decodeToken from 'jwt-decode';
 import NProgress from 'nprogress';
-import pako from 'pako';
+// import pako from 'pako';
 import { prefixedLog } from '../../utils';
 import { store } from '../../redux';
 import * as actions from '../../redux/actions';
+
+function stringToUint( string ) {
+  var string = btoa( unescape( encodeURIComponent( string )));
+
+  var charList = string.split( '' );
+
+  var uintArray = [];
+
+  for ( var i = 0; i < charList.length; i++ ) {
+    uintArray.push( charList[i].charCodeAt( 0 ));
+  }
+
+  return new Uint8Array( uintArray );
+}
+
+function uintToString( uintArray ) {
+  var encodedString = String.fromCharCode.apply( null, uintArray );
+
+  var decodedString = decodeURIComponent( escape( atob( encodedString )));
+
+  return decodedString;
+}
+
+const ZstdCodec = require( 'zstd-codec' ).ZstdCodec;
 
 class Vertx {
   constructor() {
@@ -71,24 +95,57 @@ class Vertx {
     }
   };
 
-  uncompress = incomingCompressedMessage => {
-    const compressData = atob( incomingCompressedMessage );
-    const compressData2 = compressData.split( '' ).map( e => {
-      return e.charCodeAt( 0 );
+  uncompress = async incomingCompressedMessage => {
+    // return ZstdCodec.run( zstd => {
+    //   console.warn( ' THis zstd run function is being trigerred' );
+    //   const simple = new zstd.Simple();
+    //   // convert base64 to normal string
+    //   const base64toString = atob( incomingCompressedMessage );
+    //   console.warn({ base64toString });
+    //   // convert the normal string to byte array / array buffer
+    //   const stringTOUnit = ab2str( base64toString );
+    //   console.warn({ stringTOUnit });
+    //   // decompress the string
+    //   const decompressedData = simple.decompress( incomingCompressedMessage );
+    //   console.warn({ decompressedData });
+    //   return decompressedData;
+    // });
+    return ZstdCodec.run( zstd => {
+      // console.warn( ' THis zstd run function is being trigerred' );
+      // const unit = stringToUint( 'hello' );
+      // console.warn({ unit });
+      // const simple = new zstd.Simple();
+      // const compressedData = simple.compress( unit );
+      // console.warn({ compressedData });
+      // const decompressedData = simple.decompress( compressedData );
+      // console.warn({ decompressedData });
+      // const units = uintToString( decompressedData );
+      // console.warn({ units });
+
+      console.warn({ incomingCompressedMessage });
+      const simple = new zstd.Simple();
+
+      const stringRep = window.atob( incomingCompressedMessage );
+
+      console.warn({ stringRep });
+
+      const uintFromString = stringToUint( stringRep );
+
+      console.warn({ uintFromString });
+
+      const decompressedData = simple.decompress( uintFromString );
+
+      console.warn({ decompressedData });
+
+      return decompressedData;
     });
-
-    const binData = new Uint8Array( compressData2 );
-
-    const data = pako.inflate( binData );
-
-    return String.fromCharCode.apply( null, new Uint16Array( data ));
   };
 
-  handleRegisterHandler = ( error, message ) => {
-    if ( message.body && message.body.zip ) {
-      const uncompressed = this.uncompress( message.body.zip );
+  handleRegisterHandler = async ( error, message ) => {
+    if ( message && message.body && message.body.zip ) {
+      const uncompressed = await this.uncompress( message.body.zip );
 
-      if ( window ) if ( message ) this.handleIncomingMessage( uncompressed );
+      this.handleIncomingMessage( uncompressed );
     } else if ( message ) this.handleIncomingMessage( message.body );
 
     if ( error ) this.log( error, 'error' );
