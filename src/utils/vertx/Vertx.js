@@ -89,8 +89,9 @@ class Vertx {
     }
   };
 
-  uncompress = async incomingCompressedMessage => {
-    return ZstdCodec.run( zstd => {
+  uncompress = async (incomingCompressedMessage, callback) => {
+
+     ZstdCodec.run( zstd => {
       const simple = new zstd.Simple();
 
       // const testB64EncodedStr = "KLUv/SAIQQAAYUdWc2JHOD0=";
@@ -120,21 +121,25 @@ class Vertx {
 
       console.warn({ jsonified });
 
-      const deeplyParsed = deepParseJson( decoded );
+      deeplyParsed = deepParseJson( decoded );
 
       console.warn({ deeplyParsed });
 
+
+      callback(deeplyParsed);
+
       // console.warn(decoded);
-      return deeplyParsed;
     });
   };
 
   handleRegisterHandler = async ( error, message ) => {
     console.warn({ message });
     if ( message && message.body && message.body.zip ) {
-      const uncompressed = await this.uncompress( message.body.zip );
-
-      this.handleIncomingMessage( uncompressed );
+        this.uncompress( message.body.zip, data => {
+        console.warn({data});
+      this.handleIncomingMessage( data );
+      });
+      
     } else if ( message ) this.handleIncomingMessage( message.body );
 
     if ( error ) this.log( error, 'error' );
@@ -148,6 +153,7 @@ class Vertx {
     }
 
     // this.log( 'Receiving a message' );
+    console.warn({ message });
 
     if ( incomingMessageHandler ) incomingMessageHandler( message );
   };

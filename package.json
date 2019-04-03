@@ -162,7 +162,6 @@
     "react-native-dotenv": "^0.2.0",
     "react-test-renderer": "16.3.1",
     "remotedev-rn-debugger": "^0.8.3",
-    "terser-webpack-plugin": "^1.2.3",
     "uglifyjs-webpack-plugin": "^2.1.1",
     "webpack-bundle-analyzer": "^2.13.1",
     "webpack-merge": "^4.1.4"
