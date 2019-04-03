@@ -110,6 +110,8 @@ class Vertx {
   };
 
   handleRegisterHandler = async ( error, message ) => {
+
+    console.warn({ message })
     if ( message && message.body && message.body.zip ) {
       this.uncompress( message.body.zip, data => {
         this.handleIncomingMessage( data );
