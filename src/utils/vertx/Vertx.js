@@ -99,32 +99,20 @@ class Vertx {
 
       const incomingByteArray = convertDataURIToBinary( incomingCompressedMessage );
 
-      console.warn({ incomingByteArray });
       //  console.warn({ incomingByteArray });
 
       const decompressedDataArray = simple.decompress( incomingByteArray );
 
-      console.warn({ decompressedDataArray });
       // console.warn({ decompressedDataArray });
 
       var decompressedStr = new TextDecoder( 'utf-8' ).decode( decompressedDataArray );
-
-      console.warn({ decompressedStr });
 
       //  console.warn({ decompressedStr });
 
       var decoded = window.atob( decompressedStr );
 
-      console.warn({ decoded });
-
       const jsonified = JSON.parse( decoded );
-
-      console.warn({ jsonified });
-
       deeplyParsed = deepParseJson( decoded );
-
-      console.warn({ deeplyParsed });
-
 
       callback(deeplyParsed);
 
@@ -136,7 +124,6 @@ class Vertx {
     console.warn({ message });
     if ( message && message.body && message.body.zip ) {
         this.uncompress( message.body.zip, data => {
-        console.warn({data});
       this.handleIncomingMessage( data );
       });
       
