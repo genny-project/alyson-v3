@@ -24,6 +24,14 @@ function convertDataURIToBinary( base64 ) {
 
 const ZstdCodec = require( 'zstd-codec' ).ZstdCodec;
 
+const codecFunc = cb =>
+  ZstdCodec.run( zstd => {
+    const simple = new zstd.Simple();
+
+    cb( simple );
+    // console.warn(decoded);
+  });
+
 class Vertx {
   constructor() {
     this.log = prefixedLog( 'Vertx' );
@@ -89,43 +97,23 @@ class Vertx {
     }
   };
 
-  uncompress = async (incomingCompressedMessage, callback) => {
-
-     ZstdCodec.run( zstd => {
-      const simple = new zstd.Simple();
-
-      // const testB64EncodedStr = "KLUv/SAIQQAAYUdWc2JHOD0=";
-      // console.warn({ incomingCompressedMessage });
-
+  uncompress = async ( incomingCompressedMessage, callback ) => {
+    codecFunc( simple => {
       const incomingByteArray = convertDataURIToBinary( incomingCompressedMessage );
-
-      //  console.warn({ incomingByteArray });
-
       const decompressedDataArray = simple.decompress( incomingByteArray );
-
-      // console.warn({ decompressedDataArray });
-
-      var decompressedStr = new TextDecoder( 'utf-8' ).decode( decompressedDataArray );
-
-      //  console.warn({ decompressedStr });
-
+      const decompressedStr = new TextDecoder( 'utf-8' ).decode( decompressedDataArray );
       var decoded = window.atob( decompressedStr );
+      const deeplyParsed = deepParseJson( decoded );
 
-      const jsonified = JSON.parse( decoded );
-      deeplyParsed = deepParseJson( decoded );
-
-      callback(deeplyParsed);
-
-      // console.warn(decoded);
+      callback( deeplyParsed );
     });
   };
 
   handleRegisterHandler = async ( error, message ) => {
     if ( message && message.body && message.body.zip ) {
-        this.uncompress( message.body.zip, data => {
-      this.handleIncomingMessage( data );
+      this.uncompress( message.body.zip, data => {
+        this.handleIncomingMessage( data );
       });
-      
     } else if ( message ) this.handleIncomingMessage( message.body );
 
     if ( error ) this.log( error, 'error' );
