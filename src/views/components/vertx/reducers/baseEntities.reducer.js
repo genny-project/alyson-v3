@@ -1,5 +1,5 @@
 import copy from 'fast-copy';
-import { isArray } from '../../../../utils';
+import { isArray, isString } from '../../../../utils';
 
 const initialState = {
   data: {},
@@ -57,10 +57,10 @@ const getDisplayValueField = ( item ) => {
 
   if ( item.valueString != null ) {
     if (
-      ( item.valueString.startsWith( '[' ) &&
+      ( item && item.valueString && isString( item.valueString ) && item.valueString.startsWith( '[' ) &&
       item.valueString.endsWith( ']' )) ||
-      ( item.valueString.startsWith( '{' ) &&
-      item.valueString.endsWith( '}' ))
+      ( item && item.valueString &&  isString( item.valueString ) && item.valueString.startsWith( '{' ) &&
+      item && item.valueString && isString( item.valueString ) &&  item.valueString.endsWith( '}' ))
     ) {
       try {
         const object = JSON.parse( item.valueString );
