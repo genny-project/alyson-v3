@@ -83,7 +83,6 @@ class Input extends Component {
         );
 
       case 'textarea':
-      case 'rich-text-editor':
         return (
           <InputText
             multiline
@@ -334,8 +333,13 @@ class Input extends Component {
         return <Signature {...this.props} />;
 
       case 'htmlarea':
-        return <RichTextEditor {...inputProps} />;
-
+      case 'rich-text-editor':
+        return (
+          <RichTextEditor
+            {...inputProps}
+            ref={input => ( this.input = input )}
+          />
+        );
       default:
         return (
           <Text>
