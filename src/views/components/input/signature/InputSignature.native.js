@@ -76,9 +76,7 @@ class InputSignature extends Component {
 
     return (
       <Box>
-        <Text
-          text="Component not built yet"
-        />
+        <Text text="Component not built yet" />
       </Box>
       // <Box
       //   height={height}

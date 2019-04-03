@@ -174,7 +174,7 @@ class InputSignature extends Component {
               onChange={this.handleTextSignatureChange}
               value={this.state.textSignatureValue}
             />
-            <p style={{ fontFamily: 'satisfy', fontSize: 20 }}>
+            <p style={{ fontFamily: 'satisfy', fontSize: 20 }}> 
               {' '}
               {this.state.textSignatureValue}
             </p>
