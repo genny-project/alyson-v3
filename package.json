@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start:native": "node node_modules/react-native/local-cli/cli.js start",
-    "start:web": "./node_modules/.bin/webpack-dev-server -d --config ./webpack.dev.js --inline --hot --colors",
+    "start:web": "./node_modules/.bin/webpack-dev-server -d --config ./webpack.dev.js ---max-old-space-size=4069 -inline --hot --colors",
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/alysonv3/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
     "build:web": "./node_modules/.bin/webpack -p --config ./webpack.prod.js",
     "test": "jest",
@@ -36,6 +36,7 @@
     "color": "^3.0.0",
     "css-loader": "^0.28.11",
     "date-fns": "^1.29.0",
+    "deep-parse-json": "^1.0.1",
     "deepmerge": "^3.0.0",
     "dlv": "^1.1.2",
     "dotenv": "^6.2.0",
@@ -73,7 +74,6 @@
     "memoize-one": "^4.0.2",
     "moment": "^2.22.2",
     "monaco-editor-webpack-plugin": "^1.5.1",
-    "node-git-info": "^1.1.0",
     "nprogress": "^0.2.0",
     "prettier": "^1.13.7",
     "prettier-bytes": "^1.0.4",
@@ -146,7 +146,8 @@
     "vertx3-eventbus-client": "genny-project/vertx3-eventbus-client",
     "webpack": "^4.14.0",
     "webpack-cli": "^3.0.8",
-    "webpack-dev-server": "^3.1.4"
+    "webpack-dev-server": "^3.1.4",
+    "zstd-codec": "^0.1.1"
   },
   "devDependencies": {
     "app-icon": "^0.6.3",
