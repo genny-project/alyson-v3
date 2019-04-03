@@ -26,7 +26,7 @@ const ZstdCodec = require( 'zstd-codec' ).ZstdCodec;
 
 const codecFunc = cb =>
   ZstdCodec.run( zstd => {
-    const simple = new zstd.Simple();
+    const simple = new zstd.Streaming();
 
     cb( simple );
     // console.warn(decoded);
