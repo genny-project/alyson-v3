@@ -6,11 +6,11 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/fromPromise';
 import { combineEpics } from 'redux-observable';
 import { default as fetchKeycloakConfig } from './fetchKeycloakConfig.epic';
-import { default as fetchPublicLayouts } from './fetchPublicLayouts.epic';
+/* import { default as fetchPublicLayouts } from './fetchPublicLayouts.epic'; */
 
 const epics = combineEpics(
-  fetchKeycloakConfig,
-  fetchPublicLayouts,
+  fetchKeycloakConfig
+  /* fetchPublicLayouts, */
 );
 
 export default epics;
