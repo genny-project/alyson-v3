@@ -84,7 +84,7 @@ class Form extends Component {
       questionGroupCode !== prevProps.questionGroupCode
     ) {
       const newGroups = this.getQuestionGroups();
-     
+
       if ( newGroups.length > 0 ) {
         // eslint-disable-next-line react/no-did-update-set-state
         this.setState({ questionGroups: newGroups, missingBaseEntities: [] }, () => {
@@ -101,7 +101,7 @@ class Form extends Component {
       isArray( questionGroups, { ofExactLength: 0 })
     ) {
       const newGroups = this.getQuestionGroups();
-      
+
       if ( newGroups.length > 0 ) {
         // eslint-disable-next-line react/no-did-update-set-state
         this.setState({ questionGroups: newGroups, missingBaseEntities: [] }, () => {
@@ -119,7 +119,7 @@ class Form extends Component {
     ) {
       const newGroups = this.getQuestionGroups();
       const prevGroups = this.getQuestionGroups( prevProps );
-      
+
       if ( newGroups.length !== prevGroups.length ) {
         // eslint-disable-next-line react/no-did-update-set-state
         this.setState({ questionGroups: newGroups, missingBaseEntities: [] }, () => {
@@ -142,23 +142,12 @@ class Form extends Component {
       }
     }
 
-    // else if (
-    //   isArray( questionGroupCode ) &&
-    //   questionGroupCode.length !== questionGroups.length
-    // ) {
-    //   const newGroups = this.getQuestionGroups();
-    //   const prevGroups = this.getQuestionGroups( prevProps );
-
-    //   if ( newGroups.length !== prevGroups.length ) {
-    //     // eslint-disable-next-line react/no-did-update-set-state
-    //     this.setState({ questionGroups: newGroups }, () => {
-    //       if ( checkIfSetNeeded ) {
-    //         this.setInitialValues();
-    //         this.setValidationList();
-    //       }
-    //     });
-    //   }
-    // }
+    else if (
+      this.checkForUpdatedAttributeValues( this.props )
+    ) {
+      this.setInitialValues();
+      this.setValidationList();
+    }
   }
 
   setInitialValues = () => {
@@ -304,6 +293,44 @@ class Form extends Component {
     });
     
     return result;
+  }
+
+  checkForUpdatedAttributeValues = ( newProps ) => {
+    /* identify the attributes for each question */
+
+    const {
+      initialValues,
+    } = this.state;
+    const newQuestionGroup = newProps.asks[newProps.questionGroupCode];
+
+    const compareAttributeValues = ( ask ) => {
+      if ( !ask.question ) return true;
+
+      const questionCode = ask.questionCode;
+      const target = ask.targetCode;
+      const attributeCode = ask.question.attributeCode;
+      const baseEntityAttributeValue = dlv( newProps, `baseEntities.attributes.${target}.${attributeCode}.value` );
+
+      const isMatch = (
+        initialValues[questionCode] == null &&
+        baseEntityAttributeValue == null
+      ) ||
+        initialValues[questionCode] === baseEntityAttributeValue;
+
+      if ( isMatch ) return false;
+
+      const isChildMatch = ask.childAsks.some(
+        childAsk => compareAttributeValues( childAsk )
+      );
+
+      return !isChildMatch;
+    };
+
+    const isDifference = newQuestionGroup.childAsks.some(
+      childAsk => compareAttributeValues( childAsk )
+    );
+
+    return isDifference;
   }
 
   doValidate = values => {

@@ -124,11 +124,10 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
       resultant[current.code] = {
         ...resultant[current.code],
         [link.link.linkValue]: [
-          ...( resultant[current.code] && isArray( resultant[current.code][link.link.linkValue] )
-            ? resultant[current.code][link.link.linkValue].filter(
-              existingLink => existingLink.link.targetCode !== link.link.targetCode
-            )
-            : [] ),
+          ...( resultant[current.code] && isArray( resultant[current.code][link.link.linkValue] ))
+            ? resultant[current.code][link.link.linkValue]
+              .filter( existingLink => existingLink.link.targetCode !== link.link.targetCode )
+            : [],
           link,
         ],
       };
