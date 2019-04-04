@@ -1,5 +1,5 @@
 import copy from 'fast-copy';
-import { isArray } from '../../../../utils';
+import { isArray, isString } from '../../../../utils';
 
 const initialState = {
   data: {},
@@ -13,37 +13,28 @@ const initialState = {
   links: {},
 };
 
-const getDisplayValueField = ( item ) => {
-  if ( item.value != null )
-    return item.value;
+const getDisplayValueField = item => {
+  if ( item.value != null ) return item.value;
 
   if ( item.valueDouble != null ) {
     let local = navigator.language;
 
-    if ( local == null )
-      local = 'en-AU';
+    if ( local == null ) local = 'en-AU';
 
     const value = new Intl.NumberFormat( local ).format( item.valueDouble );
 
-    return value
-      ? new Intl.NumberFormat( local ).format( item.valueDouble )
-      : item.valueDouble;
+    return value ? new Intl.NumberFormat( local ).format( item.valueDouble ) : item.valueDouble;
   }
 
-  if ( item.valueInteger != null )
-    return item.valueInteger;
+  if ( item.valueInteger != null ) return item.valueInteger;
 
-  if ( item.valueLong != null )
-    return item.valueLong;
+  if ( item.valueLong != null ) return item.valueLong;
 
-  if ( item.valueDateTime != null )
-    return item.valueDateTime;
+  if ( item.valueDateTime != null ) return item.valueDateTime;
 
-  if ( item.valueDate != null )
-    return item.valueDate;
+  if ( item.valueDate != null ) return item.valueDate;
 
-  if ( item.valueBoolean != null )
-    return item.valueBoolean;
+  if ( item.valueBoolean != null ) return item.valueBoolean;
 
   if ( item.valueMoney != null ) {
     const formatter = new Intl.NumberFormat( 'en-AU', {
@@ -57,17 +48,25 @@ const getDisplayValueField = ( item ) => {
 
   if ( item.valueString != null ) {
     if (
-      ( item.valueString.startsWith( '[' ) &&
-      item.valueString.endsWith( ']' )) ||
-      ( item.valueString.startsWith( '{' ) &&
-      item.valueString.endsWith( '}' ))
+      ( item &&
+        item.valueString &&
+        isString( item.valueString ) &&
+        item.valueString.startsWith( '[' ) &&
+        item.valueString.endsWith( ']' )) ||
+      ( item &&
+        item.valueString &&
+        isString( item.valueString ) &&
+        item.valueString.startsWith( '{' ) &&
+        item &&
+        item.valueString &&
+        isString( item.valueString ) &&
+        item.valueString.endsWith( '}' ))
     ) {
       try {
         const object = JSON.parse( item.valueString );
 
         return object;
-      }
-      catch ( error ) {
+      } catch ( error ) {
         return item.valueString;
       }
     }
@@ -91,15 +90,15 @@ const handleReduceAttributeCodes = ( resultantAttributes, currentAttribute ) => 
 };
 
 const handleReduceAttributes = ( resultant, current ) => {
-  if ( !current )
-    return resultant;
+  if ( !current ) return resultant;
 
   if ( current.baseEntityAttributes ) {
     const existing = resultant[current.code] || {};
 
-    const baseEntityAttributes = current
-      .baseEntityAttributes
-      .reduce( handleReduceAttributeCodes, existing );
+    const baseEntityAttributes = current.baseEntityAttributes.reduce(
+      handleReduceAttributeCodes,
+      existing
+    );
 
     resultant[current.code] = baseEntityAttributes;
   }
@@ -112,14 +111,10 @@ const handleReplaceLinks = ( resultant, current ) => {
 };
 
 const handleReduceLinks = ( resultant, current, shouldReplace ) => {
-  if ( !isArray( current.links ))
-    return resultant;
+  if ( !isArray( current.links )) return resultant;
 
   const removeMatchingExistingKeys = link => {
-    if (
-      link.link.linkValue &&
-      resultant[current.code]
-    ) {
+    if ( link.link.linkValue && resultant[current.code] ) {
       delete resultant[current.code];
     }
   };
@@ -172,8 +167,7 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
       resultant[current.parentCode] = {
         LINK: [createLink( current )],
       };
-    }
-    else {
+    } else {
       /* If parent code already exists, check to see if BEG is already there.
       If yes, we add the new link. If no, we dont do anything, because it means
       there is already another key which has been obtained from a parent to child
@@ -181,10 +175,11 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
       resultant[current.parentCode] = {
         ...resultant[current.parentCode],
         LINK: [
-          ...resultant[current.parentCode].LINK
-            ? resultant[current.parentCode].LINK
-              .filter( link => link.link.targetCode !== current.code )
-            : {},
+          ...( resultant[current.parentCode].LINK
+            ? resultant[current.parentCode].LINK.filter(
+              link => link.link.targetCode !== current.code
+            )
+            : {}),
           createLink( current ),
         ],
       };
@@ -209,23 +204,25 @@ const deleteLinkedBaseEntities = ( data, resultant, depth = 1 ) => {
   const { shouldDeleteLinkedBaseEntities, code } = data;
   const links = resultant[code] ? resultant[code].links : data.links;
 
-  if ( !isArray( links ))
-    return;
+  if ( !isArray( links )) return;
 
   links.forEach(({ link }) => {
     if ( depth >= shouldDeleteLinkedBaseEntities ) {
       delete resultant[link.targetCode];
-    }
-    else {
-      deleteLinkedBaseEntities({
-        ...resultant[link.targetCode],
-        shouldDeleteLinkedBaseEntities,
-      }, resultant, depth + 1 );
+    } else {
+      deleteLinkedBaseEntities(
+        {
+          ...resultant[link.targetCode],
+          shouldDeleteLinkedBaseEntities,
+        },
+        resultant,
+        depth + 1
+      );
     }
   });
 };
 
-const createLink = ( current ) => ({
+const createLink = current => ({
   created: current.created,
   updated: current.updated,
   code: current.code,
@@ -241,8 +238,7 @@ const createLink = ( current ) => ({
 });
 
 const handleReduceData = ( resultant, current ) => {
-  if ( !current )
-    return resultant;
+  if ( !current ) return resultant;
 
   /* Shortcut to remove properties inside the current base entity. */
   const { baseEntityAttributes, ...wantedData } = current; // eslint-disable-line no-unused-vars
@@ -262,30 +258,27 @@ const handleReduceData = ( resultant, current ) => {
 
     if ( !resultant[current.parentCode] ) {
       resultant[current.parentCode] = {
-        totalCount: current.totalCount ||
-        ( resultant[current.parentCode] ? resultant[current.parentCode].totalCount : 0 ),
-        links: [
-          createLink( current ),
-        ],
+        totalCount:
+          current.totalCount ||
+          ( resultant[current.parentCode] ? resultant[current.parentCode].totalCount : 0 ),
+        links: [createLink( current )],
       };
-    }
-    /* If there already is a base entity, add the current base entity to the list of links
+    } else {
+      /* If there already is a base entity, add the current base entity to the list of links
      * inside of it. Be sure that no duplicates occur by filtering out the current's code
      * from the list of existing links. */
-    else {
       const noLinksExist = !isArray( resultant[current.parentCode].links, { ofMinLength: 1 });
 
       /* If no links exist yet, simply set the links to be array of the new link (current). */
 
-      const newLinks = noLinksExist ? [
-        createLink( current ),
-      ] : (
-        /* Loop through each existing link. */
+      const newLinks = noLinksExist
+        ? [createLink( current )]
+        : /* Loop through each existing link. */
         resultant[current.parentCode].links.reduce(( links, link, index ) => {
-          /* If the current link is in the existing links, update the
+            /* If the current link is in the existing links, update the
            * existing link with the new link data (current). */
           if ( link.link.targetCode === current.code ) {
-            // if ( current.parentCode === 'GRP_NEW_ITEMS' ) console.log( '3a code match', links );
+              // if ( current.parentCode === 'GRP_NEW_ITEMS' ) console.log( '3a code match', links );
             links[index] = {
               ...link,
               updated: current.updated,
@@ -296,23 +289,20 @@ const handleReduceData = ( resultant, current ) => {
                 ...current.link,
               },
             };
-          }
-          /* If the new link (current) isn't already in the existing links, add it. */
-          else if ( !links.find( existingLink => existingLink.link.targetCode === current.code )) {
-            // if ( current.parentCode === 'GRP_NEW_ITEMS' ) console.log( '3b links', links );
-            links.push(
-              createLink( current )
-            );
+          } else if ( !links.find( existingLink => existingLink.link.targetCode === current.code )) {
+              /* If the new link (current) isn't already in the existing links, add it. */
+              // if ( current.parentCode === 'GRP_NEW_ITEMS' ) console.log( '3b links', links );
+            links.push( createLink( current ));
           }
 
           return links;
-        }, resultant[current.parentCode].links )
-      );
+        }, resultant[current.parentCode].links );
 
       resultant[current.parentCode] = {
         ...resultant[current.parentCode],
-        totalCount: current.totalCount ||
-        ( resultant[current.parentCode] ? resultant[current.parentCode].totalCount : 0 ),
+        totalCount:
+          current.totalCount ||
+          ( resultant[current.parentCode] ? resultant[current.parentCode].totalCount : 0 ),
         links: newLinks,
       };
     }
@@ -355,13 +345,15 @@ const handleReduceAskQuestionTypes = ( resultant, current ) => {
 };
 
 const handleRemoveLayoutAttributes = attributes => {
-  return Object
-    .keys( attributes )
+  return Object.keys( attributes )
     .filter( key => !key.startsWith( 'LAY_' ))
-    .reduce(( result, current ) => ({
-      ...result,
-      [current]: attributes[current],
-    }), {});
+    .reduce(
+      ( result, current ) => ({
+        ...result,
+        [current]: attributes[current],
+      }),
+      {}
+    );
 };
 
 const handleUpdateProjectName = ( attributes, name ) => {
@@ -385,10 +377,7 @@ function handleReduceDataTwo( message, state ) {
 
   delete newState[message.parentCode];
 
-  if (
-    message.delete &&
-    !message.shouldDeleteLinkedBaseEntities
-  ) {
+  if ( message.delete && !message.shouldDeleteLinkedBaseEntities ) {
     return newState;
   }
 
@@ -397,12 +386,16 @@ function handleReduceDataTwo( message, state ) {
 
 function changeLink( message, state ) {
   /* if we have an oldLink and it already exists in the store, we remove it */
-  if ( message.oldLink &&
+  if (
+    message.oldLink &&
     state[message.oldLink.sourceCode] &&
-    state[message.oldLink.sourceCode][message.oldLink.linkValue] ) {
-    state[message.oldLink.sourceCode][message.oldLink.linkValue] =
     state[message.oldLink.sourceCode][message.oldLink.linkValue]
-    .filter( existingLink => existingLink.link.targetCode !== message.oldLink.targetCode );
+  ) {
+    state[message.oldLink.sourceCode][message.oldLink.linkValue] = state[
+      message.oldLink.sourceCode
+    ][message.oldLink.linkValue].filter(
+      existingLink => existingLink.link.targetCode !== message.oldLink.targetCode
+    );
   }
   /* TODO: to remove. here for demo */
   // else {
@@ -425,7 +418,7 @@ function changeLink( message, state ) {
     };
   }
 
-  const createLink = ( current ) => ({
+  const createLink = current => ({
     code: current.code,
     weight: 1,
     link: {
@@ -481,10 +474,7 @@ const reducer = ( state = initialState, { type, payload }) => {
      */
 
     case 'BASE_ENTITY_MESSAGE': {
-      if (
-        payload.replace ||
-        payload.delete
-      ) {
+      if ( payload.replace || payload.delete ) {
         return {
           ...state,
           data: handleReduceDataTwo( payload, state.data ),
