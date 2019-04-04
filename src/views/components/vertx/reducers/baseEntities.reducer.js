@@ -131,6 +131,7 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
         [link.link.linkValue]: [
           ...( resultant[current.code] && isArray( resultant[current.code][link.link.linkValue] ))
             ? resultant[current.code][link.link.linkValue]
+              .filter( existingLink => existingLink.link.targetCode !== link.link.targetCode )
             : [],
           link,
         ],
@@ -154,8 +155,8 @@ const handleReduceLinks = ( resultant, current, shouldReplace ) => {
     };
   };
 
-  if ( isArray( current.links ))
-    current.links.forEach( handleCombineLinkValues );
+  // if ( isArray( current.links ))
+  //   current.links.forEach( handleCombineLinkValues );
 
   if ( shouldReplace === true ) {
     current.links.forEach( removeMatchingExistingKeys );

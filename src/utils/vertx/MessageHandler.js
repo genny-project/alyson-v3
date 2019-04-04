@@ -54,7 +54,11 @@ class MessageHandler {
     }
 
     output.payload.items = [
-      ...output.payload.items,
+      ...output.payload.items.filter( item => (
+        !current.payload.items.some( newItem => (
+          newItem.code === item.code
+        ))
+      )),
       ...current.payload.items.map( item => ({
         delete: current.payload.delete,
         replace: current.payload.replace,
@@ -63,6 +67,7 @@ class MessageHandler {
         totalCount: current.payload.returnCount,
         linkCode: current.payload.linkCode,
         ...item,
+        links: ( item.questions ? item.links.concat( item.questions ) : item.links ),
       })),
     ];
 
@@ -116,7 +121,7 @@ class MessageHandler {
       );
 
       this.lastBe = new Date().getTime();
-    } 
+    }
     else {
       const payload = message;
 
