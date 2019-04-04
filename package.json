@@ -173,6 +173,11 @@
       "./node_modules/appcenter-crashes/test/AppCenterCrashesMock.js"
     ]
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "lint-staged": {
     "*.js": [
       "prettier \"src/**/*.js\"",
