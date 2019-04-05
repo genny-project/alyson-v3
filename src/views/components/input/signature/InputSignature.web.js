@@ -137,9 +137,10 @@ class InputSignature extends Component {
           tabBarSize="md"
           textColor="black"
           tabs={[
-            { key: 0, title: 'Draw ' },
-            { key: 1, title: 'Write ' },
-            { key: 2, title: 'Upload ' },
+            { key: 0, title: 'Draw ', testID: 'Draw' },
+            { key: 1, title: 'Write ', testID: 'Write' },
+            { key: 2, title: 'Upload ', testID: 'Upload' },
+
           ]}
         >
           <div

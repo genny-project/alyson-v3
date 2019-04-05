@@ -116,11 +116,14 @@ class InputDropdown extends Component {
   }
 
   shouldComponentUpdate( nextProps ) {
-    if ( nextProps.value !== this.props.value )
+    if ( nextProps.value !== this.props.value ) {
       return true;
+    }
 
-    if ( nextProps.items !== this.props.items )
+    if (( nextProps.items !== this.props.items ) || 
+    ( nextProps.items.length !== this.props.items.length )) {
       return true;
+    }
 
     return false;
   }
@@ -301,7 +304,7 @@ class InputDropdown extends Component {
                         ? ( item[itemIdKey] || item[itemStringKey] )
                         : item
                     )}
-                    testID={`input-dropdown-option ${testID}`}
+                    testID={`input-dropdown-option ${testID} ${item[itemValueKey]}`}
                     label={isItemObject ? item[itemStringKey] : item}
                     value={isItemObject ? item[itemValueKey] : item}
                   />

@@ -98,6 +98,7 @@ class ScrollView extends Component {
       minHeight,
       maxHeight,
       backgroundColor,
+      transform: 'none',
     };
 
     const contentStyle = {

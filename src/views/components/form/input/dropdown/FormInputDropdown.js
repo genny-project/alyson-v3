@@ -96,6 +96,12 @@ class FormInputDropdown extends Component {
       return;
     }
 
+    if ( items.length !== newItems.length ) {
+      this.setState({ items: newItems });
+
+      return;
+    }
+
     for ( let i = 0; i < items.length; i++ ) {
       const item = items[i];
       const newItem = newItems[i];
