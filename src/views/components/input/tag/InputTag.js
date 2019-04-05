@@ -185,7 +185,7 @@ class InputTag extends Component {
                 selectedItems.map( item => {
                   const fileterdData =
                     this.props.items.length >= 1 &&
-                    this.props.items.find( i => i.value === item.value );
+                    this.props.items.filter( i => i.value === item.value )[0];
 
                   const stringFromFilteredData = fileterdData.label || null;
 
@@ -202,19 +202,12 @@ class InputTag extends Component {
                     this.removeItemToPreSelection( itemObject );
                   };
 
-                  {
-                    console.warn({ itemObject });
-                    console.warn({ fileterdData });
-                    console.warn({ itemString });
-                    console.warn({ stringFromFilteredData });
-                  }
-
                   return (
                     <InputTagItem
                       key={itemId}
                       renderProp={renderTag}
-                      item={itemObject || fileterdData}
-                      itemString={itemString || stringFromFilteredData}
+                      item={fileterdData || itemObject}
+                      itemString={stringFromFilteredData || itemString}
                       touchableProps={getRemoveButtonProps({
                         withFeedback: true,
                         onPress: onPress,
