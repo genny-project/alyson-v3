@@ -187,7 +187,7 @@ class InputTag extends Component {
                     this.props.items.length >= 1 &&
                     this.props.items.filter( i => i.value === item.value )[0];
 
-                  const stringFromFilteredData = fileterdData.label || null;
+                  const stringFromFilteredData = ( fileterdData && fileterdData.label ) || null;
 
                   const itemString = isObject( item ) ? item[itemStringKey] : item;
                   const itemId = isObject( item ) ? item[itemValueKey] : item;
