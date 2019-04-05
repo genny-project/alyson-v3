@@ -10,16 +10,10 @@ class InputTagItem extends Component {
     itemString: string,
     touchableProps: object,
     onPress: func,
-  }
+  };
 
   render() {
-    const {
-      renderProp,
-      item,
-      itemString,
-      touchableProps,
-      onPress,
-    } = this.props;
+    const { renderProp, item, itemString, touchableProps, onPress } = this.props;
 
     if ( renderProp ) {
       return (
@@ -60,9 +54,7 @@ class InputTagItem extends Component {
           </Text>
         </Box>
 
-        <Touchable
-          {...touchableProps}
-        >
+        <Touchable {...touchableProps}>
           <Icon
             type="material-icons"
             name="clear"
