@@ -140,6 +140,7 @@ class InputSignature extends Component {
             { key: 0, title: 'Draw ', testID: 'Draw' },
             { key: 1, title: 'Write ', testID: 'Write' },
             { key: 2, title: 'Upload ', testID: 'Upload' },
+
           ]}
         >
           <div

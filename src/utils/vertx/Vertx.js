@@ -98,6 +98,7 @@ class Vertx {
   };
 
   uncompress = async ( incomingCompressedMessage, callback ) => {
+    console.warn('Comporession being used.'); // eslint-disable-line
     codecFunc( simple => {
       const incomingByteArray = convertDataURIToBinary( incomingCompressedMessage );
       const decompressedDataArray = simple.decompress( incomingByteArray );
