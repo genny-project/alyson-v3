@@ -185,9 +185,9 @@ class InputTag extends Component {
                 selectedItems.map( item => {
                   const fileterdData =
                     this.props.items.length >= 1 &&
-                    this.props.items.find( i => i.value === item.value );
+                    this.props.items.filter( i => i.value === item.value )[0];
 
-                  const stringFromFilteredData = fileterdData.label;
+                  const stringFromFilteredData = ( fileterdData && fileterdData.label ) || null;
 
                   const itemString = isObject( item ) ? item[itemStringKey] : item;
                   const itemId = isObject( item ) ? item[itemValueKey] : item;
@@ -206,8 +206,8 @@ class InputTag extends Component {
                     <InputTagItem
                       key={itemId}
                       renderProp={renderTag}
-                      item={fileterdData}
-                      itemString={stringFromFilteredData}
+                      item={fileterdData || itemObject}
+                      itemString={stringFromFilteredData || itemString}
                       touchableProps={getRemoveButtonProps({
                         withFeedback: true,
                         onPress: onPress,
