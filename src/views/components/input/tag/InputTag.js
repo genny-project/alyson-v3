@@ -202,6 +202,13 @@ class InputTag extends Component {
                     this.removeItemToPreSelection( itemObject );
                   };
 
+                  {
+                    console.warn({ itemObject });
+                    console.warn({ fileterdData });
+                    console.warn({ itemString });
+                    console.warn({ stringFromFilteredData });
+                  }
+
                   return (
                     <InputTagItem
                       key={itemId}
