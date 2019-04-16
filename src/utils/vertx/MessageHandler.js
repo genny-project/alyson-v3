@@ -46,10 +46,7 @@ class MessageHandler {
       return output;
     }
 
-output.payload.items = [
-      ...output.payload.items.filter(
-        item => !current.payload.items.some( newItem => newItem.code === item.code )
-      ),
+    output.payload.items = [
       ...current.payload.items.map( item => ({
         delete: current.payload.delete,
         replace: current.payload.replace,
@@ -61,7 +58,7 @@ output.payload.items = [
         links: item.questions ? item.links.concat( item.questions ) : item.links,
       })),
     ];
-    
+
     return output;
   };
 
