@@ -47,6 +47,7 @@ class MessageHandler {
     }
 
     output.payload.items = [
+      ...output.payload.items,
       ...current.payload.items.map( item => ({
         delete: current.payload.delete,
         replace: current.payload.replace,
