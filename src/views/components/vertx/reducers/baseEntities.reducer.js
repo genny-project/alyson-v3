@@ -100,6 +100,9 @@ const handleReduceAttributes = ( resultant, current ) => {
       existing
     );
 
+    if ( current.code === 'GRP_INTERNS' ) {
+      console.warn({ reducerAttributes: resultant[current.code], attributes: baseEntityAttributes });
+    }
     resultant[current.code] = baseEntityAttributes;
   }
 

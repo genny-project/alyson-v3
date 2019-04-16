@@ -3,13 +3,16 @@ import { Editor, EditorState, RichUtils, getDefaultKeyBinding } from 'draft-js';
 
 import { stateToHTML } from 'draft-js-export-html';
 import { stateFromHTML } from 'draft-js-import-html';
-import { func, string } from 'prop-types';
+import { func, string, object } from 'prop-types';
 import style from './style.css'; //eslint-disable-line
 
 class RichEditorExample extends Component {
   static propTypes = {
     onChangeValue: func,
+    onToggle: func,
     value: string,
+    style: object,
+    editorState: object,
   };
 
   constructor( props ) {
