@@ -1,5 +1,7 @@
 # alysonv3
 
+### latest release 2.1.0
+
 - [Get started](#get-started)
   - [iOS](#ios)
   - [Android](#android)
