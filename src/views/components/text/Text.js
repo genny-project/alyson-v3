@@ -6,6 +6,7 @@ import upperCase from 'lodash.uppercase';
 import lowerCase from 'lodash.lowercase';
 
 const textSizes = {
+  xxxs: 10,
   xxs: 12,
   xs: 14,
   sm: 16,
@@ -53,27 +54,24 @@ const Text = ({
     textAlign: align,
     width,
     color: colors[color] || color,
-    fontFamily: fontFamily || Platform.select({
-      web: 'system-ui, sans-serif',
-      native: 'System',
-    }),
+    fontFamily:
+      fontFamily ||
+      Platform.select({
+        web: 'system-ui, sans-serif',
+        native: 'System',
+      }),
   };
 
   let child = text || children;
 
-  if (
-    transform &&
-    transforms[transform]
-  ) {
+  if ( transform && transforms[transform] ) {
     child = transforms[transform]( child );
   }
 
   return (
     <NativeText
       {...restProps}
-      style={[
-        style,
-      ]}
+      style={[style]}
     >
       {child}
     </NativeText>
@@ -83,28 +81,16 @@ const Text = ({
 Text.propTypes = {
   text: string,
   color: string,
-  decoration: oneOf(
-    ['none', 'underline']
-  ),
+  decoration: oneOf( ['none', 'underline'] ),
   fontWeight: string,
   size: string,
-  height: oneOfType(
-    [number, string]
-  ),
-  children: oneOfType(
-    [number, string, node]
-  ),
-  align: oneOf(
-    ['auto', 'left', 'right', 'center', 'justify']
-  ),
-  width: oneOfType(
-    [number, string]
-  ),
+  height: oneOfType( [number, string] ),
+  children: oneOfType( [number, string, node] ),
+  align: oneOf( ['auto', 'left', 'right', 'center', 'justify'] ),
+  width: oneOfType( [number, string] ),
   bold: bool,
   fontFamily: string,
-  transform: oneOf(
-    ['upperCase', 'lowerCase', 'capitalize']
-  ),
+  transform: oneOf( ['upperCase', 'lowerCase', 'capitalize'] ),
 };
 
 export default Text;

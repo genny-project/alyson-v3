@@ -19,6 +19,8 @@
     "lg": 60
   },
   "textSizes": {
+    "xxs": "xxxs",
+    "xs": "xxs",
     "sm": "xs",
     "md": "sm",
     "lg": "md"
