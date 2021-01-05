@@ -26,7 +26,7 @@
     "appcenter": "^1.6.0",
     "appcenter-analytics": "^1.6.0",
     "appcenter-crashes": "^1.6.0",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "babel-eslint": "^8.2.5",
     "babel-loader": "^7.1.4",
     "babel-plugin-react-native-web": "^0.8.6",
